@@ -37,3 +37,11 @@ console.log(`isPalindrome(12321): ${isPalindrome(12321)}`); // 出力: isPalindr
 console.log(`isPalindrome(1): ${isPalindrome(1)}`); // 出力: isPalindrome(1): true
 console.log(`isPalindrome(12.1): ${isPalindrome(12.1)}`); // 出力: isPalindrome(12.1): false
 console.log(`isPalindrome(1221): ${isPalindrome(1221)}`); // 出力: isPalindrome(1221): true
+
+// Sample
+// function isPalindrome(x: number): boolean {
+//   if (x.toString().split('').reverse().join('') == x.toString()) {
+//     return true;
+//   }
+//   return false;
+// }
