@@ -79,7 +79,7 @@ function isValid(s: string): boolean {
   const mergeValue = [...leftValue, ...rightValue];
   for (let j = 0; j < mergeValue.length; j++) {
     if (
-      leftBrackets.indexOf(leftValue[j]) ===
+      leftBrackets.indexOf(leftValue[j]) !==
       rightBrackets.indexOf(rightValue[j])
     )
       return false;
