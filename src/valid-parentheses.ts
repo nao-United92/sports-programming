@@ -58,33 +58,68 @@
 //   return result;
 // }
 
+// function isValid(s: string): boolean {
+//   const surplus = s.length % 2;
+//   if (surplus !== 0) return false;
+
+//   let leftValue = '';
+//   let rightValue = '';
+//   const leftBrackets: string[] = ['(', '{', '['];
+//   const rightBrackets: string[] = [')', '}', ']'];
+//   const sLength = s.length;
+//   let result = false;
+//   for (let i = 0; i < sLength; i++) {
+//     if (leftBrackets.includes(s[i])) {
+//       leftValue += s[i];
+//     }
+//     if (rightBrackets.includes(s[i])) {
+//       rightValue += s[i];
+//     }
+//   }
+//   const mergeValue = [...leftValue, ...rightValue];
+//   for (let j = 0; j < sLength; j++) {
+//     if (
+//       j === sLength - 1 &&
+//       leftBrackets.indexOf(leftValue[j]) !==
+//         rightBrackets.indexOf(rightValue[j])
+//     )
+//       return false;
+//   }
+
+//   if (leftValue.length === rightValue.length) result = true;
+//   return result;
+// }
+
+// Sample Code
+// function isValid(s: string): boolean {
+//   const stack: string[] = [];
+//   const mapping: { [key: string]: string } = {
+//     ')': '(',
+//     '}': '{',
+//     ']': '[',
+//   };
+
+//   for (let i = 0; i < s.length; i++) {
+//     const char = s[i];
+
+//     if (char === '(' || char === '{' || char === '[') {
+//       stack.push(char);
+//     } else if (char === ')' || char === '}' || char === ']') {
+//       if (stack.length === 0 || stack.pop() !== mapping[char]) {
+//         return false;
+//       }
+//     }
+//   }
+
+//   return stack.length === 0;
+// }
+
 function isValid(s: string): boolean {
-  const surplus = s.length % 2;
-  if (surplus !== 0) return false;
-
-  let leftValue = '';
-  let rightValue = '';
-  const leftBrackets: string[] = ['(', '{', '['];
-  const rightBrackets: string[] = [')', '}', ']'];
-  const sLength = s.length;
-  let result = false;
-  for (let i = 0; i < sLength; i++) {
-    if (leftBrackets.includes(s[i])) {
-      leftValue += s[i];
-    }
-    if (rightBrackets.includes(s[i])) {
-      rightValue += s[i];
-    }
-  }
-  const mergeValue = [...leftValue, ...rightValue];
-  for (let j = 0; j < mergeValue.length; j++) {
-    if (
-      leftBrackets.indexOf(leftValue[j]) !==
-      rightBrackets.indexOf(rightValue[j])
-    )
-      return false;
+  while (s.includes('()') || s.includes('[]') || s.includes('{}')) {
+    s = s.replace('()', '');
+    s = s.replace('{}', '');
+    s = s.replace('[]', '');
   }
 
-  if (leftValue.length === rightValue.length) result = true;
-  return result;
+  return s === '';
 }
