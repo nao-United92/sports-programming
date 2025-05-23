@@ -67,6 +67,7 @@ function isValid(s: string): boolean {
   const leftBrackets: string[] = ['(', '{', '['];
   const rightBrackets: string[] = [')', '}', ']'];
   const sLength = s.length;
+  let result = false;
   for (let i = 0; i < sLength; i++) {
     if (leftBrackets.includes(s[i])) {
       leftValue += s[i];
@@ -84,5 +85,6 @@ function isValid(s: string): boolean {
       return false;
   }
 
-  if (leftValue.length === rightValue.length) return true;
+  if (leftValue.length === rightValue.length) result = true;
+  return result;
 }
