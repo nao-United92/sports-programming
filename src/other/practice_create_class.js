@@ -14,8 +14,9 @@ class User {
 }
 
 class AdminUser extends User {
-  constructor(user) {
+  constructor(user, gender) {
     super(user);
+    this.gender = gender;
   }
 
   deleteUser(user) {
@@ -23,11 +24,11 @@ class AdminUser extends User {
       throw new Error('Userオブジェクトを引数にする必要があります。');
     }
     user.deleted = 1;
-    console.log(`${user.username}は削除しました。`);
+    console.log(`${user.username}, ${user.gender}は削除しました。`);
   }
 }
 
 const user = new User('naoya');
-const adminUser = new AdminUser('admin');
+const adminUser = new AdminUser('admin', 'female');
 adminUser.deleteUser(user);
 user.login();
