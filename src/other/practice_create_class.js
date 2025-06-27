@@ -1,7 +1,7 @@
 class User {
-  constructor(username, deleted = 0) {
+  constructor(username) {
     this.username = username;
-    this.deleted = deleted;
+    this.deleted = 0;
   }
 
   login() {
@@ -14,9 +14,8 @@ class User {
 }
 
 class AdminUser extends User {
-  constructor(username, deleted) {
-    super(username);
-    this.deleted = deleted;
+  constructor(user) {
+    super(user);
   }
 
   deleteUser(username) {
