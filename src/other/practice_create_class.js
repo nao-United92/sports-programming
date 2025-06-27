@@ -1,12 +1,13 @@
 class User {
-  constructor(username) {
+  constructor(userid, username) {
+    this.userid = Number(userid);
     this.username = username;
     this.deleted = 0;
   }
 
   login() {
     if (this.deleted === 0) {
-      console.log(`${this.username}はログインに成功しました。`);
+      console.log(`${this.userid}, ${this.username}はログインに成功しました。`);
     } else {
       console.log(`${this.username}はログインに失敗しました。`);
     }
@@ -28,7 +29,7 @@ class AdminUser extends User {
   }
 }
 
-const user = new User('naoya');
+const user = new User('1', 'naoya');
 const adminUser = new AdminUser('admin', 'female');
 adminUser.deleteUser(user);
 user.login();
