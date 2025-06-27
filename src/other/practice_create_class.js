@@ -18,15 +18,16 @@ class AdminUser extends User {
     super(user);
   }
 
-  deleteUser(username) {
-    this.deleted = 1;
-    console.log(`${this.username}は削除しました。`);
+  deleteUser(user) {
+    if (!(user instanceof User)) {
+      throw new Error('Userオブジェクトを引数にする必要があります。');
+    }
+    user.deleted = 1;
+    console.log(`${user.username}は削除しました。`);
   }
 }
 
 const user = new User('naoya');
-const adminUser = new AdminUser('admin', 0);
-adminUser.deleteUser(user.username);
-if (user.username in user) {
-  throw new Error('Userオブジェクトを引数にする必要があります。');
-}
+const adminUser = new AdminUser('admin');
+adminUser.deleteUser(user);
+user.login();
