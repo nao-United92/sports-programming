@@ -7,4 +7,8 @@ const intervalID = setInterval(() => {
     clearInterval(intervalID);
     console.log('インターバル終了');
   }
+
+  if (confirm('Do you want to continue?')) {
+    console.log('Continuing...');
+  }
 }, 1000);
