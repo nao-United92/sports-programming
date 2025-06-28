@@ -8,3 +8,6 @@ console.log(dateMs);
 console.log(dateYmd);
 console.log(dateJst);
 console.log(now);
+
+let dateMs2 = new Date(24 * 60 * 60 * 1000);
+console.log(dateMs2);
