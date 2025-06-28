@@ -20,3 +20,9 @@ console.log(dateJst2);
 
 let dateJst3 = new Date(2023, 9, 1);
 console.log(dateJst3);
+
+let dateJst5 = new Date(2023, 9, 1, 0, 0, 0);
+console.log(dateJst5);
+
+let dateJst6 = new Date(2023, 9, 1, 0, 0);
+console.log(dateJst6);
