@@ -47,3 +47,8 @@ printDayName(dayIndex);
 
 const monthIndex = getDay(convertMonth);
 printDayName(monthIndex);
+
+const date3 = new Date();
+
+const firstDay = new Date(date.getFullYear(), date.getMonth(),1);
+console.log(firstDay.toDateString());
