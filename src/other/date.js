@@ -52,3 +52,6 @@ const date3 = new Date();
 
 const firstDay = new Date(date.getFullYear(), date.getMonth(),1);
 console.log(firstDay.toDateString());
+
+const lastDay = new Date(date.getFullYear(), date.getMonth()+1, 0);
+console.log(lastDay.toDateString());
