@@ -55,3 +55,10 @@ console.log(firstDay.toDateString());
 
 const lastDay = new Date(date.getFullYear(), date.getMonth()+1, 0);
 console.log(lastDay.toDateString());
+
+//diff_date
+const dayUnit = 1000 * 60 * 60 * 24;
+const yearEnd = new Date(2021, 11, 31);
+const yearBegin = new Date(2022, 0, 1);
+const diffDays = Math.abs(yearEnd - yearBegin) / dayUnit;
+console.log(diffDays);
