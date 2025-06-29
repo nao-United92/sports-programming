@@ -26,3 +26,24 @@ console.log(dateJst5);
 
 let dateJst6 = new Date(2023, 9, 1, 0, 0);
 console.log(dateJst6);
+
+let dateProblem1 = new Date(2022, 5, 12 , 3, 12, 13, 333);
+dateProblem1.setDate(15);
+console.log(dateProblem1.getDay());
+let convertMonth = getMonth(dateProblem1) + 3;
+
+const days = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
+
+function printDayName(dayIndex) {
+  if (dayIndex >= 0 && dayIndex <= 6) {
+    console.log(days[dayIndex]);
+  } else {
+    console.log("不明な曜日");
+  }
+}
+
+const dayIndex = getDay(convertDate);
+printDayName(dayIndex);
+
+const monthIndex = getDay(convertMonth);
+printDayName(monthIndex);
