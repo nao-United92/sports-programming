@@ -29,3 +29,18 @@ data.val++;
 
 const json = JSON.stringify(data);
 localStorage.setItem('data', json);
+
+const fruits = {
+  banana: 'うまい',
+  apple: 'りんご',
+  orange: 'オレンジ',
+  other: { grape: 'うまい' },
+};
+function replacer(key, value) {
+  if (typeof value === 'string' && value !== 'うまい') {
+    return;
+  }
+  return value;
+}
+
+console.log(JSON.stringify(fruits, replacer));
