@@ -15,3 +15,17 @@ function replacer(prop, value) {
 console.log(JSON.stringify(target, replacer));
 
 console.log(JSON.stringify(target, null, '\t'));
+
+let data = localStorage.getItem('data');
+data = JSON.parse(data);
+
+if (data === null) {
+  data = { val: 0 };
+}
+
+console.log(data.val);
+
+data.val++;
+
+const json = JSON.stringify(data);
+localStorage.setItem('data', json);
