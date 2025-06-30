@@ -1,3 +1,4 @@
 localStorage.setItem('apple', 'りんご');
-localStorage.removeItem('apple');
-console.log(localStorage.getItem('apple'));
+localStorage.setItem('banana', 'バナナ');
+localStorage.clear();
+console.log(localStorage.length);
