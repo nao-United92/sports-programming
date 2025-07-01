@@ -24,3 +24,34 @@ const original = ['1'];
 const deepCopied = original.concat();
 deepCopied[0] = '3';
 console.log(original); // ['1']
+
+// fill
+const fill = new Array(100).fill(0);
+console.log(fill); // [0, 0, 0, ..., 0]
+// flat
+const nestedArray = [1, [2, 3], [4, [5, 6]]];
+const flatArray = nestedArray.flat(2);
+console.log(flatArray); // [1, 2, 3, 4, 5, 6]
+// reverse
+const reversed = flatArray.reverse();
+console.log(reversed); // [6, 5, 4, 3, 2, 1]
+
+// practice
+let chuka = ['八宝菜', '餃子', '青椒肉絲'];
+chuka.push('天津飯');
+console.log(chuka); // ['八宝菜', '餃子', '青椒肉絲', '天津飯']
+chuka.unshift('チャーハン');
+console.log(chuka); // ['チャーハン', '八宝菜', '餃子', '青椒肉絲', '天津飯']
+chuka.shift();
+console.log(chuka); // ['八宝菜', '餃子', '青椒肉絲', '天津飯']
+chuka.pop();
+console.log(chuka); // ['八宝菜', '餃子', '青椒肉絲']
+chuka.splice(2, 1);
+console.log(chuka); // ['八宝菜', '餃子']
+console.log(chuka.indexOf('餃子')); // 1
+chuka.concat(['杏仁豆腐', 'ごま豆腐']);
+console.log(chuka); // ['八宝菜', '餃子', '杏仁豆腐', 'ごま豆腐']
+const newArr = chuka.slice(1, 4);
+console.log(newArr); // ['餃子', '杏仁豆腐', 'ごま豆腐']
+console.log(newArr.reverse()); // ['ごま豆腐', '杏仁豆腐', '餃子']
+console.log(newArr.includes('八宝菜')); // false
