@@ -55,3 +55,29 @@ const newArr = chuka.slice(1, 4);
 console.log(newArr); // ['餃子', '杏仁豆腐', 'ごま豆腐']
 console.log(newArr.reverse()); // ['ごま豆腐', '杏仁豆腐', '餃子']
 console.log(newArr.includes('八宝菜')); // false
+
+// map
+const arrMap = [1, 2, 3, 5, 6];
+function multiply5(value) {
+  return value * 5;
+}
+const newMap = arrMap.map((value) => value * 5);
+console.log(newMap);
+// filter
+function gt3(value) {
+  return value > 3;
+}
+const newFilter = arrMap.filter(gt3);
+console.log(newFilter);
+// every
+const arrEvery = arrMap.every((value) => value > 0);
+console.log(arrEvery);
+// some
+const arrSome = arrMap((value) => value > 2);
+console.log(arrSome);
+// find
+const arrFind = arrMap((value) => value > 2);
+console.log(arrFind);
+// sort
+const arrSort = arrMap.sort();
+console.log(arrSort);
