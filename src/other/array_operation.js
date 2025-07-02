@@ -81,3 +81,22 @@ console.log(arrFind);
 // sort
 const arrSort = arrMap.sort();
 console.log(arrSort);
+
+// destructing array
+const array = [1, 2, 3];
+
+const [x, y, z] = array;
+console.log(x, y, z);
+
+const [x1, , z1] = array;
+console.log(x1, z1);
+
+const x2 = 0;
+[x2] = array;
+console.log(x2);
+
+const [, , , a3 = 4] = array;
+console.log(a3);
+
+const [x5, ...rest] = array;
+console.log(x5, rest);
