@@ -26,3 +26,11 @@ function printTodo(todos) {
   });
 }
 printTodo(notCompleted);
+
+// Set
+let fruits = ['apple', 'orange', 'melon'];
+
+const fruitsSet = new Set(fruits);
+fruits = Array.from(fruitsSet);
+
+console.log(fruits);
