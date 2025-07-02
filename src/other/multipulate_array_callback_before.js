@@ -34,3 +34,11 @@ const fruitsSet = new Set(fruits);
 fruits = Array.from(fruitsSet);
 
 console.log(fruits);
+
+// Map
+const map = new Map([
+  ['キー1', '値1'],
+  ['キー2', '値2'],
+]);
+const obj = Object.fromEntries(map);
+console.log(obj['キー1']);
