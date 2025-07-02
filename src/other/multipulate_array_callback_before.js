@@ -11,22 +11,18 @@ const notCompleted = todos.filter(({ completed }) => !completed);
 
 // 3
 let onlyPriority = [];
-function exportPriority(notCompleted) {
-  notCompleted.foreach((values) => {
-    onlyPriority.push(values.priority);
-  });
-}
-function descending(a, b) {
-  return a - b;
-}
-console.log(onlyPriority.sort(descending));
+notCompleted.sort((todoA, todoB) => {
+  return todoB.priority - todoA.priority;
+});
 
 // 1・4
-function printTodo({ title, completed }, notCompleted) {
-  if (completed) {
-    console.log(`${title}は完了！`);
-  } else {
-    console.log(`${title}をやらないと！`);
-  }
+function printTodo(todos) {
+  todos.foreach(({ title, completed }) => {
+    if (completed) {
+      console.log(`${title}は完了！`);
+    } else {
+      console.log(`${title}をやらないと！`);
+    }
+  });
 }
-printTodo(todos);
+printTodo(notCompleted);
