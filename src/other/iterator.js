@@ -20,26 +20,11 @@ function genIterator(min, max) {
 const iterator = genIterator(1, 10);
 console.log(iterator.next().value);
 
-function genStep(min, max, step) {
-  const currentValue = min - step;
-
-  return {
-    next() {
-      currentValue += step;
-      if (currentValue > max) {
-        return {
-          done: true,
-        };
-      } else {
-        return {
-          done: false,
-          value: currentValue,
-        };
-      }
-    },
-  };
+function* genStep(min, max, step) {
+  for (let currentValue = min; currentValue <= max; currentValue += step) {
+    yield currentValue;
+  }
 }
-
 const it = genStep(3, 10, 2);
 let a = it.next();
 
