@@ -1,12 +1,12 @@
-function genIterator(max) {
-  let value = 0;
+function genIterator(min, max) {
+  let value = min;
 
   return {
     next() {
       if (value < max) {
         return {
           done: false,
-          value: value++,
+          value: min++,
         };
       } else {
         return {
@@ -17,10 +17,5 @@ function genIterator(max) {
   };
 }
 
-const iterator = genIterator(2);
-
-console.log(iterator.next());
-
-console.log(iterator.next());
-
-console.log(iterator.next());
+const iterator = genIterator(1, 10);
+console.log(iterator.next().value);
