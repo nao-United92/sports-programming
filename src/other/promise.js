@@ -55,3 +55,21 @@ console.log(prom);
 promResolve('引数');
 
 console.log(prom);
+
+// promise all
+function wait(ms) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log('処理が完了しました。');
+      resolve(ms);
+    }, ms);
+  });
+}
+
+const wait500 = wait(500);
+const wait600 = wait(600);
+
+Promise.all([wait500, wait600]).then(([resolve500, resolve600]) => {
+  console.log('すべてのPromiseが完了しました。');
+  console.log(resolve500, resolve600);
+});
