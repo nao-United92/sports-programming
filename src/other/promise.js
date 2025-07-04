@@ -42,3 +42,16 @@ promiseFactory(0)
   .finally(() => {
     console.error('処理を終了します。');
   });
+
+// promise status
+let promResolve, promReject;
+
+const prom = new Promise((resolve, reject) => {
+  promResolve = resolve;
+  promReject = reject;
+});
+
+console.log(prom);
+promResolve('引数');
+
+console.log(prom);
