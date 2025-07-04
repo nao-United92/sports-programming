@@ -20,9 +20,8 @@ function delay(fn, message, ms) {
   }, ms);
 }
 
-delay(console.log, 'こんにちは', 1);
-delay(alert, 'さようなら', 2);
-
+delay(console.log, 'こんにちは', 1000);
+delay(alert, 'さようなら', 2000);
 delay(
   function (message1) {
     console.log(message1);
