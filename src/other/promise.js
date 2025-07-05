@@ -84,3 +84,10 @@ Promise.resolve().then(() => {
 val = 1;
 
 console.log('グローバルコンテキスト終了');
+
+// promise.reject
+Promise.reject().catch((error) => {
+  console.log(error);
+});
+
+console.log('グローバルコンテキスト終了');
