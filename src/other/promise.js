@@ -91,3 +91,18 @@ Promise.reject().catch((error) => {
 });
 
 console.log('グローバルコンテキスト終了');
+
+// job queue and task queue
+setTimeout(function task() {
+  console.log('Taskの実行');
+});
+
+Promise.resolve().then(function job1() {
+  console.log('Job1の実行');
+});
+
+Promise.resolve().then(function job2() {
+  console.log('Job2の実行');
+});
+
+console.log('グローバルコンテキスト終了');
