@@ -73,3 +73,14 @@ Promise.all([wait500, wait600]).then(([resolve500, resolve600]) => {
   console.log('すべてのPromiseが完了しました。');
   console.log(resolve500, resolve600);
 });
+
+// promise.resolve
+let val = 0;
+
+Promise.resolve().then(() => {
+  console.log(val);
+});
+
+val = 1;
+
+console.log('グローバルコンテキスト終了');
