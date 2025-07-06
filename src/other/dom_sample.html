@@ -1,40 +1,92 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DOM操作のサンプル</title>
-  <style>
-    .highlight {
-      background-color: yellow;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DOM操作のサンプル</title>
+    <style>
+      .highlight {
+        background-color: yellow;
+        font-weight: bold;
+      }
+      #hover-box {
+        width: 150px;
+        height: 50px;
+        background-color: lightblue;
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid blue;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="main-title">DOMの学習</h1>
+    <p>下のボタンをクリックすると、このテキストが変更されます。</p>
+    <button id="change-text-btn">テキストを変更</button>
+    <button id="toggle-highlight-btn">ハイライト切替</button>
 
-  <h1 id="main-title">DOMの学習</h1>
-  <p>下のボタンをクリックすると、このテキストが変更されます。</p>
-  <button id="change-text-btn">テキストを変更</button>
-  <button id="toggle-highlight-btn">ハイライト切替</button>
+    <h2>要素の動的追加</h2>
+    <button id="add-list-item-btn">リストアイテムを追加</button>
+    <ul id="my-list"></ul>
 
-  <script>
-    // DOM要素を取得
-    const mainTitle = document.getElementById('main-title');
-    const paragraph = document.querySelector('p');
-    const changeTextButton = document.getElementById('change-text-btn');
-    const toggleHighlightButton = document.getElementById('toggle-highlight-btn');
+    <h2>マウスイベント</h2>
+    <div id="hover-box">マウスを乗せてみて！</div>
 
-    // テキスト変更ボタンのクリックイベント
-    changeTextButton.addEventListener('click', () => {
-      paragraph.textContent = 'テキストが変更されました！';
-    });
+    <script>
+      // DOM要素を取得
+      const mainTitle = document.getElementById('main-title');
+      const paragraph = document.querySelector('p');
+      const changeTextButton = document.getElementById('change-text-btn');
+      const toggleHighlightButton = document.getElementById(
+        'toggle-highlight-btn'
+      );
 
-    // ハイライト切替ボタンのクリックイベント
-    toggleHighlightButton.addEventListener('click', () => {
-      mainTitle.classList.toggle('highlight');
-    });
-  </script>
+      // テキスト変更ボタンのクリックイベント
+      changeTextButton.addEventListener('click', () => {
+        paragraph.textContent = 'テキストが変更されました！';
+      });
 
-</body>
+      // ハイライト切替ボタンのクリックイベント
+      toggleHighlightButton.addEventListener('click', () => {
+        mainTitle.classList.toggle('highlight');
+      });
+
+      // 要素の動的追加
+      const addListItemButton = document.getElementById('add-list-item-btn');
+      const myList = document.getElementById('my-list');
+      let itemCounter = 0;
+
+      addListItemButton.addEventListener('click', () => {
+        itemCounter++;
+        const newItem = document.createElement('li');
+        newItem.textContent = `新しいアイテム ${itemCounter}`;
+        myList.appendChild(newItem);
+      });
+
+      // マウスイベント
+      const hoverBox = document.getElementById('hover-box');
+
+      hoverBox.addEventListener('mouseover', () => {
+        hoverBox.style.backgroundColor = 'lightcoral';
+        hoverBox.textContent = '乗ったね！';
+      });
+
+      hoverBox.addEventListener('mouseout', () => {
+        hoverBox.style.backgroundColor = 'lightblue';
+        hoverBox.textContent = 'マウスを乗せてみて！';
+      });
+
+      // --- フォーム入力の取得と表示 --- //
+      const inputText = document.getElementById('input-text');
+      const displayInputButton = document.getElementById('display-input-btn');
+      const displayArea = document.getElementById('display-area');
+
+      displayInputButton.addEventListener('click', () => {
+        displayArea.textContent = `入力されたテキスト: ${inputText.value}`;
+        inputText.value = ''; // 入力フィールドをクリア
+      });
+    </script>
+  </body>
 </html>
