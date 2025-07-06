@@ -34,7 +34,12 @@
     <h2>マウスイベント</h2>
     <div id="hover-box">マウスを乗せてみて！</div>
 
-    <script>
+    <h2>フォーム入力</h2>
+  <input type="text" id="input-text" placeholder="何か入力してください">
+  <button id="display-input-btn">入力内容を表示</button>
+  <p id="display-area"></p>
+
+  <script>
       // DOM要素を取得
       const mainTitle = document.getElementById('main-title');
       const paragraph = document.querySelector('p');
@@ -74,19 +79,19 @@
       });
 
       hoverBox.addEventListener('mouseout', () => {
-        hoverBox.style.backgroundColor = 'lightblue';
-        hoverBox.textContent = 'マウスを乗せてみて！';
-      });
+      hoverBox.style.backgroundColor = 'lightblue';
+      hoverBox.textContent = 'マウスを乗せてみて！';
+    });
 
-      // --- フォーム入力の取得と表示 --- //
-      const inputText = document.getElementById('input-text');
-      const displayInputButton = document.getElementById('display-input-btn');
-      const displayArea = document.getElementById('display-area');
+    // --- フォーム入力の取得と表示 --- //
+    const inputText = document.getElementById('input-text');
+    const displayInputButton = document.getElementById('display-input-btn');
+    const displayArea = document.getElementById('display-area');
 
-      displayInputButton.addEventListener('click', () => {
-        displayArea.textContent = `入力されたテキスト: ${inputText.value}`;
-        inputText.value = ''; // 入力フィールドをクリア
-      });
-    </script>
-  </body>
+    displayInputButton.addEventListener('click', () => {
+      displayArea.textContent = `入力されたテキスト: ${inputText.value}`;
+      inputText.value = ''; // 入力フィールドをクリア
+    });
+  </script>
+</body>
 </html>
