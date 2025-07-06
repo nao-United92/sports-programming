@@ -39,6 +39,14 @@
   <button id="display-input-btn">入力内容を表示</button>
   <p id="display-area"></p>
 
+  <h2>属性の変更</h2>
+  <img id="my-image" src="https://via.placeholder.com/150" alt="プレースホルダー画像">
+  <button id="change-image-btn">画像を切り替える</button>
+
+  <h2>要素の削除</h2>
+  <div id="removable-box" style="background-color: lightgreen; padding: 10px; margin-top: 20px;">このボックスは削除できます。</div>
+  <button id="remove-box-btn">ボックスを削除</button>
+
   <script>
       // DOM要素を取得
       const mainTitle = document.getElementById('main-title');
@@ -91,6 +99,22 @@
     displayInputButton.addEventListener('click', () => {
       displayArea.textContent = `入力されたテキスト: ${inputText.value}`;
       inputText.value = ''; // 入力フィールドをクリア
+    });
+
+    // --- 属性の変更 --- //
+    const myImage = document.getElementById('my-image');
+    const changeImageButton = document.getElementById('change-image-btn');
+    let isImageOne = true;
+
+    changeImageButton.addEventListener('click', () => {
+      if (isImageOne) {
+        myImage.setAttribute('src', 'https://via.placeholder.com/150/FF0000/FFFFFF?text=Image+Two');
+        myImage.setAttribute('alt', '赤いプレースホルダー画像');
+      } else {
+        myImage.setAttribute('src', 'https://via.placeholder.com/150');
+        myImage.setAttribute('alt', 'プレースホルダー画像');
+      }
+      isImageOne = !isImageOne;
     });
   </script>
 </body>
