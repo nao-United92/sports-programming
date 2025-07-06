@@ -47,6 +47,14 @@
   <div id="removable-box" style="background-color: lightgreen; padding: 10px; margin-top: 20px;">このボックスは削除できます。</div>
   <button id="remove-box-btn">ボックスを削除</button>
 
+  <button id="remove-box-btn">ボックスを削除</button>
+
+  <h2>複数の要素のスタイル変更</h2>
+  <div class="styled-item">アイテム 1</div>
+  <div class="styled-item">アイテム 2</div>
+  <div class="styled-item">アイテム 3</div>
+  <button id="change-all-styles-btn">全てのアイテムのスタイルを変更</button>
+
   <script>
       // DOM要素を取得
       const mainTitle = document.getElementById('main-title');
@@ -115,6 +123,18 @@
         myImage.setAttribute('alt', 'プレースホルダー画像');
       }
       isImageOne = !isImageOne;
+    });
+
+    // --- 要素の削除 --- //
+    const removableBox = document.getElementById('removable-box');
+    const removeBoxButton = document.getElementById('remove-box-btn');
+
+    removeBoxButton.addEventListener('click', () => {
+      if (removableBox) {
+        removableBox.remove(); // 要素を削除
+        removeBoxButton.disabled = true; // ボタンを無効化
+        removeBoxButton.textContent = 'ボックスは削除されました';
+      }
     });
   </script>
 </body>
