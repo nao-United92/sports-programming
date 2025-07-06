@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOM操作のサンプル</title>
+  <style>
+    .highlight {
+      background-color: yellow;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="main-title">DOMの学習</h1>
+  <p>下のボタンをクリックすると、このテキストが変更されます。</p>
+  <button id="change-text-btn">テキストを変更</button>
+  <button id="toggle-highlight-btn">ハイライト切替</button>
+
+  <script>
+    // DOM要素を取得
+    const mainTitle = document.getElementById('main-title');
+    const paragraph = document.querySelector('p');
+    const changeTextButton = document.getElementById('change-text-btn');
+    const toggleHighlightButton = document.getElementById('toggle-highlight-btn');
+
+    // テキスト変更ボタンのクリックイベント
+    changeTextButton.addEventListener('click', () => {
+      paragraph.textContent = 'テキストが変更されました！';
+    });
+
+    // ハイライト切替ボタンのクリックイベント
+    toggleHighlightButton.addEventListener('click', () => {
+      mainTitle.classList.toggle('highlight');
+    });
+  </script>
+
+</body>
+</html>
