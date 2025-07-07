@@ -42,3 +42,42 @@ console.log('setAttribute: リンクのhref属性を変更しました。');
 // 要素にクラスを追加 (classList.add)
 link.classList.add('new-class');
 console.log('classList.add: リンクにnew-classクラスを追加しました。');
+
+// 要素の削除 (removeChild)
+const list = document.getElementById('list-to-modify');
+const itemToRemove = document.getElementById('item-to-remove');
+if (list && itemToRemove) {
+  list.removeChild(itemToRemove);
+  console.log('removeChild: list-to-modifyから要素を削除しました。');
+}
+
+
+// HTMLコンテンツの書き換え (innerHTML)
+const container = document.getElementById('container');
+if (container) {
+    container.innerHTML = '<h2>innerHTMLで書き換えました</h2>';
+    console.log('innerHTML: containerの中身を書き換えました。');
+}
+
+
+// クラスの削除とトグル (classList.remove, classList.toggle)
+const linkForClassToggle = document.getElementById('link'); // HTMLが書き換わったので再取得
+if(linkForClassToggle) { // innerHTMLで消されている可能性があるので存在チェック
+    linkForClassToggle.classList.remove('new-class');
+    console.log('classList.remove: linkからnew-classクラスを削除しました。');
+    // toggleはクラスがあれば削除、なければ追加する
+    linkForClassToggle.classList.toggle('active'); // activeクラスを追加
+    console.log('classList.toggle: linkにactiveクラスをトグル(追加)しました。');
+    linkForClassToggle.classList.toggle('active'); // activeクラスを削除
+    console.log('classList.toggle: linkのactiveクラスをトグル(削除)しました。');
+}
+
+
+// イベントリスナーの追加 (addEventListener)
+const button = document.getElementById('action-button');
+if (button) {
+    button.addEventListener('click', () => {
+      alert('ボタンがクリックされました！');
+      console.log('addEventListener: ボタンのクリックイベントを検知しました。');
+    });
+}
