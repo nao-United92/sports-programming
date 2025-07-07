@@ -48,7 +48,33 @@ async function runAsyncOperations() {
     console.log('await fetchData(false):', data2); // ここは実行されない
   } catch (error) {
     console.error('エラーが発生しました:', error.message);
-  } finally {
+  }
+
+    console.log('\n--- Promise.all を使った並行処理 ---');
+    try {
+      // 複数の非同期処理を並行して実行し、全てが完了するのを待つ
+      const [resultA, resultB] = await Promise.all([
+        delay(1000), // 1秒待機
+        fetchData(true) // 1.5秒後に成功
+      ]);
+      console.log('Promise.all 結果:', { resultA, resultB });
+    } catch (error) {
+      console.error('Promise.all エラー:', error.message);
+    }
+
+    console.log('\n--- Promise.race を使った最速処理 ---');
+    try {
+      // 複数の非同期処理のうち、最初に完了したものの結果を取得する
+      const fastestResult = await Promise.race([
+        delay(2000), // 2秒待機
+        fetchData(true) // 1.5秒後に成功
+      ]);
+      console.log('Promise.race 結果:', fastestResult);
+    } catch (error) {
+      console.error('Promise.race エラー:', error.message);
+    }
+
+  finally {
     console.log('非同期処理が終了しました。');
   }
 }
