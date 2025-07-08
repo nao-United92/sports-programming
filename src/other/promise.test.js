@@ -146,4 +146,52 @@ describe('Promise Examples', () => {
     await Promise.resolve();
     expect(consoleErrorSpy).toHaveBeenCalledWith('Promisified Function (エラー):', 'コールバック関数でエラーが発生しました。');
   });
+
+  // Promise.race のより詳細な例（拒否を含む）のテスト
+  test('Promise.race should resolve with the first settled promise (success or reject)', async () => {
+    // 成功が先に解決するパターン
+    // eval時に実行される
+    jest.advanceTimersByTime(200); // Fast Failが先に完了
+    await Promise.resolve();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Promise.race 結果 (失敗):', 'Race Failed: Fast Fail');
+
+    // 失敗が先に解決するパターン
+    // eval時に実行される
+    jest.advanceTimersByTime(800); // Fast Fail (200ms) は既に処理済み。Slow Success (1000ms) が残っている
+    await Promise.resolve();
+    // 既にFast Failがログされているので、ここでは追加のログは期待しない
+    // ただし、Promise.raceの内部的な解決は行われている
+  });
+
+  // Promiseチェーンでの値の変換と伝播のテスト
+  test('Promise chain should transform and propagate values', async () => {
+    // eval時に実行される
+    jest.advanceTimersByTime(300); // Step 1
+    await Promise.resolve();
+    expect(consoleLogSpy).toHaveBeenCalledWith('Step 1: 5 を受け取りました');
+
+    jest.advanceTimersByTime(200); // Step 2
+    await Promise.resolve();
+    expect(consoleLogSpy).toHaveBeenCalledWith('Step 2: 10 を受け取りました');
+
+    jest.advanceTimersByTime(100); // Step 3
+    await Promise.resolve();
+    expect(consoleLogSpy).toHaveBeenCalledWith('Step 3: 20 を受け取りました');
+    expect(consoleLogSpy).toHaveBeenCalledWith('Promiseチェーン完了:', '最終結果: 30');
+  });
+
+  // async/await を使った Promise の簡潔な利用例のテスト
+  test('fetchUserData should fetch and log user data', async () => {
+    // eval時にfetchUserData(123)が実行される
+    jest.advanceTimersByTime(700);
+    await Promise.resolve();
+    expect(consoleLogSpy).toHaveBeenCalledWith('ユーザーデータ取得中: 123...');
+    expect(consoleLogSpy).toHaveBeenCalledWith('ユーザーデータ取得成功:', { id: 123, name: 'ユーザー123', email: 'user123@example.com' });
+
+    // fetchUserData(456)もeval時に実行される
+    jest.advanceTimersByTime(700); // 1400ms経過
+    await Promise.resolve();
+    expect(consoleLogSpy).toHaveBeenCalledWith('ユーザーデータ取得中: 456...');
+    expect(consoleLogSpy).toHaveBeenCalledWith('ユーザーデータ取得成功:', { id: 456, name: 'ユーザー456', email: 'user456@example.com' });
+  });
 });
