@@ -209,3 +209,106 @@ promisifiedFunction('error')
 .catch(error => {
     console.error('Promisified Function (エラー):', error.message);
   })
+
+console.log('\n--- Promise.race のより詳細な例（拒否を含む）---');
+
+function delayedPromise(value, ms, shouldReject = false) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (shouldReject) {
+        console.log(`Race: ${value} が ${ms}ms で失敗`);
+        reject(new Error(`Race Failed: ${value}`));
+      } else {
+        console.log(`Race: ${value} が ${ms}ms で成功`);
+        resolve(value);
+      }
+    }, ms);
+  });
+}
+
+// 成功が先に解決するパターン
+Promise.race([
+  delayedPromise('Fast Success', 500),
+  delayedPromise('Slow Success', 1000),
+  delayedPromise('Fast Fail', 200, true) // これが一番速いが、失敗
+])
+.then(result => {
+  console.log('Promise.race 結果 (成功):', result); // Fast Success
+})
+.catch(error => {
+  console.error('Promise.race 結果 (失敗):', error.message); // Fast Fail
+});
+
+// 失敗が先に解決するパターン
+Promise.race([
+  delayedPromise('Slow Success', 1000),
+  delayedPromise('Fast Fail', 200, true) // これが一番速く、失敗
+])
+.then(result => {
+  console.log('Promise.race 結果 (成功):', result);
+})
+.catch(error => {
+  console.error('Promise.race 結果 (失敗):', error.message); // Fast Fail
+});
+
+
+console.log('\n--- Promiseチェーンでの値の変換と伝播 ---');
+
+function step1(input) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log(`Step 1: ${input} を受け取りました`);
+      resolve(input * 2); // 値を2倍にして次のPromiseに渡す
+    }, 300);
+  });
+}
+
+function step2(input) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log(`Step 2: ${input} を受け取りました`);
+      resolve(input + 10); // 値に10を加えて次のPromiseに渡す
+    }, 200);
+  });
+}
+
+function step3(input) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log(`Step 3: ${input} を受け取りました`);
+      resolve(`最終結果: ${input}`); // 文字列に変換して最終結果とする
+    }, 100);
+  });
+}
+
+step1(5)
+  .then(result1 => step2(result1)) // result1 (10) が step2 に渡される
+  .then(result2 => step3(result2)) // result2 (20) が step3 に渡される
+  .then(finalResult => {
+    console.log('Promiseチェーン完了:', finalResult); // 最終結果: 30
+  })
+  .catch(error => {
+    console.error('Promiseチェーンエラー:', error.message);
+  });
+
+
+console.log('\n--- async/await を使った Promise の簡潔な利用例 ---');
+
+async function fetchUserData(userId) {
+  console.log(`ユーザーデータ取得中: ${userId}...`);
+  try {
+    // 擬似的なAPI呼び出し
+    const response = await new Promise(resolve => setTimeout(() => {
+      resolve({ id: userId, name: `ユーザー${userId}`, email: `user${userId}@example.com` });
+    }, 700));
+    console.log('ユーザーデータ取得成功:', response);
+    return response;
+  } catch (error) {
+    console.error('ユーザーデータ取得失敗:', error.message);
+    throw error; // エラーを再スロー
+  }
+}
+
+// async 関数を呼び出す
+fetchUserData(123);
+fetchUserData(456).catch(e => console.error('外部でキャッチ:', e.message)); // エラーハンドリングの例

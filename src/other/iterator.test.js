@@ -99,4 +99,36 @@ describe('Iterator Examples', () => {
     expect(consoleSpy).toHaveBeenCalledWith('ジェネレータのfinallyブロックが実行されました。');
     expect(errGen.next()).toEqual({ value: undefined, done: true }); // 既に終了している
   });
+
+  // 非同期ジェネレータと for await...of のテスト
+  test('async generator should yield data chunks asynchronously', async () => {
+    // consumeAsyncGenerator() は eval 時に実行される
+    jest.advanceTimersByTime(500); // 最初のデータチャンク
+    await Promise.resolve();
+    expect(consoleSpy).toHaveBeenCalledWith('非同期ジェネレータ: データチャンク 1 を生成');
+    expect(consoleSpy).toHaveBeenCalledWith('for await...of: データチャンク 1 を受け取りました');
+
+    jest.advanceTimersByTime(500); // 2番目のデータチャンク
+    await Promise.resolve();
+    expect(consoleSpy).toHaveBeenCalledWith('非同期ジェネレータ: データチャンク 2 を生成');
+    expect(consoleSpy).toHaveBeenCalledWith('for await...of: データチャンク 2 を受け取りました');
+
+    jest.advanceTimersByTime(500); // 3番目のデータチャンク
+    await Promise.resolve();
+    expect(consoleSpy).toHaveBeenCalledWith('非同期ジェネレータ: データチャンク 3 を生成');
+    expect(consoleSpy).toHaveBeenCalledWith('for await...of: データチャンク 3 を受け取りました');
+
+    jest.advanceTimersByTime(1); // 完了メッセージ
+    await Promise.resolve();
+    expect(consoleSpy).toHaveBeenCalledWith('非同期ジェネレータの消費が完了しました。');
+  });
+
+  // ジェネレータの return() メソッドのテスト
+  test('generator return() method should terminate generator and execute finally', () => {
+    const genToCancel = cancellableGenerator(); // evalで定義されたcancellableGeneratorを使用
+    expect(genToCancel.next()).toEqual({ value: 1, done: false });
+    expect(genToCancel.return('中断')).toEqual({ value: '中断', done: true });
+    expect(consoleSpy).toHaveBeenCalledWith('cancellableGenerator: finally ブロックが実行されました。');
+    expect(genToCancel.next()).toEqual({ value: undefined, done: true });
+  });
 });

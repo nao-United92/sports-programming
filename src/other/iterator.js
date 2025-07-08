@@ -135,3 +135,47 @@ console.log(errGen.next()); // { value: 1, done: false }
 console.log(errGen.throw(new Error('意図的なエラー'))); // { value: undefined, done: true }
 console.log(errGen.next()); // { value: undefined, done: true } (既に終了している)
 
+console.log('\n--- 非同期ジェネレータと for await...of の例 ---');
+
+/**
+ * 擬似的な非同期データストリームを生成する非同期ジェネレータ
+ * @param {number} count - 生成するデータの数
+ * @param {number} delayMs - 各データ生成間の遅延ミリ秒
+ */
+async function* fetchDataStream(count, delayMs) {
+  for (let i = 1; i <= count; i++) {
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+    const data = `データチャンク ${i}`;
+    console.log(`非同期ジェネレータ: ${data} を生成`);
+    yield data;
+  }
+}
+
+async function consumeAsyncGenerator() {
+  console.log('非同期ジェネレータの消費を開始します...');
+  for await (const chunk of fetchDataStream(3, 500)) {
+    console.log(`for await...of: ${chunk} を受け取りました`);
+  }
+  console.log('非同期ジェネレータの消費が完了しました。');
+}
+
+consumeAsyncGenerator();
+
+
+console.log('\n--- ジェネレータの return() メソッドの例 ---');
+
+function* cancellableGenerator() {
+  try {
+    yield 1;
+    yield 2;
+    yield 3;
+  } finally {
+    console.log('cancellableGenerator: finally ブロックが実行されました。');
+  }
+}
+
+const genToCancel = cancellableGenerator();
+console.log('genToCancel.next():', genToCancel.next()); // { value: 1, done: false }
+console.log('genToCancel.return("中断"):', genToCancel.return('中断')); // { value: '中断', done: true }
+console.log('genToCancel.next():', genToCancel.next()); // { value: undefined, done: true } (既に終了)
+
