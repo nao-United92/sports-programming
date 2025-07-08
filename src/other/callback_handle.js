@@ -115,3 +115,95 @@ const sum = numbers.reduce(function (accumulator, currentValue) {
   return accumulator + currentValue;
 }, 0); // 初期値0
 console.log('reduce (sum):', sum); // 15
+
+console.log('\n--- 高階関数 (Higher-Order Function) の例 ---');
+
+/**
+ * ログメッセージにプレフィックスを追加する高階関数
+ * @param {string} prefix - ログのプレフィックス
+ * @returns {function(string)} - プレフィックス付きでログを出力する関数
+ */
+function createLogger(prefix) {
+  return function(message) {
+    console.log(`[${prefix}] ${message}`);
+  };
+}
+
+const appLogger = createLogger('APP');
+const errorLogger = createLogger('ERROR');
+
+appLogger('アプリケーションが起動しました。');
+errorLogger('致命的なエラーが発生しました！');
+
+
+console.log('\n--- カスタムイベントエミッターの例 ---');
+
+/**
+ * シンプルなイベントエミッター
+ */
+class EventEmitter {
+  constructor() {
+    this.events = {}; // イベント名とコールバック関数のマップ
+  }
+
+  /**
+   * イベントリスナーを登録する
+   * @param {string} eventName - イベント名
+   * @param {function} callback - 実行するコールバック関数
+   */
+  on(eventName, callback) {
+    if (!this.events[eventName]) {
+      this.events[eventName] = [];
+    }
+    this.events[eventName].push(callback);
+    console.log(`イベント '${eventName}' にリスナーを登録しました。`);
+  }
+
+  /**
+   * イベントを発火させる
+   * @param {string} eventName - 発火させるイベント名
+   * @param {...any} args - コールバック関数に渡す引数
+   */
+  emit(eventName, ...args) {
+    if (this.events[eventName]) {
+      console.log(`イベント '${eventName}' を発火します。`);
+      this.events[eventName].forEach(callback => {
+        callback(...args);
+      });
+    }
+    else {
+      console.log(`イベント '${eventName}' のリスナーはありません。`);
+    }
+  }
+
+  /**
+   * イベントリスナーを削除する
+   * @param {string} eventName - イベント名
+   * @param {function} callback - 削除するコールバック関数
+   */
+  off(eventName, callback) {
+    if (this.events[eventName]) {
+      this.events[eventName] = this.events[eventName].filter(cb => cb !== callback);
+      console.log(`イベント '${eventName}' からリスナーを削除しました。`);
+    }
+  }
+}
+
+const myEmitter = new EventEmitter();
+
+// イベントリスナーを登録
+const greetListener = (name) => console.log(`こんにちは、${name}さん！`);
+const farewellListener = (name) => console.log(`さようなら、${name}さん！`);
+
+myEmitter.on('greet', greetListener);
+myEmitter.on('farewell', farewellListener);
+myEmitter.on('greet', (name) => console.log(`[追加] ${name}さん、ようこそ！`));
+
+// イベントを発火
+myEmitter.emit('greet', '太郎');
+myEmitter.emit('farewell', '花子');
+myEmitter.emit('unknownEvent'); // リスナーがないイベント
+
+// リスナーを削除して再度発火
+myEmitter.off('greet', greetListener);
+myEmitter.emit('greet', '次郎'); // greetListenerは呼び出されない
