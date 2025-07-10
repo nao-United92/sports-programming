@@ -14,6 +14,7 @@ describe('DOM Selector and Manipulation after script execution', () => {
     jest.resetModules();
     document.documentElement.innerHTML = html.toString();
     alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    // スクリプトを実行
     require('./dom_selector.js');
   });
 
@@ -21,14 +22,23 @@ describe('DOM Selector and Manipulation after script execution', () => {
     alertMock.mockRestore();
   });
 
+  test('should keep the main title as it is outside the manipulated container', () => {
+    const mainTitle = document.getElementById('main-title');
+    expect(mainTitle).not.toBeNull();
+    expect(mainTitle.textContent).toBe('メインタイトル');
+  });
+
+  test('should keep the list items as they are outside the manipulated container', () => {
+    const items = document.querySelectorAll('.item');
+    expect(items.length).toBe(3);
+  });
+
   test('should have replaced the content of the container with an h2', () => {
     const container = document.getElementById('container');
     expect(container.innerHTML).toBe('<h2>innerHTMLで書き換えました</h2>');
   });
 
-  test('elements that were replaced should no longer exist', () => {
-    expect(document.getElementById('main-title')).toBeNull();
-    expect(document.querySelector('.item')).toBeNull();
+  test('the link inside the container should no longer exist', () => {
     expect(document.getElementById('link')).toBeNull();
   });
 
