@@ -32,6 +32,10 @@ function twoSum(nums: number[], target: number): number[] {
     return [];
 }
 
+function printArray(arr: any[]): void {
+    console.log(arr);
+}
+
 // You can add test cases here to verify your solution
 // For example:
 // console.log(twoSum([2,7,11,15], 9)); // Expected: [0,1]

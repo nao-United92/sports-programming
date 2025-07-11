@@ -43,6 +43,10 @@ function removeDuplicates(nums: number[]): number {
     return 0;
 }
 
+function printArrayWithLength(arr: number[], len: number): void {
+    console.log(arr.slice(0, len));
+}
+
 // You can add test cases here to verify your solution
 // For example:
 // let nums1 = [1,1,2];

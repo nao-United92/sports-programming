@@ -41,27 +41,27 @@ function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | nul
 
 // You can add test cases here to verify your solution
 // For example:
-// function createList(arr: number[]): ListNode | null {
-//     if (arr.length === 0) return null;
-//     let head = new ListNode(arr[0]);
-//     let current = head;
-//     for (let i = 1; i < arr.length; i++) {
-//         current.next = new ListNode(arr[i]);
-//         current = current.next;
-//     }
-//     return head;
-// }
+function createList(arr: number[]): ListNode | null {
+    if (arr.length === 0) return null;
+    let head = new ListNode(arr[0]);
+    let current = head;
+    for (let i = 1; i < arr.length; i++) {
+        current.next = new ListNode(arr[i]);
+        current = current.next;
+    }
+    return head;
+}
 
-// function listToArray(head: ListNode | null): number[] {
-//     let arr: number[] = [];
-//     let current = head;
-//     while (current) {
-//         arr.push(current.val);
-//         current = current.next;
-//     }
-//     return arr;
-// }
+function listToArray(head: ListNode | null): number[] {
+    let arr: number[] = [];
+    let current = head;
+    while (current) {
+        arr.push(current.val);
+        current = current.next;
+    }
+    return arr;
+}
 
-// console.log(listToArray(addTwoNumbers(createList([2,4,3]), createList([5,6,4])))); // Expected: [7,0,8]
-// console.log(listToArray(addTwoNumbers(createList([0]), createList([0]))));       // Expected: [0]
-// console.log(listToArray(addTwoNumbers(createList([9,9,9,9,9,9,9]), createList([9,9,9,9])))); // Expected: [8,9,9,9,0,0,0,1]
+console.log(listToArray(addTwoNumbers(createList([2,4,3]), createList([5,6,4])))); // Expected: [7,0,8]
+console.log(listToArray(addTwoNumbers(createList([0]), createList([0]))));       // Expected: [0]
+console.log(listToArray(addTwoNumbers(createList([9,9,9,9,9,9,9]), createList([9,9,9,9])))); // Expected: [8,9,9,9,0,0,0,1]

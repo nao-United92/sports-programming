@@ -35,29 +35,36 @@ function reverseList(head: ListNode | null): ListNode | null {
     return null;
 }
 
+function reverseList(head: ListNode | null): ListNode | null {
+    // Your code here
+    return null;
+}
+
+// Helper function to create a linked list from an array
+function createList(arr: number[]): ListNode | null {
+    if (arr.length === 0) return null;
+    let head = new ListNode(arr[0]);
+    let current = head;
+    for (let i = 1; i < arr.length; i++) {
+        current.next = new ListNode(arr[i]);
+        current = current.next;
+    }
+    return head;
+}
+
+// Helper function to convert a linked list to an array
+function listToArray(head: ListNode | null): number[] {
+    let arr: number[] = [];
+    let current = head;
+    while (current) {
+        arr.push(current.val);
+        current = current.next;
+    }
+    return arr;
+}
+
 // You can add test cases here to verify your solution
 // For example:
-// function createList(arr: number[]): ListNode | null {
-//     if (arr.length === 0) return null;
-//     let head = new ListNode(arr[0]);
-//     let current = head;
-//     for (let i = 1; i < arr.length; i++) {
-//         current.next = new ListNode(arr[i]);
-//         current = current.next;
-//     }
-//     return head;
-// }
-
-// function listToArray(head: ListNode | null): number[] {
-//     let arr: number[] = [];
-//     let current = head;
-//     while (current) {
-//         arr.push(current.val);
-//         current = current.next;
-//     }
-//     return arr;
-// }
-
 // console.log(listToArray(reverseList(createList([1,2,3,4,5])))); // Expected: [5,4,3,2,1]
 // console.log(listToArray(reverseList(createList([1,2]))));       // Expected: [2,1]
 // console.log(listToArray(reverseList(createList([]))));          // Expected: []
