@@ -59,3 +59,21 @@ export function addTemporaryClass(element, className, duration) {
     element.classList.remove(className);
   }, duration);
 }
+
+/**
+ * Adds classes to multiple DOM elements.
+ * @param {Element[]} elements Array of DOM elements.
+ * @param {...string} classNames The class names to add.
+ */
+export function addClassesToMultiple(elements, ...classNames) {
+  elements.forEach(element => addClasses(element, ...classNames));
+}
+
+/**
+ * Removes classes from multiple DOM elements.
+ * @param {Element[]} elements Array of DOM elements.
+ * @param {...string} classNames The class names to remove.
+ */
+export function removeClassesFromMultiple(elements, ...classNames) {
+  elements.forEach(element => removeClasses(element, ...classNames));
+}

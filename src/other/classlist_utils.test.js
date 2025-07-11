@@ -9,13 +9,17 @@ import {
   replaceClass,
   hasClass,
   addTemporaryClass,
+  addClassesToMultiple,
+  removeClassesFromMultiple,
 } from './classlist_utils.js';
 
 describe('DOM classList utility functions', () => {
   let element;
+  let elements;
 
   beforeEach(() => {
     element = document.createElement('div');
+    elements = [document.createElement('div'), document.createElement('div')];
   });
 
   // addClasses
@@ -131,6 +135,32 @@ describe('DOM classList utility functions', () => {
       jest.advanceTimersByTime(500);
 
       expect(element.classList.contains('temp-class')).toBe(true);
+    });
+  });
+
+  // addClassesToMultiple
+  describe('addClassesToMultiple', () => {
+    test('should add classes to multiple elements', () => {
+      addClassesToMultiple(elements, 'new-class-1', 'new-class-2');
+      elements.forEach(el => {
+        expect(el.classList.contains('new-class-1')).toBe(true);
+        expect(el.classList.contains('new-class-2')).toBe(true);
+      });
+    });
+  });
+
+  // removeClassesFromMultiple
+  describe('removeClassesFromMultiple', () => {
+    beforeEach(() => {
+      elements.forEach(el => el.classList.add('existing-class-1', 'existing-class-2'));
+    });
+
+    test('should remove classes from multiple elements', () => {
+      removeClassesFromMultiple(elements, 'existing-class-1');
+      elements.forEach(el => {
+        expect(el.classList.contains('existing-class-1')).toBe(false);
+        expect(el.classList.contains('existing-class-2')).toBe(true);
+      });
     });
   });
 });
