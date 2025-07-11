@@ -18,17 +18,13 @@ export function solveClassSimulation(input) {
 
     switch (operation) {
       case 'ADD':
-        elementClasses.add(className);
+        _addClass(elementClasses, className);
         break;
       case 'REMOVE':
-        elementClasses.delete(className);
+        _removeClass(elementClasses, className);
         break;
       case 'TOGGLE':
-        if (elementClasses.has(className)) {
-          elementClasses.delete(className);
-        } else {
-          elementClasses.add(className);
-        }
+        _toggleClass(elementClasses, className);
         break;
     }
   }
@@ -44,5 +40,36 @@ export function solveClassSimulation(input) {
   }
 
   return count;
+}
+
+/**
+ * 要素のクラスセットにクラスを追加します。
+ * @param {Set<string>} elementClasses - 要素のクラスを保持するSetオブジェクト。
+ * @param {string} className - 追加するクラス名。
+ */
+function _addClass(elementClasses, className) {
+  elementClasses.add(className);
+}
+
+/**
+ * 要素のクラスセットからクラスを削除します。
+ * @param {Set<string>} elementClasses - 要素のクラスを保持するSetオブジェクト。
+ * @param {string} className - 削除するクラス名。
+ */
+function _removeClass(elementClasses, className) {
+  elementClasses.delete(className);
+}
+
+/**
+ * 要素のクラスセットのクラスをトグルします。
+ * @param {Set<string>} elementClasses - 要素のクラスを保持するSetオブジェクト。
+ * @param {string} className - トグルするクラス名。
+ */
+function _toggleClass(elementClasses, className) {
+  if (elementClasses.has(className)) {
+    elementClasses.delete(className);
+  } else {
+    elementClasses.add(className);
+  }
 }
 
