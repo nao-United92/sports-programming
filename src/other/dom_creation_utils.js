@@ -109,9 +109,45 @@ const DomCreationUtils = {
    */
   cloneElement(element, deep = true) {
     return element.cloneNode(deep);
+  },
+
+  /**
+   * 指定されたタグ名とテキストコンテンツを持つDOM要素を作成します。
+   *
+   * @param {string} tagName - 要素のHTMLタグ (例: 'div', 'p', 'span')。
+   * @param {string} textContent - 要素のテキストコンテンツ。
+   * @returns {HTMLElement} 新しく作成されたDOM要素。
+   *
+   * @example
+   * const myParagraph = DomCreationUtils.createElementWithText('p', 'これは新しい段落です。');
+   * document.body.appendChild(myParagraph);
+   */
+  createElementWithText(tagName, textContent) {
+    const element = document.createElement(tagName);
+    element.textContent = textContent;
+    return element;
+  },
+
+  /**
+   * 複数の子要素を親要素に追加します。
+   *
+   * @param {HTMLElement} parent - 子要素を追加する親DOM要素。
+   * @param {...HTMLElement} children - 親に追加する子DOM要素。
+   *
+   * @example
+   * const parentDiv = DomCreationUtils.createElement('div');
+   * const child1 = DomCreationUtils.createElementWithText('span', '子要素1');
+   * const child2 = DomCreationUtils.createElementWithText('span', '子要素2');
+   * DomCreationUtils.appendChildren(parentDiv, child1, child2);
+   * document.body.appendChild(parentDiv);
+   */
+  appendChildren(parent, ...children) {
+    children.forEach(child => {
+      if (child instanceof HTMLElement) {
+        parent.appendChild(child);
+      }
+    });
   }
 };
 
-// ブラウザ環境で使用するために、このオブジェクトをwindowオブジェクトにアタッチしたり、
-// プロジェクトがESモジュールで設定されている場合はモジュールとして使用したりできます。
-// 例: window.DomCreationUtils = DomCreationUtils;
+export { DomCreationUtils };

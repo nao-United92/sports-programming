@@ -2,14 +2,9 @@
  * @jest-environment jsdom
  */
 
-// dom_creation_utils.js のための完成したテストファイルです。
+import { DomCreationUtils } from './dom_creation_utils.js';
 
-const fs = require('fs');
-const path = require('path');
-const utilsScript = fs.readFileSync(path.resolve(__dirname, './dom_creation_utils.js'), 'utf8');
-eval(utilsScript);
-
-describe('DOM Creation Utils - 解答例', () => {
+describe('DOM Creation Utils', () => {
 
   describe('createElement', () => {
 
@@ -121,6 +116,46 @@ describe('DOM Creation Utils - 解答例', () => {
     test('要素をシャロークローン（子要素を含まない）できること', () => {
       const shallowClone = DomCreationUtils.cloneElement(originalElement, false);
       expect(shallowClone.children.length).toBe(0);
+    });
+  });
+
+  describe('createElementWithText', () => {
+    test('指定されたタグ名とテキストコンテンツを持つ要素を作成できること', () => {
+      const element = DomCreationUtils.createElementWithText('p', 'Hello World');
+      expect(element.tagName).toBe('P');
+      expect(element.textContent).toBe('Hello World');
+    });
+  });
+
+  describe('appendChildren', () => {
+    let parentElement;
+    let child1;
+    let child2;
+
+    beforeEach(() => {
+      parentElement = document.createElement('div');
+      child1 = document.createElement('span');
+      child2 = document.createElement('p');
+    });
+
+    test('複数の子要素を親要素に追加できること', () => {
+      DomCreationUtils.appendChildren(parentElement, child1, child2);
+      expect(parentElement.children.length).toBe(2);
+      expect(parentElement.children[0]).toBe(child1);
+      expect(parentElement.children[1]).toBe(child2);
+    });
+
+    test('子要素がHTMLElementでない場合は追加されないこと', () => {
+      const nonHTMLElement = 'not an element';
+      DomCreationUtils.appendChildren(parentElement, child1, nonHTMLElement, child2);
+      expect(parentElement.children.length).toBe(2);
+      expect(parentElement.children[0]).toBe(child1);
+      expect(parentElement.children[1]).toBe(child2);
+    });
+
+    test('子要素がない場合は何も追加されないこと', () => {
+      DomCreationUtils.appendChildren(parentElement);
+      expect(parentElement.children.length).toBe(0);
     });
   });
 });
