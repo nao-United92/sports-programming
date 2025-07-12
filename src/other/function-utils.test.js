@@ -11,7 +11,7 @@ describe('function-utils', () => {
 
   it('should pipe functions', () => {
     const addThenSquare = pipe(add, square);
-    expect(addThenSquare(2, 3)).toBe(NaN);
+    expect(addThenSquare(2, 3)).toBe(25);
   });
 
   it('should curry a function', () => {

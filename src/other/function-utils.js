@@ -6,8 +6,9 @@
  * @returns A new function that is the composition of the input functions.
  */
 export function compose(...fns) {
-    return function(x) {
-        return fns.reduceRight((acc, fn) => fn(acc), x);
+    return function(...args) {
+        const [firstFn, ...restFns] = fns.reverse();
+        return restFns.reduce((acc, fn) => fn(acc), firstFn(...args));
     };
 }
 
@@ -19,8 +20,9 @@ export function compose(...fns) {
  * @returns A new function that is the pipe of the input functions.
  */
 export function pipe(...fns) {
-    return function(x) {
-        return fns.reduce((acc, fn) => fn(acc), x);
+    return function(...args) {
+        const [firstFn, ...restFns] = fns;
+        return restFns.reduce((acc, fn) => fn(acc), firstFn(...args));
     };
 }
 
