@@ -1,67 +1,53 @@
 /**
- * Checks if a string is empty or contains only whitespace.
- *
- * @param str The string to check.
- * @returns True if the string is empty or whitespace only, false otherwise.
- */
-export function isEmptyString(str) {
-    return typeof str !== 'string' || str.trim().length === 0;
-}
-
-/**
- * Checks if a string is a valid email address.
- *
- * @param email The string to check.
- * @returns True if the string is a valid email, false otherwise.
+ * Checks if the given string is a valid email address format.
+ * @param {string} email The email address to validate.
+ * @returns {boolean} True if the email is valid, false otherwise.
  */
 export function isValidEmail(email) {
-    if (typeof email !== 'string') {
-        return false;
-    }
-    // Basic regex for email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  if (typeof email !== 'string') {
+    return false;
+  }
+  // A simple regex for email validation. More comprehensive regex might be needed for strict validation.
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
 }
 
 /**
- * Checks if a string is a valid URL.
- *
- * @param url The string to check.
- * @returns True if the string is a valid URL, false otherwise.
+ * Checks if the given string is a valid URL format.
+ * @param {string} url The URL to validate.
+ * @returns {boolean} True if the URL is valid, false otherwise.
  */
-export function isValidUrl(url) {
-    if (typeof url !== 'string') {
-        return false;
-    }
-    try {
-        new URL(url);
-        return true;
-    } catch (e) {
-        return false;
-    }
+export function isValidURL(url) {
+  if (typeof url !== 'string') {
+    return false;
+  }
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 /**
- * Checks if a string represents a valid number (can be parsed as a float).
- *
- * @param value The value to check.
- * @returns True if the value is a valid number string, false otherwise.
+ * Checks if the given value is a number.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a number, false otherwise.
  */
 export function isNumeric(value) {
-    return !isNaN(parseFloat(value)) && isFinite(value);
+  return typeof value === 'number' && !isNaN(value);
 }
 
 /**
- * Checks if a value is within a specified range (inclusive).
- *
- * @param value The value to check.
- * @param min The minimum allowed value.
- * @param max The maximum allowed value.
- * @returns True if the value is within the range, false otherwise.
+ * Checks if a number is within a specified range (inclusive).
+ * @param {number} value The number to check.
+ * @param {number} min The minimum allowed value.
+ * @param {number} max The maximum allowed value.
+ * @returns {boolean} True if the number is within the range, false otherwise.
  */
-export function isInRange(value, min, max) {
-    if (typeof value !== 'number' || typeof min !== 'number' || typeof max !== 'number') {
-        return false;
-    }
-    return value >= min && value <= max;
+export function isWithinRange(value, min, max) {
+  if (!isNumeric(value) || !isNumeric(min) || !isNumeric(max)) {
+    return false;
+  }
+  return value >= min && value <= max;
 }

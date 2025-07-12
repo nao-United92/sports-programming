@@ -1,57 +1,57 @@
 /**
- * Checks if an object has no enumerable own properties.
- *
- * @param obj The object to check.
- * @returns True if the object is empty, false otherwise.
+ * Performs a deep clone of an object or array.
+ * @param {object|Array} obj The object or array to clone.
+ * @returns {object|Array} A deep clone of the input.
+ */
+export function deepClone(obj) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime());
+  }
+
+  if (obj instanceof RegExp) {
+    return new RegExp(obj);
+  }
+
+  const clone = Array.isArray(obj) ? [] : {};
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      clone[key] = deepClone(obj[key]);
+    }
+  }
+  return clone;
+}
+
+/**
+ * Checks if an object is empty (has no enumerable own properties).
+ * @param {object} obj The object to check.
+ * @returns {boolean} True if the object is empty, false otherwise.
  */
 export function isEmptyObject(obj) {
-    return Object.keys(obj).length === 0 && obj.constructor === Object;
+  return Object.keys(obj).length === 0 && obj.constructor === Object;
 }
 
 /**
- * Deeply merges two or more objects into a new object.
- * Properties in later objects overwrite properties in earlier objects.
- *
- * @param target The target object to merge into.
- * @param sources One or more source objects to merge.
- * @returns A new object with merged properties.
+ * Safely gets a nested property from an object using a dot-separated path.
+ * @param {object} obj The object to query.
+ * @param {string} path The dot-separated path to the property (e.g., 'user.address.street').
+ * @param {*} [defaultValue] The default value to return if the property is not found.
+ * @returns {*} The value of the nested property, or defaultValue if not found.
  */
-export function deepMerge(target, ...sources) {
-    const output = { ...target };
+export function getNestedProperty(obj, path, defaultValue = undefined) {
+  const parts = path.split('.');
+  let current = obj;
 
-    sources.forEach(source => {
-        if (source && typeof source === 'object') {
-            for (const key in source) {
-                if (source.hasOwnProperty(key)) {
-                    if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key]) && typeof output[key] === 'object' && output[key] !== null && !Array.isArray(output[key])) {
-                        output[key] = deepMerge(output[key], source[key]);
-                    } else {
-                        output[key] = source[key];
-                    }
-                }
-            }
-        }
-    });
-
-    return output;
-}
-
-/**
- * Returns an array of a given object's own enumerable string-keyed property names.
- *
- * @param obj The object whose own enumerable string-keyed properties are to be returned.
- * @returns An array of strings that represent the given object's own enumerable string-keyed properties.
- */
-export function getObjectKeys(obj) {
-    return Object.keys(obj);
-}
-
-/**
- * Returns an array of a given object's own enumerable string-keyed property values.
- *
- * @param obj The object whose own enumerable string-keyed property values are to be returned.
- * @returns An array of values that represent the given object's own enumerable string-keyed property values.
- */
-export function getObjectValues(obj) {
-    return Object.values(obj);
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (current === null || typeof current !== 'object' || !Object.prototype.hasOwnProperty.call(current, part)) {
+      return defaultValue;
+    }
+    current = current[part];
+  }
+  return current;
 }
