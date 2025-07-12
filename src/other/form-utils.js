@@ -19,7 +19,13 @@ export function getFormData(formElement) {
  * @param formElement The HTMLFormElement to clear.
  */
 export function clearForm(formElement) {
-    formElement.reset();
+    for (const element of formElement.elements) {
+        if (element.type === 'checkbox' || element.type === 'radio') {
+            element.checked = false;
+        } else if (element.type !== 'submit' && element.type !== 'button' && element.type !== 'reset') {
+            element.value = '';
+        }
+    }
 }
 
 /**
