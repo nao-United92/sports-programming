@@ -1,46 +1,50 @@
 /**
- * Sets a cookie.
- *
- * @param name The name of the cookie.
- * @param value The value of the cookie.
- * @param days Optional. The number of days until the cookie expires. If 0 or negative, it's a session cookie.
- * @param path Optional. The path for which the cookie is valid. Defaults to '/'.
+ * Sets a cookie with the given name, value, and options.
+ * @param {string} name The name of the cookie.
+ * @param {string} value The value of the cookie.
+ * @param {object} [options={}] Options for the cookie (expires, path, domain, secure, samesite).
+ * @param {Date} [options.expires] The expiration date of the cookie.
+ * @param {string} [options.path='/'] The path for which the cookie is valid.
+ * @param {string} [options.domain] The domain for which the cookie is valid.
+ * @param {boolean} [options.secure] If true, the cookie will only be sent over HTTPS.
+ * @param {string} [options.samesite] Controls when cookies are sent with cross-site requests (e.g., 'Lax', 'Strict', 'None').
  */
-export function setCookie(name, value, days, path = '/') {
-    let expires = '';
-    if (days) {
-        const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = `; expires=${date.toUTCString()}`;
+export function setCookie(name, value, options = {}) {
+  let updatedCookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+
+  for (const optionKey in options) {
+    updatedCookie += '; ' + optionKey;
+    const optionValue = options[optionKey];
+    if (optionValue !== true) {
+      updatedCookie += '=' + optionValue;
     }
-    document.cookie = `${name}=${encodeURIComponent(value)}${expires}; path=${path}`;
+  }
+
+  document.cookie = updatedCookie;
 }
 
 /**
- * Gets the value of a cookie.
- *
- * @param name The name of the cookie to get.
- * @returns The value of the cookie, or null if not found.
+ * Gets the value of a cookie by its name.
+ * @param {string} name The name of the cookie to retrieve.
+ * @returns {string|null} The value of the cookie, or null if not found.
  */
 export function getCookie(name) {
-    const nameEQ = `${name}=`;
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) {
-            return decodeURIComponent(c.substring(nameEQ.length, c.length));
-        }
+  const nameEQ = encodeURIComponent(name) + '=';
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) {
+      return decodeURIComponent(c.substring(nameEQ.length, c.length));
     }
-    return null;
+  }
+  return null;
 }
 
 /**
- * Deletes a cookie.
- *
- * @param name The name of the cookie to delete.
- * @param path Optional. The path for which the cookie was set. Defaults to '/'.
+ * Deletes a cookie by its name.
+ * @param {string} name The name of the cookie to delete.
  */
-export function deleteCookie(name, path = '/') {
-    document.cookie = `${name}=; Max-Age=-99999999; path=${path}`;
+export function deleteCookie(name) {
+  setCookie(name, '', { 'max-age': -1 });
 }
