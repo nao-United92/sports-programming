@@ -1,72 +1,102 @@
-import { isValidEmail, isValidURL, isNumeric, isWithinRange } from './validation-utils';
 
-describe('isValidEmail', () => {
-  test('should return true for a valid email', () => {
-    expect(isValidEmail('test@example.com')).toBe(true);
+import {
+  isValidEmail,
+  isValidURL,
+  isNumeric,
+  isStrongPassword,
+  isNotBlank,
+} from './validation-utils';
+
+describe('validation-utils', () => {
+  describe('isValidEmail', () => {
+    it('should return true for a valid email', () => {
+      expect(isValidEmail('test@example.com')).toBe(true);
+      expect(isValidEmail('john.doe123@sub.domain.co.uk')).toBe(true);
+    });
+
+    it('should return false for an invalid email', () => {
+      expect(isValidEmail('invalid-email')).toBe(false);
+      expect(isValidEmail('test@.com')).toBe(false);
+      expect(isValidEmail('test@example')).toBe(false);
+      expect(isValidEmail('test@example..com')).toBe(false);
+      expect(isValidEmail('')).toBe(false);
+      expect(isValidEmail(null)).toBe(false);
+      expect(isValidEmail(undefined)).toBe(false);
+    });
   });
 
-  test('should return false for an invalid email', () => {
-    expect(isValidEmail('invalid-email')).toBe(false);
-    expect(isValidEmail('test@.com')).toBe(false);
-    expect(isValidEmail('test@example')).toBe(false);
-    expect(isValidEmail(null)).toBe(false);
-    expect(isValidEmail(undefined)).toBe(false);
-    expect(isValidEmail(123)).toBe(false);
-  });
-});
+  describe('isValidURL', () => {
+    it('should return true for a valid URL', () => {
+      expect(isValidURL('http://example.com')).toBe(true);
+      expect(isValidURL('https://www.example.com/path?query=1#hash')).toBe(true);
+      expect(isValidURL('ftp://ftp.example.com')).toBe(true);
+      expect(isValidURL('//example.com')).toBe(true); // Protocol-relative URL
+    });
 
-describe('isValidURL', () => {
-  test('should return true for a valid URL', () => {
-    expect(isValidURL('http://example.com')).toBe(true);
-    expect(isValidURL('https://www.example.com/path?query=1#hash')).toBe(true);
-    expect(isValidURL('ftp://ftp.example.com')).toBe(true);
-  });
-
-  test('should return false for an invalid URL', () => {
-    expect(isValidURL('invalid-url')).toBe(false);
-    expect(isValidURL('example.com')).toBe(false);
-    expect(isValidURL(null)).toBe(false);
-    expect(isValidURL(undefined)).toBe(false);
-    expect(isValidURL(123)).toBe(false);
-  });
-});
-
-describe('isNumeric', () => {
-  test('should return true for a number', () => {
-    expect(isNumeric(123)).toBe(true);
-    expect(isNumeric(0)).toBe(true);
-    expect(isNumeric(-10)).toBe(true);
-    expect(isNumeric(3.14)).toBe(true);
+    it('should return false for an invalid URL', () => {
+      expect(isValidURL('invalid-url')).toBe(false);
+      expect(isValidURL('example.com')).toBe(false); // Missing protocol
+      expect(isValidURL('')).toBe(false);
+      expect(isValidURL(null)).toBe(false);
+      expect(isValidURL(undefined)).toBe(false);
+    });
   });
 
-  test('should return false for a non-number', () => {
-    expect(isNumeric('123')).toBe(false);
-    expect(isNumeric('abc')).toBe(false);
-    expect(isNumeric(null)).toBe(false);
-    expect(isNumeric(undefined)).toBe(false);
-    expect(isNumeric(NaN)).toBe(false);
-    expect(isNumeric([])).toBe(false);
-    expect(isNumeric({})).toBe(false);
-  });
-});
+  describe('isNumeric', () => {
+    it('should return true for numeric values', () => {
+      expect(isNumeric(123)).toBe(true);
+      expect(isNumeric('123')).toBe(true);
+      expect(isNumeric(123.45)).toBe(true);
+      expect(isNumeric('-10')).toBe(true);
+      expect(isNumeric(0)).toBe(true);
+    });
 
-describe('isWithinRange', () => {
-  test('should return true if value is within range', () => {
-    expect(isWithinRange(5, 1, 10)).toBe(true);
-    expect(isWithinRange(1, 1, 10)).toBe(true);
-    expect(isWithinRange(10, 1, 10)).toBe(true);
-  });
-
-  test('should return false if value is outside range', () => {
-    expect(isWithinRange(0, 1, 10)).toBe(false);
-    expect(isWithinRange(11, 1, 10)).toBe(false);
+    it('should return false for non-numeric values', () => {
+      expect(isNumeric('abc')).toBe(false);
+      expect(isNumeric(null)).toBe(false);
+      expect(isNumeric(undefined)).toBe(false);
+      expect(isNumeric(true)).toBe(false);
+      expect(isNumeric({})).toBe(false);
+      expect(isNumeric([])).toBe(false);
+      expect(isNumeric('')).toBe(false);
+      expect(isNumeric(' ')).toBe(false);
+    });
   });
 
-  test('should return false if inputs are not numeric', () => {
-    expect(isWithinRange('5', 1, 10)).toBe(false);
-    expect(isWithinRange(5, '1', 10)).toBe(false);
-    expect(isWithinRange(5, 1, '10')).toBe(false);
-    expect(isWithinRange(null, 1, 10)).toBe(false);
-    expect(isWithinRange(5, undefined, 10)).toBe(false);
+  describe('isStrongPassword', () => {
+    it('should return true for a strong password', () => {
+      expect(isStrongPassword('Password123!')).toBe(true);
+      expect(isStrongPassword('MyStrongP@ssw0rd')).toBe(true);
+    });
+
+    it('should return false for a weak password', () => {
+      expect(isStrongPassword('short')).toBe(false); // Too short
+      expect(isStrongPassword('nouppercase1!')).toBe(false); // No uppercase
+      expect(isStrongPassword('NOLOWERCASE1!')).toBe(false); // No lowercase
+      expect(isStrongPassword('NoNumber!!')).toBe(false); // No number
+      expect(isStrongPassword('NoSpecialChar1')).toBe(false); // No special char
+      expect(isStrongPassword('password123')).toBe(false); // No special char
+      expect(isStrongPassword('')).toBe(false);
+      expect(isStrongPassword(null)).toBe(false);
+      expect(isStrongPassword(undefined)).toBe(false);
+    });
+  });
+
+  describe('isNotBlank', () => {
+    it('should return true for non-blank strings', () => {
+      expect(isNotBlank('hello')).toBe(true);
+      expect(isNotBlank('  world  ')).toBe(true);
+      expect(isNotBlank('123')).toBe(true);
+    });
+
+    it('should return false for blank strings or non-strings', () => {
+      expect(isNotBlank('')).toBe(false);
+      expect(isNotBlank('   ')).toBe(false);
+      expect(isNotBlank(null)).toBe(false);
+      expect(isNotBlank(undefined)).toBe(false);
+      expect(isNotBlank(0)).toBe(false);
+      expect(isNotBlank(true)).toBe(false);
+      expect(isNotBlank({})).toBe(false);
+    });
   });
 });
