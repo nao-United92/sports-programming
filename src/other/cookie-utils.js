@@ -1,26 +1,18 @@
+
 /**
- * Sets a cookie with the given name, value, and options.
+ * Sets a cookie.
  * @param {string} name The name of the cookie.
  * @param {string} value The value of the cookie.
- * @param {object} [options={}] Options for the cookie (expires, path, domain, secure, samesite).
- * @param {Date} [options.expires] The expiration date of the cookie.
- * @param {string} [options.path='/'] The path for which the cookie is valid.
- * @param {string} [options.domain] The domain for which the cookie is valid.
- * @param {boolean} [options.secure] If true, the cookie will only be sent over HTTPS.
- * @param {string} [options.samesite] Controls when cookies are sent with cross-site requests (e.g., 'Lax', 'Strict', 'None').
+ * @param {number} [days] The number of days until the cookie expires. If not provided, it's a session cookie.
  */
-export function setCookie(name, value, options = {}) {
-  let updatedCookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
-
-  for (const optionKey in options) {
-    updatedCookie += '; ' + optionKey;
-    const optionValue = options[optionKey];
-    if (optionValue !== true) {
-      updatedCookie += '=' + optionValue;
-    }
+export function setCookie(name, value, days) {
+  let expires = '';
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = '; expires=' + date.toUTCString();
   }
-
-  document.cookie = updatedCookie;
+  document.cookie = name + '=' + (value || '') + expires + '; path=/';
 }
 
 /**
@@ -29,14 +21,12 @@ export function setCookie(name, value, options = {}) {
  * @returns {string|null} The value of the cookie, or null if not found.
  */
 export function getCookie(name) {
-  const nameEQ = encodeURIComponent(name) + '=';
+  const nameEQ = name + '=';
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) {
-      return decodeURIComponent(c.substring(nameEQ.length, c.length));
-    }
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
   }
   return null;
 }
@@ -46,5 +36,5 @@ export function getCookie(name) {
  * @param {string} name The name of the cookie to delete.
  */
 export function deleteCookie(name) {
-  setCookie(name, '', { 'max-age': -1 });
+  document.cookie = name + '=; Max-Age=-99999999;';
 }
