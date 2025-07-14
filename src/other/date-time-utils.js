@@ -1,0 +1,87 @@
+
+/**
+ * Formats a Date object into a custom string format.
+ * @param {Date} date The Date object to format.
+ * @param {string} format The format string (e.g., 'YYYY-MM-DD HH:mm:ss').
+ * @returns {string} The formatted date string.
+ */
+export function formatDateCustom(date, format) {
+  if (!(date instanceof Date) || isNaN(date)) {
+    return '';
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return format
+    .replace(/YYYY/g, year)
+    .replace(/MM/g, month)
+    .replace(/DD/g, day)
+    .replace(/HH/g, hours)
+    .replace(/mm/g, minutes)
+    .replace(/ss/g, seconds);
+}
+
+/**
+ * Adds a specified number of days to a Date object.
+ * @param {Date} date The original Date object.
+ * @param {number} days The number of days to add.
+ * @returns {Date} A new Date object with the added days.
+ */
+export function addDays(date, days) {
+  const newDate = new Date(date);
+  newDate.setDate(date.getDate() + days);
+  return newDate;
+}
+
+/**
+ * Calculates the difference in days between two Date objects.
+ * @param {Date} date1 The first Date object.
+ * @param {Date} date2 The second Date object.
+ * @returns {number} The difference in days (positive if date1 is after date2, negative otherwise).
+ */
+export function diffDays(date1, date2) {
+  const oneDay = 1000 * 60 * 60 * 24;
+  const diffTime = date1.getTime() - date2.getTime();
+  return Math.round(diffTime / oneDay);
+}
+
+/**
+ * Checks if a given date is today.
+ * @param {Date} date The Date object to check.
+ * @returns {boolean} True if the date is today, false otherwise.
+ */
+export function isToday(date) {
+  const today = new Date();
+  return (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
+}
+
+/**
+ * Returns a new Date object set to the beginning of the day (00:00:00).
+ * @param {Date} date The original Date object.
+ * @returns {Date} A new Date object at the start of the day.
+ */
+export function startOfDay(date) {
+  const newDate = new Date(date);
+  newDate.setHours(0, 0, 0, 0);
+  return newDate;
+}
+
+/**
+ * Returns a new Date object set to the end of the day (23:59:59).
+ * @param {Date} date The original Date object.
+ * @returns {Date} A new Date object at the end of the day.
+ */
+export function endOfDay(date) {
+  const newDate = new Date(date);
+  newDate.setHours(23, 59, 59, 999);
+  return newDate;
+}
