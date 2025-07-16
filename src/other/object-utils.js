@@ -130,3 +130,54 @@ export function omit(obj, keys) {
   }
   return newObj;
 }
+
+/**
+ * Returns a new object with only the specified properties.
+ * @param {object} obj The original object.
+ * @param {string[]} keys An array of keys to pick.
+ * @returns {object} A new object with only the picked keys.
+ */
+export function pick(obj, keys) {
+  if (typeof obj !== 'object' || obj === null) {
+    return {};
+  }
+
+  const newObj = {};
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      newObj[key] = obj[key];
+    }
+  }
+  return newObj;
+}
+
+/**
+ * Deeply merges two or more objects.
+ * @param {object} target The target object to merge into.
+ * @param {object[]} sources The source objects to merge from.
+ * @returns {object} The deeply merged object.
+ */
+export function mergeDeep(target, ...sources) {
+  if (typeof target !== 'object' || target === null) {
+    target = {};
+  }
+
+  for (const source of sources) {
+    if (typeof source !== 'object' || source === null) {
+      continue;
+    }
+
+    for (const key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key]) && typeof target[key] === 'object' && target[key] !== null && !Array.isArray(target[key])) {
+          target[key] = mergeDeep(target[key] || {}, source[key]);
+        } else if (Array.isArray(source[key]) && Array.isArray(target[key])) {
+          target[key] = [...target[key], ...source[key]];
+        } else {
+          target[key] = source[key];
+        }
+      }
+    }
+  }
+  return target;
+}

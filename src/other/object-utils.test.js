@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit } from './object-utils';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep } from './object-utils';
 
 describe('deepClone', () => {
   test('should deep clone a simple object', () => {
@@ -182,5 +182,80 @@ describe('omit', () => {
     expect(omit(null, ['a'])).toBe(null);
     expect(omit(undefined, ['a'])).toBe(undefined);
     expect(omit(123, ['a'])).toBe(123);
+  });
+});
+
+describe('pick', () => {
+  test('should pick a single property', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const newObj = pick(obj, ['b']);
+    expect(newObj).toEqual({ b: 2 });
+  });
+
+  test('should pick multiple properties', () => {
+    const obj = { a: 1, b: 2, c: 3, d: 4 };
+    const newObj = pick(obj, ['b', 'd']);
+    expect(newObj).toEqual({ b: 2, d: 4 });
+  });
+
+  test('should return an empty object if no keys are picked', () => {
+    const obj = { a: 1, b: 2 };
+    const newObj = pick(obj, []);
+    expect(newObj).toEqual({});
+  });
+
+  test('should handle non-existent keys gracefully', () => {
+    const obj = { a: 1, b: 2 };
+    const newObj = pick(obj, ['c']);
+    expect(newObj).toEqual({});
+  });
+
+  test('should return an empty object for non-object inputs', () => {
+    expect(pick(null, ['a'])).toEqual({});
+    expect(pick(undefined, ['a'])).toEqual({});
+    expect(pick(123, ['a'])).toEqual({});
+  });
+});
+
+describe('mergeDeep', () => {
+  test('should deeply merge two objects', () => {
+    const obj1 = { a: 1, b: { c: 2 } };
+    const obj2 = { d: 3, b: { e: 4 } };
+    const merged = mergeDeep(obj1, obj2);
+    expect(merged).toEqual({ a: 1, b: { c: 2, e: 4 }, d: 3 });
+  });
+
+  test('should deeply merge multiple objects', () => {
+    const obj1 = { a: 1, b: { c: 2 } };
+    const obj2 = { d: 3, b: { e: 4 } };
+    const obj3 = { f: 5, b: { g: 6 } };
+    const merged = mergeDeep(obj1, obj2, obj3);
+    expect(merged).toEqual({ a: 1, b: { c: 2, e: 4, g: 6 }, d: 3, f: 5 });
+  });
+
+  test('should overwrite primitive values', () => {
+    const obj1 = { a: 1, b: { c: 2 } };
+    const obj2 = { a: 10, b: { c: 20 } };
+    const merged = mergeDeep(obj1, obj2);
+    expect(merged).toEqual({ a: 10, b: { c: 20 } });
+  });
+
+  test('should handle arrays by concatenating them', () => {
+    const obj1 = { a: [1, 2], b: { c: [3] } };
+    const obj2 = { a: [3, 4], b: { c: [4, 5] } };
+    const merged = mergeDeep(obj1, obj2);
+    expect(merged).toEqual({ a: [1, 2, 3, 4], b: { c: [3, 4, 5] } });
+  });
+
+  test('should handle null and undefined values gracefully', () => {
+    const obj1 = { a: 1, b: { c: 2 } };
+    const obj2 = { b: null, d: undefined };
+    const merged = mergeDeep(obj1, obj2);
+    expect(merged).toEqual({ a: 1, b: null, d: undefined });
+  });
+
+  test('should return a new object if target is not an object', () => {
+    const merged = mergeDeep(null, { a: 1 });
+    expect(merged).toEqual({ a: 1 });
   });
 });
