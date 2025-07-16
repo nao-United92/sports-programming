@@ -1,4 +1,4 @@
-import { formatDate, addDays, isSameDay, daysBetween, isPast, startOfMonth, endOfMonth } from './date-utils.js';
+import { formatDate, addDays, isSameDay, daysBetween, isPast, startOfMonth, endOfMonth, getDaysInMonth, isLeapYear } from './date-utils.js';
 
 describe('date-utils', () => {
   it('should format a date', () => {
@@ -70,6 +70,29 @@ describe('date-utils', () => {
       const date = new Date(2023, 1, 15); // February 15, 2023 (non-leap year)
       const expected = new Date(2023, 1, 28, 23, 59, 59, 999);
       expect(endOfMonth(date)).toEqual(expected);
+    });
+  });
+
+  describe('getDaysInMonth', () => {
+    it('should return the correct number of days for a given month and year', () => {
+      expect(getDaysInMonth(2024, 0)).toBe(31); // January
+      expect(getDaysInMonth(2024, 1)).toBe(29); // February (leap year)
+      expect(getDaysInMonth(2023, 1)).toBe(28); // February (non-leap year)
+      expect(getDaysInMonth(2024, 3)).toBe(30); // April
+    });
+  });
+
+  describe('isLeapYear', () => {
+    it('should return true for leap years', () => {
+      expect(isLeapYear(2000)).toBe(true);
+      expect(isLeapYear(2004)).toBe(true);
+      expect(isLeapYear(2024)).toBe(true);
+    });
+
+    it('should return false for non-leap years', () => {
+      expect(isLeapYear(1900)).toBe(false);
+      expect(isLeapYear(2003)).toBe(false);
+      expect(isLeapYear(2023)).toBe(false);
     });
   });
 });

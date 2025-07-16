@@ -95,3 +95,22 @@ export function endOfMonth(date) {
   newDate.setHours(23, 59, 59, 999);
   return newDate;
 }
+
+/**
+ * Returns the number of days in a given month and year.
+ * @param {number} year - The year.
+ * @param {number} month - The month (0-indexed, i.e., 0 for January, 11 for December).
+ * @returns {number} The number of days in the month.
+ */
+export function getDaysInMonth(year, month) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+/**
+ * Checks if a given year is a leap year.
+ * @param {number} year - The year to check.
+ * @returns {boolean} True if the year is a leap year, false otherwise.
+ */
+export function isLeapYear(year) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
