@@ -1,4 +1,4 @@
-import { compose, pipe, curry, applyTransforms, debounce } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce, throttle } from './function-utils.js';
 
 describe('function-utils', () => {
   const add = (a, b) => a + b;
@@ -39,5 +39,25 @@ describe('function-utils', () => {
       expect(callCount).toBe(1);
       done();
     }, 150);
+  });
+
+  it('should throttle a function', (done) => {
+    let callCount = 0;
+    const throttled = throttle(() => {
+      callCount++;
+    }, 100);
+
+    throttled(); // First call should execute immediately
+    throttled(); // Second call should be throttled
+    throttled(); // Third call should be throttled
+
+    setTimeout(() => {
+      expect(callCount).toBe(1); // Only the first call should have executed
+      throttled(); // This call should execute after the wait period
+      setTimeout(() => {
+        expect(callCount).toBe(2);
+        done();
+      }, 100);
+    }, 50);
   });
 });

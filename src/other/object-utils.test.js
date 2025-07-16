@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys } from './object-utils';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit } from './object-utils';
 
 describe('deepClone', () => {
   test('should deep clone a simple object', () => {
@@ -116,5 +116,71 @@ describe('toCamelCaseKeys', () => {
     const obj = { users: [{ user_name: 'John' }, { user_name: 'Jane' }] };
     const expected = { users: [{ userName: 'John' }, { userName: 'Jane' }] };
     expect(toCamelCaseKeys(obj)).toEqual(expected);
+  });
+});
+
+describe('setNestedProperty', () => {
+  test('should set a top-level property', () => {
+    const obj = {};
+    setNestedProperty(obj, 'name', 'John');
+    expect(obj).toEqual({ name: 'John' });
+  });
+
+  test('should set a nested property, creating intermediate objects', () => {
+    const obj = {};
+    setNestedProperty(obj, 'user.address.city', 'New York');
+    expect(obj).toEqual({ user: { address: { city: 'New York' } } });
+  });
+
+  test('should update an existing nested property', () => {
+    const obj = { user: { name: 'John' } };
+    setNestedProperty(obj, 'user.name', 'Jane');
+    expect(obj).toEqual({ user: { name: 'Jane' } });
+  });
+
+  test('should handle non-object initial values by overwriting', () => {
+    const obj = { user: null };
+    setNestedProperty(obj, 'user.name', 'John');
+    expect(obj).toEqual({ user: { name: 'John' } });
+  });
+
+  test('should return the modified object', () => {
+    const obj = {};
+    const result = setNestedProperty(obj, 'a', 1);
+    expect(result).toBe(obj);
+  });
+});
+
+describe('omit', () => {
+  test('should omit a single property', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const newObj = omit(obj, ['b']);
+    expect(newObj).toEqual({ a: 1, c: 3 });
+    expect(newObj).not.toBe(obj);
+  });
+
+  test('should omit multiple properties', () => {
+    const obj = { a: 1, b: 2, c: 3, d: 4 };
+    const newObj = omit(obj, ['b', 'd']);
+    expect(newObj).toEqual({ a: 1, c: 3 });
+  });
+
+  test('should return a shallow copy if no keys are omitted', () => {
+    const obj = { a: 1, b: 2 };
+    const newObj = omit(obj, []);
+    expect(newObj).toEqual(obj);
+    expect(newObj).not.toBe(obj);
+  });
+
+  test('should handle non-existent keys gracefully', () => {
+    const obj = { a: 1, b: 2 };
+    const newObj = omit(obj, ['c']);
+    expect(newObj).toEqual({ a: 1, b: 2 });
+  });
+
+  test('should return the original value for non-object inputs', () => {
+    expect(omit(null, ['a'])).toBe(null);
+    expect(omit(undefined, ['a'])).toBe(undefined);
+    expect(omit(123, ['a'])).toBe(123);
   });
 });

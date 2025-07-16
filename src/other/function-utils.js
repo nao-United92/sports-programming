@@ -77,3 +77,31 @@ export function debounce(func, wait) {
         timeout = setTimeout(() => func.apply(context, args), wait);
     };
 }
+
+/**
+ * Creates a throttled function that only invokes `func` at most once per `wait` milliseconds.
+ *
+ * @param func The function to throttle.
+ * @param wait The number of milliseconds to throttle invocations to.
+ * @returns A new throttled function.
+ */
+export function throttle(func, wait) {
+    let inThrottle, lastFn, lastTime;
+    return function() {
+        const context = this,
+            args = arguments;
+        if (!inThrottle) {
+            func.apply(context, args);
+            lastTime = Date.now();
+            inThrottle = true;
+        } else {
+            clearTimeout(lastFn);
+            lastFn = setTimeout(function() {
+                if (Date.now() - lastTime >= wait) {
+                    func.apply(context, args);
+                    lastTime = Date.now();
+                }
+            }, Math.max(wait - (Date.now() - lastTime), 0));
+        }
+    };
+}

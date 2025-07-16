@@ -82,3 +82,51 @@ export function toCamelCaseKeys(obj) {
     return acc;
   }, {});
 }
+
+/**
+ * Safely sets a nested property on an object using a dot-separated path.
+ * If intermediate objects do not exist, they will be created.
+ * @param {object} obj The object to modify.
+ * @param {string} path The dot-separated path to the property (e.g., 'user.address.street').
+ * @param {*} value The value to set.
+ * @returns {object} The modified object.
+ */
+export function setNestedProperty(obj, path, value) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  const parts = path.split('.');
+  let current = obj;
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (i === parts.length - 1) {
+      current[part] = value;
+    } else {
+      if (typeof current[part] !== 'object' || current[part] === null) {
+        current[part] = {};
+      }
+      current = current[part];
+    }
+  }
+  return obj;
+}
+
+/**
+ * Returns a new object with specified properties omitted.
+ * @param {object} obj The original object.
+ * @param {string[]} keys An array of keys to omit.
+ * @returns {object} A new object without the omitted keys.
+ */
+export function omit(obj, keys) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  const newObj = { ...obj };
+  for (const key of keys) {
+    delete newObj[key];
+  }
+  return newObj;
+}
