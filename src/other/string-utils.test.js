@@ -4,6 +4,8 @@ import {
   kebabCase,
   camelCase,
   stripHtml,
+  startsWith,
+  endsWith,
 } from './string-utils';
 
 describe('string-utils', () => {
@@ -92,6 +94,26 @@ describe('string-utils', () => {
       expect(stripHtml(null)).toBe('');
       expect(stripHtml(undefined)).toBe('');
       expect(stripHtml(123)).toBe('');
+    });
+  });
+
+  describe('startsWith', () => {
+    it('should return true if a string starts with the specified substring', () => {
+      expect(startsWith('hello world', 'hello')).toBe(true);
+    });
+
+    it('should return false if a string does not start with the specified substring', () => {
+      expect(startsWith('hello world', 'world')).toBe(false);
+    });
+  });
+
+  describe('endsWith', () => {
+    it('should return true if a string ends with the specified substring', () => {
+      expect(endsWith('hello world', 'world')).toBe(true);
+    });
+
+    it('should return false if a string does not end with the specified substring', () => {
+      expect(endsWith('hello world', 'hello')).toBe(false);
     });
   });
 });

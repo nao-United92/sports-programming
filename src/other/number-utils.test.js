@@ -1,4 +1,4 @@
-import { isNumber, clamp, getRandomInt, formatNumber } from './number-utils.js';
+import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd } from './number-utils.js';
 
 describe('number-utils', () => {
   describe('isNumber', () => {
@@ -34,6 +34,26 @@ describe('number-utils', () => {
 
     it('should return an empty string if the input is not a number', () => {
       expect(formatNumber('hello', 2)).toBe('');
+    });
+  });
+
+  describe('isEven', () => {
+    it('should return true for an even number', () => {
+      expect(isEven(2)).toBe(true);
+    });
+
+    it('should return false for an odd number', () => {
+      expect(isEven(3)).toBe(false);
+    });
+  });
+
+  describe('isOdd', () => {
+    it('should return true for an odd number', () => {
+      expect(isOdd(3)).toBe(true);
+    });
+
+    it('should return false for an even number', () => {
+      expect(isOdd(2)).toBe(false);
     });
   });
 });

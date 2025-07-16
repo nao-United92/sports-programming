@@ -67,3 +67,29 @@ export function stripHtml(str) {
   const doc = new DOMParser().parseFromString(str, 'text/html');
   return doc.body.textContent || '';
 }
+
+/**
+ * Checks if a string starts with a specified substring.
+ * @param {string} str The input string.
+ * @param {string} searchString The substring to search for.
+ * @returns {boolean} True if the string starts with the substring, false otherwise.
+ */
+export function startsWith(str, searchString) {
+  if (typeof str !== 'string' || typeof searchString !== 'string') {
+    return false;
+  }
+  return str.startsWith(searchString);
+}
+
+/**
+ * Checks if a string ends with a specified substring.
+ * @param {string} str The input string.
+ * @param {string} searchString The substring to search for.
+ * @returns {boolean} True if the string ends with the substring, false otherwise.
+ */
+export function endsWith(str, searchString) {
+  if (typeof str !== 'string' || typeof searchString !== 'string') {
+    return false;
+  }
+  return str.endsWith(searchString);
+}

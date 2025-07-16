@@ -46,3 +46,23 @@ export function formatNumber(num, decimals) {
     }
     return num.toFixed(decimals);
 }
+
+/**
+ * Checks if a number is even.
+ *
+ * @param num The number to check.
+ * @returns True if the number is even, false otherwise.
+ */
+export function isEven(num) {
+  return isNumber(num) && num % 2 === 0;
+}
+
+/**
+ * Checks if a number is odd.
+ *
+ * @param num The number to check.
+ * @returns True if the number is odd, false otherwise.
+ */
+export function isOdd(num) {
+  return isNumber(num) && num % 2 !== 0;
+}
