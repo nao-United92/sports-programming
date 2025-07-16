@@ -1,4 +1,4 @@
-import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass } from './dom-utils.js';
+import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren } from './dom-utils.js';
 
 describe('dom-utils', () => {
   beforeEach(() => {
@@ -104,6 +104,40 @@ describe('dom-utils', () => {
     it('should return false if element is null or undefined', () => {
       const el = null;
       expect(hasClass(el, 'test-class')).toBe(false);
+    });
+  });
+
+  describe('setAttributes', () => {
+    it('should set multiple attributes on an element', () => {
+      const el = createElement('div');
+      setAttributes(el, { id: 'myId', 'data-value': '123' });
+      expect(el.id).toBe('myId');
+      expect(el.getAttribute('data-value')).toBe('123');
+    });
+
+    it('should not throw error if element is null', () => {
+      const el = null;
+      setAttributes(el, { id: 'myId' });
+      // No error should be thrown
+    });
+  });
+
+  describe('appendChildren', () => {
+    it('should append multiple child elements', () => {
+      const parent = createElement('div');
+      const child1 = createElement('span');
+      const child2 = createElement('p');
+      appendChildren(parent, [child1, child2, 'text node']);
+      expect(parent.children.length).toBe(2);
+      expect(parent.children[0].tagName).toBe('SPAN');
+      expect(parent.children[1].tagName).toBe('P');
+      expect(parent.childNodes[2].nodeValue).toBe('text node');
+    });
+
+    it('should not throw error if parent is null', () => {
+      const parent = null;
+      appendChildren(parent, [createElement('div')]);
+      // No error should be thrown
     });
   });
 });

@@ -138,3 +138,35 @@ export function hasClass(element, className) {
   }
   return false;
 }
+
+/**
+ * Sets multiple attributes on an HTML element.
+ * @param {HTMLElement} element The element to set attributes on.
+ * @param {object} attributes An object of attribute key-value pairs.
+ */
+export function setAttributes(element, attributes) {
+  if (element && attributes) {
+    for (const key in attributes) {
+      if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+        element.setAttribute(key, attributes[key]);
+      }
+    }
+  }
+}
+
+/**
+ * Appends multiple child elements to a parent element.
+ * @param {HTMLElement} parent The parent HTMLElement.
+ * @param {Array<HTMLElement|Node|string>} children An array of child elements or strings to append.
+ */
+export function appendChildren(parent, children) {
+  if (parent && Array.isArray(children)) {
+    children.forEach(child => {
+      if (typeof child === 'string') {
+        parent.appendChild(document.createTextNode(child));
+      } else if (child instanceof Node) {
+        parent.appendChild(child);
+      }
+    });
+  }
+}
