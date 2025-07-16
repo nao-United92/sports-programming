@@ -76,3 +76,27 @@ export const shuffle = (array) => {
   }
   return array;
 };
+
+/**
+ * Flattens a nested array.
+ * @param {Array} arr The array to flatten.
+ * @returns {Array} The flattened array.
+ */
+export function flattenArray(arr) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return arr.flat(Infinity);
+}
+
+/**
+ * Calculates the sum of numbers in an array.
+ * @param {Array<number>} arr The array of numbers.
+ * @returns {number} The sum of the numbers.
+ */
+export function sumArray(arr) {
+  if (!Array.isArray(arr) || arr.some(isNaN)) {
+    return 0;
+  }
+  return arr.reduce((sum, num) => sum + num, 0);
+}
