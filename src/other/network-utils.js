@@ -33,3 +33,28 @@ export async function postJSON(url, data) {
   }
   return response.json();
 }
+
+/**
+ * Checks if the browser is online.
+ * @returns {boolean} True if online, false otherwise.
+ */
+export function isOnline() {
+  return navigator.onLine;
+}
+
+/**
+ * Parses URL query parameters into an object.
+ * @param {string} url The URL string to parse. Defaults to current window location.
+ * @returns {object} An object containing the query parameters.
+ */
+export function getQueryParams(url = window.location.search) {
+  const params = {};
+  const queryString = url.startsWith('?') ? url.substring(1) : url;
+  queryString.split('&').forEach(pair => {
+    const [key, value] = pair.split('=').map(decodeURIComponent);
+    if (key) {
+      params[key] = value || '';
+    }
+  });
+  return params;
+}

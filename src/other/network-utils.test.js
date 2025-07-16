@@ -1,4 +1,4 @@
-import { getJSON, postJSON } from './network-utils.js';
+import { getJSON, postJSON, isOnline, getQueryParams } from './network-utils.js';
 
 global.fetch = jest.fn();
 
@@ -46,6 +46,52 @@ describe('network-utils', () => {
       fetch.mockResolvedValueOnce({ ok: false, status: 500 });
 
       await expect(postJSON('https://example.com/error.json', postData)).rejects.toThrow('HTTP error! status: 500');
+    });
+  });
+
+  describe('isOnline', () => {
+    it('should return true when navigator.onLine is true', () => {
+      Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });
+      expect(isOnline()).toBe(true);
+    });
+
+    it('should return false when navigator.onLine is false', () => {
+      Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
+      expect(isOnline()).toBe(false);
+    });
+  });
+
+  describe('getQueryParams', () => {
+    it('should parse query parameters from a URL string', () => {
+      const url = '?name=John%20Doe&age=30&city=';
+      const params = getQueryParams(url);
+      expect(params).toEqual({ name: 'John Doe', age: '30', city: '' });
+    });
+
+    it('should handle URL without query string prefix', () => {
+      const url = 'name=Jane&id=123';
+      const params = getQueryParams(url);
+      expect(params).toEqual({ name: 'Jane', id: '123' });
+    });
+
+    it('should return an empty object for an empty query string', () => {
+      expect(getQueryParams('')).toEqual({});
+      expect(getQueryParams('?')).toEqual({});
+    });
+
+    it('should handle parameters with no value', () => {
+      const url = '?param1&param2=value2';
+      const params = getQueryParams(url);
+      expect(params).toEqual({ param1: '', param2: 'value2' });
+    });
+
+    it('should use window.location.search by default', () => {
+      // Mock window.location.search
+      Object.defineProperty(window, 'location', {
+        value: { search: '?test=default' },
+        writable: true,
+      });
+      expect(getQueryParams()).toEqual({ test: 'default' });
     });
   });
 });
