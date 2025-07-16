@@ -1,84 +1,112 @@
 /**
- * Sets the text content of an HTML element.
- *
- * @param element The HTMLElement to set text content for.
- * @param text The text string to set.
+ * Creates a new HTML element with optional attributes and children.
+ * @param {string} tagName The tag name of the element to create (e.g., 'div', 'p').
+ * @param {object} [attributes] An object of attribute key-value pairs (e.g., { id: 'myId', class: 'my-class' }).
+ * @param {(HTMLElement|string)[]} [children] An array of child elements or strings.
+ * @returns {HTMLElement} The newly created HTML element.
  */
-export function setTextContent(element, text) {
-    if (element) {
-        element.textContent = text;
+export function createElement(tagName, attributes = {}, children = []) {
+  const element = document.createElement(tagName);
+  for (const key in attributes) {
+    if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+      element.setAttribute(key, attributes[key]);
     }
+  }
+  appendChildren(element, children);
+  return element;
 }
 
 /**
- * Sets the inner HTML of an HTML element.
- *
- * @param element The HTMLElement to set inner HTML for.
- * @param html The HTML string to set.
+ * Appends one or more children to a parent element.
+ * @param {HTMLElement} parent The parent element.
+ * @param {(HTMLElement|string)[]} children An array of child elements or strings to append.
  */
-export function setInnerHtml(element, html) {
-    if (element) {
-        element.innerHTML = html;
+export function appendChildren(parent, children) {
+  if (!parent) return;
+  children.forEach(child => {
+    if (typeof child === 'string') {
+      parent.appendChild(document.createTextNode(child));
+    } else if (child instanceof HTMLElement) {
+      parent.appendChild(child);
     }
+  });
 }
 
 /**
- * Adds one or more CSS classes to an HTML element.
- *
- * @param element The HTMLElement to add classes to.
- * @param classes One or more class names (string) or an array of class names.
+ * Prepends one or more children to a parent element.
+ * @param {HTMLElement} parent The parent element.
+ * @param {(HTMLElement|string)[]} children An array of child elements or strings to prepend.
  */
-export function addClass(element, classes) {
-    if (element) {
-        if (Array.isArray(classes)) {
-            element.classList.add(...classes);
-        } else {
-            element.classList.add(classes);
-        }
+export function prependChildren(parent, children) {
+  if (!parent) return;
+  // Reverse children array to prepend in correct order
+  [...children].reverse().forEach(child => {
+    if (typeof child === 'string') {
+      parent.prepend(document.createTextNode(child));
+    } else if (child instanceof HTMLElement) {
+      parent.prepend(child);
     }
+  });
 }
 
 /**
- * Removes one or more CSS classes from an HTML element.
- *
- * @param element The HTMLElement to remove classes from.
- * @param classes One or more class names (string) or an array of class names.
+ * Removes an element from the DOM.
+ * @param {HTMLElement} element The element to remove.
  */
-export function removeClass(element, classes) {
-    if (element) {
-        if (Array.isArray(classes)) {
-            element.classList.remove(...classes);
-        } else {
-            element.classList.remove(classes);
-        }
-    }
+export function removeElement(element) {
+  if (element && element.parentNode) {
+    element.parentNode.removeChild(element);
+  }
 }
 
 /**
- * Toggles a CSS class on an HTML element.
- *
- * @param element The HTMLElement to toggle the class on.
- * @param className The class name to toggle.
- * @param force Optional. If true, adds the class; if false, removes it.
+ * Removes all children from an element.
+ * @param {HTMLElement} element The element to empty.
  */
-export function toggleClass(element, className, force) {
-    if (element) {
-        element.classList.toggle(className, force);
-    }
+export function emptyElement(element) {
+  if (!element) return;
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
 }
 
 /**
- * Sets multiple CSS styles on an HTML element.
- *
- * @param element The HTMLElement to apply styles to.
- * @param styles An object where keys are CSS property names (camelCase) and values are their values.
+ * Sets multiple attributes on an HTML element.
+ * @param {HTMLElement} element The element to set attributes on.
+ * @param {object} attributes An object of attribute key-value pairs.
  */
-export function setStyles(element, styles) {
-    if (element) {
-        for (const prop in styles) {
-            if (styles.hasOwnProperty(prop)) {
-                element.style[prop] = styles[prop];
-            }
-        }
+export function setAttributes(element, attributes) {
+  if (!element) return;
+  for (const key in attributes) {
+    if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+      element.setAttribute(key, attributes[key]);
     }
+  }
+}
+
+/**
+ * Gets the values of multiple attributes from an HTML element.
+ * @param {HTMLElement} element The element to get attributes from.
+ * @param {string[]} attributeNames An array of attribute names to retrieve.
+ * @returns {object} An object with attribute names as keys and their values.
+ */
+export function getAttributes(element, attributeNames) {
+  const result = {};
+  if (!element) return result;
+  attributeNames.forEach(attrName => {
+    result[attrName] = element.getAttribute(attrName);
+  });
+  return result;
+}
+
+/**
+ * Checks if an element is visible (not display: none or visibility: hidden).
+ * Does not check if it's off-screen or covered by other elements.
+ * @param {HTMLElement} element The element to check.
+ * @returns {boolean} True if the element is visible, false otherwise.
+ */
+export function isVisible(element) {
+  if (!element) return false;
+  const style = window.getComputedStyle(element);
+  return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
 }
