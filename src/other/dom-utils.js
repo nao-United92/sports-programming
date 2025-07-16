@@ -69,3 +69,37 @@ export function removeElement(element) {
         element.parentNode.removeChild(element);
     }
 }
+
+/**
+ * Shows an element by setting its display style to 'block'.
+ * @param {HTMLElement} element The element to show.
+ */
+export function show(element) {
+  if (element) {
+    element.style.display = 'block';
+  }
+}
+
+/**
+ * Hides an element by setting its display style to 'none'.
+ * @param {HTMLElement} element The element to hide.
+ */
+export function hide(element) {
+  if (element) {
+    element.style.display = 'none';
+  }
+}
+
+/**
+ * Toggles the display of an element.
+ * @param {HTMLElement} element The element to toggle.
+ */
+export function toggle(element) {
+  if (element) {
+    if (element.style.display === 'none') {
+      show(element);
+    } else {
+      hide(element);
+    }
+  }
+}

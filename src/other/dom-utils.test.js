@@ -1,4 +1,4 @@
-import { selectElement, selectAllElements, createElement, appendChild, removeElement } from './dom-utils.js';
+import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle } from './dom-utils.js';
 
 describe('dom-utils', () => {
   beforeEach(() => {
@@ -38,5 +38,26 @@ describe('dom-utils', () => {
     document.body.appendChild(el);
     removeElement(el);
     expect(document.body.children.length).toBe(0);
+  });
+
+  it('should show an element', () => {
+    const el = createElement('div');
+    el.style.display = 'none';
+    show(el);
+    expect(el.style.display).toBe('block');
+  });
+
+  it('should hide an element', () => {
+    const el = createElement('div');
+    hide(el);
+    expect(el.style.display).toBe('none');
+  });
+
+  it('should toggle an element', () => {
+    const el = createElement('div');
+    toggle(el);
+    expect(el.style.display).toBe('none');
+    toggle(el);
+    expect(el.style.display).toBe('block');
   });
 });

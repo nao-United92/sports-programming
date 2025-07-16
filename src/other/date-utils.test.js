@@ -1,4 +1,4 @@
-import { formatDate, addDays, isSameDay } from './date-utils.js';
+import { formatDate, addDays, isSameDay, daysBetween } from './date-utils.js';
 
 describe('date-utils', () => {
   it('should format a date', () => {
@@ -18,5 +18,11 @@ describe('date-utils', () => {
     const date3 = new Date(2024, 0, 21, 10, 0, 0);
     expect(isSameDay(date1, date2)).toBe(true);
     expect(isSameDay(date1, date3)).toBe(false);
+  });
+
+  it('should calculate the days between two dates', () => {
+    const date1 = new Date(2024, 0, 20);
+    const date2 = new Date(2024, 0, 25);
+    expect(daysBetween(date1, date2)).toBe(5);
   });
 });

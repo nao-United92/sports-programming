@@ -46,3 +46,15 @@ export function isSameDay(date1, date2) {
     date1.getDate() === date2.getDate()
   );
 }
+
+/**
+ * Calculates the number of days between two dates.
+ * @param {Date} date1 The first date.
+ * @param {Date} date2 The second date.
+ * @returns {number} The number of days between the two dates.
+ */
+export function daysBetween(date1, date2) {
+  const oneDay = 1000 * 60 * 60 * 24;
+  const diff = Math.abs(date1.getTime() - date2.getTime());
+  return Math.round(diff / oneDay);
+}
