@@ -58,3 +58,40 @@ export function daysBetween(date1, date2) {
   const diff = Math.abs(date1.getTime() - date2.getTime());
   return Math.round(diff / oneDay);
 }
+
+/**
+ * Checks if a given date is in the past.
+ * @param {Date} date - The date to check.
+ * @returns {boolean} True if the date is in the past, false otherwise.
+ */
+export function isPast(date) {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // Ignore time for comparison
+  const checkDate = new Date(date);
+  checkDate.setHours(0, 0, 0, 0); // Ignore time for comparison
+  return checkDate.getTime() < now.getTime();
+}
+
+/**
+ * Gets the first day of the month for a given date.
+ * @param {Date} date - The date to get the start of the month from.
+ * @returns {Date} A new Date object representing the first day of the month.
+ */
+export function startOfMonth(date) {
+  const newDate = new Date(date);
+  newDate.setDate(1);
+  newDate.setHours(0, 0, 0, 0);
+  return newDate;
+}
+
+/**
+ * Gets the last day of the month for a given date.
+ * @param {Date} date - The date to get the end of the month from.
+ * @returns {Date} A new Date object representing the last day of the month.
+ */
+export function endOfMonth(date) {
+  const newDate = new Date(date);
+  newDate.setMonth(newDate.getMonth() + 1, 0);
+  newDate.setHours(23, 59, 59, 999);
+  return newDate;
+}
