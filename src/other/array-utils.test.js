@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -76,6 +76,34 @@ describe('array-utils', () => {
       expect(sumArray(null)).toBe(0);
       expect(sumArray(undefined)).toBe(0);
       expect(sumArray([1, 'a', 3])).toBe(0);
+    });
+  });
+
+  describe('chunkArray', () => {
+    it('should chunk an array into smaller arrays', () => {
+      expect(chunkArray([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]]);
+      expect(chunkArray([1, 2, 3, 4, 5], 3)).toEqual([[1, 2, 3], [4, 5]]);
+      expect(chunkArray([1, 2, 3], 1)).toEqual([[1], [2], [3]]);
+    });
+
+    it('should return an empty array for invalid inputs', () => {
+      expect(chunkArray([], 2)).toEqual([]);
+      expect(chunkArray([1, 2, 3], 0)).toEqual([]);
+      expect(chunkArray(null, 2)).toEqual([]);
+      expect(chunkArray(undefined, 2)).toEqual([]);
+    });
+  });
+
+  describe('removeFalsy', () => {
+    it('should remove falsy values from an array', () => {
+      expect(removeFalsy([1, 0, true, false, '', null, undefined, NaN, 'hello'])).toEqual([1, true, 'hello']);
+      expect(removeFalsy([0, false, '', null, undefined, NaN])).toEqual([]);
+    });
+
+    it('should return an empty array for non-array inputs', () => {
+      expect(removeFalsy(null)).toEqual([]);
+      expect(removeFalsy(undefined)).toEqual([]);
+      expect(removeFalsy(123)).toEqual([]);
     });
   });
 });

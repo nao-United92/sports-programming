@@ -100,3 +100,33 @@ export function sumArray(arr) {
   }
   return arr.reduce((sum, num) => sum + num, 0);
 }
+
+/**
+ * Chunks an array into smaller arrays of a specified size.
+ * @param {Array} arr The array to chunk.
+ * @param {number} size The size of each chunk.
+ * @returns {Array<Array>} An array of chunked arrays.
+ */
+export function chunkArray(arr, size) {
+  if (!Array.isArray(arr) || size <= 0) {
+    return [];
+  }
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+/**
+ * Removes falsy values (false, null, 0, "", undefined, NaN) from an array.
+ * @param {Array} arr The array to clean.
+ * @returns {Array} A new array with falsy values removed.
+ */
+export function removeFalsy(arr) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return arr.filter(Boolean);
+}
+}
