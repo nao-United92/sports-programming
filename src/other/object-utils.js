@@ -32,6 +32,9 @@ export function deepClone(obj) {
  * @returns {boolean} True if the object is empty, false otherwise.
  */
 export function isEmptyObject(obj) {
+  if (obj === null || obj === undefined) {
+    return false;
+  }
   return Object.keys(obj).length === 0 && obj.constructor === Object;
 }
 
@@ -43,6 +46,9 @@ export function isEmptyObject(obj) {
  * @returns {*} The value of the nested property, or defaultValue if not found.
  */
 export function getNestedProperty(obj, path, defaultValue = undefined) {
+  if (path === '') {
+    return obj;
+  }
   const parts = path.split('.');
   let current = obj;
 
@@ -54,4 +60,25 @@ export function getNestedProperty(obj, path, defaultValue = undefined) {
     current = current[part];
   }
   return current;
+}
+
+/**
+ * Recursively converts object keys to camelCase.
+ * @param {object} obj The object to convert.
+ * @returns {object} A new object with camelCase keys.
+ */
+export function toCamelCaseKeys(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(v => toCamelCaseKeys(v));
+  }
+
+  return Object.keys(obj).reduce((acc, key) => {
+    const camelKey = key.replace(/_([a-z])/g, g => g[1].toUpperCase());
+    acc[camelKey] = toCamelCaseKeys(obj[key]);
+    return acc;
+  }, {});
 }

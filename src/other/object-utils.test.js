@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty } from './object-utils';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys } from './object-utils';
 
 describe('deepClone', () => {
   test('should deep clone a simple object', () => {
@@ -96,5 +96,25 @@ describe('getNestedProperty', () => {
 
   test('should return the object itself if path is empty', () => {
     expect(getNestedProperty(obj, '')).toEqual(obj);
+  });
+});
+
+describe('toCamelCaseKeys', () => {
+  test('should convert snake_case keys to camelCase', () => {
+    const obj = { first_name: 'John', last_name: 'Doe' };
+    const expected = { firstName: 'John', lastName: 'Doe' };
+    expect(toCamelCaseKeys(obj)).toEqual(expected);
+  });
+
+  test('should handle nested objects', () => {
+    const obj = { user_info: { first_name: 'John' } };
+    const expected = { userInfo: { firstName: 'John' } };
+    expect(toCamelCaseKeys(obj)).toEqual(expected);
+  });
+
+  test('should handle arrays of objects', () => {
+    const obj = { users: [{ user_name: 'John' }, { user_name: 'Jane' }] };
+    const expected = { users: [{ userName: 'John' }, { userName: 'Jane' }] };
+    expect(toCamelCaseKeys(obj)).toEqual(expected);
   });
 });

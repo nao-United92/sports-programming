@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -39,6 +39,15 @@ describe('array-utils', () => {
   describe('uniqueArray', () => {
     it('should return an array with unique values', () => {
       expect(uniqueArray([1, 2, 2, 3, 3, 3])).toEqual([1, 2, 3]);
+    });
+  });
+
+  describe('shuffle', () => {
+    it('should shuffle an array', () => {
+      const arr = [1, 2, 3, 4, 5];
+      const shuffled = shuffle([...arr]);
+      expect(shuffled).not.toEqual(arr);
+      expect(shuffled.sort()).toEqual(arr.sort());
     });
   });
 });
