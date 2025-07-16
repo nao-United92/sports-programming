@@ -6,6 +6,8 @@ import {
   stripHtml,
   startsWith,
   endsWith,
+  reverseString,
+  isEmpty,
 } from './string-utils';
 
 describe('string-utils', () => {
@@ -114,6 +116,33 @@ describe('string-utils', () => {
 
     it('should return false if a string does not end with the specified substring', () => {
       expect(endsWith('hello world', 'hello')).toBe(false);
+    });
+  });
+
+  describe('reverseString', () => {
+    it('should reverse a string', () => {
+      expect(reverseString('hello')).toBe('olleh');
+      expect(reverseString('world')).toBe('dlrow');
+    });
+
+    it('should return an empty string for non-string inputs', () => {
+      expect(reverseString(null)).toBe('');
+      expect(reverseString(undefined)).toBe('');
+      expect(reverseString(123)).toBe('');
+    });
+  });
+
+  describe('isEmpty', () => {
+    it('should return true for empty or whitespace-only strings', () => {
+      expect(isEmpty('')).toBe(true);
+      expect(isEmpty('  ')).toBe(true);
+      expect(isEmpty(null)).toBe(true);
+      expect(isEmpty(undefined)).toBe(true);
+    });
+
+    it('should return false for non-empty strings', () => {
+      expect(isEmpty('hello')).toBe(false);
+      expect(isEmpty('  hello  ')).toBe(false);
     });
   });
 });

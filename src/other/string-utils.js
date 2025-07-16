@@ -93,3 +93,27 @@ export function endsWith(str, searchString) {
   }
   return str.endsWith(searchString);
 }
+
+/**
+ * Reverses a string.
+ * @param {string} str The input string.
+ * @returns {string} The reversed string.
+ */
+export function reverseString(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.split('').reverse().join('');
+}
+
+/**
+ * Checks if a string is empty or contains only whitespace.
+ * @param {string} str The input string.
+ * @returns {boolean} True if the string is empty or contains only whitespace, false otherwise.
+ */
+export function isEmpty(str) {
+  if (typeof str !== 'string') {
+    return true;
+  }
+  return str.trim().length === 0;
+}
