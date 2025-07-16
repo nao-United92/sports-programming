@@ -8,6 +8,8 @@ import {
   endsWith,
   reverseString,
   isEmpty,
+  isPalindrome,
+  countOccurrences,
 } from './string-utils';
 
 describe('string-utils', () => {
@@ -143,6 +145,54 @@ describe('string-utils', () => {
     it('should return false for non-empty strings', () => {
       expect(isEmpty('hello')).toBe(false);
       expect(isEmpty('  hello  ')).toBe(false);
+    });
+  });
+
+  describe('isPalindrome', () => {
+    it('should return true for palindromes', () => {
+      expect(isPalindrome('madam')).toBe(true);
+      expect(isPalindrome('A man, a plan, a canal: Panama')).toBe(true);
+      expect(isPalindrome('racecar')).toBe(true);
+      expect(isPalindrome('No lemon, no melon')).toBe(true);
+    });
+
+    it('should return false for non-palindromes', () => {
+      expect(isPalindrome('hello')).toBe(false);
+      expect(isPalindrome('world')).toBe(false);
+    });
+
+    it('should handle empty strings and non-string inputs', () => {
+      expect(isPalindrome('')).toBe(true);
+      expect(isPalindrome(null)).toBe(false);
+      expect(isPalindrome(undefined)).toBe(false);
+      expect(isPalindrome(123)).toBe(false);
+    });
+  });
+
+  describe('countOccurrences', () => {
+    it('should count occurrences of a substring case-sensitively', () => {
+      expect(countOccurrences('hello world hello', 'hello')).toBe(2);
+      expect(countOccurrences('Hello world hello', 'hello')).toBe(1);
+      expect(countOccurrences('aaaaa', 'aa')).toBe(2);
+    });
+
+    it('should count occurrences of a substring case-insensitively', () => {
+      expect(countOccurrences('Hello world hello', 'hello', false)).toBe(2);
+      expect(countOccurrences('HELLO world HELLO', 'hello', false)).toBe(2);
+    });
+
+    it('should return 0 if substring is not found', () => {
+      expect(countOccurrences('hello world', 'foo')).toBe(0);
+    });
+
+    it('should return 0 for empty string or empty substring', () => {
+      expect(countOccurrences('', 'hello')).toBe(0);
+      expect(countOccurrences('hello', '')).toBe(0);
+    });
+
+    it('should handle non-string inputs', () => {
+      expect(countOccurrences(null, 'a')).toBe(0);
+      expect(countOccurrences('a', null)).toBe(0);
     });
   });
 });

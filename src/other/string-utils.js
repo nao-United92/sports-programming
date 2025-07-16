@@ -117,3 +117,44 @@ export function isEmpty(str) {
   }
   return str.trim().length === 0;
 }
+
+/**
+ * Checks if a string is a palindrome (reads the same forwards and backwards, ignoring case and non-alphanumeric characters).
+ * @param {string} str The input string.
+ * @returns {boolean} True if the string is a palindrome, false otherwise.
+ */
+export function isPalindrome(str) {
+  if (typeof str !== 'string') {
+    return false;
+  }
+  const cleanedStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return cleanedStr === cleanedStr.split('').reverse().join('');
+}
+
+/**
+ * Counts the occurrences of a substring within a string.
+ * @param {string} str The main string.
+ * @param {string} subStr The substring to count.
+ * @param {boolean} [caseSensitive=true] Whether the search should be case-sensitive.
+ * @returns {number} The number of occurrences.
+ */
+export function countOccurrences(str, subStr, caseSensitive = true) {
+  if (typeof str !== 'string' || typeof subStr !== 'string' || subStr.length === 0) {
+    return 0;
+  }
+  let count = 0;
+  let i = 0;
+  const mainStr = caseSensitive ? str : str.toLowerCase();
+  const searchSubStr = caseSensitive ? subStr : subStr.toLowerCase();
+
+  while (true) {
+    i = mainStr.indexOf(searchSubStr, i);
+    if (i >= 0) {
+      count++;
+      i += searchSubStr.length;
+    } else {
+      break;
+    }
+  }
+  return count;
+}
