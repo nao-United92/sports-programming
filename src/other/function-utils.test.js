@@ -1,4 +1,4 @@
-import { compose, pipe, curry, applyTransforms } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce } from './function-utils.js';
 
 describe('function-utils', () => {
   const add = (a, b) => a + b;
@@ -23,5 +23,21 @@ describe('function-utils', () => {
     const transform = (a, b) => a + b;
     const transformed = applyTransforms(transform, [square, square]);
     expect(transformed(2, 3)).toBe(13);
+  });
+
+  it('should debounce a function', (done) => {
+    let callCount = 0;
+    const debounced = debounce(() => {
+      callCount++;
+    }, 100);
+
+    debounced();
+    debounced();
+    debounced();
+
+    setTimeout(() => {
+      expect(callCount).toBe(1);
+      done();
+    }, 150);
   });
 });
