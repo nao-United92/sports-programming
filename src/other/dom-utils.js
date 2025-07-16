@@ -103,3 +103,38 @@ export function toggle(element) {
     }
   }
 }
+
+/**
+ * Adds a class to an HTML element.
+ * @param {HTMLElement} element The element to add the class to.
+ * @param {string} className The class name to add.
+ */
+export function addClass(element, className) {
+  if (element && className) {
+    element.classList.add(className);
+  }
+}
+
+/**
+ * Removes a class from an HTML element.
+ * @param {HTMLElement} element The element to remove the class from.
+ * @param {string} className The class name to remove.
+ */
+export function removeClass(element, className) {
+  if (element && className) {
+    element.classList.remove(className);
+  }
+}
+
+/**
+ * Checks if an HTML element has a specific class.
+ * @param {HTMLElement} element The element to check.
+ * @param {string} className The class name to check for.
+ * @returns {boolean} True if the element has the class, false otherwise.
+ */
+export function hasClass(element, className) {
+  if (element && className) {
+    return element.classList.contains(className);
+  }
+  return false;
+}

@@ -1,4 +1,4 @@
-import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle } from './dom-utils.js';
+import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass } from './dom-utils.js';
 
 describe('dom-utils', () => {
   beforeEach(() => {
@@ -59,5 +59,51 @@ describe('dom-utils', () => {
     expect(el.style.display).toBe('none');
     toggle(el);
     expect(el.style.display).toBe('block');
+  });
+
+  describe('addClass', () => {
+    it('should add a class to an element', () => {
+      const el = createElement('div');
+      addClass(el, 'test-class');
+      expect(el.classList.contains('test-class')).toBe(true);
+    });
+
+    it('should not add a class if element is null or undefined', () => {
+      const el = null;
+      addClass(el, 'test-class');
+      // No error should be thrown
+    });
+  });
+
+  describe('removeClass', () => {
+    it('should remove a class from an element', () => {
+      const el = createElement('div', { class: 'test-class another-class' });
+      removeClass(el, 'test-class');
+      expect(el.classList.contains('test-class')).toBe(false);
+      expect(el.classList.contains('another-class')).toBe(true);
+    });
+
+    it('should not remove a class if element is null or undefined', () => {
+      const el = null;
+      removeClass(el, 'test-class');
+      // No error should be thrown
+    });
+  });
+
+  describe('hasClass', () => {
+    it('should return true if an element has the class', () => {
+      const el = createElement('div', { class: 'test-class' });
+      expect(hasClass(el, 'test-class')).toBe(true);
+    });
+
+    it('should return false if an element does not have the class', () => {
+      const el = createElement('div', { class: 'another-class' });
+      expect(hasClass(el, 'test-class')).toBe(false);
+    });
+
+    it('should return false if element is null or undefined', () => {
+      const el = null;
+      expect(hasClass(el, 'test-class')).toBe(false);
+    });
   });
 });
