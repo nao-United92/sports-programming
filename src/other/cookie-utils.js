@@ -1,9 +1,8 @@
-
 /**
- * Sets a cookie.
+ * Sets a cookie with the given name, value, and optional expiration days.
  * @param {string} name The name of the cookie.
  * @param {string} value The value of the cookie.
- * @param {number} [days] The number of days until the cookie expires. If not provided, it's a session cookie.
+ * @param {number} [days] The number of days until the cookie expires. If not provided, the cookie is a session cookie.
  */
 export function setCookie(name, value, days) {
   let expires = '';
@@ -29,12 +28,4 @@ export function getCookie(name) {
     if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
   }
   return null;
-}
-
-/**
- * Deletes a cookie by its name.
- * @param {string} name The name of the cookie to delete.
- */
-export function deleteCookie(name) {
-  document.cookie = name + '=; Max-Age=-99999999;';
 }
