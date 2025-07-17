@@ -1,4 +1,4 @@
-import { setLoggingEnabled, info, warn, error, debug } from './log-utils.js';
+import { setLoggingEnabled, logInfo, logWarning, logError, logDebug } from './log-utils.js';
 
 describe('log-utils', () => {
   const spy = {
@@ -14,31 +14,31 @@ describe('log-utils', () => {
   });
 
   it('should log info messages', () => {
-    info('test');
+    logInfo('test');
     expect(spy.info).toHaveBeenCalledWith('test');
   });
 
   it('should log warn messages', () => {
-    warn('test');
+    logWarning('test');
     expect(spy.warn).toHaveBeenCalledWith('test');
   });
 
   it('should log error messages', () => {
-    error('test');
+    logError('test');
     expect(spy.error).toHaveBeenCalledWith('test');
   });
 
   it('should log debug messages', () => {
-    debug('test');
+    logDebug('test');
     expect(spy.debug).toHaveBeenCalledWith('test');
   });
 
   it('should not log when disabled', () => {
     setLoggingEnabled(false);
-    info('test');
-    warn('test');
-    error('test');
-    debug('test');
+    logInfo('test');
+    logWarning('test');
+    logError('test');
+    logDebug('test');
     expect(spy.info).not.toHaveBeenCalled();
     expect(spy.warn).not.toHaveBeenCalled();
     expect(spy.error).not.toHaveBeenCalled();

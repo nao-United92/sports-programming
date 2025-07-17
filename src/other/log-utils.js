@@ -12,7 +12,7 @@ export function setLoggingEnabled(enable) {
  * Logs an informational message.
  * @param {...any} args - The arguments to log.
  */
-export function info(...args) {
+export function logInfo(...args) {
     if (enableLogging) {
         console.info(...args);
     }
@@ -22,7 +22,7 @@ export function info(...args) {
  * Logs a warning message.
  * @param {...any} args - The arguments to log.
  */
-export function warn(...args) {
+export function logWarning(...args) {
     if (enableLogging) {
         console.warn(...args);
     }
@@ -32,7 +32,7 @@ export function warn(...args) {
  * Logs an error message.
  * @param {...any} args - The arguments to log.
  */
-export function error(...args) {
+export function logError(...args) {
     if (enableLogging) {
         console.error(...args);
     }
@@ -42,7 +42,7 @@ export function error(...args) {
  * Logs a debug message.
  * @param {...any} args - The arguments to log.
  */
-export function debug(...args) {
+export function logDebug(...args) {
     if (enableLogging) {
         console.debug(...args);
     }
