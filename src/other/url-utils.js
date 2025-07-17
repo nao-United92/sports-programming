@@ -50,3 +50,19 @@ export function isAbsoluteUrl(url) {
         return false;
     }
 }
+
+/**
+ * Adds multiple query parameters to a URL.
+ * @param {string} url The original URL string.
+ * @param {object} params An object of query parameter key-value pairs.
+ * @returns {string} The new URL string with the added query parameters.
+ */
+export function addQueryParams(url, params) {
+  const urlObj = new URL(url);
+  for (const key in params) {
+    if (Object.prototype.hasOwnProperty.call(params, key)) {
+      urlObj.searchParams.append(key, params[key]);
+    }
+  }
+  return urlObj.toString();
+}
