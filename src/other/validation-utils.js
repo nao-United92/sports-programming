@@ -62,3 +62,23 @@ export function isStrongPassword(password) {
 export function isNotBlank(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
+
+/**
+ * Checks if a string is a valid phone number format (simple check).
+ * @param {string} phoneNumber The phone number string to validate.
+ * @returns {boolean} True if the phone number is valid, false otherwise.
+ */
+export function isPhoneNumber(phoneNumber) {
+  const re = /^\+?[0-9]{10,15}$/;
+  return re.test(String(phoneNumber));
+}
+
+/**
+ * Checks if a string is a valid Japanese postal code format (e.g., 123-4567).
+ * @param {string} postalCode The postal code string to validate.
+ * @returns {boolean} True if the postal code is valid, false otherwise.
+ */
+export function isPostalCode(postalCode) {
+  const re = /^\d{3}-\d{4}$/;
+  return re.test(String(postalCode));
+}

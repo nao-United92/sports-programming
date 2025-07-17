@@ -5,6 +5,8 @@ import {
   isNumeric,
   isStrongPassword,
   isNotBlank,
+  isPhoneNumber,
+  isPostalCode,
 } from './validation-utils';
 
 describe('validation-utils', () => {
@@ -97,6 +99,38 @@ describe('validation-utils', () => {
       expect(isNotBlank(0)).toBe(false);
       expect(isNotBlank(true)).toBe(false);
       expect(isNotBlank({})).toBe(false);
+    });
+  });
+
+  describe('isPhoneNumber', () => {
+    it('should return true for valid phone numbers', () => {
+      expect(isPhoneNumber('1234567890')).toBe(true);
+      expect(isPhoneNumber('+123456789012')).toBe(true);
+      expect(isPhoneNumber('09012345678')).toBe(true);
+    });
+
+    it('should return false for invalid phone numbers', () => {
+      expect(isPhoneNumber('123')).toBe(false);
+      expect(isPhoneNumber('abcde')).toBe(false);
+      expect(isPhoneNumber('123-456-7890')).toBe(false); // No hyphens allowed in this simple check
+      expect(isPhoneNumber(null)).toBe(false);
+      expect(isPhoneNumber(undefined)).toBe(false);
+    });
+  });
+
+  describe('isPostalCode', () => {
+    it('should return true for valid Japanese postal codes', () => {
+      expect(isPostalCode('123-4567')).toBe(true);
+      expect(isPostalCode('000-0000')).toBe(true);
+    });
+
+    it('should return false for invalid Japanese postal codes', () => {
+      expect(isPostalCode('1234567')).toBe(false); // Missing hyphen
+      expect(isPostalCode('123-456')).toBe(false); // Too short
+      expect(isPostalCode('123-45678')).toBe(false); // Too long
+      expect(isPostalCode('abc-defg')).toBe(false); // Non-numeric
+      expect(isPostalCode(null)).toBe(false);
+      expect(isPostalCode(undefined)).toBe(false);
     });
   });
 });
