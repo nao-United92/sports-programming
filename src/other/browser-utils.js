@@ -58,3 +58,43 @@ export function isInViewport(element) {
         rect.right <= (window.innerWidth || document.documentElement.clientWidth)
     );
 }
+
+/**
+ * Detects and returns information about the current browser.
+ * @returns {object} An object containing browser name and version, or 'Unknown'.
+ */
+export function getBrowserInfo() {
+  const ua = navigator.userAgent;
+  let browserName = 'Unknown';
+  let version = 'Unknown';
+
+  if (/Edge\/\d./i.test(ua)) {
+    browserName = 'Edge';
+    version = ua.match(/Edge\/(\d+\.\d+)/i)[1];
+  } else if (/MSIE|Trident/i.test(ua)) {
+    browserName = 'IE';
+    version = ua.match(/(?:MSIE |rv:)(\d+\.\d+)/i)[1];
+  } else if (/Chrome/i.test(ua) && !/Edge/i.test(ua)) {
+    browserName = 'Chrome';
+    version = ua.match(/Chrome\/(\d+\.\d+)/i)[1];
+  } else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) {
+    browserName = 'Safari';
+    version = ua.match(/Version\/(\d+\.\d+)/i)[1];
+  } else if (/Firefox/i.test(ua)) {
+    browserName = 'Firefox';
+    version = ua.match(/Firefox\/(\d+\.\d+)/i)[1];
+  } else if (/Opera|OPR/i.test(ua)) {
+    browserName = 'Opera';
+    version = ua.match(/(?:Opera|OPR)\/(\d+\.\d+)/i)[1];
+  }
+
+  return { name: browserName, version: version };
+}
+
+/**
+ * Checks if the current device is a mobile device.
+ * @returns {boolean} True if it's a mobile device, false otherwise.
+ */
+export function isMobileDevice() {
+  return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+}
