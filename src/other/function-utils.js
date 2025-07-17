@@ -105,3 +105,39 @@ export function throttle(func, wait) {
         }
     };
 }
+
+/**
+ * Creates a memoized function that caches the result of the given function.
+ * @param {Function} func The function to memoize.
+ * @returns {Function} The memoized function.
+ */
+export function memoize(func) {
+  const cache = {};
+  return function(...args) {
+    const key = JSON.stringify(args);
+    if (cache[key]) {
+      return cache[key];
+    }
+    const result = func.apply(this, args);
+    cache[key] = result;
+    return result;
+  };
+}
+
+/**
+ * Creates a function that is restricted to invoking `func` once.
+ * Repeat calls to the function return the value of the first invocation.
+ * @param {Function} func The function to restrict.
+ * @returns {Function} Returns the new restricted function.
+ */
+export function once(func) {
+  let hasBeenCalled = false;
+  let result;
+  return function(...args) {
+    if (!hasBeenCalled) {
+      hasBeenCalled = true;
+      result = func.apply(this, args);
+    }
+    return result;
+  };
+}

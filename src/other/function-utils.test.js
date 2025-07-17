@@ -1,4 +1,4 @@
-import { compose, pipe, curry, applyTransforms, debounce, throttle } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once } from './function-utils.js';
 
 describe('function-utils', () => {
   const add = (a, b) => a + b;
@@ -59,5 +59,58 @@ describe('function-utils', () => {
         done();
       }, 100);
     }, 50);
+  });
+
+  describe('memoize', () => {
+    it('should memoize a function' , () => {
+      const mockFn = jest.fn((a, b) => a + b);
+      const memoizedFn = memoize(mockFn);
+
+      expect(memoizedFn(1, 2)).toBe(3);
+      expect(mockFn).toHaveBeenCalledTimes(1);
+
+      expect(memoizedFn(1, 2)).toBe(3);
+      expect(mockFn).toHaveBeenCalledTimes(1); // Should not be called again
+
+      expect(memoizedFn(2, 3)).toBe(5);
+      expect(mockFn).toHaveBeenCalledTimes(2);
+    });
+
+    it('should handle different arguments', () => {
+      const mockFn = jest.fn((a, b) => a * b);
+      const memoizedFn = memoize(mockFn);
+
+      memoizedFn(2, 3);
+      memoizedFn(3, 2);
+      expect(mockFn).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('once', () => {
+    it('should call the function only once', () => {
+      const mockFn = jest.fn(() => Math.random());
+      const onceFn = once(mockFn);
+
+      const result1 = onceFn();
+      const result2 = onceFn();
+      const result3 = onceFn();
+
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      expect(result1).toBe(result2);
+      expect(result2).toBe(result3);
+    });
+
+    it('should return the same result on subsequent calls', () => {
+      let counter = 0;
+      const increment = once(() => {
+        counter++;
+        return counter;
+      });
+
+      expect(increment()).toBe(1);
+      expect(increment()).toBe(1);
+      expect(increment()).toBe(1);
+      expect(counter).toBe(1);
+    });
   });
 });
