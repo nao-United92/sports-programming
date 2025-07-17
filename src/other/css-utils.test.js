@@ -1,5 +1,5 @@
 
-import { hasClass, addClass, removeClass, toggleClass, getStyle, setStyle } from './css-utils';
+import { hasClass, addClass, removeClass, toggleClass, getStyle, setStyle, hideElement, showElement } from './css-utils';
 
 describe('CSS Utilities', () => {
   let element;
@@ -115,6 +115,42 @@ describe('CSS Utilities', () => {
     test('should warn for invalid element', () => {
       const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
       setStyle(null, 'color', 'blue');
+      expect(consoleWarnSpy).toHaveBeenCalled();
+      consoleWarnSpy.mockRestore();
+    });
+  });
+
+  describe('hideElement', () => {
+    test('should hide an element', () => {
+      element.style.display = 'block';
+      hideElement(element);
+      expect(element.style.display).toBe('none');
+    });
+
+    test('should warn for invalid element', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      hideElement(null);
+      expect(consoleWarnSpy).toHaveBeenCalled();
+      consoleWarnSpy.mockRestore();
+    });
+  });
+
+  describe('showElement', () => {
+    test('should show an element with default display', () => {
+      element.style.display = 'none';
+      showElement(element);
+      expect(element.style.display).toBe('block');
+    });
+
+    test('should show an element with custom display', () => {
+      element.style.display = 'none';
+      showElement(element, 'inline-block');
+      expect(element.style.display).toBe('inline-block');
+    });
+
+    test('should warn for invalid element', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      showElement(null);
       expect(consoleWarnSpy).toHaveBeenCalled();
       consoleWarnSpy.mockRestore();
     });

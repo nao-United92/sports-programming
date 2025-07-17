@@ -80,3 +80,28 @@ export function setStyle(element, property, value) {
   }
   element.style[property] = value;
 }
+
+/**
+ * Hides an HTML element by setting its display style to 'none'.
+ * @param {HTMLElement} element The HTML element to hide.
+ */
+export function hideElement(element) {
+  if (!element) {
+    console.warn('hideElement: Invalid element provided.');
+    return;
+  }
+  element.style.display = 'none';
+}
+
+/**
+ * Shows an HTML element by setting its display style to 'block' (or its original display value).
+ * @param {HTMLElement} element The HTML element to show.
+ * @param {string} [display='block'] The display value to set (e.g., 'block', 'inline-block', 'flex').
+ */
+export function showElement(element, display = 'block') {
+  if (!element) {
+    console.warn('showElement: Invalid element provided.');
+    return;
+  }
+  element.style.display = display;
+}
