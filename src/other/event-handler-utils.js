@@ -62,3 +62,29 @@ export function throttle(func, interval) {
         return lastResult;
     };
 }
+
+/**
+ * Adds an event listener to an element.
+ * @param {EventTarget} element The element to attach the event listener to.
+ * @param {string} eventType The type of event to listen for (e.g., 'click', 'mouseover').
+ * @param {Function} handler The event handler function.
+ * @param {boolean} [useCapture=false] Whether to use capture phase.
+ */
+export function addEvent(element, eventType, handler, useCapture = false) {
+  if (element && eventType && handler) {
+    element.addEventListener(eventType, handler, useCapture);
+  }
+}
+
+/**
+ * Removes an event listener from an element.
+ * @param {EventTarget} element The element to remove the event listener from.
+ * @param {string} eventType The type of event to remove.
+ * @param {Function} handler The event handler function to remove.
+ * @param {boolean} [useCapture=false] Whether to use capture phase.
+ */
+export function removeEvent(element, eventType, handler, useCapture = false) {
+  if (element && eventType && handler) {
+    element.removeEventListener(eventType, handler, useCapture);
+  }
+}
