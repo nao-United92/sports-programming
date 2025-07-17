@@ -47,3 +47,44 @@ export function readFileAsDataURL(file) {
     reader.readAsDataURL(file);
   });
 }
+
+/**
+ * Simulates a file upload by accepting a File object and returning its content.
+ * In a real application, this would send the file to a server.
+ * @param {File} file The File object to "upload".
+ * @returns {Promise<string>} A promise that resolves with the file's text content (for demonstration).
+ */
+export function uploadFile(file) {
+  return readFileAsText(file);
+}
+
+/**
+ * Sets up a drag-and-drop area for file uploads.
+ * @param {HTMLElement} dropArea The DOM element to use as the drop area.
+ * @param {Function} onDropCallback A callback function that receives an array of File objects when files are dropped.
+ */
+export function dragAndDropUpload(dropArea, onDropCallback) {
+  if (!dropArea || !onDropCallback) {
+    console.error('dragAndDropUpload: dropArea and onDropCallback are required.');
+    return;
+  }
+
+  dropArea.addEventListener('dragover', (event) => {
+    event.preventDefault(); // Prevent default to allow drop
+    dropArea.classList.add('drag-over');
+  });
+
+  dropArea.addEventListener('dragleave', () => {
+    dropArea.classList.remove('drag-over');
+  });
+
+  dropArea.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dropArea.classList.remove('drag-over');
+
+    const files = Array.from(event.dataTransfer.files);
+    if (files.length > 0) {
+      onDropCallback(files);
+    }
+  });
+}

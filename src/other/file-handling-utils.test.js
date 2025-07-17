@@ -1,5 +1,5 @@
 
-import { downloadFile, readFileAsText, readFileAsDataURL } from './file-handling-utils';
+import { downloadFile, readFileAsText, readFileAsDataURL, uploadFile, dragAndDropUpload } from './file-handling-utils';
 
 // Mocking Browser APIs for Jest (Node.js environment)
 global.URL.createObjectURL = jest.fn(() => 'blob:http://localhost/mock-url');
@@ -83,6 +83,79 @@ describe('file-handling-utils', () => {
     it('should reject on a read error', async () => {
       const file = { name: 'error.png' };
       await expect(readFileAsDataURL(file)).rejects.toThrow('Read error');
+    });
+  });
+
+  describe('uploadFile', () => {
+    it('should "upload" a file by reading its text content', async () => {
+      const file = { name: 'upload.txt', content: 'upload content' };
+      const content = await uploadFile(file);
+      expect(content).toBe('upload content');
+    });
+
+    it('should handle error during "upload"', async () => {
+      const file = { name: 'error.txt' };
+      await expect(uploadFile(file)).rejects.toThrow('Read error');
+    });
+  });
+
+  describe('dragAndDropUpload', () => {
+    let dropArea;
+    let onDropCallback;
+
+    beforeEach(() => {
+      dropArea = document.createElement('div');
+      onDropCallback = jest.fn();
+      dragAndDropUpload(dropArea, onDropCallback);
+    });
+
+    it('should prevent default on dragover and add drag-over class', () => {
+      const event = new Event('dragover');
+      event.preventDefault = jest.fn();
+      dropArea.dispatchEvent(event);
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(dropArea.classList.contains('drag-over')).toBe(true);
+    });
+
+    it('should remove drag-over class on dragleave', () => {
+      dropArea.classList.add('drag-over');
+      const event = new Event('dragleave');
+      dropArea.dispatchEvent(event);
+      expect(dropArea.classList.contains('drag-over')).toBe(false);
+    });
+
+    it('should call onDropCallback with files on drop', () => {
+      const file1 = { name: 'file1.txt', content: 'content1' };
+      const file2 = { name: 'file2.txt', content: 'content2' };
+      const dataTransfer = { files: [file1, file2] };
+
+      const event = new Event('drop');
+      event.preventDefault = jest.fn();
+      Object.defineProperty(event, 'dataTransfer', { value: dataTransfer });
+
+      dropArea.dispatchEvent(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(dropArea.classList.contains('drag-over')).toBe(false);
+      expect(onDropCallback).toHaveBeenCalledWith([file1, file2]);
+    });
+
+    it('should not call onDropCallback if no files are dropped', () => {
+      const dataTransfer = { files: [] };
+      const event = new Event('drop');
+      event.preventDefault = jest.fn();
+      Object.defineProperty(event, 'dataTransfer', { value: dataTransfer });
+
+      dropArea.dispatchEvent(event);
+
+      expect(onDropCallback).not.toHaveBeenCalled();
+    });
+
+    it('should log error if dropArea or onDropCallback is missing', () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      dragAndDropUpload(null, jest.fn());
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
   });
 });
