@@ -4,6 +4,8 @@ import {
   generateUUID,
   getRandomInt,
   shuffleArray,
+  randomFloat,
+  randomHexColor,
 } from './random-utils';
 
 describe('random-utils', () => {
@@ -111,6 +113,36 @@ describe('random-utils', () => {
 
     it('should handle a single-element array', () => {
       expect(shuffleArray([1])).toEqual([1]);
+    });
+  });
+
+  describe('randomFloat', () => {
+    it('should return a float within the specified range (exclusive max)', () => {
+      mockMathRandom.mockReturnValue(0.0);
+      expect(randomFloat(0, 1)).toBe(0);
+
+      mockMathRandom.mockReturnValue(0.9999999999999999);
+      expect(randomFloat(0, 1)).toBeCloseTo(1, 10); // Close to 1, but not exactly 1
+
+      const min = 10;
+      const max = 20;
+      for (let i = 0; i < 100; i++) {
+        const result = randomFloat(min, max);
+        expect(result).toBeGreaterThanOrEqual(min);
+        expect(result).toBeLessThan(max);
+      }
+    });
+  });
+
+  describe('randomHexColor', () => {
+    it('should return a valid hex color string', () => {
+      mockMathRandom.mockReturnValue(0.5); // Predictable color
+      expect(randomHexColor()).toBe('#7f7f7f');
+
+      const hexColorRegex = /^#[0-9A-Fa-f]{6}$/;
+      for (let i = 0; i < 100; i++) {
+        expect(randomHexColor()).toMatch(hexColorRegex);
+      }
     });
   });
 });

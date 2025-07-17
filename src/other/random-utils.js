@@ -64,3 +64,21 @@ export function shuffleArray(array) {
 
   return newArray;
 }
+
+/**
+ * Generates a random floating-point number within a specified range.
+ * @param {number} min The minimum value (inclusive).
+ * @param {number} max The maximum value (exclusive).
+ * @returns {number} A random floating-point number between min and max.
+ */
+export function randomFloat(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+/**
+ * Generates a random hexadecimal color code.
+ * @returns {string} A random hex color string (e.g., '#RRGGBB').
+ */
+export function randomHexColor() {
+  return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+}
