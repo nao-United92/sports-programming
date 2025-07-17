@@ -3,6 +3,8 @@ import {
   resetForm,
   getInputValue,
   setInputValue,
+  getFormData,
+  clearForm,
 } from './form-utils';
 
 describe('form-utils', () => {
@@ -151,6 +153,69 @@ describe('form-utils', () => {
 
     it('should do nothing for non-existent input', () => {
       expect(() => setInputValue(null, 'value')).not.toThrow();
+    });
+  });
+
+  describe('getFormData', () => {
+    it('should get all form data correctly', () => {
+      const data = getFormData(form);
+      expect(data).toEqual({
+        username: 'john.doe',
+        email: 'john@example.com',
+        newsletter: true,
+        terms: false,
+        gender: 'male',
+        country: 'ca',
+        colors: ['red', 'blue'],
+        message: 'Hello World',
+      });
+    });
+
+    it('should handle empty form', () => {
+      document.body.innerHTML = '<form id="emptyForm"></form>';
+      const emptyForm = document.getElementById('emptyForm');
+      expect(getFormData(emptyForm)).toEqual({});
+    });
+
+    it('should handle form with no name attributes', () => {
+      document.body.innerHTML = '<form id="noNameForm"><input type="text"></form>';
+      const noNameForm = document.getElementById('noNameForm');
+      expect(getFormData(noNameForm)).toEqual({});
+    });
+
+    it('should return empty object if form is null', () => {
+      expect(getFormData(null)).toEqual({});
+    });
+  });
+
+  describe('clearForm', () => {
+    it('should clear all input fields in a form', () => {
+      form.elements.username.value = 'changed';
+      form.elements.email.value = 'changed@example.com';
+      form.elements.newsletter.checked = false;
+      form.elements.gender[1].checked = true;
+      form.elements.country.value = 'us';
+      form.elements.colors.options[0].selected = false;
+      form.elements.colors.options[1].selected = true;
+      form.elements.colors.options[2].selected = false;
+      form.elements.message.value = 'changed message';
+
+      clearForm(form);
+
+      expect(form.elements.username.value).toBe('');
+      expect(form.elements.email.value).toBe('');
+      expect(form.elements.newsletter.checked).toBe(false);
+      expect(form.elements.gender[0].checked).toBe(false);
+      expect(form.elements.gender[1].checked).toBe(false);
+      expect(form.elements.country.value).toBe('us'); // Selects usually reset to first option or empty
+      expect(form.elements.colors.options[0].selected).toBe(false);
+      expect(form.elements.colors.options[1].selected).toBe(false);
+      expect(form.elements.colors.options[2].selected).toBe(false);
+      expect(form.elements.message.value).toBe('');
+    });
+
+    it('should do nothing if form is null', () => {
+      expect(() => clearForm(null)).not.toThrow();
     });
   });
 });

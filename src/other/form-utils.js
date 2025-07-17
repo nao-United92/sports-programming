@@ -92,3 +92,53 @@ export function setInputValue(inputElement, value) {
     inputElement.value = String(value);
   }
 }
+
+/**
+ * Gets all form data as an object, including values from various input types.
+ * @param {HTMLFormElement} formElement The form element.
+ * @returns {object} An object with form field names as keys and their values.
+ */
+export function getFormData(formElement) {
+  const data = {};
+  if (!formElement) return data;
+
+  const inputs = formElement.querySelectorAll('input, select, textarea');
+  inputs.forEach(input => {
+    const name = input.name;
+    if (!name) return;
+
+    if (input.type === 'checkbox') {
+      data[name] = input.checked;
+    } else if (input.type === 'radio') {
+      if (input.checked) {
+        data[name] = input.value;
+      }
+    } else if (input.tagName.toLowerCase() === 'select' && input.multiple) {
+      data[name] = Array.from(input.options)
+        .filter(option => option.selected)
+        .map(option => option.value);
+    } else {
+      data[name] = input.value;
+    }
+  });
+  return data;
+}
+
+/**
+ * Clears all input fields within a form.
+ * @param {HTMLFormElement} formElement The form element to clear.
+ */
+export function clearForm(formElement) {
+  if (!formElement) return;
+
+  const inputs = formElement.querySelectorAll('input, select, textarea');
+  inputs.forEach(input => {
+    if (input.type === 'checkbox' || input.type === 'radio') {
+      input.checked = false;
+    } else if (input.tagName.toLowerCase() === 'select') {
+      input.selectedIndex = -1;
+    } else {
+      input.value = '';
+    }
+  });
+}
