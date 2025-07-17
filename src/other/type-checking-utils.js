@@ -47,3 +47,23 @@ export function isBoolean(value) {
 export function isObject(value) {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
+
+/**
+ * Checks if a value is a number.
+ *
+ * @param value The value to check.
+ * @returns True if the value is a number, false otherwise.
+ */
+export function isNumber(value) {
+    return typeof value === 'number';
+}
+
+/**
+ * Checks if a value is undefined.
+ *
+ * @param value The value to check.
+ * @returns True if the value is undefined, false otherwise.
+ */
+export function isUndefined(value) {
+    return typeof value === 'undefined';
+}
