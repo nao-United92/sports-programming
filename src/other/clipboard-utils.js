@@ -31,3 +31,38 @@ export async function copyToClipboard(text) {
     return Promise.reject(new Error('Failed to copy text to clipboard using Clipboard API.'));
   }
 }
+
+/**
+ * Reads text from the clipboard.
+ * Requires user permission and a secure context (HTTPS).
+ * @returns {Promise<string>} A Promise that resolves with the text from the clipboard.
+ */
+export async function readTextFromClipboard() {
+  if (!navigator.clipboard || !navigator.clipboard.readText) {
+    return Promise.reject(new Error('Clipboard API readText not supported.'));
+  }
+  try {
+    const text = await navigator.clipboard.readText();
+    return Promise.resolve(text);
+  } catch (err) {
+    return Promise.reject(new Error('Failed to read text from clipboard.' + err.message));
+  }
+}
+
+/**
+ * Writes text to the clipboard.
+ * Requires user permission and a secure context (HTTPS).
+ * @param {string} text The text to write to the clipboard.
+ * @returns {Promise<void>} A Promise that resolves when the text is written.
+ */
+export async function writeTextToClipboard(text) {
+  if (!navigator.clipboard || !navigator.clipboard.writeText) {
+    return Promise.reject(new Error('Clipboard API writeText not supported.'));
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    return Promise.resolve();
+  } catch (err) {
+    return Promise.reject(new Error('Failed to write text to clipboard.' + err.message));
+  }
+}

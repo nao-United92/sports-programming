@@ -110,3 +110,32 @@ export function isVisible(element) {
   const style = window.getComputedStyle(element);
   return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
 }
+
+/**
+ * Replaces an existing element with a new element.
+ * @param {HTMLElement} oldElement The element to be replaced.
+ * @param {HTMLElement} newElement The element to replace with.
+ * @returns {HTMLElement|null} The new element if successful, null otherwise.
+ */
+export function replaceElement(oldElement, newElement) {
+  if (!oldElement || !newElement || !oldElement.parentNode) {
+    return null;
+  }
+  oldElement.parentNode.replaceChild(newElement, oldElement);
+  return newElement;
+}
+
+/**
+ * Wraps an element with another element.
+ * @param {HTMLElement} elementToWrap The element to be wrapped.
+ * @param {HTMLElement} wrapperElement The element to wrap with.
+ * @returns {HTMLElement|null} The wrapper element if successful, null otherwise.
+ */
+export function wrapElement(elementToWrap, wrapperElement) {
+  if (!elementToWrap || !wrapperElement || !elementToWrap.parentNode) {
+    return null;
+  }
+  elementToWrap.parentNode.insertBefore(wrapperElement, elementToWrap);
+  wrapperElement.appendChild(elementToWrap);
+  return wrapperElement;
+}

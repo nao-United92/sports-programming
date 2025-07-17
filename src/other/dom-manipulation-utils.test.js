@@ -187,4 +187,51 @@ describe('dom-manipulation-utils', () => {
       expect(isVisible(null)).toBe(false);
     });
   });
+
+  describe('replaceElement', () => {
+    it('should replace an old element with a new one', () => {
+      const oldEl = createElement('div', { id: 'old' });
+      const newEl = createElement('span', { id: 'new' });
+      container.appendChild(oldEl);
+      expect(container.children[0]).toBe(oldEl);
+
+      replaceElement(oldEl, newEl);
+      expect(container.children[0]).toBe(newEl);
+      expect(container.children.length).toBe(1);
+    });
+
+    it('should return null if oldElement is null', () => {
+      const newEl = createElement('span');
+      expect(replaceElement(null, newEl)).toBeNull();
+    });
+
+    it('should return null if newElement is null', ()2 => {
+      const oldEl = createElement('div');
+      container.appendChild(oldEl);
+      expect(replaceElement(oldEl, null)).toBeNull();
+    });
+  });
+
+  describe('wrapElement', () => {
+    it('should wrap an element with another element', () => {
+      const innerEl = createElement('span', { id: 'inner' });
+      const wrapperEl = createElement('div', { id: 'wrapper' });
+      container.appendChild(innerEl);
+
+      wrapElement(innerEl, wrapperEl);
+      expect(container.children[0]).toBe(wrapperEl);
+      expect(wrapperEl.children[0]).toBe(innerEl);
+    });
+
+    it('should return null if elementToWrap is null', () => {
+      const wrapperEl = createElement('div');
+      expect(wrapElement(null, wrapperEl)).toBeNull();
+    });
+
+    it('should return null if wrapperElement is null', () => {
+      const innerEl = createElement('span');
+      container.appendChild(innerEl);
+      expect(wrapElement(innerEl, null)).toBeNull();
+    });
+  });
 });
