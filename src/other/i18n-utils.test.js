@@ -1,5 +1,5 @@
 
-import { formatNumber, formatDate, formatCurrency, getTranslation } from './i18n-utils';
+import { formatNumber, formatDate, formatCurrency, getTranslation, getLocale, pluralize } from './i18n-utils';
 
 describe('i18n-utils', () => {
   // Mock navigator.language for consistent testing
@@ -84,6 +84,25 @@ describe('i18n-utils', () => {
     it('should return the key if no translation is found', () => {
       Object.defineProperty(navigator, 'language', { value: 'fr-FR', configurable: true });
       expect(getTranslation('nonexistent', translations, 'en')).toBe('nonexistent');
+    });
+  });
+
+  describe('getLocale', () => {
+    it('should return the current browser locale', () => {
+      Object.defineProperty(navigator, 'language', { value: 'fr-CA', configurable: true });
+      expect(getLocale()).toBe('fr-CA');
+    });
+  });
+
+  describe('pluralize', () => {
+    it('should return the singular form for count 1', () => {
+      expect(pluralize(1, 'apple', 'apples')).toBe('apple');
+    });
+
+    it('should return the plural form for count other than 1', () => {
+      expect(pluralize(0, 'apple', 'apples')).toBe('apples');
+      expect(pluralize(2, 'apple', 'apples')).toBe('apples');
+      expect(pluralize(10, 'apple', 'apples')).toBe('apples');
     });
   });
 });

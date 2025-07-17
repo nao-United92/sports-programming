@@ -60,3 +60,22 @@ export function getTranslation(key, translations, fallbackLang = 'en') {
   const langTranslations = translations[lang] || translations[fallbackLang];
   return langTranslations ? langTranslations[key] || key : key;
 }
+
+/**
+ * Returns the current browser's locale.
+ * @returns {string} The locale string (e.g., 'en-US').
+ */
+export function getLocale() {
+  return navigator.language;
+}
+
+/**
+ * Returns the plural or singular form of a word based on a count.
+ * @param {number} count The number to check for plurality.
+ * @param {string} singular The singular form of the word.
+ * @param {string} plural The plural form of the word.
+ * @returns {string} The appropriate form of the word.
+ */
+export function pluralize(count, singular, plural) {
+  return count === 1 ? singular : plural;
+}
