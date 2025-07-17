@@ -105,3 +105,33 @@ export function clearSessionStorage() {
         console.error("Error clearing sessionStorage:", e);
     }
 }
+
+/**
+ * Checks if localStorage is available and accessible.
+ * @returns {boolean} True if localStorage is available, false otherwise.
+ */
+export function hasLocalStorage() {
+  try {
+    const testKey = '__localStorageTest__';
+    localStorage.setItem(testKey, testKey);
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Checks if sessionStorage is available and accessible.
+ * @returns {boolean} True if sessionStorage is available, false otherwise.
+ */
+export function hasSessionStorage() {
+  try {
+    const testKey = '__sessionStorageTest__';
+    sessionStorage.setItem(testKey, testKey);
+    sessionStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
