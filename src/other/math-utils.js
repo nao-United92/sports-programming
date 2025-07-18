@@ -21,3 +21,51 @@ export function clamp(num, lower, upper) {
 export function mapRange(num, inMin, inMax, outMin, outMax) {
   return ((num - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
 }
+
+/**
+ * Calculates the sum of numbers in an array.
+ * @param {number[]} numbers The array of numbers.
+ * @returns {number} The sum of the numbers.
+ */
+export function sum(numbers) {
+  if (!Array.isArray(numbers)) {
+    return 0;
+  }
+  return numbers.reduce((acc, num) => acc + num, 0);
+}
+
+/**
+ * Calculates the average of numbers in an array.
+ * @param {number[]} numbers The array of numbers.
+ * @returns {number} The average of the numbers.
+ */
+export function average(numbers) {
+  if (!Array.isArray(numbers) || numbers.length === 0) {
+    return 0;
+  }
+  return sum(numbers) / numbers.length;
+}
+
+/**
+ * Finds the minimum number in an array.
+ * @param {number[]} numbers The array of numbers.
+ * @returns {number} The minimum number.
+ */
+export function min(numbers) {
+  if (!Array.isArray(numbers) || numbers.length === 0) {
+    return Infinity;
+  }
+  return Math.min(...numbers);
+}
+
+/**
+ * Finds the maximum number in an array.
+ * @param {number[]} numbers The array of numbers.
+ * @returns {number} The maximum number.
+ */
+export function max(numbers) {
+  if (!Array.isArray(numbers) || numbers.length === 0) {
+    return -Infinity;
+  }
+  return Math.max(...numbers);
+}
