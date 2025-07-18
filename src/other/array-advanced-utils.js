@@ -67,3 +67,21 @@ export function shuffleArray(arr) {
 
   return arr;
 }
+
+/**
+ * Groups the elements of an array based on a given key or function.
+ * @param {Array} arr The array to group.
+ * @param {string|Function} key The key to group by, or a function that returns the key.
+ * @returns {object} An object with the grouped elements.
+ */
+export function groupBy(arr, key) {
+  if (!Array.isArray(arr)) {
+    return {};
+  }
+  return arr.reduce((acc, item) => {
+    const group = typeof key === 'function' ? key(item) : item[key];
+    acc[group] = acc[group] || [];
+    acc[group].push(item);
+    return acc;
+  }, {});
+}

@@ -1,5 +1,5 @@
 
-import { uniqueArray, flattenArray, chunkArray, shuffleArray } from './array-advanced-utils';
+import { uniqueArray, flattenArray, chunkArray, shuffleArray, groupBy } from './array-advanced-utils';
 
 describe('uniqueArray', () => {
   test('should return an array with unique elements', () => {
@@ -80,5 +80,39 @@ describe('shuffleArray', () => {
     const arr = [];
     shuffleArray(arr);
     expect(arr).toEqual([]);
+  });
+});
+
+describe('groupBy', () => {
+  test('should group by a key string', () => {
+    const arr = [
+      { category: 'A', value: 1 },
+      { category: 'B', value: 2 },
+      { category: 'A', value: 3 },
+    ];
+    const grouped = groupBy(arr, 'category');
+    expect(grouped).toEqual({
+      A: [{ category: 'A', value: 1 }, { category: 'A', value: 3 }],
+      B: [{ category: 'B', value: 2 }],
+    });
+  });
+
+  test('should group by a function', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const grouped = groupBy(arr, item => (item % 2 === 0 ? 'even' : 'odd'));
+    expect(grouped).toEqual({
+      odd: [1, 3, 5],
+      even: [2, 4],
+    });
+  });
+
+  test('should return an empty object for an empty array', () => {
+    expect(groupBy([], 'category')).toEqual({});
+  });
+
+  test('should return an empty object for non-array input', () => {
+    expect(groupBy(null, 'category')).toEqual({});
+    expect(groupBy(undefined, 'category')).toEqual({});
+    expect(groupBy('string', 'category')).toEqual({});
   });
 });
