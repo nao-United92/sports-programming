@@ -1,4 +1,4 @@
-import { uuid } from './general-utils.js';
+import { uuid, delay } from './general-utils.js';
 
 describe('general-utils', () => {
   describe('uuid', () => {
@@ -13,6 +13,24 @@ describe('general-utils', () => {
       const id1 = uuid();
       const id2 = uuid();
       expect(id1).not.toBe(id2);
+    });
+  });
+
+  describe('delay', () => {
+    jest.useFakeTimers();
+
+    test('should delay execution for the specified time', async () => {
+      const mockFunction = jest.fn();
+      const promise = delay(1000).then(mockFunction);
+
+      expect(mockFunction).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(500);
+      expect(mockFunction).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(500);
+      await promise; // Ensure the promise resolves
+      expect(mockFunction).toHaveBeenCalledTimes(1);
     });
   });
 });

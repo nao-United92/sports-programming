@@ -9,3 +9,12 @@ export function uuid() {
     return v.toString(16);
   });
 }
+
+/**
+ * Delays the execution of a function for a specified amount of time.
+ * @param {number} ms The number of milliseconds to delay.
+ * @returns {Promise<void>} A Promise that resolves after the delay.
+ */
+export function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
