@@ -77,3 +77,25 @@ export function removeSessionStorageItem(key) {
     console.error('Error removing sessionStorage item:', e);
   }
 }
+
+/**
+ * Clears all items from localStorage.
+ */
+export function clearLocalStorage() {
+  try {
+    localStorage.clear();
+  } catch (e) {
+    console.error('Error clearing localStorage:', e);
+  }
+}
+
+/**
+ * Clears all items from sessionStorage.
+ */
+export function clearSessionStorage() {
+  try {
+    sessionStorage.clear();
+  } catch (e) {
+    console.error('Error clearing sessionStorage:', e);
+  }
+}

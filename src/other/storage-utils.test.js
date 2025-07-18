@@ -1,4 +1,4 @@
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, setSessionStorageItem, getSessionStorageItem, removeSessionStorageItem } from './storage-utils.js';
+import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, setSessionStorageItem, getSessionStorageItem, removeSessionStorageItem, clearLocalStorage, clearSessionStorage } from './storage-utils.js';
 
 describe('storage-utils', () => {
   const localStorageMock = (() => {
@@ -47,9 +47,11 @@ describe('storage-utils', () => {
     localStorageMock.getItem.mockClear();
     localStorageMock.setItem.mockClear();
     localStorageMock.removeItem.mockClear();
+    localStorageMock.clear.mockClear(); // Add this line
     sessionStorageMock.getItem.mockClear();
     sessionStorageMock.setItem.mockClear();
     sessionStorageMock.removeItem.mockClear();
+    sessionStorageMock.clear.mockClear(); // Add this line
   });
 
   describe('localStorage', () => {
@@ -114,6 +116,15 @@ describe('storage-utils', () => {
       expect(consoleErrorSpy).toHaveBeenCalled();
       consoleErrorSpy.mockRestore();
     });
+
+    test('clearLocalStorage should clear all items', () => {
+      setLocalStorageItem('key1', 'value1');
+      setLocalStorageItem('key2', 'value2');
+      clearLocalStorage();
+      expect(localStorageMock.clear).toHaveBeenCalledTimes(1);
+      expect(getLocalStorageItem('key1')).toBeNull();
+      expect(getLocalStorageItem('key2')).toBeNull();
+    });
   });
 
   describe('sessionStorage', () => {
@@ -177,6 +188,15 @@ describe('storage-utils', () => {
       expect(getSessionStorageItem('errorKey')).toBeNull();
       expect(consoleErrorSpy).toHaveBeenCalled();
       consoleErrorSpy.mockRestore();
+    });
+
+    test('clearSessionStorage should clear all items', () => {
+      setSessionStorageItem('key1', 'value1');
+      setSessionStorageItem('key2', 'value2');
+      clearSessionStorage();
+      expect(sessionStorageMock.clear).toHaveBeenCalledTimes(1);
+      expect(getSessionStorageItem('key1')).toBeNull();
+      expect(getSessionStorageItem('key2')).toBeNull();
     });
   });
 });
