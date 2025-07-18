@@ -1,31 +1,50 @@
 /**
- * Sets a cookie with the given name, value, and optional expiration days.
- * @param {string} name The name of the cookie.
- * @param {string} value The value of the cookie.
- * @param {number} [days] The number of days until the cookie expires. If not provided, the cookie is a session cookie.
- */
-export function setCookie(name, value, days) {
-  let expires = '';
-  if (days) {
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = '; expires=' + date.toUTCString();
-  }
-  document.cookie = name + '=' + (value || '') + expires + '; path=/';
-}
-
-/**
- * Gets the value of a cookie by its name.
- * @param {string} name The name of the cookie to retrieve.
+ * Gets a cookie by name.
+ * @param {string} name The name of the cookie to get.
  * @returns {string|null} The value of the cookie, or null if not found.
  */
 export function getCookie(name) {
-  const nameEQ = name + '=';
-  const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  if (match) {
+    return decodeURIComponent(match[2]);
   }
   return null;
+}
+
+/**
+ * Sets a cookie.
+ * @param {string} name The name of the cookie.
+ * @param {string} value The value of the cookie.
+ * @param {object} [options] Options for the cookie.
+ * @param {number} [options.days] The number of days until the cookie expires.
+ * @param {string} [options.path] The path for the cookie.
+ */
+export function setCookie(name, value, options = {}) {
+  let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+
+  if (options.days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (options.days * 24 * 60 * 60 * 1000));
+    cookieString += '; expires=' + date.toUTCString();
+  } else {
+    const date = new Date();
+    date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000));
+    cookieString += '; expires=' + date.toUTCString();
+  }
+
+  if (options.path) {
+    cookieString += '; path=' + options.path;
+  } else {
+    cookieString += '; path=/';
+  }
+
+  document.cookie = cookieString;
+}
+
+/**
+ * Deletes a cookie by name.
+ * @param {string} name The name of the cookie to delete.
+ */
+export function deleteCookie(name) {
+  setCookie(name, '', { days: -1 });
 }

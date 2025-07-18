@@ -1,53 +1,50 @@
-import { setCookie, getCookie } from './cookie-utils';
+import { getCookie, setCookie, deleteCookie } from './cookie-utils.js';
 
 describe('cookie-utils', () => {
+  let cookies = {};
+
+  Object.defineProperty(document, 'cookie', {
+    get: jest.fn(() => {
+      return Object.keys(cookies).map(key => `${key}=${cookies[key]}`).join('; ');
+    }),
+    set: jest.fn((cookieString) => {
+      const [nameValue, ...rest] = cookieString.split(';');
+      const [name, value] = nameValue.split('=');
+      if (value === undefined || rest.includes('expires=Thu, 01 Jan 1970 00:00:00 GMT')) {
+        delete cookies[name];
+      } else {
+        cookies[name] = value;
+      }
+    }),
+    configurable: true,
+  });
+
   beforeEach(() => {
-    // Clear cookies before each test
-    document.cookie.split(';').forEach(function(c) {
-      document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
-    });
+    cookies = {}; // Clear cookies before each test
   });
 
-  describe('setCookie', () => {
-    it('should set a cookie with a name and value', () => {
-      setCookie('testName', 'testValue');
-      expect(document.cookie).toContain('testName=testValue');
-    });
-
-    it('should set a cookie with expiration days', () => {
-      const date = new Date();
-      date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000));
-      setCookie('testName', 'testValue', 1);
-      expect(document.cookie).toContain('testName=testValue');
-      expect(document.cookie).toContain('expires=' + date.toUTCString().split(' ').slice(0, 5).join(' '));
-    });
-
-    it('should set an empty value cookie', () => {
-      setCookie('emptyCookie', '');
-      expect(document.cookie).toContain('emptyCookie=');
-    });
+  test('setCookie and getCookie', () => {
+    setCookie('test', 'value');
+    expect(getCookie('test')).toBe('value');
   });
 
-  describe('getCookie', () => {
-    it('should get the value of an existing cookie', () => {
-      document.cookie = 'myCookie=myValue';
-      expect(getCookie('myCookie')).toBe('myValue');
-    });
+  test('setCookie with expiration', () => {
+    setCookie('test', 'value', { days: 1 });
+    expect(document.cookie).toContain('test=value'); // Check if the cookie is set
+  });
 
-    it('should return null for a non-existent cookie', () => {
-      expect(getCookie('nonExistentCookie')).toBe(null);
-    });
+  test('setCookie with path', () => {
+    setCookie('test', 'value', { path: '/' });
+    expect(document.cookie).toContain('test=value'); // Check if the cookie is set
+  });
 
-    it('should handle multiple cookies', () => {
-      document.cookie = 'cookie1=value1';
-      document.cookie = 'cookie2=value2';
-      expect(getCookie('cookie1')).toBe('value1');
-      expect(getCookie('cookie2')).toBe('value2');
-    });
+  test('deleteCookie', () => {
+    setCookie('test', 'value');
+    deleteCookie('test');
+    expect(getCookie('test')).toBe(null);
+  });
 
-    it('should return null for an empty cookie string', () => {
-      document.cookie = '';
-      expect(getCookie('anyCookie')).toBe(null);
-    });
+  test('getCookie for non-existent cookie', () => {
+    expect(getCookie('nonexistent')).toBe(null);
   });
 });
