@@ -1,5 +1,5 @@
 
-import { getQueryParams, addQueryParams, removeQueryParams } from './url-query-utils';
+import { getQueryParams, addQueryParams, removeQueryParams, hasQueryParam, getQueryParamValue } from './url-query-utils';
 
 describe('getQueryParams', () => {
   test('should parse query parameters from a URL string', () => {
@@ -77,5 +77,43 @@ describe('removeQueryParams', () => {
     const url = 'https://example.com/path';
     const paramsToRemove = ['name'];
     expect(removeQueryParams(url, paramsToRemove)).toBe('https://example.com/path');
+  });
+});
+
+describe('hasQueryParam', () => {
+  test('should return true if the URL has the parameter', () => {
+    const url = 'https://example.com?param1=value1';
+    expect(hasQueryParam(url, 'param1')).toBe(true);
+  });
+
+  test('should return false if the URL does not have the parameter', () => {
+    const url = 'https://example.com?param1=value1';
+    expect(hasQueryParam(url, 'param2')).toBe(false);
+  });
+
+  test('should handle empty URL', () => {
+    expect(hasQueryParam('', 'param1')).toBe(false);
+  });
+});
+
+describe('getQueryParamValue', () => {
+  test('should return the value of the parameter if found', () => {
+    const url = 'https://example.com?param1=value1&param2=value2';
+    expect(getQueryParamValue(url, 'param1')).toBe('value1');
+    expect(getQueryParamValue(url, 'param2')).toBe('value2');
+  });
+
+  test('should return null if the parameter is not found', () => {
+    const url = 'https://example.com?param1=value1';
+    expect(getQueryParamValue(url, 'param3')).toBeNull();
+  });
+
+  test('should return empty string if parameter exists but has no value', () => {
+    const url = 'https://example.com?param1=';
+    expect(getQueryParamValue(url, 'param1')).toBe('');
+  });
+
+  test('should handle empty URL', () => {
+    expect(getQueryParamValue('', 'param1')).toBeNull();
   });
 });
