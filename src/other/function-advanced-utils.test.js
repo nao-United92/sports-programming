@@ -1,5 +1,4 @@
-
-import { debounce, throttle, memoize } from './function-advanced-utils';
+import { debounce, throttle, memoize, once } from './function-advanced-utils';
 
 describe('debounce', () => {
   jest.useFakeTimers();
@@ -106,5 +105,29 @@ describe('memoize', () => {
 
     expect(memoizedFunc({ x: 2 }, [3])).toBe('{"a":{"x":2},"b":[3]}');
     expect(func).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('once', () => {
+  test('should only call the function once', () => {
+    const func = jest.fn();
+    const onceFunc = once(func);
+
+    onceFunc();
+    onceFunc();
+    onceFunc();
+
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  test('should return the result of the first call', () => {
+    const func = jest.fn((a, b) => a + b);
+    const onceFunc = once(func);
+
+    const result1 = onceFunc(1, 2);
+    expect(result1).toBe(3);
+
+    const result2 = onceFunc(3, 4);
+    expect(result2).toBe(3);
   });
 });
