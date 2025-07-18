@@ -1,4 +1,4 @@
-import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd } from './number-utils.js';
+import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange } from './number-utils.js';
 
 describe('number-utils', () => {
   describe('isNumber', () => {
@@ -54,6 +54,38 @@ describe('number-utils', () => {
 
     it('should return false for an even number', () => {
       expect(isOdd(2)).toBe(false);
+    });
+  });
+
+  describe('toPercentage', () => {
+    it('should convert a number to a percentage string with default decimals', () => {
+      expect(toPercentage(0.5)).toBe('50%');
+      expect(toPercentage(0.1234, 2)).toBe('12.34%');
+    });
+
+    it('should return an empty string for non-number inputs', () => {
+      expect(toPercentage(null)).toBe('');
+      expect(toPercentage(undefined)).toBe('');
+      expect(toPercentage('abc')).toBe('');
+    });
+  });
+
+  describe('isInRange', () => {
+    it('should return true if the number is within the range', () => {
+      expect(isInRange(5, 1, 10)).toBe(true);
+      expect(isInRange(1, 1, 10)).toBe(true);
+      expect(isInRange(10, 1, 10)).toBe(true);
+    });
+
+    it('should return false if the number is outside the range', () => {
+      expect(isInRange(0, 1, 10)).toBe(false);
+      expect(isInRange(11, 1, 10)).toBe(false);
+    });
+
+    it('should return false for non-number inputs', () => {
+      expect(isInRange(null, 1, 10)).toBe(false);
+      expect(isInRange(undefined, 1, 10)).toBe(false);
+      expect(isInRange('abc', 1, 10)).toBe(false);
     });
   });
 });

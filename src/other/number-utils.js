@@ -66,3 +66,27 @@ export function isEven(num) {
 export function isOdd(num) {
   return isNumber(num) && num % 2 !== 0;
 }
+
+/**
+ * Converts a number to a percentage string.
+ * @param {number} num The number to convert.
+ * @param {number} [decimals=0] The number of decimal places to include.
+ * @returns {string} The percentage string.
+ */
+export function toPercentage(num, decimals = 0) {
+  if (!isNumber(num)) {
+    return '';
+  }
+  return `${(num * 100).toFixed(decimals)}%`;
+}
+
+/**
+ * Checks if a number is within a specified range (inclusive).
+ * @param {number} num The number to check.
+ * @param {number} min The minimum value of the range.
+ * @param {number} max The maximum value of the range.
+ * @returns {boolean} True if the number is within the range, false otherwise.
+ */
+export function isInRange(num, min, max) {
+  return isNumber(num) && num >= min && num <= max;
+}
