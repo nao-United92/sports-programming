@@ -150,3 +150,56 @@ export function slideUp(element, duration = 400) {
     requestAnimationFrame(animate);
   });
 }
+
+/**
+ * Animates the scrolling of an element to a specific position.
+ * @param {HTMLElement} element The element to scroll.
+ * @param {number} to The target scroll position (e.g., scrollTop value).
+ * @param {number} [duration=500] The duration of the animation in milliseconds.
+ * @returns {Promise<void>} A Promise that resolves when the animation is complete.
+ */
+export function animateScrollTo(element, to, duration = 500) {
+  return new Promise(resolve => {
+    if (!element) {
+      resolve();
+      return;
+    }
+
+    const start = element.scrollTop;
+    const change = to - start;
+    let currentTime = 0;
+
+    const animateScroll = () => {
+      currentTime += 10; // Increment time
+      const val = easeInOutQuad(currentTime, start, change, duration);
+      element.scrollTop = val;
+      if (currentTime < duration) {
+        requestAnimationFrame(animateScroll);
+      } else {
+        resolve();
+      }
+    };
+
+    // Easing function (Quadratic ease-in-out)
+    const easeInOutQuad = (t, b, c, d) => {
+      t /= d / 2;
+      if (t < 1) return c / 2 * t * t + b;
+      t--;
+      return -c / 2 * (t * (t - 2) - 1) + b;
+    };
+
+    animateScroll();
+  });
+}
+
+/**
+ * Stops all CSS animations on an element.
+ * @param {HTMLElement} element The element to stop animations on.
+ */
+export function stopAnimations(element) {
+  if (element && typeof element.getAnimations === 'function') {
+    element.getAnimations().forEach(animation => {
+      animation.cancel();
+    });
+  }
+}
