@@ -181,3 +181,21 @@ export function mergeDeep(target, ...sources) {
   }
   return target;
 }
+
+/**
+ * Inverts the keys and values of an object.
+ * @param {object} obj The object to invert.
+ * @returns {object} A new object with inverted keys and values.
+ */
+export function invertObject(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return {};
+  }
+  const newObj = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      newObj[obj[key]] = key;
+    }
+  }
+  return newObj;
+}

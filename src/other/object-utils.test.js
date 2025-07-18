@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep } from './object-utils';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject } from './object-utils';
 
 describe('deepClone', () => {
   test('should deep clone a simple object', () => {
@@ -257,5 +257,35 @@ describe('mergeDeep', () => {
   test('should return a new object if target is not an object', () => {
     const merged = mergeDeep(null, { a: 1 });
     expect(merged).toEqual({ a: 1 });
+  });
+});
+
+describe('invertObject', () => {
+  test('should invert keys and values', () => {
+    const obj = { a: '1', b: '2', c: '3' };
+    const inverted = invertObject(obj);
+    expect(inverted).toEqual({ '1': 'a', '2': 'b', '3': 'c' });
+  });
+
+  test('should handle objects with non-string values', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const inverted = invertObject(obj);
+    expect(inverted).toEqual({ '1': 'a', '2': 'b', '3': 'c' });
+  });
+
+  test('should handle duplicate values by overwriting', () => {
+    const obj = { a: '1', b: '2', c: '1' };
+    const inverted = invertObject(obj);
+    expect(inverted).toEqual({ '1': 'c', '2': 'b' });
+  });
+
+  test('should return an empty object for an empty object', () => {
+    expect(invertObject({})).toEqual({});
+  });
+
+  test('should return an empty object for non-object inputs', () => {
+    expect(invertObject(null)).toEqual({});
+    expect(invertObject(undefined)).toEqual({});
+    expect(invertObject(123)).toEqual({});
   });
 });
