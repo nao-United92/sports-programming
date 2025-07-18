@@ -1,16 +1,20 @@
 /**
  * Formats a Date object into a string with the specified format.
- * @param {Date} date - The date object to format.
- * @param {string} format - The format string (e.g., 'YYYY-MM-DD', 'MM/DD/YYYY').
+ * @param {Date} date The Date object to format.
+ * @param {string} format The format string (e.g., 'YYYY-MM-DD', 'MM/DD/YYYY HH:mm:ss').
  * @returns {string} The formatted date string.
  */
 export function formatDate(date, format) {
+  if (!(date instanceof Date) || isNaN(date)) {
+    return '';
+  }
+
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
 
   return format
     .replace(/YYYY/g, year)
@@ -22,95 +26,18 @@ export function formatDate(date, format) {
 }
 
 /**
- * Adds a specified number of days to a Date object.
- * @param {Date} date - The original date.
- * @param {number} days - The number of days to add.
- * @returns {Date} A new Date object with the added days.
- */
-export function addDays(date, days) {
-  const newDate = new Date(date);
-  newDate.setDate(date.getDate() + days);
-  return newDate;
-}
-
-/**
  * Checks if two Date objects represent the same day (ignoring time).
- * @param {Date} date1 - The first date.
- * @param {Date} date2 - The second date.
+ * @param {Date} date1 The first Date object.
+ * @param {Date} date2 The second Date object.
  * @returns {boolean} True if both dates are on the same day, false otherwise.
  */
 export function isSameDay(date1, date2) {
+  if (!(date1 instanceof Date) || isNaN(date1) || !(date2 instanceof Date) || isNaN(date2)) {
+    return false;
+  }
   return (
     date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate()
   );
-}
-
-/**
- * Calculates the number of days between two dates.
- * @param {Date} date1 The first date.
- * @param {Date} date2 The second date.
- * @returns {number} The number of days between the two dates.
- */
-export function daysBetween(date1, date2) {
-  const oneDay = 1000 * 60 * 60 * 24;
-  const diff = Math.abs(date1.getTime() - date2.getTime());
-  return Math.round(diff / oneDay);
-}
-
-/**
- * Checks if a given date is in the past.
- * @param {Date} date - The date to check.
- * @returns {boolean} True if the date is in the past, false otherwise.
- */
-export function isPast(date) {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0); // Ignore time for comparison
-  const checkDate = new Date(date);
-  checkDate.setHours(0, 0, 0, 0); // Ignore time for comparison
-  return checkDate.getTime() < now.getTime();
-}
-
-/**
- * Gets the first day of the month for a given date.
- * @param {Date} date - The date to get the start of the month from.
- * @returns {Date} A new Date object representing the first day of the month.
- */
-export function startOfMonth(date) {
-  const newDate = new Date(date);
-  newDate.setDate(1);
-  newDate.setHours(0, 0, 0, 0);
-  return newDate;
-}
-
-/**
- * Gets the last day of the month for a given date.
- * @param {Date} date - The date to get the end of the month from.
- * @returns {Date} A new Date object representing the last day of the month.
- */
-export function endOfMonth(date) {
-  const newDate = new Date(date);
-  newDate.setMonth(newDate.getMonth() + 1, 0);
-  newDate.setHours(23, 59, 59, 999);
-  return newDate;
-}
-
-/**
- * Returns the number of days in a given month and year.
- * @param {number} year - The year.
- * @param {number} month - The month (0-indexed, i.e., 0 for January, 11 for December).
- * @returns {number} The number of days in the month.
- */
-export function getDaysInMonth(year, month) {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-/**
- * Checks if a given year is a leap year.
- * @param {number} year - The year to check.
- * @returns {boolean} True if the year is a leap year, false otherwise.
- */
-export function isLeapYear(year) {
-  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
