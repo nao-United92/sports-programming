@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -104,6 +104,47 @@ describe('array-utils', () => {
       expect(removeFalsy(null)).toEqual([]);
       expect(removeFalsy(undefined)).toEqual([]);
       expect(removeFalsy(123)).toEqual([]);
+    });
+  });
+
+  describe('contains', () => {
+    it('should return true if the array contains the element', () => {
+      expect(contains([1, 2, 3], 2)).toBe(true);
+    });
+
+    it('should return false if the array does not contain the element', () => {
+      expect(contains([1, 2, 3], 4)).toBe(false);
+    });
+
+    it('should handle non-array inputs', () => {
+      expect(contains(null, 1)).toBe(false);
+      expect(contains(undefined, 1)).toBe(false);
+    });
+  });
+
+  describe('intersection', () => {
+    it('should return common elements between two arrays', () => {
+      expect(intersection([1, 2, 3], [2, 3, 4])).toEqual([2, 3]);
+      expect(intersection(['a', 'b'], ['b', 'c'])).toEqual(['b']);
+      expect(intersection([1, 2], [3, 4])).toEqual([]);
+    });
+
+    it('should handle non-array inputs', () => {
+      expect(intersection(null, [1, 2])).toEqual([]);
+      expect(intersection([1, 2], undefined)).toEqual([]);
+    });
+  });
+
+  describe('difference', () => {
+    it('should return elements present in the first array but not in the second', () => {
+      expect(difference([1, 2, 3, 4], [2, 4])).toEqual([1, 3]);
+      expect(difference(['a', 'b', 'c'], ['b'])).toEqual(['a', 'c']);
+      expect(difference([1, 2], [3, 4])).toEqual([1, 2]);
+    });
+
+    it('should handle non-array inputs', () => {
+      expect(difference(null, [1, 2])).toEqual([]);
+      expect(difference([1, 2], undefined)).toEqual([]);
     });
   });
 });

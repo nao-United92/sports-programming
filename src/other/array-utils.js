@@ -129,4 +129,44 @@ export function removeFalsy(arr) {
   }
   return arr.filter(Boolean);
 }
+
+/**
+ * Checks if an array contains a specific element.
+ * @param {Array} arr The array to check.
+ * @param {*} element The element to search for.
+ * @returns {boolean} True if the element is found, false otherwise.
+ */
+export function contains(arr, element) {
+  if (!Array.isArray(arr)) {
+    return false;
+  }
+  return arr.includes(element);
+}
+
+/**
+ * Returns a new array with elements that are present in both arrays.
+ * @param {Array} arr1 The first array.
+ * @param {Array} arr2 The second array.
+ * @returns {Array} A new array containing common elements.
+ */
+export function intersection(arr1, arr2) {
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    return [];
+  }
+  const set2 = new Set(arr2);
+  return arr1.filter(item => set2.has(item));
+}
+
+/**
+ * Returns a new array with elements that are present in the first array but not in the second.
+ * @param {Array} arr1 The first array.
+ * @param {Array} arr2 The second array.
+ * @returns {Array} A new array containing the difference.
+ */
+export function difference(arr1, arr2) {
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    return [];
+  }
+  const set2 = new Set(arr2);
+  return arr1.filter(item => !set2.has(item));
 }
