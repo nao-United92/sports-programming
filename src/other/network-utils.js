@@ -43,6 +43,17 @@ export function isOnline() {
 }
 
 /**
+ * Gets the current network connection type.
+ * @returns {string} The network connection type (e.g., 'wifi', 'cellular', 'ethernet', 'none', or 'unknown').
+ */
+export function getNetworkType() {
+  if (navigator.connection && navigator.connection.effectiveType) {
+    return navigator.connection.effectiveType;
+  }
+  return 'unknown';
+}
+
+/**
  * Parses URL query parameters into an object.
  * @param {string} url The URL string to parse. Defaults to current window location.
  * @returns {object} An object containing the query parameters.

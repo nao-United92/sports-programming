@@ -1,4 +1,4 @@
-import { getJSON, postJSON, isOnline, getQueryParams } from './network-utils.js';
+import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType } from './network-utils.js';
 
 global.fetch = jest.fn();
 
@@ -92,6 +92,32 @@ describe('network-utils', () => {
         writable: true,
       });
       expect(getQueryParams()).toEqual({ test: 'default' });
+    });
+  });
+
+  describe('getNetworkType', () => {
+    it('should return the effective network type if available', () => {
+      Object.defineProperty(navigator, 'connection', {
+        value: { effectiveType: '4g' },
+        configurable: true,
+      });
+      expect(getNetworkType()).toBe('4g');
+    });
+
+    it('should return 'unknown' if effectiveType is not available', () => {
+      Object.defineProperty(navigator, 'connection', {
+        value: {},
+        configurable: true,
+      });
+      expect(getNetworkType()).toBe('unknown');
+    });
+
+    it('should return 'unknown' if navigator.connection is not available', () => {
+      Object.defineProperty(navigator, 'connection', {
+        value: undefined,
+        configurable: true,
+      });
+      expect(getNetworkType()).toBe('unknown');
     });
   });
 });

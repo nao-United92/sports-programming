@@ -158,3 +158,25 @@ export function countOccurrences(str, subStr, caseSensitive = true) {
   }
   return count;
 }
+
+/**
+ * Escapes HTML special characters in a string.
+ * @param {string} str The input string.
+ * @returns {string} The escaped string.
+ */
+export function escapeHtml(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.replace(/[&<>'"/]/g, (match) => {
+    const escapeMap = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+      '/': '&#x2F;'
+    };
+    return escapeMap[match];
+  });
+}

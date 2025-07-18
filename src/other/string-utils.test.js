@@ -10,6 +10,7 @@ import {
   isEmpty,
   isPalindrome,
   countOccurrences,
+  escapeHtml,
 } from './string-utils';
 
 describe('string-utils', () => {
@@ -193,6 +194,19 @@ describe('string-utils', () => {
     it('should handle non-string inputs', () => {
       expect(countOccurrences(null, 'a')).toBe(0);
       expect(countOccurrences('a', null)).toBe(0);
+    });
+  });
+
+  describe('escapeHtml', () => {
+    it('should escape HTML special characters', () => {
+      expect(escapeHtml('<script>alert("xss")</script>')).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;&#x2F;script&gt;');
+      expect(escapeHtml('Stay tuned for more & great content!')).toBe('Stay tuned for more &amp; great content!');
+    });
+
+    it('should return an empty string for non-string inputs', () => {
+      expect(escapeHtml(null)).toBe('');
+      expect(escapeHtml(undefined)).toBe('');
+      expect(escapeHtml(123)).toBe('');
     });
   });
 });
