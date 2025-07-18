@@ -1,4 +1,4 @@
-import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren } from './dom-utils.js';
+import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml } from './dom-utils.js';
 
 describe('dom-utils', () => {
   beforeEach(() => {
@@ -137,6 +137,83 @@ describe('dom-utils', () => {
     it('should not throw error if parent is null', () => {
       const parent = null;
       appendChildren(parent, [createElement('div')]);
+      // No error should be thrown
+    });
+  });
+
+  describe('getStyle', () => {
+    it('should get the computed style of an element', () => {
+      const el = createElement('div');
+      el.style.width = '100px';
+      document.body.appendChild(el);
+      expect(getStyle(el, 'width')).toBe('100px');
+    });
+
+    it('should return empty string for null element', () => {
+      expect(getStyle(null, 'width')).toBe('');
+    });
+  });
+
+  describe('setStyle', () => {
+    it('should set the style of an element', () => {
+      const el = createElement('div');
+      setStyle(el, 'width', '200px');
+      expect(el.style.width).toBe('200px');
+    });
+
+    it('should not throw error for null element', () => {
+      const el = null;
+      setStyle(el, 'width', '200px');
+      // No error should be thrown
+    });
+  });
+
+  describe('getText', () => {
+    it('should get the text content of an element', () => {
+      const el = createElement('div', {}, ['Hello World']);
+      expect(getText(el)).toBe('Hello World');
+    });
+
+    it('should return empty string for null element', () => {
+      expect(getText(null)).toBe('');
+    });
+  });
+
+  describe('setText', () => {
+    it('should set the text content of an element', () => {
+      const el = createElement('div');
+      setText(el, 'New Text');
+      expect(el.textContent).toBe('New Text');
+    });
+
+    it('should not throw error for null element', () => {
+      const el = null;
+      setText(el, 'New Text');
+      // No error should be thrown
+    });
+  });
+
+  describe('getHtml', () => {
+    it('should get the HTML content of an element', () => {
+      const el = createElement('div', {}, [createElement('span', {}, ['Hello'])]);
+      expect(getHtml(el)).toBe('<span>Hello</span>');
+    });
+
+    it('should return empty string for null element', () => {
+      expect(getHtml(null)).toBe('');
+    });
+  });
+
+  describe('setHtml', () => {
+    it('should set the HTML content of an element', () => {
+      const el = createElement('div');
+      setHtml(el, '<strong>New HTML</strong>');
+      expect(el.innerHTML).toBe('<strong>New HTML</strong>');
+    });
+
+    it('should not throw error for null element', () => {
+      const el = null;
+      setHtml(el, '<strong>New HTML</strong>');
       // No error should be thrown
     });
   });

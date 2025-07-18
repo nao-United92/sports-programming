@@ -170,3 +170,74 @@ export function appendChildren(parent, children) {
     });
   }
 }
+
+/**
+ * Gets the computed style of an element.
+ * @param {HTMLElement} element The element to get the style from.
+ * @param {string} property The CSS property to get.
+ * @returns {string} The computed style value.
+ */
+export function getStyle(element, property) {
+  if (!element || typeof property !== 'string') {
+    return '';
+  }
+  return window.getComputedStyle(element).getPropertyValue(property);
+}
+
+/**
+ * Sets the style of an element.
+ * @param {HTMLElement} element The element to set the style on.
+ * @param {string} property The CSS property to set.
+ * @param {string} value The value to set the property to.
+ */
+export function setStyle(element, property, value) {
+  if (element && typeof property === 'string' && typeof value === 'string') {
+    element.style[property] = value;
+  }
+}
+
+/**
+ * Gets the text content of an element.
+ * @param {HTMLElement} element The element to get the text content from.
+ * @returns {string} The text content of the element.
+ */
+export function getText(element) {
+  if (!element) {
+    return '';
+  }
+  return element.textContent || '';
+}
+
+/**
+ * Sets the text content of an element.
+ * @param {HTMLElement} element The element to set the text content on.
+ * @param {string} text The text content to set.
+ */
+export function setText(element, text) {
+  if (element) {
+    element.textContent = text;
+  }
+}
+
+/**
+ * Gets the HTML content of an element.
+ * @param {HTMLElement} element The element to get the HTML content from.
+ * @returns {string} The HTML content of the element.
+ */
+export function getHtml(element) {
+  if (!element) {
+    return '';
+  }
+  return element.innerHTML || '';
+}
+
+/**
+ * Sets the HTML content of an element.
+ * @param {HTMLElement} element The element to set the HTML content on.
+ * @param {string} html The HTML content to set.
+ */
+export function setHtml(element, html) {
+  if (element) {
+    element.innerHTML = html;
+  }
+}
