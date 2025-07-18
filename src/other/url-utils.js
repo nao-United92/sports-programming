@@ -66,3 +66,15 @@ export function addQueryParams(url, params) {
   }
   return urlObj.toString();
 }
+
+/**
+ * Combines a base URL and a relative URL into a single URL.
+ * @param {string} baseURL The base URL.
+ * @param {string} relativeURL The relative URL.
+ * @returns {string} The combined URL.
+ */
+export function combineURLs(baseURL, relativeURL) {
+  return relativeURL
+    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+    : baseURL;
+}

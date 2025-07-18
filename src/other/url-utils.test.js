@@ -1,4 +1,4 @@
-import { getQueryParam, setQueryParam, removeQueryParam, isAbsoluteUrl, addQueryParams } from './url-utils.js';
+import { getQueryParam, setQueryParam, removeQueryParam, isAbsoluteUrl, addQueryParams, combineURLs } from './url-utils.js';
 
 describe('url-utils', () => {
   const url = 'https://example.com?a=1&b=2';
@@ -35,5 +35,27 @@ describe('url-utils', () => {
   it('should handle empty params object', () => {
     const newUrl = addQueryParams('https://example.com', {});
     expect(newUrl).toBe('https://example.com/');
+  });
+
+  describe('combineURLs', () => {
+    it('should combine a base URL and a relative URL', () => {
+      expect(combineURLs('https://example.com', '/foo')).toBe('https://example.com/foo');
+    });
+
+    it('should handle trailing slashes in the base URL', () => {
+      expect(combineURLs('https://example.com/', '/foo')).toBe('https://example.com/foo');
+    });
+
+    it('should handle leading slashes in the relative URL', () => {
+      expect(combineURLs('https://example.com', 'foo')).toBe('https://example.com/foo');
+    });
+
+    it('should handle both trailing and leading slashes', () => {
+      expect(combineURLs('https://example.com/', 'foo')).toBe('https://example.com/foo');
+    });
+
+    it('should return the base URL if the relative URL is empty', () => {
+      expect(combineURLs('https://example.com', '')).toBe('https://example.com');
+    });
   });
 });
