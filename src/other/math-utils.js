@@ -69,3 +69,17 @@ export function max(numbers) {
   }
   return Math.max(...numbers);
 }
+
+/**
+ * Calculates the median of numbers in an array.
+ * @param {number[]} numbers The array of numbers.
+ * @returns {number} The median of the numbers.
+ */
+export function median(numbers) {
+  if (!Array.isArray(numbers) || numbers.length === 0) {
+    return NaN;
+  }
+  const sortedNumbers = [...numbers].sort((a, b) => a - b);
+  const mid = Math.floor(sortedNumbers.length / 2);
+  return sortedNumbers.length % 2 !== 0 ? sortedNumbers[mid] : (sortedNumbers[mid - 1] + sortedNumbers[mid]) / 2;
+}

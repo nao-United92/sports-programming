@@ -1,4 +1,4 @@
-import { clamp, mapRange, sum, average, min, max } from './math-utils';
+import { clamp, mapRange, sum, average, min, max, median } from './math-utils';
 
 describe('math-utils', () => {
   describe('clamp', () => {
@@ -106,6 +106,28 @@ describe('math-utils', () => {
       expect(max(null)).toBe(-Infinity);
       expect(max(undefined)).toBe(-Infinity);
       expect(max('abc')).toBe(-Infinity);
+    });
+  });
+
+  describe('median', () => {
+    it('should calculate the median of an odd-length array', () => {
+      expect(median([1, 2, 3, 4, 5])).toBe(3);
+      expect(median([5, 1, 4, 2, 3])).toBe(3);
+    });
+
+    it('should calculate the median of an even-length array', () => {
+      expect(median([1, 2, 3, 4])).toBe(2.5);
+      expect(median([4, 1, 3, 2])).toBe(2.5);
+    });
+
+    it('should return NaN for an empty array', () => {
+      expect(median([])).toBeNaN();
+    });
+
+    it('should return NaN for non-array input', () => {
+      expect(median(null)).toBeNaN();
+      expect(median(undefined)).toBeNaN();
+      expect(median('abc')).toBeNaN();
     });
   });
 });
