@@ -180,3 +180,18 @@ export function escapeHtml(str) {
     return escapeMap[match];
   });
 }
+
+/**
+ * Converts a string to snake_case.
+ * @param {string} str The input string.
+ * @returns {string} The snake_cased string.
+ */
+export function toSnakeCase(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str
+    .replace(/([A-Z])/g, '_$1')
+    .toLowerCase()
+    .replace(/^_/, '');
+}

@@ -11,6 +11,7 @@ import {
   isPalindrome,
   countOccurrences,
   escapeHtml,
+  toSnakeCase,
 } from './string-utils';
 
 describe('string-utils', () => {
@@ -207,6 +208,23 @@ describe('string-utils', () => {
       expect(escapeHtml(null)).toBe('');
       expect(escapeHtml(undefined)).toBe('');
       expect(escapeHtml(123)).toBe('');
+    });
+  });
+
+  describe('toSnakeCase', () => {
+    it('should convert a string to snake_case', () => {
+      expect(toSnakeCase('helloWorld')).toBe('hello_world');
+      expect(toSnakeCase('HelloWorld')).toBe('hello_world');
+      expect(toSnakeCase('hello-world')).toBe('hello_world');
+      expect(toSnakeCase('Hello World')).toBe('hello_world');
+      expect(toSnakeCase('  Hello   World  ')).toBe('hello_world');
+      expect(toSnakeCase('XMLHttpRequest')).toBe('xml_http_request');
+    });
+
+    it('should return an empty string for non-string inputs', () => {
+      expect(toSnakeCase(null)).toBe('');
+      expect(toSnakeCase(undefined)).toBe('');
+      expect(toSnakeCase(123)).toBe('');
     });
   });
 });
