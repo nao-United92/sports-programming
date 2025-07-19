@@ -41,3 +41,18 @@ export function isSameDay(date1, date2) {
     date1.getDate() === date2.getDate()
   );
 }
+
+/**
+ * Calculates the difference in days between two dates.
+ * @param {Date} date1 The first Date object.
+ * @param {Date} date2 The second Date object.
+ * @returns {number} The difference in days. Returns NaN if either date is invalid.
+ */
+export function getDayDifference(date1, date2) {
+  if (!(date1 instanceof Date) || isNaN(date1) || !(date2 instanceof Date) || isNaN(date2)) {
+    return NaN;
+  }
+  const oneDay = 1000 * 60 * 60 * 24;
+  const diffTime = Math.abs(date1.getTime() - date2.getTime());
+  return Math.ceil(diffTime / oneDay);
+}

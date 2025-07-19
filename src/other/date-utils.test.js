@@ -1,4 +1,4 @@
-import { formatDate, isSameDay } from './date-utils.js';
+import { formatDate, isSameDay, getDayDifference } from './date-utils.js';
 
 describe('date-utils', () => {
   describe('formatDate', () => {
@@ -54,6 +54,27 @@ describe('date-utils', () => {
       expect(isSameDay(new Date(), new Date('invalid'))).toBe(false);
       expect(isSameDay(null, new Date())).toBe(false);
       expect(isSameDay(new Date(), undefined)).toBe(false);
+    });
+  });
+
+  describe('getDayDifference', () => {
+    test('should calculate the difference in days between two dates', () => {
+      const date1 = new Date('2023-01-01T10:00:00Z');
+      const date2 = new Date('2023-01-03T15:00:00Z');
+      expect(getDayDifference(date1, date2)).toBe(2);
+    });
+
+    test('should return 0 for the same day', () => {
+      const date1 = new Date('2023-01-01T10:00:00Z');
+      const date2 = new Date('2023-01-01T15:00:00Z');
+      expect(getDayDifference(date1, date2)).toBe(0);
+    });
+
+    test('should return NaN for invalid dates', () => {
+      expect(getDayDifference(new Date('invalid'), new Date())).toBeNaN();
+      expect(getDayDifference(new Date(), new Date('invalid'))).toBeNaN();
+      expect(getDayDifference(null, new Date())).toBeNaN();
+      expect(getDayDifference(new Date(), undefined)).toBeNaN();
     });
   });
 });
