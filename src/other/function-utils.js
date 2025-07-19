@@ -141,3 +141,16 @@ export function once(func) {
     return result;
   };
 }
+
+/**
+ * Creates a function that invokes `func` with arguments arranged according to the `indexes` array.
+ * @param {Function} func The function to rearrange arguments for.
+ * @param {number[]} indexes An array of indexes specifying the new order of arguments.
+ * @returns {Function} A new function with rearranged arguments.
+ */
+export function rearg(func, indexes) {
+  return function(...args) {
+    const newArgs = indexes.map(index => args[index]);
+    return func.apply(this, newArgs);
+  };
+}

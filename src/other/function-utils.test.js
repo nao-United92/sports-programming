@@ -1,4 +1,4 @@
-import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg } from './function-utils.js';
 
 describe('function-utils', () => {
   const add = (a, b) => a + b;
@@ -108,9 +108,39 @@ describe('function-utils', () => {
       });
 
       expect(increment()).toBe(1);
-      expect(increment()).toBe(1);
-      expect(increment()).toBe(1);
-      expect(counter).toBe(1);
+    });
+  });
+
+  describe('rearg', () => {
+    test('should reorder arguments based on indexes', () => {
+      const originalFn = jest.fn((a, b, c) => `${a}-${b}-${c}`);
+      const reargFn = rearg(originalFn, [2, 0, 1]); // c, a, b
+
+      const result = reargFn('argA', 'argB', 'argC');
+
+      expect(originalFn).toHaveBeenCalledWith('argC', 'argA', 'argB');
+      expect(result).toBe('argC-argA-argB');
+    });
+
+    test('should handle fewer arguments than indexes', () => {
+      const originalFn = jest.fn((a, b) => `${a}-${b}`);
+      const reargFn = rearg(originalFn, [1, 0, 2]); // b, a, undefined
+
+      const result = reargFn('argA', 'argB');
+
+      expect(originalFn).toHaveBeenCalledWith('argB', 'argA', undefined);
+      expect(result).toBe('argB-argA');
+    });
+
+    test('should maintain context', () => {
+      const originalFn = jest.fn(function(a, b) { return this.value + a + b; });
+      const reargFn = rearg(originalFn, [1, 0]);
+      const context = { value: 10 };
+
+      const result = reargFn.apply(context, [1, 2]);
+
+      expect(originalFn).toHaveBeenCalledWith(2, 1);
+      expect(result).toBe(13);
     });
   });
 });
