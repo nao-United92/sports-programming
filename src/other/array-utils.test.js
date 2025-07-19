@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -145,6 +145,19 @@ describe('array-utils', () => {
     it('should handle non-array inputs', () => {
       expect(difference(null, [1, 2])).toEqual([]);
       expect(difference([1, 2], undefined)).toEqual([]);
+    });
+  });
+
+  describe('removeDuplicates', () => {
+    it('should remove duplicate values from an array', () => {
+      expect(removeDuplicates([1, 1, 2, 3, 2, 4, 5, 5])).toEqual([1, 2, 3, 4, 5]);
+      expect(removeDuplicates(['a', 'b', 'a', 'c', 'b'])).toEqual(['a', 'b', 'c']);
+      expect(removeDuplicates([])).toEqual([]);
+    });
+
+    it('should handle non-array inputs', () => {
+      expect(removeDuplicates(null)).toEqual([]);
+      expect(removeDuplicates(undefined)).toEqual([]);
     });
   });
 });
