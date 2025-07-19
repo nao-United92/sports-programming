@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject } from './object-utils';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject, shallowEqual } from './object-utils';
 
 describe('deepClone', () => {
   test('should deep clone a simple object', () => {
@@ -287,5 +287,61 @@ describe('invertObject', () => {
     expect(invertObject(null)).toEqual({});
     expect(invertObject(undefined)).toEqual({});
     expect(invertObject(123)).toEqual({});
+  });
+});
+
+describe('shallowEqual', () => {
+  test('should return true for two shallowly equal objects', () => {
+    const obj1 = { a: 1, b: 'hello' };
+    const obj2 = { a: 1, b: 'hello' };
+    expect(shallowEqual(obj1, obj2)).toBe(true);
+  });
+
+  test('should return false for objects with different values', () => {
+    const obj1 = { a: 1, b: 'hello' };
+    const obj2 = { a: 1, b: 'world' };
+    expect(shallowEqual(obj1, obj2)).toBe(false);
+  });
+
+  test('should return false for objects with different keys', () => {
+    const obj1 = { a: 1, b: 'hello' };
+    const obj2 = { a: 1, c: 'hello' };
+    expect(shallowEqual(obj1, obj2)).toBe(false);
+  });
+
+  test('should return false for objects with different number of keys', () => {
+    const obj1 = { a: 1, b: 'hello' };
+    const obj2 = { a: 1 };
+    expect(shallowEqual(obj1, obj2)).toBe(false);
+  });
+
+  test('should handle nested objects by reference equality', () => {
+    const nestedObj = { c: 3 };
+    const obj1 = { a: 1, b: nestedObj };
+    const obj2 = { a: 1, b: nestedObj };
+    const obj3 = { a: 1, b: { c: 3 } };
+    expect(shallowEqual(obj1, obj2)).toBe(true);
+    expect(shallowEqual(obj1, obj3)).toBe(false);
+  });
+
+  test('should return true for two empty objects', () => {
+    expect(shallowEqual({}, {})).toBe(true);
+  });
+
+  test('should return true for same object reference', () => {
+    const obj = { a: 1 };
+    expect(shallowEqual(obj, obj)).toBe(true);
+  });
+
+  test('should return false for null or undefined inputs', () => {
+    expect(shallowEqual(null, {})).toBe(false);
+    expect(shallowEqual({}, undefined)).toBe(false);
+    expect(shallowEqual(null, undefined)).toBe(false);
+  });
+
+  test('should handle arrays as objects (shallow comparison)', () => {
+    expect(shallowEqual([1, 2], [1, 2])).toBe(true);
+    expect(shallowEqual([1, 2], [1, 3])).toBe(false);
+    expect(shallowEqual([1, { a: 1 }], [1, { a: 1 }])).toBe(false); // Nested objects are not deep compared
   });
 });
