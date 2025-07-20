@@ -40,3 +40,22 @@ export function isUrl(url) {
     return false;
   }
 }
+
+/**
+ * Checks if a string is a strong password.
+ * Requires at least 8 characters, one uppercase, one lowercase, one number, and one special character.
+ * @param {string} password The string to validate.
+ * @returns {boolean} True if the string is a strong password, false otherwise.
+ */
+export function isStrongPassword(password) {
+  if (typeof password !== 'string') {
+    return false;
+  }
+  const hasMinLength = password.length >= 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+  return hasMinLength && hasUppercase && hasLowercase && hasNumber && hasSpecialChar;
+}

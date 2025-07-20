@@ -1,4 +1,4 @@
-import { isEmail, isPhoneNumber, isUrl } from './validation-utils.js';
+import { isEmail, isPhoneNumber, isUrl, isStrongPassword } from './validation-utils.js';
 
 describe('validation-utils', () => {
   describe('isEmail', () => {
@@ -50,6 +50,39 @@ describe('validation-utils', () => {
       expect(isUrl(null)).toBe(false);
       expect(isUrl(undefined)).toBe(false);
       expect(isUrl(123)).toBe(false);
+    });
+  });
+
+  describe('isStrongPassword', () => {
+    test('should return true for a strong password', () => {
+      expect(isStrongPassword('Password123!')).toBe(true);
+      expect(isStrongPassword('MyP@ssw0rd')).toBe(true);
+    });
+
+    test('should return false if password is too short', () => {
+      expect(isStrongPassword('Pass1!')).toBe(false);
+    });
+
+    test('should return false if no uppercase letter', () => {
+      expect(isStrongPassword('password123!')).toBe(false);
+    });
+
+    test('should return false if no lowercase letter', () => {
+      expect(isStrongPassword('PASSWORD123!')).toBe(false);
+    });
+
+    test('should return false if no number', () => {
+      expect(isStrongPassword('Password!!')).toBe(false);
+    });
+
+    test('should return false if no special character', () => {
+      expect(isStrongPassword('Password123')).toBe(false);
+    });
+
+    test('should return false for non-string inputs', () => {
+      expect(isStrongPassword(null)).toBe(false);
+      expect(isStrongPassword(undefined)).toBe(false);
+      expect(isStrongPassword(123)).toBe(false);
     });
   });
 });
