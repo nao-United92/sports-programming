@@ -1,4 +1,4 @@
-import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial } from './function-utils.js';
 
 describe('function-utils', () => {
   const add = (a, b) => a + b;
@@ -141,6 +141,26 @@ describe('function-utils', () => {
 
       expect(originalFn).toHaveBeenCalledWith(2, 1);
       expect(result).toBe(13);
+    });
+  });
+
+  describe('partial', () => {
+    test('should partially apply arguments to a function', () => {
+      const greet = (greeting, name) => `${greeting}, ${name}!`;
+      const sayHello = partial(greet, 'Hello');
+      expect(sayHello('John')).toBe('Hello, John!');
+    });
+
+    test('should handle multiple partial arguments', () => {
+      const sum = (a, b, c) => a + b + c;
+      const add5And10 = partial(sum, 5, 10);
+      expect(add5And10(20)).toBe(35);
+    });
+
+    test('should maintain context', () => {
+      const obj = { value: 10, add: function(a, b) { return this.value + a + b; } };
+      const addPartial = partial(obj.add, 5);
+      expect(addPartial.call(obj, 2)).toBe(17);
     });
   });
 });

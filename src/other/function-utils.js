@@ -154,3 +154,15 @@ export function rearg(func, indexes) {
     return func.apply(this, newArgs);
   };
 }
+
+/**
+ * Creates a function that invokes `func` with `partials` prepended to the arguments it receives.
+ * @param {Function} func The function to partially apply arguments to.
+ * @param {...*} partials The arguments to be partially applied.
+ * @returns {Function} Returns the new partially applied function.
+ */
+export function partial(func, ...partials) {
+  return function(...args) {
+    return func.apply(this, partials.concat(args));
+  };
+}
