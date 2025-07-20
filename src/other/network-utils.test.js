@@ -1,4 +1,4 @@
-import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType } from './network-utils.js';
+import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType, isValidUrl } from './network-utils.js';
 
 global.fetch = jest.fn();
 
@@ -118,6 +118,24 @@ describe('network-utils', () => {
         configurable: true,
       });
       expect(getNetworkType()).toBe('unknown');
+    });
+  });
+
+  describe('isValidUrl', () => {
+    it('should return true for valid URLs', () => {
+      expect(isValidUrl('http://example.com')).toBe(true);
+      expect(isValidUrl('https://www.example.com/path?query=1#hash')).toBe(true);
+      expect(isValidUrl('ftp://ftp.example.com')).toBe(true);
+      expect(isValidUrl('http://localhost:3000')).toBe(true);
+    });
+
+    it('should return false for invalid URLs', () => {
+      expect(isValidUrl('invalid-url')).toBe(false);
+      expect(isValidUrl('example.com')).toBe(false);
+      expect(isValidUrl('http://')).toBe(false);
+      expect(isValidUrl(null)).toBe(false);
+      expect(isValidUrl(undefined)).toBe(false);
+      expect(isValidUrl(123)).toBe(false);
     });
   });
 });

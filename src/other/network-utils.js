@@ -69,3 +69,17 @@ export function getQueryParams(url = window.location.search) {
   });
   return params;
 }
+
+/**
+ * Checks if a given URL is valid.
+ * @param {string} url The URL string to validate.
+ * @returns {boolean} True if the URL is valid, false otherwise.
+ */
+export function isValidUrl(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
