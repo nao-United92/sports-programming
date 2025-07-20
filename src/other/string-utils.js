@@ -195,3 +195,15 @@ export function toSnakeCase(str) {
     .toLowerCase()
     .replace(/^_/, '');
 }
+
+/**
+ * Capitalizes the first letter of each word in a string.
+ * @param {string} str The input string.
+ * @returns {string} The string with each word capitalized.
+ */
+export function capitalizeWords(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.replace(/\b\w/g, char => char.toUpperCase());
+}

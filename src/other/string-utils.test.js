@@ -12,6 +12,7 @@ import {
   countOccurrences,
   escapeHtml,
   toSnakeCase,
+  capitalizeWords,
 } from './string-utils';
 
 describe('string-utils', () => {
@@ -225,6 +226,24 @@ describe('string-utils', () => {
       expect(toSnakeCase(null)).toBe('');
       expect(toSnakeCase(undefined)).toBe('');
       expect(toSnakeCase(123)).toBe('');
+    });
+  });
+
+  describe('capitalizeWords', () => {
+    it('should capitalize the first letter of each word', () => {
+      expect(capitalizeWords('hello world')).toBe('Hello World');
+      expect(capitalizeWords('foo bar baz')).toBe('Foo Bar Baz');
+      expect(capitalizeWords('singleword')).toBe('Singleword');
+    });
+
+    it('should handle empty string', () => {
+      expect(capitalizeWords('')).toBe('');
+    });
+
+    it('should return empty string for non-string inputs', () => {
+      expect(capitalizeWords(null)).toBe('');
+      expect(capitalizeWords(undefined)).toBe('');
+      expect(capitalizeWords(123)).toBe('');
     });
   });
 });
