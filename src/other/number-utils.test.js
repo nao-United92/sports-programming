@@ -1,4 +1,4 @@
-import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange } from './number-utils.js';
+import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace } from './number-utils.js';
 
 describe('number-utils', () => {
   describe('isNumber', () => {
@@ -86,6 +86,24 @@ describe('number-utils', () => {
       expect(isInRange(null, 1, 10)).toBe(false);
       expect(isInRange(undefined, 1, 10)).toBe(false);
       expect(isInRange('abc', 1, 10)).toBe(false);
+    });
+  });
+
+  describe('roundToDecimalPlace', () => {
+    test('should round a number to the specified decimal places', () => {
+      expect(roundToDecimalPlace(123.456, 2)).toBe(123.46);
+      expect(roundToDecimalPlace(123.454, 2)).toBe(123.45);
+      expect(roundToDecimalPlace(123.4, 0)).toBe(123);
+      expect(roundToDecimalPlace(123.5, 0)).toBe(124);
+    });
+
+    test('should handle negative decimal places as NaN', () => {
+      expect(roundToDecimalPlace(123.456, -1)).toBeNaN();
+    });
+
+    test('should return NaN for non-number inputs', () => {
+      expect(roundToDecimalPlace(null, 2)).toBeNaN();
+      expect(roundToDecimalPlace(123.456, 'abc')).toBeNaN();
     });
   });
 });

@@ -90,3 +90,17 @@ export function toPercentage(num, decimals = 0) {
 export function isInRange(num, min, max) {
   return isNumber(num) && num >= min && num <= max;
 }
+
+/**
+ * Rounds a number to a specified number of decimal places.
+ * @param {number} num The number to round.
+ * @param {number} decimalPlaces The number of decimal places to round to.
+ * @returns {number} The rounded number.
+ */
+export function roundToDecimalPlace(num, decimalPlaces) {
+  if (!isNumber(num) || !isNumber(decimalPlaces) || decimalPlaces < 0) {
+    return NaN;
+  }
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.round(num * factor) / factor;
+}
