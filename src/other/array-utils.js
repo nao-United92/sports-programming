@@ -182,3 +182,21 @@ export function removeDuplicates(arr) {
   }
   return [...new Set(arr)];
 }
+
+/**
+ * Groups the elements of an array based on a given key.
+ * @param {Array<Object>} arr The array of objects to group.
+ * @param {string} key The key to group by.
+ * @returns {Object} An object with the grouped elements.
+ */
+export function groupBy(arr, key) {
+  if (!Array.isArray(arr)) {
+    return {};
+  }
+  return arr.reduce((acc, item) => {
+    const group = item[key];
+    acc[group] = acc[group] || [];
+    acc[group].push(item);
+    return acc;
+  }, {});
+}

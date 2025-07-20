@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -158,6 +158,29 @@ describe('array-utils', () => {
     it('should handle non-array inputs', () => {
       expect(removeDuplicates(null)).toEqual([]);
       expect(removeDuplicates(undefined)).toEqual([]);
+    });
+  });
+
+  describe('groupBy', () => {
+    it('should group an array of objects by a given key', () => {
+      const arr = [
+        { category: 'fruit', name: 'apple' },
+        { category: 'vegetable', name: 'carrot' },
+        { category: 'fruit', name: 'banana' },
+      ];
+      const grouped = groupBy(arr, 'category');
+      expect(grouped).toEqual({
+        fruit: [
+          { category: 'fruit', name: 'apple' },
+          { category: 'fruit', name: 'banana' },
+        ],
+        vegetable: [{ category: 'vegetable', name: 'carrot' }],
+      });
+    });
+
+    it('should return an empty object for non-array inputs', () => {
+      expect(groupBy(null, 'category')).toEqual({});
+      expect(groupBy(undefined, 'category')).toEqual({});
     });
   });
 });
