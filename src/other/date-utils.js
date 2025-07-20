@@ -53,8 +53,8 @@ export function getDayDifference(date1, date2) {
     return NaN;
   }
   const oneDay = 1000 * 60 * 60 * 24;
-  const diffTime = Math.abs(date1.getTime() - date2.getTime());
-  return Math.ceil(diffTime / oneDay);
+  const diffTime = Math.abs(date2.getTime() - date1.getTime());
+  return Math.floor(diffTime / oneDay);
 }
 
 /**
@@ -68,4 +68,19 @@ export function isWeekend(date) {
   }
   const day = date.getDay();
   return day === 0 || day === 6; // 0 for Sunday, 6 for Saturday
+}
+
+/**
+ * Adds a specified number of days to a date.
+ * @param {Date} date The date to add days to.
+ * @param {number} days The number of days to add.
+ * @returns {Date} A new Date object with the days added.
+ */
+export function addDays(date, days) {
+  if (!(date instanceof Date) || isNaN(date)) {
+    return null;
+  }
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
 }

@@ -1,4 +1,4 @@
-import { formatDate, isSameDay, getDayDifference, isWeekend } from './date-utils.js';
+import { formatDate, isSameDay, getDayDifference, isWeekend, addDays } from './date-utils.js';
 
 describe('date-utils', () => {
   describe('formatDate', () => {
@@ -98,6 +98,18 @@ describe('date-utils', () => {
       expect(isWeekend(new Date('invalid'))).toBe(false);
       expect(isWeekend(null)).toBe(false);
       expect(isWeekend(undefined)).toBe(false);
+    });
+  });
+
+  describe('addDays', () => {
+    test('should add days to a date', () => {
+      const date = new Date('2023-01-01');
+      const newDate = addDays(date, 5);
+      expect(newDate.getDate()).toBe(6);
+    });
+
+    test('should return null for invalid date', () => {
+      expect(addDays(new Date('invalid'), 5)).toBeNull();
     });
   });
 });
