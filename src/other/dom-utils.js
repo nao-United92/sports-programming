@@ -241,3 +241,16 @@ export function setHtml(element, html) {
     element.innerHTML = html;
   }
 }
+
+/**
+ * Checks if an element is visible to the user.
+ * @param {HTMLElement} element The element to check.
+ * @returns {boolean} True if the element is visible, false otherwise.
+ */
+export function isElementVisible(element) {
+  if (!element) {
+    return false;
+  }
+  const style = window.getComputedStyle(element);
+  return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+}

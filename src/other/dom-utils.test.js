@@ -1,4 +1,4 @@
-import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml } from './dom-utils.js';
+import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml, isElementVisible } from './dom-utils.js';
 
 describe('dom-utils', () => {
   beforeEach(() => {
@@ -215,6 +215,39 @@ describe('dom-utils', () => {
       const el = null;
       setHtml(el, '<strong>New HTML</strong>');
       // No error should be thrown
+    });
+  });
+
+  describe('isElementVisible', () => {
+    test('should return true for a visible element', () => {
+      const el = createElement('div');
+      document.body.appendChild(el);
+      expect(isElementVisible(el)).toBe(true);
+    });
+
+    test('should return false for a hidden element (display: none)', () => {
+      const el = createElement('div');
+      el.style.display = 'none';
+      document.body.appendChild(el);
+      expect(isElementVisible(el)).toBe(false);
+    });
+
+    test('should return false for a hidden element (visibility: hidden)', () => {
+      const el = createElement('div');
+      el.style.visibility = 'hidden';
+      document.body.appendChild(el);
+      expect(isElementVisible(el)).toBe(false);
+    });
+
+    test('should return false for a hidden element (opacity: 0)', () => {
+      const el = createElement('div');
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      expect(isElementVisible(el)).toBe(false);
+    });
+
+    test('should return false for null element', () => {
+      expect(isElementVisible(null)).toBe(false);
     });
   });
 });
