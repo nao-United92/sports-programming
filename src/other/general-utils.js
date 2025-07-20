@@ -18,3 +18,11 @@ export function uuid() {
 export function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * Generates a unique ID string. This is a simple implementation and not cryptographically secure.
+ * @returns {string} A unique ID string.
+ */
+export function getUniqueId() {
+  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+}

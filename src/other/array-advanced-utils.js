@@ -85,3 +85,15 @@ export function groupBy(arr, key) {
     return acc;
   }, {});
 }
+
+/**
+ * Creates a new array with all null and undefined values removed.
+ * @param {Array} arr The input array.
+ * @returns {Array} A new array with null and undefined values removed.
+ */
+export function compact(arr) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return arr.filter(item => item !== null && item !== undefined);
+}

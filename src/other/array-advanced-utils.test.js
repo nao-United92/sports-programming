@@ -1,5 +1,5 @@
 
-import { uniqueArray, flattenArray, chunkArray, shuffleArray, groupBy } from './array-advanced-utils';
+import { uniqueArray, flattenArray, chunkArray, shuffleArray, groupBy, compact } from './array-advanced-utils';
 
 describe('uniqueArray', () => {
   test('should return an array with unique elements', () => {
@@ -114,5 +114,23 @@ describe('groupBy', () => {
     expect(groupBy(null, 'category')).toEqual({});
     expect(groupBy(undefined, 'category')).toEqual({});
     expect(groupBy('string', 'category')).toEqual({});
+  });
+});
+
+describe('compact', () => {
+  test('should remove null and undefined values from an array', () => {
+    expect(compact([1, null, 2, undefined, 3])).toEqual([1, 2, 3]);
+    expect(compact([null, undefined])).toEqual([]);
+    expect(compact([1, 2, 3])).toEqual([1, 2, 3]);
+  });
+
+  test('should return an empty array for non-array input', () => {
+    expect(compact(null)).toEqual([]);
+    expect(compact(undefined)).toEqual([]);
+    expect(compact('string')).toEqual([]);
+  });
+
+  test('should handle empty array', () => {
+    expect(compact([])).toEqual([]);
   });
 });
