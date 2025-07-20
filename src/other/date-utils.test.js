@@ -1,4 +1,4 @@
-import { formatDate, isSameDay, getDayDifference } from './date-utils.js';
+import { formatDate, isSameDay, getDayDifference, isWeekend } from './date-utils.js';
 
 describe('date-utils', () => {
   describe('formatDate', () => {
@@ -75,6 +75,29 @@ describe('date-utils', () => {
       expect(getDayDifference(new Date(), new Date('invalid'))).toBeNaN();
       expect(getDayDifference(null, new Date())).toBeNaN();
       expect(getDayDifference(new Date(), undefined)).toBeNaN();
+    });
+  });
+
+  describe('isWeekend', () => {
+    test('should return true for Saturday', () => {
+      const saturday = new Date('2023-07-22T12:00:00Z'); // Saturday
+      expect(isWeekend(saturday)).toBe(true);
+    });
+
+    test('should return true for Sunday', () => {
+      const sunday = new Date('2023-07-23T12:00:00Z'); // Sunday
+      expect(isWeekend(sunday)).toBe(true);
+    });
+
+    test('should return false for a weekday', () => {
+      const monday = new Date('2023-07-24T12:00:00Z'); // Monday
+      expect(isWeekend(monday)).toBe(false);
+    });
+
+    test('should return false for invalid dates', () => {
+      expect(isWeekend(new Date('invalid'))).toBe(false);
+      expect(isWeekend(null)).toBe(false);
+      expect(isWeekend(undefined)).toBe(false);
     });
   });
 });

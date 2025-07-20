@@ -56,3 +56,16 @@ export function getDayDifference(date1, date2) {
   const diffTime = Math.abs(date1.getTime() - date2.getTime());
   return Math.ceil(diffTime / oneDay);
 }
+
+/**
+ * Checks if a given date falls on a weekend (Saturday or Sunday).
+ * @param {Date} date The Date object to check.
+ * @returns {boolean} True if the date is a weekend, false otherwise.
+ */
+export function isWeekend(date) {
+  if (!(date instanceof Date) || isNaN(date)) {
+    return false;
+  }
+  const day = date.getDay();
+  return day === 0 || day === 6; // 0 for Sunday, 6 for Saturday
+}
