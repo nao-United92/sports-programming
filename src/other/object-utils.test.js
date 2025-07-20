@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject, shallowEqual } from './object-utils';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject, shallowEqual, isObject } from './object-utils';
 
 describe('deepClone', () => {
   test('should deep clone a simple object', () => {
@@ -343,5 +343,27 @@ describe('shallowEqual', () => {
     expect(shallowEqual([1, 2], [1, 2])).toBe(true);
     expect(shallowEqual([1, 2], [1, 3])).toBe(false);
     expect(shallowEqual([1, { a: 1 }], [1, { a: 1 }])).toBe(false); // Nested objects are not deep compared
+  });
+});
+
+describe('isObject', () => {
+  test('should return true for an object', () => {
+    expect(isObject({})).toBe(true);
+    expect(isObject({ a: 1 })).toBe(true);
+  });
+
+  test('should return false for an array', () => {
+    expect(isObject([])).toBe(false);
+  });
+
+  test('should return false for null', () => {
+    expect(isObject(null)).toBe(false);
+  });
+
+  test('should return false for primitive values', () => {
+    expect(isObject(123)).toBe(false);
+    expect(isObject('string')).toBe(false);
+    expect(isObject(true)).toBe(false);
+    expect(isObject(undefined)).toBe(false);
   });
 });
