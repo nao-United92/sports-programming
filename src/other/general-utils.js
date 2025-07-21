@@ -26,3 +26,12 @@ export function delay(ms) {
 export function getUniqueId() {
   return Date.now().toString(36) + Math.random().toString(36).substring(2);
 }
+
+/**
+ * Checks if a value is null or undefined.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is null or undefined, false otherwise.
+ */
+export function isNil(value) {
+  return value === null || value === undefined;
+}

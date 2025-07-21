@@ -1,4 +1,4 @@
-import { uuid, delay } from './general-utils.js';
+import { uuid, delay, isNil } from './general-utils.js';
 
 describe('general-utils', () => {
   describe('uuid', () => {
@@ -31,6 +31,25 @@ describe('general-utils', () => {
       jest.advanceTimersByTime(500);
       await promise; // Ensure the promise resolves
       expect(mockFunction).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('isNil', () => {
+    test('should return true for null', () => {
+      expect(isNil(null)).toBe(true);
+    });
+
+    test('should return true for undefined', () => {
+      expect(isNil(undefined)).toBe(true);
+    });
+
+    test('should return false for other values', () => {
+      expect(isNil(0)).toBe(false);
+      expect(isNil('')).toBe(false);
+      expect(isNil(false)).toBe(false);
+      expect(isNil(NaN)).toBe(false);
+      expect(isNil({})).toBe(false);
+      expect(isNil([])).toBe(false);
     });
   });
 });
