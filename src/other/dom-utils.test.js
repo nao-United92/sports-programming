@@ -250,4 +250,27 @@ describe('dom-utils', () => {
       expect(isElementVisible(null)).toBe(false);
     });
   });
+
+  describe('hasAttribute', () => {
+    test('should return true if the element has the attribute', () => {
+      const el = createElement('div', { 'data-test': 'value' });
+      expect(hasAttribute(el, 'data-test')).toBe(true);
+    });
+
+    test('should return false if the element does not have the attribute', () => {
+      const el = createElement('div');
+      expect(hasAttribute(el, 'data-test')).toBe(false);
+    });
+
+    test('should return false for null element', () => {
+      expect(hasAttribute(null, 'data-test')).toBe(false);
+    });
+
+    test('should return false for invalid attribute name', () => {
+      const el = createElement('div', { 'data-test': 'value' });
+      expect(hasAttribute(el, null)).toBe(false);
+      expect(hasAttribute(el, undefined)).toBe(false);
+      expect(hasAttribute(el, 123)).toBe(false);
+    });
+  });
 });

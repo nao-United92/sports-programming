@@ -254,3 +254,16 @@ export function isElementVisible(element) {
   const style = window.getComputedStyle(element);
   return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
 }
+
+/**
+ * Checks if an HTML element has a specific attribute.
+ * @param {HTMLElement} element The element to check.
+ * @param {string} attributeName The name of the attribute to check for.
+ * @returns {boolean} True if the element has the attribute, false otherwise.
+ */
+export function hasAttribute(element, attributeName) {
+  if (!element || typeof attributeName !== 'string') {
+    return false;
+  }
+  return element.hasAttribute(attributeName);
+}
