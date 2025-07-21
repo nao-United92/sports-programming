@@ -213,3 +213,16 @@ export function removeAllOccurrences(arr, element) {
   }
   return arr.filter(item => item !== element);
 }
+
+/**
+ * Calculates the average of numbers in an array.
+ * @param {Array<number>} arr The array of numbers.
+ * @returns {number} The average of the numbers. Returns NaN if the array is empty or contains non-numeric values.
+ */
+export function getAverage(arr) {
+  if (!Array.isArray(arr) || arr.length === 0 || arr.some(isNaN)) {
+    return NaN;
+  }
+  const sum = arr.reduce((total, num) => total + num, 0);
+  return sum / arr.length;
+}

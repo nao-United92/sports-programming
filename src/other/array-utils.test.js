@@ -197,4 +197,22 @@ describe('array-utils', () => {
       expect(removeAllOccurrences(undefined, 1)).toEqual([]);
     });
   });
+
+  describe('getAverage', () => {
+    it('should calculate the average of numbers in an array', () => {
+      expect(getAverage([1, 2, 3, 4, 5])).toBe(3);
+      expect(getAverage([10, 20, 30])).toBe(20);
+      expect(getAverage([5])).toBe(5);
+    });
+
+    it('should return NaN for an empty array', () => {
+      expect(getAverage([])).toBeNaN();
+    });
+
+    it('should return NaN for non-array inputs or arrays with non-numeric values', () => {
+      expect(getAverage(null)).toBeNaN();
+      expect(getAverage(undefined)).toBeNaN();
+      expect(getAverage([1, 'a', 3])).toBeNaN();
+    });
+  });
 });
