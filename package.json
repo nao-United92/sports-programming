@@ -3,7 +3,13 @@
     "test": "jest"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(\\@babel/runtime|@babel/preset-env|jest-environment-jsdom)/)"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",
