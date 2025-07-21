@@ -17,3 +17,18 @@ describe('removeNonAlphanumeric', () => {
     expect(removeNonAlphanumeric('')).toBe('');
   });
 });
+
+describe('reverseString', () => {
+  test('should reverse a given string', () => {
+    expect(reverseString('hello')).toBe('olleh');
+    expect(reverseString('world')).toBe('dlrow');
+    expect(reverseString('12345')).toBe('54321');
+    expect(reverseString('')).toBe('');
+  });
+
+  test('should return an empty string if the input is not a string', () => {
+    expect(reverseString(123)).toBe('');
+    expect(reverseString(null)).toBe('');
+    expect(reverseString(undefined)).toBe('');
+  });
+});

@@ -37,3 +37,16 @@ export function removeNonAlphanumeric(str) {
   }
   return str.replace(/[^a-zA-Z0-9]/g, '');
 }
+
+/**
+ * Reverses a given string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function reverseString(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.split('').reverse().join('');
+}
