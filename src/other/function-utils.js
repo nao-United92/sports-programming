@@ -124,23 +124,6 @@ export function memoize(func) {
   };
 }
 
-/**
- * Creates a function that is restricted to invoking `func` once.
- * Repeat calls to the function return the value of the first invocation.
- * @param {Function} func The function to restrict.
- * @returns {Function} Returns the new restricted function.
- */
-export function once(func) {
-  let hasBeenCalled = false;
-  let result;
-  return function(...args) {
-    if (!hasBeenCalled) {
-      hasBeenCalled = true;
-      result = func.apply(this, args);
-    }
-    return result;
-  };
-}
 
 /**
  * Creates a function that invokes `func` with arguments arranged according to the `indexes` array.
@@ -166,3 +149,13 @@ export function partial(func, ...partials) {
     return func.apply(this, partials.concat(args));
   };
 }
+
+/**
+ * Delays the execution for a specified number of milliseconds.
+ * @param {number} ms The number of milliseconds to wait.
+ * @returns {Promise<void>} A promise that resolves after the specified time.
+ */
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+

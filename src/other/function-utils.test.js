@@ -1,4 +1,13 @@
-import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial, sleep } from './function-utils.js';
+
+describe('sleep', () => {
+  test('should resolve after the specified time', async () => {
+    const startTime = Date.now();
+    await sleep(100);
+    const endTime = Date.now();
+    expect(endTime - startTime).toBeGreaterThanOrEqual(100);
+  });
+});
 
 describe('function-utils', () => {
   const add = (a, b) => a + b;
@@ -86,30 +95,7 @@ describe('function-utils', () => {
     });
   });
 
-  describe('once', () => {
-    it('should call the function only once', () => {
-      const mockFn = jest.fn(() => Math.random());
-      const onceFn = once(mockFn);
-
-      const result1 = onceFn();
-      const result2 = onceFn();
-      const result3 = onceFn();
-
-      expect(mockFn).toHaveBeenCalledTimes(1);
-      expect(result1).toBe(result2);
-      expect(result2).toBe(result3);
-    });
-
-    it('should return the same result on subsequent calls', () => {
-      let counter = 0;
-      const increment = once(() => {
-        counter++;
-        return counter;
-      });
-
-      expect(increment()).toBe(1);
-    });
-  });
+  
 
   describe('rearg', () => {
     test('should reorder arguments based on indexes', () => {
@@ -163,4 +149,6 @@ describe('function-utils', () => {
       expect(addPartial.call(obj, 2)).toBe(17);
     });
   });
+
+
 });
