@@ -104,3 +104,13 @@ export function roundToDecimalPlace(num, decimalPlaces) {
   const factor = Math.pow(10, decimalPlaces);
   return Math.round(num * factor) / factor;
 }
+
+/**
+ * Checks if a number is divisible by another number.
+ * @param {number} num The number to check.
+ * @param {number} divisor The number to divide by.
+ * @returns {boolean} True if the number is divisible by the divisor, false otherwise.
+ */
+export function isDivisibleBy(num, divisor) {
+  return isNumber(num) && isNumber(divisor) && divisor !== 0 && num % divisor === 0;
+}

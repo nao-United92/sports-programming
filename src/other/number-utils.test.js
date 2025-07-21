@@ -106,4 +106,27 @@ describe('number-utils', () => {
       expect(roundToDecimalPlace(123.456, 'abc')).toBeNaN();
     });
   });
+
+  describe('isDivisibleBy', () => {
+    it('should return true if the number is divisible by the divisor', () => {
+      expect(isDivisibleBy(10, 2)).toBe(true);
+      expect(isDivisibleBy(9, 3)).toBe(true);
+      expect(isDivisibleBy(7, 7)).toBe(true);
+    });
+
+    it('should return false if the number is not divisible by the divisor', () => {
+      expect(isDivisibleBy(10, 3)).toBe(false);
+      expect(isDivisibleBy(7, 2)).toBe(false);
+    });
+
+    it('should return false if the divisor is 0', () => {
+      expect(isDivisibleBy(10, 0)).toBe(false);
+    });
+
+    it('should return false for non-number inputs', () => {
+      expect(isDivisibleBy(null, 2)).toBe(false);
+      expect(isDivisibleBy(10, undefined)).toBe(false);
+      expect(isDivisibleBy('abc', 2)).toBe(false);
+    });
+  });
 });
