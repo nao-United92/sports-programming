@@ -200,3 +200,16 @@ export function groupBy(arr, key) {
     return acc;
   }, {});
 }
+
+/**
+ * Removes all occurrences of a specified element from an array.
+ * @param {Array} arr The array to modify. This function returns a new array and does not modify the original.
+ * @param {*} element The element to remove.
+ * @returns {Array} A new array with all occurrences of the element removed.
+ */
+export function removeAllOccurrences(arr, element) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return arr.filter(item => item !== element);
+}

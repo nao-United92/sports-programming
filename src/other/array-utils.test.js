@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -181,6 +181,20 @@ describe('array-utils', () => {
     it('should return an empty object for non-array inputs', () => {
       expect(groupBy(null, 'category')).toEqual({});
       expect(groupBy(undefined, 'category')).toEqual({});
+    });
+  });
+
+  describe('removeAllOccurrences', () => {
+    it('should remove all occurrences of a specific element', () => {
+      expect(removeAllOccurrences([1, 2, 3, 2, 4, 2], 2)).toEqual([1, 3, 4]);
+      expect(removeAllOccurrences(['a', 'b', 'a', 'c'], 'a')).toEqual(['b', 'c']);
+      expect(removeAllOccurrences([1, 2, 3], 5)).toEqual([1, 2, 3]); // Element not found
+      expect(removeAllOccurrences([], 1)).toEqual([]);
+    });
+
+    it('should return an empty array for non-array inputs', () => {
+      expect(removeAllOccurrences(null, 1)).toEqual([]);
+      expect(removeAllOccurrences(undefined, 1)).toEqual([]);
     });
   });
 });
