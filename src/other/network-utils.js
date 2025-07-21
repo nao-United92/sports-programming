@@ -83,3 +83,24 @@ export function isValidUrl(url) {
     return false;
   }
 }
+
+/**
+ * Pings a URL by sending an HTTP HEAD request.
+ * @param {string} url The URL to ping.
+ * @param {number} [timeout=5000] The timeout in milliseconds.
+ * @returns {Promise<boolean>} True if the URL is reachable, false otherwise.
+ */
+export async function ping(url, timeout = 5000) {
+  try {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    const response = await fetch(url, {
+      method: 'HEAD',
+      signal: controller.signal,
+    });
+    clearTimeout(id);
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+}

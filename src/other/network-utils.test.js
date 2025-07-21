@@ -104,7 +104,7 @@ describe('network-utils', () => {
       expect(getNetworkType()).toBe('4g');
     });
 
-    it('should return 'unknown' if effectiveType is not available', () => {
+    it('should return unknown type', () => {
       Object.defineProperty(navigator, 'connection', {
         value: {},
         configurable: true,
@@ -112,7 +112,7 @@ describe('network-utils', () => {
       expect(getNetworkType()).toBe('unknown');
     });
 
-    it('should return 'unknown' if navigator.connection is not available', () => {
+    it('should return 'unknown' when connection is not available', () => {
       Object.defineProperty(navigator, 'connection', {
         value: undefined,
         configurable: true,
@@ -136,6 +136,28 @@ describe('network-utils', () => {
       expect(isValidUrl(null)).toBe(false);
       expect(isValidUrl(undefined)).toBe(false);
       expect(isValidUrl(123)).toBe(false);
+    });
+  });
+
+  describe('ping', () => {
+    test('should return true for a reachable URL', async () => {
+      fetch.mockResolvedValueOnce({ ok: true });
+      await expect(ping('http://example.com')).resolves.toBe(true);
+    });
+
+    test('should return false for an unreachable URL', async () => {
+      fetch.mockResolvedValueOnce({ ok: false });
+      await expect(ping('http://example.com')).resolves.toBe(false);
+    });
+
+    test('should return false on network error', async () => {
+      fetch.mockRejectedValueOnce(new Error('Network error'));
+      await expect(ping('http://example.com')).resolves.toBe(false);
+    });
+
+    test('should return false on timeout', async () => {
+      fetch.mockImplementationOnce(() => new Promise(resolve => setTimeout(() => resolve({ ok: true }), 100)));
+      await expect(ping('http://example.com', 50)).resolves.toBe(false);
     });
   });
 });
