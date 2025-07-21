@@ -150,5 +150,40 @@ describe('function-utils', () => {
     });
   });
 
+  describe('once', () => {
+    test('should only execute the function once', () => {
+      const mockFn = jest.fn(() => 123);
+      const onceFn = once(mockFn);
+
+      expect(onceFn()).toBe(123);
+      expect(onceFn()).toBe(123);
+      expect(onceFn()).toBe(123);
+
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    });
+
+    test('should return the same result on subsequent calls', () => {
+      let counter = 0;
+      const increment = once(() => {
+        counter++;
+        return counter;
+      });
+
+      expect(increment()).toBe(1);
+      expect(increment()).toBe(1);
+      expect(increment()).toBe(1);
+      expect(counter).toBe(1);
+    });
+
+    test('should maintain context', () => {
+      const obj = { value: 10, getValue: once(function() { return this.value; }) };
+      expect(obj.getValue()).toBe(10);
+      obj.value = 20; // Change value after first call
+      expect(obj.getValue()).toBe(10); // Should still return the initial value
+    });
+  });
+});
+  });
+
 
 });
