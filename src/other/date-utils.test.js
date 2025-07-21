@@ -1,4 +1,22 @@
-import { formatDate, isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference } from './date-utils.js';
+import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDateToYYYYMMDD } from './date-utils.js';
+
+describe('formatDateToYYYYMMDD', () => {
+  test('should format a Date object to YYYY-MM-DD string', () => {
+    const date = new Date('2023-01-05T10:00:00Z');
+    expect(formatDateToYYYYMMDD(date)).toBe('2023-01-05');
+  });
+
+  test('should pad month and day with leading zeros', () => {
+    const date = new Date('2023-03-07T10:00:00Z');
+    expect(formatDateToYYYYMMDD(date)).toBe('2023-03-07');
+  });
+
+  test('should return empty string for invalid date', () => {
+    expect(formatDateToYYYYMMDD(new Date('invalid'))).toBe('');
+    expect(formatDateToYYYYMMDD(null)).toBe('');
+    expect(formatDateToYYYYMMDD(undefined)).toBe('');
+  });
+});
 
 describe('date-utils', () => {
   describe('getMonthDifference', () => {

@@ -73,3 +73,18 @@ export function getMonthDifference(date1, date2) {
   return months - date1.getMonth() + date2.getMonth();
 }
 
+/**
+ * Formats a Date object into a "YYYY-MM-DD" string.
+ * @param {Date} date The Date object to format.
+ * @returns {string} The formatted date string.
+ */
+export function formatDateToYYYYMMDD(date) {
+  if (!(date instanceof Date) || isNaN(date)) {
+    return '';
+  }
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
