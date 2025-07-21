@@ -83,3 +83,17 @@ export function median(numbers) {
   const mid = Math.floor(sortedNumbers.length / 2);
   return sortedNumbers.length % 2 !== 0 ? sortedNumbers[mid] : (sortedNumbers[mid - 1] + sortedNumbers[mid]) / 2;
 }
+
+/**
+ * Rounds a number to a specified number of decimal places.
+ * @param {number} num The number to round.
+ * @param {number} decimalPlaces The number of decimal places to round to. Defaults to 0.
+ * @returns {number} The rounded number.
+ */
+export function round(num, decimalPlaces = 0) {
+  if (typeof num !== 'number' || isNaN(num)) {
+    return NaN;
+  }
+  const factor = 10 ** decimalPlaces;
+  return Math.round(num * factor) / factor;
+}

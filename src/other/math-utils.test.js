@@ -130,4 +130,39 @@ describe('math-utils', () => {
       expect(median('abc')).toBeNaN();
     });
   });
+
+  describe('round', () => {
+    it('should round a number to the nearest integer by default', () => {
+      expect(round(3.14)).toBe(3);
+      expect(round(3.5)).toBe(4);
+      expect(round(3.8)).toBe(4);
+    });
+
+    it('should round a number to a specified number of decimal places', () => {
+      expect(round(3.14159, 2)).toBe(3.14);
+      expect(round(3.14159, 3)).toBe(3.142);
+      expect(round(10.12345, 0)).toBe(10);
+    });
+
+    it('should handle negative numbers', () => {
+      expect(round(-3.14)).toBe(-3);
+      expect(round(-3.5)).toBe(-3);
+      expect(round(-3.8)).toBe(-4);
+      expect(round(-3.14159, 2)).toBe(-3.14);
+    });
+
+    it('should return NaN for invalid number input', () => {
+      expect(round(null)).toBeNaN();
+      expect(round(undefined)).toBeNaN();
+      expect(round('abc')).toBeNaN();
+    });
+
+    it('should handle zero decimal places explicitly', () => {
+      expect(round(123.456, 0)).toBe(123);
+    });
+
+    it('should handle large numbers of decimal places', () => {
+      expect(round(1.23456789, 8)).toBe(1.23456789);
+    });
+  });
 });
