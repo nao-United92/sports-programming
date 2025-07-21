@@ -1,4 +1,49 @@
-import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType, isValidUrl } from './network-utils.js';
+import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType, isValidUrl, getBatteryLevel } from './network-utils.js';
+
+describe('getBatteryLevel', () => {
+  test('should return the battery level if available', async () => {
+    Object.defineProperty(navigator, 'getBattery', {
+      value: jest.fn().mockResolvedValue({ level: 0.75 }),
+      configurable: true,
+    });
+    await expect(getBatteryLevel()).resolves.toBe(0.75);
+  });
+
+  test('should return undefined if getBattery is not available', async () => {
+    Object.defineProperty(navigator, 'getBattery', {
+      value: undefined,
+      configurable: true,
+    });
+    await expect(getBatteryLevel()).resolves.toBeUndefined();
+  });
+});
+
+
+describe('getBandwidth', () => {
+    test('should return the estimated download speed if available', () => {
+      Object.defineProperty(navigator, 'connection', {
+        value: { downlink: 10.5 },
+        configurable: true,
+      });
+      expect(getBandwidth()).toBe(10.5);
+    });
+
+    test('should return undefined if navigator.connection is not available', () => {
+      Object.defineProperty(navigator, 'connection', {
+        value: undefined,
+        configurable: true,
+      });
+      expect(getBandwidth()).toBeUndefined();
+    });
+
+    test('should return undefined if downlink is not available', () => {
+      Object.defineProperty(navigator, 'connection', {
+        value: { },
+        configurable: true,
+      });
+      expect(getBandwidth()).toBeUndefined();
+    });
+  });
 
 global.fetch = jest.fn();
 

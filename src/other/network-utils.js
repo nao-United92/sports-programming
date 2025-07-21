@@ -42,6 +42,7 @@ export function isOnline() {
   return navigator.onLine;
 }
 
+
 /**
  * Gets the current network connection type.
  * @returns {string} The network connection type (e.g., 'wifi', 'cellular', 'ethernet', 'none', or 'unknown').
@@ -104,3 +105,27 @@ export async function ping(url, timeout = 5000) {
     return false;
   }
 }
+
+/**
+ * Gets the current battery level of the device.
+ * @returns {Promise<number|undefined>} A promise that resolves with the battery level (0-1), or undefined if not available.
+ */
+export async function getBatteryLevel() {
+  if ('getBattery' in navigator) {
+    const battery = await navigator.getBattery();
+    return battery.level;
+  }
+  return undefined;
+}
+
+/**
+ * Gets the estimated download speed of the user's connection in Mbps.
+ * @returns {number|undefined} The estimated download speed, or undefined if not available.
+ */
+export function getBandwidth() {
+  if (navigator.connection && navigator.connection.downlink) {
+    return navigator.connection.downlink;
+  }
+  return undefined;
+}
+
