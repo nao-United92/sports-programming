@@ -397,3 +397,37 @@ describe('isObject', () => {
     expect(isObject(undefined)).toBe(false);
   });
 });
+
+describe('renameKey', () => {
+  test('should rename an existing key', () => {
+    const obj = { a: 1, b: 2 };
+    const newObj = renameKey(obj, 'a', 'x');
+    expect(newObj).toEqual({ x: 1, b: 2 });
+    expect(newObj).not.toBe(obj);
+  });
+
+  test('should not modify the original object', () => {
+    const obj = { a: 1, b: 2 };
+    renameKey(obj, 'a', 'x');
+    expect(obj).toEqual({ a: 1, b: 2 });
+  });
+
+  test('should return a new object with the same properties if oldKey does not exist', () => {
+    const obj = { a: 1, b: 2 };
+    const newObj = renameKey(obj, 'c', 'x');
+    expect(newObj).toEqual({ a: 1, b: 2 });
+    expect(newObj).not.toBe(obj);
+  });
+
+  test('should handle null or non-object inputs by returning a shallow copy', () => {
+    expect(renameKey(null, 'a', 'x')).toEqual(null);
+    expect(renameKey(undefined, 'a', 'x')).toEqual(undefined);
+    expect(renameKey(123, 'a', 'x')).toEqual(123);
+  });
+
+  test('should overwrite if newKey already exists', () => {
+    const obj = { a: 1, b: 2 };
+    const newObj = renameKey(obj, 'a', 'b');
+    expect(newObj).toEqual({ b: 1 });
+  });
+});

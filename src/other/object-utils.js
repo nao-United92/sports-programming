@@ -287,3 +287,20 @@ export function isDeepEqual(a, b) {
   // true if both NaN, false otherwise
   return a !== a && b !== b;
 }
+
+/**
+ * Renames a key in an object.
+ * @param {object} obj The original object.
+ * @param {string} oldKey The key to rename.
+ * @param {string} newKey The new name for the key.
+ * @returns {object} A new object with the key renamed.
+ */
+export function renameKey(obj, oldKey, newKey) {
+  if (typeof obj !== 'object' || obj === null || !obj.hasOwnProperty(oldKey)) {
+    return { ...obj };
+  }
+  const newObj = { ...obj };
+  newObj[newKey] = newObj[oldKey];
+  delete newObj[oldKey];
+  return newObj;
+}
