@@ -24,3 +24,16 @@ export function truncate(str, maxLength) {
   }
   return str.slice(0, maxLength) + '...';
 }
+
+/**
+ * Removes all non-alphanumeric characters from a string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function removeNonAlphanumeric(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.replace(/[^a-zA-Z0-9]/g, '');
+}

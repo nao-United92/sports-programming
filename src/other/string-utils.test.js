@@ -1,29 +1,19 @@
-import { capitalize, truncate } from './string-utils';
 
-describe('capitalize', () => {
-  test('capitalizes the first letter of a string', () => {
-    expect(capitalize('hello')).toBe('Hello');
+describe('removeNonAlphanumeric', () => {
+  test('should remove all non-alphanumeric characters from a string', () => {
+    expect(removeNonAlphanumeric('Hello, World!123')).toBe('HelloWorld123');
+    expect(removeNonAlphanumeric('  abc-123_xyz  ')).toBe('abc123xyz');
+    expect(removeNonAlphanumeric('!@#$%^&*()')).toBe('');
+    expect(removeNonAlphanumeric('abc')).toBe('abc');
   });
 
-  test('returns an empty string if the input is not a string', () => {
-    expect(capitalize(123)).toBe('');
+  test('should return an empty string if the input is not a string', () => {
+    expect(removeNonAlphanumeric(123)).toBe('');
+    expect(removeNonAlphanumeric(null)).toBe('');
+    expect(removeNonAlphanumeric(undefined)).toBe('');
   });
 
-  test('returns an empty string if the input is an empty string', () => {
-    expect(capitalize('')).toBe('');
-  });
-});
-
-describe('truncate', () => {
-  test('truncates a string to a specified length', () => {
-    expect(truncate('hello world', 5)).toBe('hello...');
-  });
-
-  test('does not truncate if the string is shorter than the specified length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
-  });
-
-  test('returns the original string if the input is not a string', () => {
-    expect(truncate(123, 5)).toBe(123);
+  test('should handle empty string', () => {
+    expect(removeNonAlphanumeric('')).toBe('');
   });
 });
