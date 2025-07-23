@@ -82,3 +82,26 @@ export function randomFloat(min, max) {
 export function randomHexColor() {
   return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
 }
+
+/**
+ * Generates a random boolean value.
+ * @returns {boolean} A random boolean (true or false).
+ */
+export function randomBoolean() {
+  return Math.random() >= 0.5;
+}
+
+/**
+ * Generates a random string of a specified length using a given set of characters.
+ * @param {number} length The desired length of the random string.
+ * @param {string} [characters='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'] The characters to use for generating the string.
+ * @returns {string} The generated random string.
+ */
+export function randomString(length, characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}

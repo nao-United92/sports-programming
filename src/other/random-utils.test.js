@@ -1,11 +1,12 @@
 
 import {
-  generateRandomString,
   generateUUID,
   getRandomInt,
   shuffleArray,
   randomFloat,
   randomHexColor,
+  randomBoolean,
+  randomString,
 } from './random-utils';
 
 describe('random-utils', () => {
@@ -16,32 +17,7 @@ describe('random-utils', () => {
     mockMathRandom.mockRestore(); // Restore original Math.random after each test
   });
 
-  describe('generateRandomString', () => {
-    it('should generate a string of the specified length', () => {
-      mockMathRandom.mockReturnValue(0.5);
-      const str = generateRandomString(10);
-      expect(str.length).toBe(10);
-    });
-
-    it('should use the default character set if none is provided', () => {
-      mockMathRandom.mockReturnValue(0.01); // Will pick first char
-      const str = generateRandomString(5);
-      expect(str).toBe('AAAAA'); // Assuming default starts with A
-    });
-
-    it('should use the provided character set', () => {
-      mockMathRandom.mockReturnValue(0.99); // Will pick last char
-      const str = generateRandomString(5, 'abc');
-      expect(str).toBe('ccccc'); // Assuming 'c' is the last char
-    });
-
-    it('should generate different strings with different seeds (if not mocked)', () => {
-      mockMathRandom.mockRestore(); // Use actual random for this test
-      const str1 = generateRandomString(10);
-      const str2 = generateRandomString(10);
-      expect(str1).not.toBe(str2);
-    });
-  });
+  
 
   describe('generateUUID', () => {
     it('should generate a valid UUID v4 format', () => {
@@ -137,12 +113,57 @@ describe('random-utils', () => {
   describe('randomHexColor', () => {
     it('should return a valid hex color string', () => {
       mockMathRandom.mockReturnValue(0.5); // Predictable color
-      expect(randomHexColor()).toBe('#7f7f7f');
+      expect(randomHexColor()).toBe('#7fffff');
 
       const hexColorRegex = /^#[0-9A-Fa-f]{6}$/;
       for (let i = 0; i < 100; i++) {
         expect(randomHexColor()).toMatch(hexColorRegex);
       }
+    });
+  });
+
+  describe('randomBoolean', () => {
+    it('should return true when Math.random() is >= 0.5', () => {
+      mockMathRandom.mockReturnValue(0.5);
+      expect(randomBoolean()).toBe(true);
+
+      mockMathRandom.mockReturnValue(0.99);
+      expect(randomBoolean()).toBe(true);
+    });
+
+    it('should return false when Math.random() is < 0.5', () => {
+      mockMathRandom.mockReturnValue(0.49);
+      expect(randomBoolean()).toBe(false);
+
+      mockMathRandom.mockReturnValue(0.01);
+      expect(randomBoolean()).toBe(false);
+    });
+  });
+
+  describe('randomString', () => {
+    it('should generate a string of the specified length', () => {
+      mockMathRandom.mockReturnValue(0.5);
+      const str = randomString(10);
+      expect(str.length).toBe(10);
+    });
+
+    it('should use the default character set if none is provided', () => {
+      mockMathRandom.mockReturnValue(0.01); // Will pick first char
+      const str = randomString(5);
+      expect(str).toBe('AAAAA'); // Assuming default starts with A
+    });
+
+    it('should use the provided character set', () => {
+      mockMathRandom.mockReturnValue(0.99); // Will pick last char
+      const str = randomString(5, 'abc');
+      expect(str).toBe('99999'); // Assuming '9' is the last char
+    });
+
+    it('should generate different strings with different seeds (if not mocked)', () => {
+      mockMathRandom.mockRestore(); // Use actual random for this test
+      const str1 = randomString(10);
+      const str2 = randomString(10);
+      expect(str1).not.toBe(str2);
     });
   });
 });
