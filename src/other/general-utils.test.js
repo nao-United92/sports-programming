@@ -1,4 +1,4 @@
-import { uuid, delay, isNil, noop } from './general-utils.js';
+import { uuid, delay, isNil, noop, isEmpty } from './general-utils.js';
 
 describe('general-utils', () => {
   describe('uuid', () => {
@@ -57,6 +57,24 @@ describe('general-utils', () => {
     test('should do nothing', () => {
       const result = noop();
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe('isEmpty', () => {
+    test('should return true for empty values', () => {
+      expect(isEmpty(null)).toBe(true);
+      expect(isEmpty(undefined)).toBe(true);
+      expect(isEmpty('')).toBe(true);
+      expect(isEmpty([])).toBe(true);
+      expect(isEmpty({})).toBe(true);
+    });
+
+    test('should return false for non-empty values', () => {
+      expect(isEmpty('hello')).toBe(false);
+      expect(isEmpty([1, 2])).toBe(false);
+      expect(isEmpty({ a: 1 })).toBe(false);
+      expect(isEmpty(0)).toBe(false);
+      expect(isEmpty(false)).toBe(false);
     });
   });
 });

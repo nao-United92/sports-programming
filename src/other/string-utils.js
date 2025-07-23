@@ -104,3 +104,29 @@ export function removeWhitespace(str) {
   }
   return str.replace(/\s/g, '');
 }
+
+/**
+ * Converts a string to camelCase.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function camelCase(str) {
+  if (typeof str !== 'string' || !str) {
+    return '';
+  }
+  return str.replace(/([-_\s]+(\w)|(^\w))/g, (match, p1, p2) => p2 ? p2.toUpperCase() : '').replace(/^\w/, c => c.toLowerCase());
+}
+
+/**
+ * Converts a string to snake_case.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function snakeCase(str) {
+  if (typeof str !== 'string' || !str) {
+    return '';
+  }
+  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`).replace(/^_/, '');
+}

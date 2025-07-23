@@ -1,5 +1,5 @@
 
-import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace } from './string-utils.js';
+import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase } from './string-utils.js';
 
 describe('removeNonAlphanumeric', () => {
   test('should remove all non-alphanumeric characters from a string', () => {
@@ -106,5 +106,21 @@ describe('removeWhitespace', () => {
     expect(removeWhitespace(123)).toBe('');
     expect(removeWhitespace(null)).toBe('');
     expect(removeWhitespace(undefined)).toBe('');
+  });
+});
+
+describe('camelCase', () => {
+  test('should convert a string to camelCase', () => {
+    expect(camelCase('hello world')).toBe('helloWorld');
+    expect(camelCase('foo-bar')).toBe('fooBar');
+    expect(camelCase('__FOO_BAR__')).toBe('fooBar');
+  });
+});
+
+describe('snakeCase', () => {
+  test('should convert a string to snake_case', () => {
+    expect(snakeCase('hello world')).toBe('hello_world');
+    expect(snakeCase('fooBar')).toBe('foo_bar');
+    expect(snakeCase('__FOO_BAR__')).toBe('__foo_bar__');
   });
 });
