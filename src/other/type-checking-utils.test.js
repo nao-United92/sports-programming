@@ -1,4 +1,4 @@
-import { isString, isNumber, isBoolean, isFunction, isObject, isArray, isNull, isUndefined } from './type-checking-utils.js';
+import { isString, isNumber, isBoolean, isFunction, isObject, isArray, isNull, isUndefined, isPlainObject, isEmpty } from './type-checking-utils.js';
 
 describe('type-checking-utils', () => {
   describe('isString', () => {
@@ -127,6 +127,62 @@ describe('type-checking-utils', () => {
       expect(isUndefined('')).toBe(false);
       expect(isUndefined(false)).toBe(false);
       expect(isUndefined({})).toBe(false);
+    });
+  });
+
+  describe('isPlainObject', () => {
+    test('should return true for plain objects', () => {
+      expect(isPlainObject({})).toBe(true);
+      expect(isPlainObject({ a: 1 })).toBe(true);
+      expect(isPlainObject(Object.create(null))).toBe(true);
+    });
+
+    test('should return false for non-plain objects', () => {
+      expect(isPlainObject([])).toBe(false);
+      expect(isPlainObject(new Date())).toBe(false);
+      expect(isPlainObject(null)).toBe(false);
+      expect(isPlainObject(undefined)).toBe(false);
+      expect(isPlainObject(123)).toBe(false);
+      expect(isPlainObject('string')).toBe(false);
+      expect(isPlainObject(true)).toBe(false);
+    });
+  });
+
+  describe('isEmpty', () => {
+    test('should return true for empty strings', () => {
+      expect(isEmpty('')).toBe(true);
+    });
+
+    test('should return true for empty arrays', () => {
+      expect(isEmpty([])).toBe(true);
+    });
+
+    test('should return true for empty objects', () => {
+      expect(isEmpty({})).toBe(true);
+    });
+
+    test('should return true for null and undefined', () => {
+      expect(isEmpty(null)).toBe(true);
+      expect(isEmpty(undefined)).toBe(true);
+    });
+
+    test('should return false for non-empty strings', () => {
+      expect(isEmpty('hello')).toBe(false);
+    });
+
+    test('should return false for non-empty arrays', () => {
+      expect(isEmpty([1, 2])).toBe(false);
+    });
+
+    test('should return false for non-empty objects', () => {
+      expect(isEmpty({ a: 1 })).toBe(false);
+    });
+
+    test('should return false for numbers and booleans', () => {
+      expect(isEmpty(0)).toBe(false);
+      expect(isEmpty(123)).toBe(false);
+      expect(isEmpty(true)).toBe(false);
+      expect(isEmpty(false)).toBe(false);
     });
   });
 });

@@ -69,3 +69,34 @@ export function isNull(value) {
 export function isUndefined(value) {
   return typeof value === 'undefined';
 }
+
+/**
+ * Checks if a value is a plain object (i.e., an object created by the Object constructor or one with a null prototype).
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a plain object, false otherwise.
+ */
+export function isPlainObject(value) {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === null || proto === Object.prototype;
+}
+
+/**
+ * Checks if a value is an empty string, empty array, or empty object.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is empty, false otherwise.
+ */
+export function isEmpty(value) {
+  if (value === null || typeof value === 'undefined') {
+    return true;
+  }
+  if (typeof value === 'string' || Array.isArray(value)) {
+    return value.length === 0;
+  }
+  if (typeof value === 'object') {
+    return Object.keys(value).length === 0;
+  }
+  return false;
+}
