@@ -97,3 +97,15 @@ export function round(num, decimalPlaces = 0) {
   const factor = 10 ** decimalPlaces;
   return Math.round(num * factor) / factor;
 }
+
+/**
+ * Generates a random integer within a specified range (inclusive).
+ * @param {number} min The minimum value (inclusive).
+ * @param {number} max The maximum value (inclusive).
+ * @returns {number} A random integer within the specified range.
+ */
+export function randomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

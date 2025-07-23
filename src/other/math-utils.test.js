@@ -1,4 +1,4 @@
-import { clamp, mapRange, sum, average, min, max, median } from './math-utils';
+import { clamp, mapRange, sum, average, min, max, median, round, randomInt } from './math-utils';
 
 describe('math-utils', () => {
   describe('clamp', () => {
@@ -163,6 +163,34 @@ describe('math-utils', () => {
 
     it('should handle large numbers of decimal places', () => {
       expect(round(1.23456789, 8)).toBe(1.23456789);
+    });
+  });
+
+  describe('randomInt', () => {
+    it('should generate a random integer within the specified range', () => {
+      for (let i = 0; i < 100; i++) {
+        const num = randomInt(1, 10);
+        expect(num).toBeGreaterThanOrEqual(1);
+        expect(num).toBeLessThanOrEqual(10);
+      }
+    });
+
+    it('should handle negative ranges', () => {
+      for (let i = 0; i < 100; i++) {
+        const num = randomInt(-5, 5);
+        expect(num).toBeGreaterThanOrEqual(-5);
+        expect(num).toBeLessThanOrEqual(5);
+      }
+    });
+
+    it('should handle single-number ranges', () => {
+      expect(randomInt(7, 7)).toBe(7);
+    });
+
+    it('should handle float inputs by flooring/ceiling', () => {
+      const num = randomInt(1.1, 10.9);
+      expect(num).toBeGreaterThanOrEqual(2);
+      expect(num).toBeLessThanOrEqual(10);
     });
   });
 });
