@@ -50,3 +50,32 @@ export function reverseString(str) {
   }
   return str.split('').reverse().join('');
 }
+
+/**
+ * Checks if a string is a palindrome.
+ *
+ * @param {string} str
+ * @returns {boolean}
+ */
+export function isPalindrome(str) {
+  if (typeof str !== 'string') {
+    return false;
+  }
+  const cleanedStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const reversedStr = cleanedStr.split('').reverse().join('');
+  return cleanedStr === reversedStr;
+}
+
+/**
+ * Counts the occurrences of a character in a string.
+ *
+ * @param {string} str
+ * @param {string} char
+ * @returns {number}
+ */
+export function countOccurrences(str, char) {
+  if (typeof str !== 'string' || typeof char !== 'string' || char.length !== 1) {
+    return 0;
+  }
+  return str.split(char).length - 1;
+}
