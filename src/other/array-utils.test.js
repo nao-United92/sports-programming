@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, unique, flatten } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -214,5 +214,30 @@ describe('array-utils', () => {
       expect(getAverage(undefined)).toBeNaN();
       expect(getAverage([1, 'a', 3])).toBeNaN();
     });
+  });
+});
+
+describe('unique', () => {
+  it('should remove duplicate values from an array', () => {
+    expect(unique([1, 1, 2, 3, 2, 4, 5, 5])).toEqual([1, 2, 3, 4, 5]);
+    expect(unique(['a', 'b', 'a', 'c', 'b'])).toEqual(['a', 'b', 'c']);
+    expect(unique([])).toEqual([]);
+  });
+
+  it('should handle non-array inputs', () => {
+    expect(unique(null)).toEqual([]);
+    expect(unique(undefined)).toEqual([]);
+  });
+});
+
+describe('flatten', () => {
+  it('should flatten a nested array', () => {
+    expect(flatten([1, [2, 3], [4, [5]]])).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it('should return an empty array for non-array inputs', () => {
+    expect(flatten(null)).toEqual([]);
+    expect(flatten(undefined)).toEqual([]);
+    expect(flatten(123)).toEqual([]);
   });
 });

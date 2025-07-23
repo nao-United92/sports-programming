@@ -226,3 +226,27 @@ export function getAverage(arr) {
   const sum = arr.reduce((total, num) => total + num, 0);
   return sum / arr.length;
 }
+
+/**
+ * Returns a new array with duplicate values removed.
+ * @param {Array} arr The array to remove duplicates from.
+ * @returns {Array} A new array with unique values.
+ */
+export function unique(arr) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return [...new Set(arr)];
+}
+
+/**
+ * Flattens a nested array into a single-dimensional array.
+ * @param {Array} arr The array to flatten.
+ * @returns {Array} The flattened array.
+ */
+export function flatten(arr) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return arr.flat(Infinity);
+}
