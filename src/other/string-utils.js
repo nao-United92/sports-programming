@@ -79,3 +79,28 @@ export function countOccurrences(str, char) {
   }
   return str.split(char).length - 1;
 }
+
+/**
+ * Counts the number of words in a string.
+ * Words are defined as sequences of non-whitespace characters.
+ * @param {string} str The input string.
+ * @returns {number} The number of words in the string.
+ */
+export function countWords(str) {
+  if (typeof str !== 'string' || str.trim() === '') {
+    return 0;
+  }
+  return str.trim().split(/\s+/).length;
+}
+
+/**
+ * Removes all whitespace characters from a string.
+ * @param {string} str The input string.
+ * @returns {string} The string with all whitespace removed.
+ */
+export function removeWhitespace(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.replace(/\s/g, '');
+}

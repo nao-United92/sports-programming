@@ -1,5 +1,5 @@
 
-import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences } from './string-utils.js';
+import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace } from './string-utils.js';
 
 describe('removeNonAlphanumeric', () => {
   test('should remove all non-alphanumeric characters from a string', () => {
@@ -74,5 +74,37 @@ describe('countOccurrences', () => {
     expect(countOccurrences(123, '1')).toBe(0);
     expect(countOccurrences('hello', 1)).toBe(0);
     expect(countOccurrences('hello', 'll')).toBe(0);
+  });
+});
+
+describe('countWords', () => {
+  test('should count words in a string', () => {
+    expect(countWords('Hello world')).toBe(2);
+    expect(countWords('  One  two   three  ')).toBe(3);
+    expect(countWords('SingleWord')).toBe(1);
+    expect(countWords('')).toBe(0);
+    expect(countWords('   ')).toBe(0);
+  });
+
+  test('should return 0 for non-string inputs', () => {
+    expect(countWords(123)).toBe(0);
+    expect(countWords(null)).toBe(0);
+    expect(countWords(undefined)).toBe(0);
+  });
+});
+
+describe('removeWhitespace', () => {
+  test('should remove all whitespace from a string', () => {
+    expect(removeWhitespace('Hello world')).toBe('Helloworld');
+    expect(removeWhitespace('  leading and trailing  ')).toBe('leadingandtrailing');
+    expect(removeWhitespace('Multiple   spaces')).toBe('Multiplespaces');
+    expect(removeWhitespace('\tTabs\nand\rNewlines')).toBe('TabsandNewlines');
+    expect(removeWhitespace('')).toBe('');
+  });
+
+  test('should return an empty string for non-string inputs', () => {
+    expect(removeWhitespace(123)).toBe('');
+    expect(removeWhitespace(null)).toBe('');
+    expect(removeWhitespace(undefined)).toBe('');
   });
 });
