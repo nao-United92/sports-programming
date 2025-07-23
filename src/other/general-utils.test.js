@@ -1,4 +1,4 @@
-import { uuid, delay, isNil } from './general-utils.js';
+import { uuid, delay, isNil, noop } from './general-utils.js';
 
 describe('general-utils', () => {
   describe('uuid', () => {
@@ -50,6 +50,13 @@ describe('general-utils', () => {
       expect(isNil(NaN)).toBe(false);
       expect(isNil({})).toBe(false);
       expect(isNil([])).toBe(false);
+    });
+  });
+
+  describe('noop', () => {
+    test('should do nothing', () => {
+      const result = noop();
+      expect(result).toBeUndefined();
     });
   });
 });

@@ -35,3 +35,10 @@ export function getUniqueId() {
 export function isNil(value) {
   return value === null || value === undefined;
 }
+
+/**
+ * A no-operation function. Does nothing.
+ */
+export function noop() {
+  // This function intentionally does nothing.
+}
