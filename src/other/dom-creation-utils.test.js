@@ -1,4 +1,4 @@
-import { createElement, appendChild, appendChildren, removeElement, replaceElement, wrapElement } from './dom-creation-utils.js';
+import { createElement, appendChild, appendChildren, removeElement, replaceElement, wrapElement, insertAfter, insertBefore } from './dom-creation-utils.js';
 
 describe('dom-creation-utils', () => {
   let container;
@@ -170,6 +170,60 @@ describe('dom-creation-utils', () => {
       const innerEl = createElement('span');
       container.appendChild(innerEl);
       expect(wrapElement(innerEl, null)).toBeNull();
+    });
+  });
+
+  describe('insertAfter', () => {
+    test('should insert a new element after a reference element', () => {
+      const refEl = createElement('p', { id: 'ref' });
+      const newEl = createElement('span', { id: 'new' });
+      container.appendChild(refEl);
+
+      insertAfter(newEl, refEl);
+      expect(container.children[0]).toBe(refEl);
+      expect(container.children[1]).toBe(newEl);
+    });
+
+    test('should return the new element', () => {
+      const refEl = createElement('p');
+      const newEl = createElement('span');
+      container.appendChild(refEl);
+      expect(insertAfter(newEl, refEl)).toBe(newEl);
+    });
+
+    test('should return null if newElement or referenceElement is invalid', () => {
+      const refEl = createElement('p');
+      container.appendChild(refEl);
+      expect(insertAfter(null, refEl)).toBeNull();
+      expect(insertAfter(createElement('span'), null)).toBeNull();
+      expect(insertAfter(createElement('span'), createElement('p'))).toBeNull(); // No parent
+    });
+  });
+
+  describe('insertBefore', () => {
+    test('should insert a new element before a reference element', () => {
+      const refEl = createElement('p', { id: 'ref' });
+      const newEl = createElement('span', { id: 'new' });
+      container.appendChild(refEl);
+
+      insertBefore(newEl, refEl);
+      expect(container.children[0]).toBe(newEl);
+      expect(container.children[1]).toBe(refEl);
+    });
+
+    test('should return the new element', () => {
+      const refEl = createElement('p');
+      const newEl = createElement('span');
+      container.appendChild(refEl);
+      expect(insertBefore(newEl, refEl)).toBe(newEl);
+    });
+
+    test('should return null if newElement or referenceElement is invalid', () => {
+      const refEl = createElement('p');
+      container.appendChild(refEl);
+      expect(insertBefore(null, refEl)).toBeNull();
+      expect(insertBefore(createElement('span'), null)).toBeNull();
+      expect(insertBefore(createElement('span'), createElement('p'))).toBeNull(); // No parent
     });
   });
 });

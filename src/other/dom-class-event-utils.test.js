@@ -6,6 +6,7 @@ import {
   removeClass,
   toggleClass,
   hasClass,
+  once,
 } from './dom-class-event-utils';
 
 describe('dom-class-event-utils', () => {
@@ -155,6 +156,32 @@ describe('dom-class-event-utils', () => {
 
     it('should not throw error if element is null for off', () => {
       expect(() => off(null, 'click', jest.fn())).not.toThrow();
+    });
+  });
+
+  describe('once', () => {
+    let element;
+    let handler;
+
+    beforeEach(() => {
+      element = document.createElement('button');
+      document.body.appendChild(element);
+      handler = jest.fn();
+    });
+
+    afterEach(() => {
+      document.body.removeChild(element);
+    });
+
+    test('should execute the handler only once', () => {
+      once(element, 'click', handler);
+      element.click();
+      element.click();
+      expect(handler).toHaveBeenCalledTimes(1);
+    });
+
+    test('should not throw error if element is null', () => {
+      expect(() => once(null, 'click', handler)).not.toThrow();
     });
   });
 });

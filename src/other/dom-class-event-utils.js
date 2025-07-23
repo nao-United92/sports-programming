@@ -103,3 +103,14 @@ export function hasClass(element, className) {
   }
   return false;
 }
+
+/**
+ * Attaches an event listener to an element that will only fire once.
+ * @param {HTMLElement} element The element to attach the listener to.
+ * @param {string} eventName The name of the event (e.g., 'click').
+ * @param {Function} handler The event handler function.
+ */
+export function once(element, eventName, handler) {
+  if (!element) return;
+  element.addEventListener(eventName, handler, { once: true });
+}

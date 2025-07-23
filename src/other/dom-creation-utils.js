@@ -90,3 +90,31 @@ export function wrapElement(elementToWrap, wrapperElement) {
   wrapperElement.appendChild(elementToWrap);
   return wrapperElement;
 }
+
+/**
+ * Inserts a new element after a reference element.
+ * @param {HTMLElement} newElement The element to insert.
+ * @param {HTMLElement} referenceElement The element after which to insert.
+ * @returns {HTMLElement|null} The new element if successful, null otherwise.
+ */
+export function insertAfter(newElement, referenceElement) {
+  if (!newElement || !referenceElement || !referenceElement.parentNode) {
+    return null;
+  }
+  referenceElement.parentNode.insertBefore(newElement, referenceElement.nextSibling);
+  return newElement;
+}
+
+/**
+ * Inserts a new element before a reference element.
+ * @param {HTMLElement} newElement The element to insert.
+ * @param {HTMLElement} referenceElement The element before which to insert.
+ * @returns {HTMLElement|null} The new element if successful, null otherwise.
+ */
+export function insertBefore(newElement, referenceElement) {
+  if (!newElement || !referenceElement || !referenceElement.parentNode) {
+    return null;
+  }
+  referenceElement.parentNode.insertBefore(newElement, referenceElement);
+  return newElement;
+}
