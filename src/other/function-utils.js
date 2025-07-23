@@ -180,3 +180,13 @@ export function once(func) {
   };
 }
 
+/**
+ * Defers invoking the `func` until the current call stack has cleared.
+ * @param {Function} func The function to defer.
+ * @param {...*} [args] The arguments to invoke `func` with.
+ * @returns {number} Returns the timer id.
+ */
+export function defer(func, ...args) {
+  return setTimeout(func, 1, ...args);
+}
+

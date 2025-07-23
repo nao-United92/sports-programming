@@ -1,4 +1,4 @@
-import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate } from './date-utils.js';
+import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast } from './date-utils.js';
 
 describe('formatDate', () => {
   test('should format a Date object to YYYY-MM-DD string', () => {
@@ -171,6 +171,46 @@ describe('isValidDate', () => {
     expect(isValidDate(undefined)).toBe(false);
     expect(isValidDate('2023-01-01')).toBe(false);
     expect(isValidDate(123)).toBe(false);
+  });
+});
+
+describe('isToday', () => {
+  test('should return true for today\'s date', () => {
+    expect(isToday(new Date())).toBe(true);
+  });
+
+  test('should return false for a date in the past', () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    expect(isToday(yesterday)).toBe(false);
+  });
+});
+
+describe('isFuture', () => {
+  test('should return true for a future date', () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    expect(isFuture(tomorrow)).toBe(true);
+  });
+
+  test('should return false for a past date', () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    expect(isFuture(yesterday)).toBe(false);
+  });
+});
+
+describe('isPast', () => {
+  test('should return true for a past date', () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    expect(isPast(yesterday)).toBe(true);
+  });
+
+  test('should return false for a future date', () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    expect(isPast(tomorrow)).toBe(false);
   });
 });
 });

@@ -108,3 +108,42 @@ export function isValidDate(date) {
   return date instanceof Date && !isNaN(date);
 }
 
+/**
+ * Checks if a date is today.
+ * @param {Date} date The date to check.
+ * @returns {boolean} True if the date is today, false otherwise.
+ */
+export function isToday(date) {
+  if (!isValidDate(date)) {
+    return false;
+  }
+  const today = new Date();
+  return isSameDay(date, today);
+}
+
+/**
+ * Checks if a date is in the future.
+ * @param {Date} date The date to check.
+ * @returns {boolean} True if the date is in the future, false otherwise.
+ */
+export function isFuture(date) {
+  if (!isValidDate(date)) {
+    return false;
+  }
+  const now = new Date();
+  return date.getTime() > now.getTime();
+}
+
+/**
+ * Checks if a date is in the past.
+ * @param {Date} date The date to check.
+ * @returns {boolean} True if the date is in the past, false otherwise.
+ */
+export function isPast(date) {
+  if (!isValidDate(date)) {
+    return false;
+  }
+  const now = new Date();
+  return date.getTime() < now.getTime();
+}
+

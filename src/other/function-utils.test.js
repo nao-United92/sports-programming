@@ -1,4 +1,4 @@
-import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial, sleep } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial, sleep, defer } from './function-utils.js';
 
 describe('sleep', () => {
   test('should resolve after the specified time', async () => {
@@ -181,6 +181,18 @@ describe('function-utils', () => {
       obj.value = 20; // Change value after first call
       expect(obj.getValue()).toBe(10); // Should still return the initial value
     });
+  });
+});
+
+describe('defer', () => {
+  test('should defer the execution of a function', (done) => {
+    const mockFn = jest.fn();
+    defer(mockFn);
+    expect(mockFn).not.toHaveBeenCalled();
+    setTimeout(() => {
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      done();
+    }, 10);
   });
 });
   
