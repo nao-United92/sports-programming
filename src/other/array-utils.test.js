@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, unique, flatten } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, unique, flatten, range, compact } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -239,5 +239,48 @@ describe('flatten', () => {
     expect(flatten(null)).toEqual([]);
     expect(flatten(undefined)).toEqual([]);
     expect(flatten(123)).toEqual([]);
+  });
+});
+
+describe('range', () => {
+  it('should generate a range of numbers with default step', () => {
+    expect(range(5)).toEqual([0, 1, 2, 3, 4]);
+    expect(range(1, 5)).toEqual([1, 2, 3, 4]);
+  });
+
+  it('should generate a range of numbers with a custom step', () => {
+    expect(range(0, 10, 2)).toEqual([0, 2, 4, 6, 8]);
+    expect(range(1, 10, 2)).toEqual([1, 3, 5, 7, 9]);
+  });
+
+  it('should generate a decreasing range', () => {
+    expect(range(5, 1, -1)).toEqual([5, 4, 3, 2]);
+    expect(range(10, 0, -2)).toEqual([10, 8, 6, 4, 2]);
+  });
+
+  it('should handle empty ranges', () => {
+    expect(range(5, 5)).toEqual([]);
+    expect(range(1, 0)).toEqual([]);
+  });
+
+  it('should handle non-numeric inputs gracefully', () => {
+    expect(range('a', 5)).toEqual([]);
+    expect(range(1, 'b')).toEqual([]);
+  });
+});
+
+describe('compact', () => {
+  it('should remove all falsey values from an array', () => {
+    expect(compact([0, 1, false, 2, '', 3, null, 'a', undefined, NaN])).toEqual([1, 2, 3, 'a']);
+  });
+
+  it('should return an empty array if all values are falsey', () => {
+    expect(compact([0, false, '', null, undefined, NaN])).toEqual([]);
+  });
+
+  it('should return an empty array for non-array inputs', () => {
+    expect(compact(null)).toEqual([]);
+    expect(compact(undefined)).toEqual([]);
+    expect(compact(123)).toEqual([]);
   });
 });

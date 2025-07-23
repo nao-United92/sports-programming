@@ -250,3 +250,38 @@ export function flatten(arr) {
   }
   return arr.flat(Infinity);
 }
+
+/**
+ * Creates an array of numbers (positive and/or negative) progressing from `start` up to, but not including, `end`.
+ * If `end` is not specified, `start` is set to `0` and `end` is set to `start`.
+ * If `step` is not specified, it defaults to `1`.
+ * @param {number} [start=0] The start of the range.
+ * @param {number} end The end of the range.
+ * @param {number} [step=1] The value to increment or decrement by.
+ * @returns {Array<number>} Returns the new array of numbers.
+ */
+export function range(start, end, step = 1) {
+  if (end === undefined) {
+    end = start;
+    start = 0;
+  }
+
+  const result = [];
+  for (let i = start; step > 0 ? i < end : i > end; i += step) {
+    result.push(i);
+  }
+  return result;
+}
+
+/**
+ * Creates an array with all falsey values removed.
+ * The values `false`, `null`, `0`, `""`, `undefined`, and `NaN` are falsey.
+ * @param {Array} array The array to compact.
+ * @returns {Array} Returns the new array of compacted values.
+ */
+export function compact(array) {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  return array.filter(Boolean);
+}
