@@ -8,12 +8,23 @@ describe('cookie-utils', () => {
       return Object.keys(cookies).map(key => `${key}=${cookies[key]}`).join('; ');
     }),
     set: jest.fn((cookieString) => {
-      const [nameValue, ...rest] = cookieString.split(';');
-      const [name, value] = nameValue.split('=');
-      if (value === undefined || rest.includes('expires=Thu, 01 Jan 1970 00:00:00 GMT')) {
+      const parts = cookieString.split('; ').map(s => s.trim());
+      const [name, value] = parts[0].split('=');
+      
+      let cookieData = { value: value };
+
+      parts.slice(1).forEach(part => {
+        if (part.startsWith('expires=')) {
+          cookieData.expires = part.substring('expires='.length);
+        } else if (part.startsWith('path=')) {
+          cookieData.path = part.substring('path='.length);
+        }
+      });
+
+      if (cookieData.expires && new Date(cookieData.expires) < new Date()) {
         delete cookies[name];
       } else {
-        cookies[name] = value;
+        cookies[name] = cookieData;
       }
     }),
     configurable: true,
@@ -46,5 +57,22 @@ describe('cookie-utils', () => {
 
   test('getCookie for non-existent cookie', () => {
     expect(getCookie('nonexistent')).toBe(null);
+  });
+
+  test('setCookie with expiration and path', () => {
+    setCookie('test_exp_path', 'value_exp_path', { days: 7, path: '/testpath' });
+    expect(document.cookie).toContain('test_exp_path=value_exp_path');
+    expect(document.cookie).toContain('path=/testpath');
+  });
+
+  test('setCookie without expiration (session cookie)', () => {
+    setCookie('test_session', 'value_session');
+    expect(document.cookie).toContain('test_session=value_session');
+    expect(document.cookie).toContain('path=/');
+  });
+
+  test('setCookie with 0 days expiration (delete immediately)', () => {
+    setCookie('test_delete', 'value_delete', { days: 0 });
+    expect(document.cookie).not.toContain('test_delete');
   });
 });

@@ -48,3 +48,5 @@ export function setCookie(name, value, options = {}) {
 export function deleteCookie(name) {
   setCookie(name, '', { days: -1 });
 }
+
+
