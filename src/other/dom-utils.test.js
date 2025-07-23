@@ -1,4 +1,4 @@
-import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml, isElementVisible } from './dom-utils.js';
+import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml, isElementVisible, hasAttribute, createElementWithAttributes } from './dom-utils.js';
 
 describe('dom-utils', () => {
   beforeEach(() => {
@@ -271,6 +271,46 @@ describe('dom-utils', () => {
       expect(hasAttribute(el, null)).toBe(false);
       expect(hasAttribute(el, undefined)).toBe(false);
       expect(hasAttribute(el, 123)).toBe(false);
+    });
+  });
+
+  describe('createElementWithAttributes', () => {
+    test('should create an element with specified tag name and attributes', () => {
+      const el = createElementWithAttributes('a', { href: '#', target: '_blank' });
+      expect(el.tagName).toBe('A');
+      expect(el.getAttribute('href')).toBe('#');
+      expect(el.getAttribute('target')).toBe('_blank');
+    });
+
+    test('should create an element without attributes if none are provided', () => {
+      const el = createElementWithAttributes('p');
+      expect(el.tagName).toBe('P');
+      expect(el.attributes.length).toBe(0);
+    });
+  });
+
+  describe('appendChildren', () => {
+    test('should append multiple child elements to a parent', () => {
+      const parent = document.createElement('div');
+      const child1 = document.createElement('span');
+      const child2 = document.createElement('p');
+      appendChildren(parent, [child1, child2, 'text node']);
+
+      expect(parent.children.length).toBe(2);
+      expect(parent.children[0]).toBe(child1);
+      expect(parent.children[1]).toBe(child2);
+      expect(parent.childNodes[2].nodeValue).toBe('text node');
+    });
+
+    test('should handle empty children array', () => {
+      const parent = document.createElement('div');
+      appendChildren(parent, []);
+      expect(parent.children.length).toBe(0);
+    });
+
+    test('should not append if parent is null or undefined', () => {
+      appendChildren(null, [document.createElement('div')]);
+      // No error should be thrown, and nothing should be appended
     });
   });
 });

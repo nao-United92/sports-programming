@@ -267,3 +267,19 @@ export function hasAttribute(element, attributeName) {
   }
   return element.hasAttribute(attributeName);
 }
+
+/**
+ * Creates a new HTML element with the specified tag name and attributes.
+ * @param {string} tagName The tag name of the element to create (e.g., 'div', 'span').
+ * @param {object} attributes An object of attribute key-value pairs.
+ * @returns {HTMLElement} The newly created HTMLElement.
+ */
+export function createElementWithAttributes(tagName, attributes = {}) {
+  const element = document.createElement(tagName);
+  for (const key in attributes) {
+    if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+      element.setAttribute(key, attributes[key]);
+    }
+  }
+  return element;
+}
