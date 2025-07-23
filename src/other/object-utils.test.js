@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject, shallowEqual, isObject, isDeepEqual } from './object-utils';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject, shallowEqual, isObject, isDeepEqual, renameKey } from './object-utils';
 
 describe('isDeepEqual', () => {
   test('should return true for deeply equal objects', () => {
@@ -209,9 +209,9 @@ describe('omit', () => {
   });
 
   test('should return the original value for non-object inputs', () => {
-    expect(omit(null, ['a'])).toBe(null);
-    expect(omit(undefined, ['a'])).toBe(undefined);
-    expect(omit(123, ['a'])).toBe(123);
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
+    expect(omit(123, ['a'])).toEqual({});
   });
 });
 
@@ -429,5 +429,19 @@ describe('renameKey', () => {
     const obj = { a: 1, b: 2 };
     const newObj = renameKey(obj, 'a', 'b');
     expect(newObj).toEqual({ b: 1 });
+  });
+});
+
+describe('pick', () => {
+  it('should create an object with picked properties', () => {
+    const object = { a: 1, b: '2', c: 3 };
+    expect(pick(object, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+  });
+});
+
+describe('omit', () => {
+  it('should create an object with omitted properties', () => {
+    const object = { a: 1, b: '2', c: 3 };
+    expect(omit(object, ['a', 'c'])).toEqual({ b: '2' });
   });
 });

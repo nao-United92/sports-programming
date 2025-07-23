@@ -113,43 +113,7 @@ export function setNestedProperty(obj, path, value) {
   return obj;
 }
 
-/**
- * Returns a new object with specified properties omitted.
- * @param {object} obj The original object.
- * @param {string[]} keys An array of keys to omit.
- * @returns {object} A new object without the omitted keys.
- */
-export function omit(obj, keys) {
-  if (typeof obj !== 'object' || obj === null) {
-    return obj;
-  }
 
-  const newObj = { ...obj };
-  for (const key of keys) {
-    delete newObj[key];
-  }
-  return newObj;
-}
-
-/**
- * Returns a new object with only the specified properties.
- * @param {object} obj The original object.
- * @param {string[]} keys An array of keys to pick.
- * @returns {object} A new object with only the picked keys.
- */
-export function pick(obj, keys) {
-  if (typeof obj !== 'object' || obj === null) {
-    return {};
-  }
-
-  const newObj = {};
-  for (const key of keys) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      newObj[key] = obj[key];
-    }
-  }
-  return newObj;
-}
 
 /**
  * Deeply merges two or more objects.
@@ -296,7 +260,10 @@ export function isDeepEqual(a, b) {
  * @returns {object} A new object with the key renamed.
  */
 export function renameKey(obj, oldKey, newKey) {
-  if (typeof obj !== 'object' || obj === null || !obj.hasOwnProperty(oldKey)) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+  if (!obj.hasOwnProperty(oldKey)) {
     return { ...obj };
   }
   const newObj = { ...obj };
@@ -304,3 +271,35 @@ export function renameKey(obj, oldKey, newKey) {
   delete newObj[oldKey];
   return newObj;
 }
+
+/**
+ * Creates an object composed of the picked object properties.
+ * @param {object} object The source object.
+ * @param {string[]} paths The property paths to pick.
+ * @returns {object} Returns the new object.
+ */
+export function pick(object, paths) {
+  return paths.reduce((obj, path) => {
+    if (object && Object.prototype.hasOwnProperty.call(object, path)) {
+      obj[path] = object[path];
+    }
+    return obj;
+  }, {});
+}
+
+/**
+ * The opposite of `pick`; this method creates an object composed of the own
+ * and inherited enumerable property paths of `object` that are not omitted.
+ * @param {object} object The source object.
+ * @param {string[]} paths The property paths to omit.
+ * @returns {object} Returns the new object.
+ */
+export function omit(object, paths) {
+  const newObject = { ...object };
+  paths.forEach(path => {
+    delete newObject[path];
+  });
+  return newObject;
+}
+
+
