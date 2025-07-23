@@ -7,6 +7,8 @@ import {
   randomHexColor,
   randomBoolean,
   randomString,
+  randomDate,
+  randomEnum,
 } from './random-utils';
 
 describe('random-utils', () => {
@@ -164,6 +166,29 @@ describe('random-utils', () => {
       const str1 = randomString(10);
       const str2 = randomString(10);
       expect(str1).not.toBe(str2);
+    });
+  });
+
+  describe('randomDate', () => {
+    test('should return a date within the specified range', () => {
+      const start = new Date('2023-01-01');
+      const end = new Date('2023-12-31');
+      const randomDt = randomDate(start, end);
+      expect(randomDt.getTime()).toBeGreaterThanOrEqual(start.getTime());
+      expect(randomDt.getTime()).toBeLessThanOrEqual(end.getTime());
+    });
+  });
+
+  describe('randomEnum', () => {
+    const Colors = {
+      RED: 'RED',
+      GREEN: 'GREEN',
+      BLUE: 'BLUE',
+    };
+
+    test('should return a random value from the enum', () => {
+      const randomColor = randomEnum(Colors);
+      expect(Object.values(Colors)).toContain(randomColor);
     });
   });
 });

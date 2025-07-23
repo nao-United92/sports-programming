@@ -100,3 +100,21 @@ export function isEmpty(value) {
   }
   return false;
 }
+
+/**
+ * Checks if a value is a Promise.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a Promise, false otherwise.
+ */
+export function isPromise(value) {
+  return value instanceof Promise || (value !== null && typeof value === 'object' && typeof value.then === 'function' && typeof value.catch === 'function');
+}
+
+/**
+ * Checks if a value is iterable.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is iterable, false otherwise.
+ */
+export function isIterable(value) {
+  return value !== null && typeof value[Symbol.iterator] === 'function';
+}

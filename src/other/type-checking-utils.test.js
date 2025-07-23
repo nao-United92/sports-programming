@@ -1,4 +1,4 @@
-import { isString, isNumber, isBoolean, isFunction, isObject, isArray, isNull, isUndefined, isPlainObject, isEmpty } from './type-checking-utils.js';
+import { isString, isNumber, isBoolean, isFunction, isObject, isArray, isNull, isUndefined, isPlainObject, isEmpty, isPromise, isIterable } from './type-checking-utils.js';
 
 describe('type-checking-utils', () => {
   describe('isString', () => {
@@ -183,6 +183,45 @@ describe('type-checking-utils', () => {
       expect(isEmpty(123)).toBe(false);
       expect(isEmpty(true)).toBe(false);
       expect(isEmpty(false)).toBe(false);
+    });
+  });
+
+  describe('isPromise', () => {
+    test('should return true for a Promise', () => {
+      expect(isPromise(Promise.resolve())).toBe(true);
+      expect(isPromise(new Promise(() => {}))).toBe(true);
+    });
+
+    test('should return true for thenable objects', () => {
+      const thenable = { then: () => {}, catch: () => {} };
+      expect(isPromise(thenable)).toBe(true);
+    });
+
+    test('should return false for non-promises', () => {
+      expect(isPromise(null)).toBe(false);
+      expect(isPromise(undefined)).toBe(false);
+      expect(isPromise(123)).toBe(false);
+      expect(isPromise('string')).toBe(false);
+      expect(isPromise({})).toBe(false);
+      expect(isPromise({ then: () => {} })).toBe(false); // Missing catch
+    });
+  });
+
+  describe('isIterable', () => {
+    test('should return true for iterable values', () => {
+      expect(isIterable([])).toBe(true);
+      expect(isIterable('string')).toBe(true);
+      expect(isIterable(new Map())).toBe(true);
+      expect(isIterable(new Set())).toBe(true);
+      expect(isIterable(new Int8Array())).toBe(true);
+    });
+
+    test('should return false for non-iterable values', () => {
+      expect(isIterable(null)).toBe(false);
+      expect(isIterable(undefined)).toBe(false);
+      expect(isIterable(123)).toBe(false);
+      expect(isIterable({})).toBe(false);
+      expect(isIterable(true)).toBe(false);
     });
   });
 });

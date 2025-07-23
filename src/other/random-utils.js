@@ -105,3 +105,24 @@ export function randomString(length, characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabc
   }
   return result;
 }
+
+/**
+ * Generates a random Date object within a specified range.
+ * @param {Date} start The start date (inclusive).
+ * @param {Date} end The end date (inclusive).
+ * @returns {Date} A random Date object.
+ */
+export function randomDate(start, end) {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+/**
+ * Returns a random value from an enum (object).
+ * @param {object} enumeration The enum object.
+ * @returns {*} A random value from the enum.
+ */
+export function randomEnum(enumeration) {
+  const values = Object.values(enumeration);
+  const randomIndex = Math.floor(Math.random() * values.length);
+  return values[randomIndex];
+}
