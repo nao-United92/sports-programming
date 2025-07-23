@@ -1,20 +1,20 @@
-import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDateToYYYYMMDD } from './date-utils.js';
+import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate } from './date-utils.js';
 
-describe('formatDateToYYYYMMDD', () => {
+describe('formatDate', () => {
   test('should format a Date object to YYYY-MM-DD string', () => {
     const date = new Date('2023-01-05T10:00:00Z');
-    expect(formatDateToYYYYMMDD(date)).toBe('2023-01-05');
+    expect(formatDate(date)).toBe('2023-01-05');
   });
 
   test('should pad month and day with leading zeros', () => {
     const date = new Date('2023-03-07T10:00:00Z');
-    expect(formatDateToYYYYMMDD(date)).toBe('2023-03-07');
+    expect(formatDate(date)).toBe('2023-03-07');
   });
 
   test('should return empty string for invalid date', () => {
-    expect(formatDateToYYYYMMDD(new Date('invalid'))).toBe('');
-    expect(formatDateToYYYYMMDD(null)).toBe('');
-    expect(formatDateToYYYYMMDD(undefined)).toBe('');
+    expect(formatDate(new Date('invalid'))).toBe('');
+    expect(formatDate(null)).toBe('');
+    expect(formatDate(undefined)).toBe('');
   });
 });
 
@@ -130,6 +130,47 @@ describe('date-utils', () => {
 
     test('should return null for invalid date', () => {
       expect(addDays(new Date('invalid'), 5)).toBeNull();
-    });
   });
+});
+
+describe('formatDate', () => {
+  test('should format a Date object to YYYY-MM-DD by default', () => {
+    const date = new Date('2023-01-05T10:00:00Z');
+    expect(formatDate(date)).toBe('2023-01-05');
+  });
+
+  test('should format a Date object with custom format string', () => {
+    const date = new Date('2023-01-05T10:05:08Z');
+    expect(formatDate(date, 'YYYY/MM/DD HH:mm:ss')).toBe('2023/01/05 19:05:08');
+  });
+
+  test('should pad month, day, hours, minutes, and seconds with leading zeros', () => {
+    const date = new Date('2023-03-07T03:05:07Z');
+    expect(formatDate(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-03-07 12:05:07');
+  });
+
+  test('should return empty string for invalid date', () => {
+    expect(formatDate(new Date('invalid'))).toBe('');
+    expect(formatDate(null)).toBe('');
+    expect(formatDate(undefined)).toBe('');
+  });
+});
+
+describe('isValidDate', () => {
+  test('should return true for a valid Date object', () => {
+    expect(isValidDate(new Date())).toBe(true);
+    expect(isValidDate(new Date('2023-01-01'))).toBe(true);
+  });
+
+  test('should return false for an invalid Date object', () => {
+    expect(isValidDate(new Date('invalid'))).toBe(false);
+  });
+
+  test('should return false for non-Date objects', () => {
+    expect(isValidDate(null)).toBe(false);
+    expect(isValidDate(undefined)).toBe(false);
+    expect(isValidDate('2023-01-01')).toBe(false);
+    expect(isValidDate(123)).toBe(false);
+  });
+});
 });

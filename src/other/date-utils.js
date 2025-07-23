@@ -78,13 +78,33 @@ export function getMonthDifference(date1, date2) {
  * @param {Date} date The Date object to format.
  * @returns {string} The formatted date string.
  */
-export function formatDateToYYYYMMDD(date) {
+export function formatDate(date, formatStr = 'YYYY-MM-DD') {
   if (!(date instanceof Date) || isNaN(date)) {
     return '';
   }
+
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const day = date.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+
+  return formatStr
+    .replace(/YYYY/g, year)
+    .replace(/MM/g, month)
+    .replace(/DD/g, day)
+    .replace(/HH/g, hours)
+    .replace(/mm/g, minutes)
+    .replace(/ss/g, seconds);
+}
+
+/**
+ * Checks if a date is a valid Date object.
+ * @param {*} date The value to check.
+ * @returns {boolean} True if the value is a valid Date object, false otherwise.
+ */
+export function isValidDate(date) {
+  return date instanceof Date && !isNaN(date);
 }
 
