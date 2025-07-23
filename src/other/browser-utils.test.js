@@ -1,4 +1,4 @@
-import { isBrowser, scrollToTop, getScrollPosition, isInViewport, getUserAgent, isMobile, isTablet } from './browser-utils.js';
+import { isBrowser, scrollToTop, getScrollPosition, isInViewport, getUserAgent, isMobile, isTablet, getURLParameters } from './browser-utils.js';
 
 describe('browser-utils', () => {
   it('should check if in a browser environment', () => {
@@ -71,6 +71,26 @@ describe('browser-utils', () => {
 
       Object.defineProperty(navigator, 'userAgent', { value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1', configurable: true });
       expect(isTablet()).toBe(false);
+    });
+  });
+
+  describe('getURLParameters', () => {
+    test('should parse URL parameters', () => {
+      const url = 'http://example.com?name=John%20Doe&age=30';
+      const params = getURLParameters(url);
+      expect(params).toEqual({ name: 'John Doe', age: '30' });
+    });
+
+    test('should handle URL with no parameters', () => {
+      const url = 'http://example.com';
+      const params = getURLParameters(url);
+      expect(params).toEqual({});
+    });
+
+    test('should handle URL with empty parameter values', () => {
+      const url = 'http://example.com?name=&age=';
+      const params = getURLParameters(url);
+      expect(params).toEqual({ name: '', age: '', });
     });
   });
 });

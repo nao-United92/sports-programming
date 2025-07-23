@@ -1,4 +1,4 @@
-import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml, isElementVisible, hasAttribute, createElementWithAttributes } from './dom-utils.js';
+import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml, isElementVisible, hasAttribute, createElementWithAttributes, isElementFullyInViewport } from './dom-utils.js';
 
 describe('dom-utils', () => {
   beforeEach(() => {
@@ -311,6 +311,52 @@ describe('dom-utils', () => {
     test('should not append if parent is null or undefined', () => {
       appendChildren(null, [document.createElement('div')]);
       // No error should be thrown, and nothing should be appended
+    });
+  });
+
+  describe('isElementFullyInViewport', () => {
+    test('should return true if element is fully in viewport', () => {
+      const el = createElement('div');
+      document.body.appendChild(el);
+      Object.defineProperty(el, 'getBoundingClientRect', {
+        value: () => ({
+          top: 10,
+          left: 10,
+          bottom: 100,
+          right: 100,
+          width: 90,
+          height: 90,
+          x: 10,
+          y: 10,
+        }),
+      });
+      Object.defineProperty(window, 'innerHeight', { value: 200, writable: true });
+      Object.defineProperty(window, 'innerWidth', { value: 200, writable: true });
+      expect(isElementFullyInViewport(el)).toBe(true);
+    });
+
+    test('should return false if element is partially out of viewport', () => {
+      const el = createElement('div');
+      document.body.appendChild(el);
+      Object.defineProperty(el, 'getBoundingClientRect', {
+        value: () => ({
+          top: -10,
+          left: 10,
+          bottom: 100,
+          right: 100,
+          width: 90,
+          height: 90,
+          x: -10,
+          y: 10,
+        }),
+      });
+      Object.defineProperty(window, 'innerHeight', { value: 200, writable: true });
+      Object.defineProperty(window, 'innerWidth', { value: 200, writable: true });
+      expect(isElementFullyInViewport(el)).toBe(false);
+    });
+
+    test('should return false for null element', () => {
+      expect(isElementFullyInViewport(null)).toBe(false);
     });
   });
 });
