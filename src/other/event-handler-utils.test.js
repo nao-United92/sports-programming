@@ -1,4 +1,4 @@
-import { preventDefault, stopPropagation, stopEvent, debounce, throttle, addEvent, removeEvent, once } from './event-handler-utils.js';
+import { preventDefault, stopPropagation, stopEvent, debounce, throttle, addEvent, removeEvent, once, delegate, onReady } from './event-handler-utils.js';
 
 describe('event-handler-utils', () => {
   let mockEvent;
@@ -157,6 +157,79 @@ describe('event-handler-utils', () => {
       // Subsequent calls should not call the original function again
       onceFn.apply({ value: 100 }, [10, 20]);
       expect(mockFn).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('delegate', () => {
+    let parentElement;
+    let childElement;
+    let handler;
+
+    beforeEach(() => {
+      parentElement = document.createElement('div');
+      childElement = document.createElement('button');
+      childElement.className = 'my-button';
+      parentElement.appendChild(childElement);
+      document.body.appendChild(parentElement);
+      handler = jest.fn();
+    });
+
+    afterEach(() => {
+      document.body.removeChild(parentElement);
+    });
+
+    test('should delegate event to child element', () => {
+      delegate(parentElement, 'click', '.my-button', handler);
+      childElement.click();
+      expect(handler).toHaveBeenCalledTimes(1);
+      expect(handler).toHaveBeenCalledWith(expect.any(Event));
+      expect(handler).toHaveBeenCalledOnLastCallWith(expect.objectContaining({ target: childElement }));
+    });
+
+    test('should not trigger handler if target does not match selector', () => {
+      const otherElement = document.createElement('span');
+      parentElement.appendChild(otherElement);
+      delegate(parentElement, 'click', '.my-button', handler);
+      otherElement.click();
+      expect(handler).not.toHaveBeenCalled();
+    });
+
+    test('should handle events on the delegated element itself if it matches the selector', () => {
+      const btn = document.createElement('button');
+      btn.className = 'my-button';
+      document.body.appendChild(btn);
+      delegate(document.body, 'click', '.my-button', handler);
+      btn.click();
+      expect(handler).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('onReady', () => {
+    let callback;
+
+    beforeEach(() => {
+      callback = jest.fn();
+    });
+
+    test('should execute callback immediately if DOM is already loaded', () => {
+      Object.defineProperty(document, 'readyState', { value: 'complete', writable: true });
+      onReady(callback);
+      expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    test('should add DOMContentLoaded listener if DOM is not loaded', () => {
+      Object.defineProperty(document, 'readyState', { value: 'loading', writable: true });
+      const addEventListenerSpy = jest.spyOn(document, 'addEventListener');
+      onReady(callback);
+      expect(addEventListenerSpy).toHaveBeenCalledWith('DOMContentLoaded', callback);
+      addEventListenerSpy.mockRestore();
+    });
+
+    test('should execute callback when DOMContentLoaded fires', () => {
+      Object.defineProperty(document, 'readyState', { value: 'loading', writable: true });
+      onReady(callback);
+      document.dispatchEvent(new Event('DOMContentLoaded'));
+      expect(callback).toHaveBeenCalledTimes(1);
     });
   });
 });

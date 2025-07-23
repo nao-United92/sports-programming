@@ -106,4 +106,35 @@ export function once(func) {
   };
 }
 
+/**
+ * Delegates an event listener to a parent element.
+ * @param {EventTarget} parent The parent element to attach the event listener to.
+ * @param {string} eventType The type of event to listen for (e.g., 'click').
+ * @param {string} selector The CSS selector for the child elements to delegate to.
+ * @param {Function} handler The event handler function.
+ * @param {boolean} [useCapture=false] Whether to use capture phase.
+ */
+export function delegate(parent, eventType, selector, handler, useCapture = false) {
+  if (parent && eventType && selector && handler) {
+    parent.addEventListener(eventType, function(event) {
+      const target = event.target.closest(selector);
+      if (target && parent.contains(target)) {
+        handler.call(target, event);
+      }
+    }, useCapture);
+  }
+}
+
+/**
+ * Executes a function when the DOM is fully loaded.
+ * @param {Function} callback The function to execute.
+ */
+export function onReady(callback) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', callback);
+  } else {
+    callback();
+  }
+}
+
 

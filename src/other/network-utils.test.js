@@ -1,4 +1,4 @@
-import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType, isValidUrl, getBatteryLevel, ping, getBandwidth } from './network-utils.js';
+import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType, isValidUrl, getBatteryLevel, ping, getBandwidth, downloadFile, uploadFile } from './network-utils.js';
 
 describe('getBatteryLevel', () => {
   test('should return the battery level if available', async () => {
@@ -43,6 +43,80 @@ describe('getBandwidth', () => {
       });
       expect(getBandwidth()).toBeUndefined();
     });
+  });
+
+  describe('downloadFile', () => {
+    let appendChildSpy;
+    let removeChildSpy;
+    let clickSpy;
+
+    beforeEach(() => {
+      appendChildSpy = jest.spyOn(document.body, 'appendChild').mockImplementation(() => {});
+      removeChildSpy = jest.spyOn(document.body, 'removeChild').mockImplementation(() => {});
+      clickSpy = jest.fn();
+      jest.spyOn(document, 'createElement').mockImplementation((tagName) => {
+        if (tagName === 'a') {
+          return { click: clickSpy, setAttribute: jest.fn(), href: '', download: '', };
+        }
+        return document.createElement(tagName);
+      });
+    });
+
+    afterEach(() => {
+      appendChildSpy.mockRestore();
+      removeChildSpy.mockRestore();
+      clickSpy.mockRestore();
+      jest.restoreAllMocks();
+    });
+
+    test('should create a link and trigger download', () => {
+      downloadFile('http://example.com/file.txt', 'file.txt');
+      expect(document.createElement).toHaveBeenCalledWith('a');
+      expect(appendChildSpy).toHaveBeenCalled();
+      expect(clickSpy).toHaveBeenCalled();
+      expect(removeChildSpy).toHaveBeenCalled();
+    });
+
+    test('should set filename if provided', () => {
+      downloadFile('http://example.com/file.txt', 'custom.txt');
+      const link = document.createElement('a');
+      expect(link.download).toBe('custom.txt');
+    });
+  });
+
+  describe('uploadFile', () => {
+    test('should upload a file and return JSON response', async () => {
+      const mockFile = new File(['content'], 'test.txt', { type: 'text/plain' });
+      const mockResponse = { status: 'success' };
+      fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockResponse) });
+
+      const result = await uploadFile('http://example.com/upload', mockFile);
+
+      expect(fetch).toHaveBeenCalledTimes(1);
+      const formData = fetch.mock.calls[0][1].body;
+      expect(formData instanceof FormData).toBe(true);
+      expect(formData.get('file')).toBe(mockFile);
+      expect(result).toEqual(mockResponse);
+    });
+
+    test('should throw an error if upload fails', async () => {
+      const mockFile = new File(['content'], 'test.txt', { type: 'text/plain' });
+      fetch.mockResolvedValueOnce({ ok: false, status: 500 });
+
+      await expect(uploadFile('http://example.com/upload', mockFile)).rejects.toThrow('HTTP error! status: 500');
+    });
+
+    test('should use custom field name if provided', async () => {
+      const mockFile = new File(['content'], 'test.txt', { type: 'text/plain' });
+      fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
+
+      await uploadFile('http://example.com/upload', mockFile, 'myFile');
+
+      const formData = fetch.mock.calls[0][1].body;
+      expect(formData.get('myFile')).toBe(mockFile);
+    });
+  });
+});
   });
 
 global.fetch = jest.fn();

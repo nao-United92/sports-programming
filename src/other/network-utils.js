@@ -129,3 +129,41 @@ export function getBandwidth() {
   return undefined;
 }
 
+/**
+ * Initiates a file download from a given URL.
+ * @param {string} url The URL of the file to download.
+ * @param {string} [filename] The desired filename for the downloaded file. If not provided, derived from URL.
+ */
+export function downloadFile(url, filename) {
+  const link = document.createElement('a');
+  link.href = url;
+  if (filename) {
+    link.download = filename;
+  }
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+/**
+ * Uploads a file to a specified URL using FormData.
+ * @param {string} url The URL to upload the file to.
+ * @param {File} file The File object to upload.
+ * @param {string} [fieldName='file'] The name of the form field for the file.
+ * @returns {Promise<any>} A promise that resolves with the JSON response from the server.
+ */
+export async function uploadFile(url, file, fieldName = 'file') {
+  const formData = new FormData();
+  formData.append(fieldName, file);
+
+  const response = await fetch(url, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+}
+
