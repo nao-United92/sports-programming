@@ -183,7 +183,4 @@ describe('function-utils', () => {
     });
   });
 });
-  });
-
-
-});
+  
