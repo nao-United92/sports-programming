@@ -1,4 +1,4 @@
-import { getQueryParam, setQueryParam, removeQueryParam, isAbsoluteUrl, addQueryParams, combineURLs, getDomainFromUrl, isAbsolute } from './url-utils.js';
+import { getQueryParam, setQueryParam, removeQueryParam, isAbsoluteUrl, addQueryParams, combineURLs, getDomainFromUrl, isAbsolute, getFragment, setFragment, removeFragment } from './url-utils.js';
 
 describe('url-utils', () => {
   const url = 'https://example.com?a=1&b=2';
@@ -92,6 +92,39 @@ describe('url-utils', () => {
       expect(isAbsolute(null)).toBe(false);
       expect(isAbsolute(undefined)).toBe(false);
       expect(isAbsolute(123)).toBe(false);
+    });
+  });
+
+  describe('getFragment', () => {
+    test('should return the fragment from a URL', () => {
+      expect(getFragment('http://example.com/path#section1')).toBe('#section1');
+      expect(getFragment('http://example.com/path')).toBe('');
+    });
+
+    test('should return empty string for invalid URL', () => {
+      expect(getFragment('invalid-url')).toBe('');
+    });
+  });
+
+  describe('setFragment', () => {
+    test('should set the fragment of a URL', () => {
+      expect(setFragment('http://example.com/path', 'new-section')).toBe('http://example.com/path#new-section');
+      expect(setFragment('http://example.com/path#old-section', 'new-section')).toBe('http://example.com/path#new-section');
+    });
+
+    test('should return original URL for invalid URL', () => {
+      expect(setFragment('invalid-url', 'new-section')).toBe('invalid-url');
+    });
+  });
+
+  describe('removeFragment', () => {
+    test('should remove the fragment from a URL', () => {
+      expect(removeFragment('http://example.com/path#section1')).toBe('http://example.com/path');
+      expect(removeFragment('http://example.com/path')).toBe('http://example.com/path');
+    });
+
+    test('should return original URL for invalid URL', () => {
+      expect(removeFragment('invalid-url')).toBe('invalid-url');
     });
   });
 });

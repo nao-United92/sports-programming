@@ -49,4 +49,21 @@ export function deleteCookie(name) {
   setCookie(name, '', { days: -1 });
 }
 
+/**
+ * Gets all cookies as an object.
+ * @returns {object} An object containing all cookies as key-value pairs.
+ */
+export function getAllCookies() {
+  const cookies = document.cookie.split(';');
+  const result = {};
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i].trim();
+    const [name, value] = cookie.split('=');
+    if (name) {
+      result[decodeURIComponent(name)] = decodeURIComponent(value || '');
+    }
+  }
+  return result;
+}
+
 

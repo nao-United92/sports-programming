@@ -1,4 +1,4 @@
-import { getCookie, setCookie, deleteCookie } from './cookie-utils.js';
+import { getCookie, setCookie, deleteCookie, getAllCookies } from './cookie-utils.js';
 
 describe('cookie-utils', () => {
   let cookies = {};
@@ -74,5 +74,23 @@ describe('cookie-utils', () => {
   test('setCookie with 0 days expiration (delete immediately)', () => {
     setCookie('test_delete', 'value_delete', { days: 0 });
     expect(document.cookie).not.toContain('test_delete');
+  });
+
+  describe('getAllCookies', () => {
+    test('should return an object with all cookies', () => {
+      setCookie('cookie1', 'value1');
+      setCookie('cookie2', 'value2');
+      const allCookies = getAllCookies();
+      expect(allCookies).toEqual({ cookie1: 'value1', cookie2: 'value2' });
+    });
+
+    test('should return an empty object if no cookies are set', () => {
+      expect(getAllCookies()).toEqual({});
+    });
+
+    test('should handle cookies with empty values', () => {
+      setCookie('emptyCookie', '');
+      expect(getAllCookies()).toEqual({ emptyCookie: '' });
+    });
   });
 });

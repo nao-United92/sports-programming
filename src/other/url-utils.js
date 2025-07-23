@@ -105,3 +105,48 @@ export function isAbsolute(url) {
   // Regular expression to check for absolute URLs, including protocol-relative ones
   return /^(?:[a-z]+:)?\/\//i.test(url);
 }
+
+/**
+ * Gets the fragment (hash) from a URL.
+ * @param {string} url The URL string.
+ * @returns {string} The fragment, including the #, or an empty string if no fragment.
+ */
+export function getFragment(url) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hash;
+  } catch (e) {
+    return '';
+  }
+}
+
+/**
+ * Sets or updates the fragment (hash) of a URL.
+ * @param {string} url The original URL string.
+ * @param {string} fragment The fragment to set (without the #).
+ * @returns {string} The new URL string with the updated fragment.
+ */
+export function setFragment(url, fragment) {
+  try {
+    const urlObj = new URL(url);
+    urlObj.hash = fragment;
+    return urlObj.toString();
+  } catch (e) {
+    return url;
+  }
+}
+
+/**
+ * Removes the fragment (hash) from a URL.
+ * @param {string} url The original URL string.
+ * @returns {string} The new URL string with the fragment removed.
+ */
+export function removeFragment(url) {
+  try {
+    const urlObj = new URL(url);
+    urlObj.hash = '';
+    return urlObj.toString();
+  } catch (e) {
+    return url;
+  }
+}
