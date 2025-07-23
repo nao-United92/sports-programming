@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject, shallowEqual, isObject, isDeepEqual, renameKey } from './object-utils';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject } from './object-utils.js';
 
 describe('isDeepEqual', () => {
   test('should return true for deeply equal objects', () => {
@@ -443,5 +443,21 @@ describe('omit', () => {
   it('should create an object with omitted properties', () => {
     const object = { a: 1, b: '2', c: 3 };
     expect(omit(object, ['a', 'c'])).toEqual({ b: '2' });
+  });
+});
+
+describe('mapObject', () => {
+  it('should map object values', () => {
+    const obj = { a: 1, b: 2 };
+    const newObj = mapObject(obj, (value) => value * 2);
+    expect(newObj).toEqual({ a: 2, b: 4 });
+  });
+});
+
+describe('filterObject', () => {
+  it('should filter object properties', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const newObj = filterObject(obj, (value) => value > 1);
+    expect(newObj).toEqual({ b: 2, c: 3 });
   });
 });

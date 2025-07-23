@@ -302,4 +302,36 @@ export function omit(object, paths) {
   return newObject;
 }
 
+/**
+ * Creates a new object with the results of calling a provided function on every property in the calling object.
+ * @param {object} object The object to iterate over.
+ * @param {Function} iteratee The function to call for each property.
+ * @returns {object} Returns the new mapped object.
+ */
+export function mapObject(object, iteratee) {
+  const newObject = {};
+  for (const key in object) {
+    if (Object.prototype.hasOwnProperty.call(object, key)) {
+      newObject[key] = iteratee(object[key], key, object);
+    }
+  }
+  return newObject;
+}
+
+/**
+ * Iterates over properties of `object`, returning an array of all properties `predicate` returns truthy for.
+ * @param {object} object The object to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {object} Returns the new filtered object.
+ */
+export function filterObject(object, predicate) {
+  const newObject = {};
+  for (const key in object) {
+    if (Object.prototype.hasOwnProperty.call(object, key) && predicate(object[key], key, object)) {
+      newObject[key] = object[key];
+    }
+  }
+  return newObject;
+}
+
 

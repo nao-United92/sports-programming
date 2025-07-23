@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, unique, flatten, range, compact } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, unique, flatten, range, compact, sample, pluck } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -282,5 +282,29 @@ describe('compact', () => {
     expect(compact(null)).toEqual([]);
     expect(compact(undefined)).toEqual([]);
     expect(compact(123)).toEqual([]);
+  });
+});
+
+describe('sample', () => {
+  it('should return a random element from the array', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const randomElement = sample(arr);
+    expect(arr).toContain(randomElement);
+  });
+
+  it('should return undefined for an empty array', () => {
+    expect(sample([])).toBeUndefined();
+  });
+});
+
+describe('pluck', () => {
+  it('should extract property values from an array of objects', () => {
+    const arr = [{ a: 1 }, { a: 2 }, { a: 3 }];
+    expect(pluck(arr, 'a')).toEqual([1, 2, 3]);
+  });
+
+  it('should return an array of undefined if key does not exist', () => {
+    const arr = [{ a: 1 }, { b: 2 }];
+    expect(pluck(arr, 'a')).toEqual([1, undefined]);
   });
 });
