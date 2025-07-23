@@ -49,3 +49,29 @@ export function stringify(obj) {
     .filter(Boolean)
     .join('&');
 }
+
+/**
+ * Updates or adds query parameters to an existing query string.
+ * @param {string} queryString The original query string.
+ * @param {object} params The parameters to update or add.
+ * @returns {string} The updated query string.
+ */
+export function updateQueryString(queryString, params) {
+  const parsed = parse(queryString);
+  const updated = { ...parsed, ...params };
+  return stringify(updated);
+}
+
+/**
+ * Removes specified query parameters from a query string.
+ * @param {string} queryString The original query string.
+ * @param {string[]} paramsToRemove An array of parameter names to remove.
+ * @returns {string} The query string with specified parameters removed.
+ */
+export function removeQueryString(queryString, paramsToRemove) {
+  const parsed = parse(queryString);
+  paramsToRemove.forEach(param => {
+    delete parsed[param];
+  });
+  return stringify(parsed);
+}

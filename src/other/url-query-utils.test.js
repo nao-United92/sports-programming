@@ -1,5 +1,5 @@
 
-import { getQueryParams, addQueryParams, removeQueryParams, hasQueryParam, getQueryParamValue } from './url-query-utils';
+import { getQueryParams, addQueryParams, removeQueryParams, hasQueryParam, getQueryParamValue, buildQueryString, updateQueryParam } from './url-query-utils';
 
 describe('getQueryParams', () => {
   test('should parse query parameters from a URL string', () => {
@@ -114,6 +114,46 @@ describe('getQueryParamValue', () => {
   });
 
   test('should handle empty URL', () => {
-    expect(getQueryParamValue('', 'param1')).toBeNull();
+      expect(getQueryParamValue('', 'param1')).toBeNull();
+    });
   });
+
+  describe('buildQueryString', () => {
+    test('should build a query string from an object', () => {
+      const params = { name: 'John Doe', age: 30 };
+      expect(buildQueryString(params)).toBe('name=John%20Doe&age=30');
+    });
+
+    test('should handle empty object', () => {
+      expect(buildQueryString({})).toBe('');
+    });
+
+    test('should handle parameters with special characters', () => {
+      const params = { query: '日本語 & test' };
+      expect(buildQueryString(params)).toBe('query=%E6%97%A5%E6%9C%AC%E8%AA%9E%20%26%20test');
+    });
+  });
+
+  describe('updateQueryParam', () => {
+    test('should update an existing query parameter', () => {
+      const url = 'https://example.com?name=John&age=30';
+      expect(updateQueryParam(url, 'age', '31')).toBe('https://example.com?name=John&age=31');
+    });
+
+    test('should add a new query parameter', () => {
+      const url = 'https://example.com?name=John';
+      expect(updateQueryParam(url, 'city', 'New York')).toBe('https://example.com?name=John&city=New%20York');
+    });
+
+    test('should handle URL with no initial query string', () => {
+      const url = 'https://example.com';
+      expect(updateQueryParam(url, 'param', 'value')).toBe('https://example.com?param=value');
+    });
+
+    test('should handle special characters in value', () => {
+      const url = 'https://example.com';
+      expect(updateQueryParam(url, 'query', '日本語 & test')).toBe('https://example.com?query=%E6%97%A5%E6%9C%AC%E8%AA%9E%20%26%20test');
+    });
+  });
+});
 });

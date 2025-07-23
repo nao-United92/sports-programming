@@ -91,3 +91,35 @@ export function getQueryParamValue(url, paramName) {
   const params = getQueryParams(url);
   return Object.prototype.hasOwnProperty.call(params, paramName) ? params[paramName] : null;
 }
+
+/**
+ * Builds a query string from an object of parameters.
+ * @param {object} params The object containing parameters.
+ * @returns {string} The constructed query string (e.g., 'key1=value1&key2=value2').
+ */
+export function buildQueryString(params) {
+  if (typeof params !== 'object' || params === null) {
+    return '';
+  }
+  return Object.keys(params)
+    .map(key => {
+      const value = params[key];
+      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    })
+    .join('&');
+}
+
+/**
+ * Updates a single query parameter in a URL.
+ * @param {string} url The original URL.
+ * @param {string} paramName The name of the parameter to update.
+ * @param {string} paramValue The new value for the parameter.
+ * @returns {string} The updated URL.
+ */
+export function updateQueryParam(url, paramName, paramValue) {
+  const [baseUrl, queryString] = url.split('?');
+  const existingParams = getQueryParams(queryString || '');
+  existingParams[paramName] = paramValue;
+  const newQueryString = buildQueryString(existingParams);
+  return newQueryString ? `${baseUrl}?${newQueryString}` : baseUrl;
+}
