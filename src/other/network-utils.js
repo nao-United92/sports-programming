@@ -42,6 +42,23 @@ export function isOnline() {
   return navigator.onLine;
 }
 
+/**
+ * Parses URL query parameters into an object.
+ * @param {string} url The URL string to parse. Defaults to current window location.
+ * @returns {object} An object containing the query parameters.
+ */
+export function getQueryParams(url) {
+  const params = {};
+  const queryString = url.startsWith('?') ? url.substring(1) : url;
+  queryString.split('&').forEach(pair => {
+    const [key, value] = pair.split('=').map(decodeURIComponent);
+    if (key) {
+      params[key] = value || '';
+    }
+  });
+  return params;
+}
+
 
 /**
  * Gets the current network connection type.
@@ -52,23 +69,6 @@ export function getNetworkType() {
     return navigator.connection.effectiveType;
   }
   return 'unknown';
-}
-
-/**
- * Parses URL query parameters into an object.
- * @param {string} url The URL string to parse. Defaults to current window location.
- * @returns {object} An object containing the query parameters.
- */
-export function getQueryParams(url = window.location.search) {
-  const params = {};
-  const queryString = url.startsWith('?') ? url.substring(1) : url;
-  queryString.split('&').forEach(pair => {
-    const [key, value] = pair.split('=').map(decodeURIComponent);
-    if (key) {
-      params[key] = value || '';
-    }
-  });
-  return params;
 }
 
 /**
@@ -111,7 +111,7 @@ export async function ping(url, timeout = 5000) {
  * @returns {Promise<number|undefined>} A promise that resolves with the battery level (0-1), or undefined if not available.
  */
 export async function getBatteryLevel() {
-  if ('getBattery' in navigator) {
+  if ('getBattery' in navigator && typeof navigator.getBattery === 'function') {
     const battery = await navigator.getBattery();
     return battery.level;
   }

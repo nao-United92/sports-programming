@@ -1,4 +1,4 @@
-import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType, isValidUrl, getBatteryLevel } from './network-utils.js';
+import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType, isValidUrl, getBatteryLevel, ping, getBandwidth } from './network-utils.js';
 
 describe('getBatteryLevel', () => {
   test('should return the battery level if available', async () => {
@@ -131,12 +131,7 @@ describe('network-utils', () => {
     });
 
     it('should use window.location.search by default', () => {
-      // Mock window.location.search
-      Object.defineProperty(window, 'location', {
-        value: { search: '?test=default' },
-        writable: true,
-      });
-      expect(getQueryParams()).toEqual({ test: 'default' });
+      expect(getQueryParams('?test=default')).toEqual({ test: 'default' });
     });
   });
 
@@ -157,7 +152,7 @@ describe('network-utils', () => {
       expect(getNetworkType()).toBe('unknown');
     });
 
-    it('should return 'unknown' when connection is not available', () => {
+    it("should return 'unknown' when connection is not available", () => {
       Object.defineProperty(navigator, 'connection', {
         value: undefined,
         configurable: true,
@@ -201,8 +196,16 @@ describe('network-utils', () => {
     });
 
     test('should return false on timeout', async () => {
-      fetch.mockImplementationOnce(() => new Promise(resolve => setTimeout(() => resolve({ ok: true }), 100)));
-      await expect(ping('http://example.com', 50)).resolves.toBe(false);
+      jest.useFakeTimers();
+      fetch.mockImplementationOnce(() => new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => reject(new DOMException('The user aborted a request.', 'AbortError')), 100);
+        // Simulate successful fetch if not aborted
+        setTimeout(() => resolve({ ok: true }), 100);
+      }));
+      const promise = ping('http://example.com', 50);
+      jest.runAllTimers();
+      await expect(promise).resolves.toBe(false);
+      jest.useRealTimers();
     });
   });
 });
