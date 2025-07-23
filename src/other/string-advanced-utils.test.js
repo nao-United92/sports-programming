@@ -1,5 +1,5 @@
 
-import { capitalize, truncate, kebabCase, camelCase } from './string-advanced-utils';
+import { capitalize, truncate, kebabCase, camelCase, reverseWords, countWords } from './string-advanced-utils';
 
 describe('capitalize', () => {
   test('should capitalize the first letter of a string', () => {
@@ -76,5 +76,48 @@ describe('camelCase', () => {
   test('should handle non-string input', () => {
     expect(camelCase(null)).toBe('');
     expect(camelCase(123)).toBe('');
+  });
+});
+
+describe('reverseWords', () => {
+  test('should reverse the order of words in a string', () => {
+    expect(reverseWords('hello world')).toBe('world hello');
+    expect(reverseWords('one two three')).toBe('three two one');
+    expect(reverseWords('single')).toBe('single');
+    expect(reverseWords('')).toBe('');
+  });
+
+  test('should handle multiple spaces between words', () => {
+    expect(reverseWords('  hello   world  ')).toBe('world   hello');
+  });
+
+  test('should return empty string for non-string input', () => {
+    expect(reverseWords(null)).toBe('');
+    expect(reverseWords(undefined)).toBe('');
+    expect(reverseWords(123)).toBe('');
+  });
+});
+
+describe('countWords', () => {
+  test('should count the number of words in a string', () => {
+    expect(countWords('hello world')).toBe(2);
+    expect(countWords('one two three four')).toBe(4);
+    expect(countWords('single')).toBe(1);
+    expect(countWords('')).toBe(0);
+    expect(countWords('   ')).toBe(0);
+  });
+
+  test('should handle leading/trailing spaces', () => {
+    expect(countWords('  hello world  ')).toBe(2);
+  });
+
+  test('should handle multiple spaces between words', () => {
+    expect(countWords('hello   world')).toBe(2);
+  });
+
+  test('should return 0 for non-string input', () => {
+    expect(countWords(null)).toBe(0);
+    expect(countWords(undefined)).toBe(0);
+    expect(countWords(123)).toBe(0);
   });
 });

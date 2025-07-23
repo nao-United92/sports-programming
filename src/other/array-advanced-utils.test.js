@@ -1,5 +1,5 @@
 
-import { uniqueArray, flattenArray, chunkArray, shuffleArray, groupBy, compact } from './array-advanced-utils';
+import { uniqueArray, flattenArray, chunkArray, shuffleArray, groupBy, compact, union, without } from './array-advanced-utils';
 
 describe('uniqueArray', () => {
   test('should return an array with unique elements', () => {
@@ -132,5 +132,44 @@ describe('compact', () => {
 
   test('should handle empty array', () => {
     expect(compact([])).toEqual([]);
+  });
+});
+
+describe('union', () => {
+  test('should return the union of multiple arrays', () => {
+    expect(union([1, 2], [2, 3])).toEqual([1, 2, 3]);
+    expect(union([1, 2, 3], [3, 4, 5], [5, 6])).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(union([], [1, 2])).toEqual([1, 2]);
+    expect(union([1, 2], [])).toEqual([1, 2]);
+  });
+
+  test('should handle arrays with mixed types', () => {
+    expect(union([1, 'a'], ['a', 2])).toEqual([1, 'a', 2]);
+  });
+
+  test('should return an empty array if no arrays are provided', () => {
+    expect(union()).toEqual([]);
+  });
+});
+
+describe('without', () => {
+  test('should return a new array excluding specified values', () => {
+    expect(without([1, 2, 3, 1, 4], 1)).toEqual([2, 3, 4]);
+    expect(without([1, 2, 3, 4, 5], 1, 3, 5)).toEqual([2, 4]);
+    expect(without(['a', 'b', 'c'], 'b')).toEqual(['a', 'c']);
+  });
+
+  test('should return the original array if no values are excluded', () => {
+    expect(without([1, 2, 3])).toEqual([1, 2, 3]);
+  });
+
+  test('should handle non-array input', () => {
+    expect(without(null, 1)).toEqual([]);
+    expect(without(undefined, 1)).toEqual([]);
+    expect(without('string', 's')).toEqual([]);
+  });
+
+  test('should handle empty array', () => {
+    expect(without([], 1)).toEqual([]);
   });
 });

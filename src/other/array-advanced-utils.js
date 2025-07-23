@@ -97,3 +97,27 @@ export function compact(arr) {
   }
   return arr.filter(item => item !== null && item !== undefined);
 }
+
+/**
+ * Creates a new array with unique values that are the union of the given arrays.
+ * @param {...Array} arrays The arrays to union.
+ * @returns {Array} A new array containing the union of all unique values.
+ */
+export function union(...arrays) {
+  const flattened = arrays.flat();
+  return [...new Set(flattened)];
+}
+
+/**
+ * Creates a new array excluding all given values.
+ * @param {Array} array The array to inspect.
+ * @param {...*} values The values to exclude.
+ * @returns {Array} A new array of filtered values.
+ */
+export function without(array, ...values) {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  const excludeSet = new Set(values);
+  return array.filter(item => !excludeSet.has(item));
+}

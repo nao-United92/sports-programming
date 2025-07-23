@@ -55,3 +55,27 @@ export function camelCase(str) {
   }
   return str.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
 }
+
+/**
+ * Reverses the order of words in a string.
+ * @param {string} str The input string.
+ * @returns {string} The string with words reversed.
+ */
+export function reverseWords(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.split(' ').reverse().join(' ');
+}
+
+/**
+ * Counts the number of words in a string.
+ * @param {string} str The input string.
+ * @returns {number} The number of words.
+ */
+export function countWords(str) {
+  if (typeof str !== 'string' || str.trim() === '') {
+    return 0;
+  }
+  return str.trim().split(/\s+/).length;
+}
