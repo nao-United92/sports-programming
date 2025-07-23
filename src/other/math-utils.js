@@ -109,3 +109,31 @@ export function randomInt(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+/**
+ * Checks if a number is prime.
+ * @param {number} num The number to check.
+ * @returns {boolean} True if the number is prime, false otherwise.
+ */
+export function isPrime(num) {
+  if (num <= 1) return false;
+  for (let i = 2; i <= Math.sqrt(num); i++) {
+    if (num % i === 0) return false;
+  }
+  return true;
+}
+
+/**
+ * Calculates the factorial of a non-negative integer.
+ * @param {number} num The number to calculate the factorial of.
+ * @returns {number} The factorial of the number.
+ */
+export function factorial(num) {
+  if (num < 0) return NaN;
+  if (num === 0) return 1;
+  let result = 1;
+  for (let i = 2; i <= num; i++) {
+    result *= i;
+  }
+  return result;
+}

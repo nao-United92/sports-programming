@@ -114,3 +114,31 @@ export function roundToDecimalPlace(num, decimalPlaces) {
 export function isDivisibleBy(num, divisor) {
   return isNumber(num) && isNumber(divisor) && divisor !== 0 && num % divisor === 0;
 }
+
+/**
+ * Formats a number as a currency string.
+ * @param {number} num The number to format.
+ * @param {string} currency The currency symbol (e.g., '
+, '€').
+ * @param {number} [decimals=2] The number of decimal places.
+ * @returns {string} The formatted currency string.
+ */
+export function toCurrency(num, currency = '
+, decimals = 2) {
+  if (!isNumber(num)) {
+    return '';
+  }
+  return `${currency}${num.toFixed(decimals)}`;
+}
+
+/**
+ * Adds commas to a number for thousands separation.
+ * @param {number} num The number to format.
+ * @returns {string} The number with commas.
+ */
+export function addCommas(num) {
+  if (!isNumber(num)) {
+    return '';
+  }
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}

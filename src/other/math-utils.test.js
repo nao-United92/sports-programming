@@ -1,4 +1,4 @@
-import { clamp, mapRange, sum, average, min, max, median, round, randomInt } from './math-utils';
+import { clamp, mapRange, sum, average, min, max, median, round, randomInt, isPrime, factorial } from './math-utils';
 
 describe('math-utils', () => {
   describe('clamp', () => {
@@ -191,6 +191,47 @@ describe('math-utils', () => {
       const num = randomInt(1.1, 10.9);
       expect(num).toBeGreaterThanOrEqual(2);
       expect(num).toBeLessThanOrEqual(10);
+    });
+  });
+
+  describe('isPrime', () => {
+    test('should return true for prime numbers', () => {
+      expect(isPrime(2)).toBe(true);
+      expect(isPrime(3)).toBe(true);
+      expect(isPrime(5)).toBe(true);
+      expect(isPrime(7)).toBe(true);
+      expect(isPrime(11)).toBe(true);
+      expect(isPrime(13)).toBe(true);
+      expect(isPrime(17)).toBe(true);
+      expect(isPrime(19)).toBe(true);
+      expect(isPrime(23)).toBe(true);
+      expect(isPrime(29)).toBe(true);
+    });
+
+    test('should return false for non-prime numbers', () => {
+      expect(isPrime(1)).toBe(false);
+      expect(isPrime(4)).toBe(false);
+      expect(isPrime(6)).toBe(false);
+      expect(isPrime(8)).toBe(false);
+      expect(isPrime(9)).toBe(false);
+      expect(isPrime(10)).toBe(false);
+      expect(isPrime(0)).toBe(false);
+      expect(isPrime(-5)).toBe(false);
+    });
+  });
+
+  describe('factorial', () => {
+    test('should calculate the factorial of a non-negative integer', () => {
+      expect(factorial(0)).toBe(1);
+      expect(factorial(1)).toBe(1);
+      expect(factorial(2)).toBe(2);
+      expect(factorial(3)).toBe(6);
+      expect(factorial(4)).toBe(24);
+      expect(factorial(5)).toBe(120);
+    });
+
+    test('should return NaN for negative numbers', () => {
+      expect(factorial(-1)).toBeNaN();
     });
   });
 });

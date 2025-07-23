@@ -1,4 +1,4 @@
-import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace } from './number-utils.js';
+import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas } from './number-utils.js';
 
 describe('number-utils', () => {
   describe('isNumber', () => {
@@ -127,6 +127,44 @@ describe('number-utils', () => {
       expect(isDivisibleBy(null, 2)).toBe(false);
       expect(isDivisibleBy(10, undefined)).toBe(false);
       expect(isDivisibleBy('abc', 2)).toBe(false);
+    });
+  });
+
+  describe('toCurrency', () => {
+    test('should format a number as currency with default decimals', () => {
+      expect(toCurrency(1234.56)).toBe('$1234.56');
+      expect(toCurrency(100)).toBe('$100.00');
+    });
+
+    test('should format a number as currency with custom currency symbol and decimals', () => {
+      expect(toCurrency(1234.567, '€', 3)).toBe('€1234.567');
+      expect(toCurrency(99.9, '¥', 0)).toBe('¥100');
+    });
+
+    test('should return empty string for non-number inputs', () => {
+      expect(toCurrency(null)).toBe('');
+      expect(toCurrency(undefined)).toBe('');
+      expect(toCurrency('abc')).toBe('');
+    });
+  });
+
+  describe('addCommas', () => {
+    test('should add commas to a number', () => {
+      expect(addCommas(1000)).toBe('1,000');
+      expect(addCommas(1000000)).toBe('1,000,000');
+      expect(addCommas(123456789)).toBe('123,456,789');
+      expect(addCommas(123)).toBe('123');
+    });
+
+    test('should handle decimal numbers', () => {
+      expect(addCommas(1234.56)).toBe('1,234.56');
+      expect(addCommas(1234567.8912)).toBe('1,234,567.8912');
+    });
+
+    test('should return empty string for non-number inputs', () => {
+      expect(addCommas(null)).toBe('');
+      expect(addCommas(undefined)).toBe('');
+      expect(addCommas('abc')).toBe('');
     });
   });
 });
