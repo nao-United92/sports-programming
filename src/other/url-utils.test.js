@@ -1,4 +1,4 @@
-import { getQueryParam, setQueryParam, removeQueryParam, isAbsoluteUrl, addQueryParams, combineURLs } from './url-utils.js';
+import { getQueryParam, setQueryParam, removeQueryParam, isAbsoluteUrl, addQueryParams, combineURLs, getDomainFromUrl, isAbsolute } from './url-utils.js';
 
 describe('url-utils', () => {
   const url = 'https://example.com?a=1&b=2';
@@ -56,6 +56,42 @@ describe('url-utils', () => {
 
     it('should return the base URL if the relative URL is empty', () => {
       expect(combineURLs('https://example.com', '')).toBe('https://example.com');
+    });
+  });
+
+  describe('getDomainFromUrl', () => {
+    test('should extract the domain from a valid URL', () => {
+      expect(getDomainFromUrl('https://www.example.com/path')).toBe('www.example.com');
+      expect(getDomainFromUrl('http://sub.domain.co.jp:8080/page')).toBe('sub.domain.co.jp');
+      expect(getDomainFromUrl('ftp://ftp.example.org')).toBe('ftp.example.org');
+    });
+
+    test('should return null for an invalid URL', () => {
+      expect(getDomainFromUrl('invalid-url')).toBeNull();
+      expect(getDomainFromUrl('/relative/path')).toBeNull();
+      expect(getDomainFromUrl(null)).toBeNull();
+      expect(getDomainFromUrl(undefined)).toBeNull();
+    });
+  });
+
+  describe('isAbsolute', () => {
+    test('should return true for absolute URLs', () => {
+      expect(isAbsolute('http://example.com')).toBe(true);
+      expect(isAbsolute('https://www.example.com/path')).toBe(true);
+      expect(isAbsolute('ftp://ftp.example.org')).toBe(true);
+      expect(isAbsolute('//example.com/path')).toBe(true); // Protocol-relative URL
+    });
+
+    test('should return false for relative URLs', () => {
+      expect(isAbsolute('/path/to/resource')).toBe(false);
+      expect(isAbsolute('path/to/resource')).toBe(false);
+      expect(isAbsolute('../path')).toBe(false);
+    });
+
+    test('should return false for invalid inputs', () => {
+      expect(isAbsolute(null)).toBe(false);
+      expect(isAbsolute(undefined)).toBe(false);
+      expect(isAbsolute(123)).toBe(false);
     });
   });
 });

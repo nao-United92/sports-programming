@@ -78,3 +78,30 @@ export function combineURLs(baseURL, relativeURL) {
     ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
     : baseURL;
 }
+
+/**
+ * Extracts the domain from a given URL.
+ * @param {string} url The URL string.
+ * @returns {string|null} The domain of the URL, or null if invalid.
+ */
+export function getDomainFromUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Checks if a given URL is an absolute URL.
+ * @param {string} url The URL string to check.
+ * @returns {boolean} True if the URL is absolute, false otherwise.
+ */
+export function isAbsolute(url) {
+  if (typeof url !== 'string') {
+    return false;
+  }
+  // Regular expression to check for absolute URLs, including protocol-relative ones
+  return /^(?:[a-z]+:)?\/\//i.test(url);
+}
