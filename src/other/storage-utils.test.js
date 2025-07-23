@@ -1,4 +1,4 @@
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, setSessionStorageItem, getSessionStorageItem, removeSessionStorageItem, clearLocalStorage, clearSessionStorage } from './storage-utils.js';
+import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, setSessionStorageItem, getSessionStorageItem, removeSessionStorageItem, clearLocalStorage, clearSessionStorage, setCookie, getCookie, removeCookie } from './storage-utils.js';
 
 describe('storage-utils', () => {
   const localStorageMock = (() => {
@@ -197,6 +197,35 @@ describe('storage-utils', () => {
       expect(sessionStorageMock.clear).toHaveBeenCalledTimes(1);
       expect(getSessionStorageItem('key1')).toBeNull();
       expect(getSessionStorageItem('key2')).toBeNull();
+    });
+  });
+
+  describe('Cookies', () => {
+    beforeEach(() => {
+      Object.defineProperty(document, 'cookie', {
+        writable: true,
+        value: '',
+      });
+    });
+
+    test('setCookie should set a cookie', () => {
+      setCookie('testName', 'testValue', 7);
+      expect(document.cookie).toContain('testName=testValue');
+    });
+
+    test('getCookie should retrieve a cookie', () => {
+      document.cookie = 'testCookie=testValue';
+      expect(getCookie('testCookie')).toBe('testValue');
+    });
+
+    test('getCookie should return null if cookie not found', () => {
+      expect(getCookie('nonExistentCookie')).toBeNull();
+    });
+
+    test('removeCookie should remove a cookie', () => {
+      setCookie('testRemove', 'value', 7);
+      removeCookie('testRemove');
+      expect(document.cookie).not.toContain('testRemove');
     });
   });
 });

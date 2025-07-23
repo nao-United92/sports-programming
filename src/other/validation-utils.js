@@ -59,3 +59,62 @@ export function isStrongPassword(password) {
 
   return hasMinLength && hasUppercase && hasLowercase && hasNumber && hasSpecialChar;
 }
+
+/**
+ * Checks if a string is a valid credit card number (basic Luhn algorithm check).
+ * @param {string} cardNumber The string to validate.
+ * @returns {boolean} True if the string is a valid credit card number, false otherwise.
+ */
+export function isCreditCard(cardNumber) {
+  if (typeof cardNumber !== 'string') {
+    return false;
+  }
+  const cleaned = cardNumber.replace(/\D/g, '');
+  if (cleaned.length < 13 || cleaned.length > 19) {
+    return false;
+  }
+  let sum = 0;
+  let double = false;
+  for (let i = cleaned.length - 1; i >= 0; i--) {
+    let digit = parseInt(cleaned.charAt(i), 10);
+    if (double) {
+      digit *= 2;
+      if (digit > 9) {
+        digit -= 9;
+      }
+    }
+    sum += digit;
+    double = !double;
+  }
+  return (sum % 10) === 0;
+}
+
+/**
+ * Checks if a string is a valid date in YYYY-MM-DD format.
+ * @param {string} dateString The string to validate.
+ * @returns {boolean} True if the string is a valid date, false otherwise.
+ */
+export function isDate(dateString) {
+  if (typeof dateString !== 'string') {
+    return false;
+  }
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!regex.test(dateString)) {
+    return false;
+  }
+  const date = new Date(dateString);
+  return !isNaN(date.getTime()) && date.toISOString().slice(0, 10) === dateString;
+}
+
+/**
+ * Checks if a string is a valid time in HH:MM or HH:MM:SS format.
+ * @param {string} timeString The string to validate.
+ * @returns {boolean} True if the string is a valid time, false otherwise.
+ */
+export function isTime(timeString) {
+  if (typeof timeString !== 'string') {
+    return false;
+  }
+  const regex = /^(?:2[0-3]|[01]?[0-9]):[0-5][0-9](?::[0-5][0-9])?$/;
+  return regex.test(timeString);
+}

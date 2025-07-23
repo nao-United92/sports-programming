@@ -1,4 +1,4 @@
-import { isEmail, isPhoneNumber, isUrl, isStrongPassword } from './validation-utils.js';
+import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime } from './validation-utils.js';
 
 describe('validation-utils', () => {
   describe('isEmail', () => {
@@ -83,6 +83,62 @@ describe('validation-utils', () => {
       expect(isStrongPassword(null)).toBe(false);
       expect(isStrongPassword(undefined)).toBe(false);
       expect(isStrongPassword(123)).toBe(false);
+    });
+  });
+
+  describe('isCreditCard', () => {
+    test('should return true for valid credit card numbers (Luhn algorithm)', () => {
+      expect(isCreditCard('49927398716')).toBe(true); // Example valid number
+      expect(isCreditCard('49927398717')).toBe(false); // Example invalid number
+      expect(isCreditCard('4242424242424242')).toBe(true); // Visa example
+    });
+
+    test('should return false for invalid credit card numbers', () => {
+      expect(isCreditCard('123')).toBe(false);
+      expect(isCreditCard('abc')).toBe(false);
+      expect(isCreditCard(null)).toBe(false);
+      expect(isCreditCard(undefined)).toBe(false);
+      expect(isCreditCard(123)).toBe(false);
+    });
+  });
+
+  describe('isDate', () => {
+    test('should return true for valid date strings (YYYY-MM-DD)', () => {
+      expect(isDate('2023-01-01')).toBe(true);
+      expect(isDate('1999-12-31')).toBe(true);
+      expect(isDate('2024-02-29')).toBe(true); // Leap year
+    });
+
+    test('should return false for invalid date strings', () => {
+      expect(isDate('2023-1-1')).toBe(false);
+      expect(isDate('2023/01/01')).toBe(false);
+      expect(isDate('2023-13-01')).toBe(false);
+      expect(isDate('2023-01-32')).toBe(false);
+      expect(isDate('not-a-date')).toBe(false);
+      expect(isDate(null)).toBe(false);
+      expect(isDate(undefined)).toBe(false);
+      expect(isDate(123)).toBe(false);
+    });
+  });
+
+  describe('isTime', () => {
+    test('should return true for valid time strings (HH:MM or HH:MM:SS)', () => {
+      expect(isTime('12:30')).toBe(true);
+      expect(isTime('00:00')).toBe(true);
+      expect(isTime('23:59')).toBe(true);
+      expect(isTime('12:30:45')).toBe(true);
+      expect(isTime('00:00:00')).toBe(true);
+    });
+
+    test('should return false for invalid time strings', () => {
+      expect(isTime('25:00')).toBe(false);
+      expect(isTime('12:60')).toBe(false);
+      expect(isTime('12:3')).toBe(false);
+      expect(isTime('1:30')).toBe(false);
+      expect(isTime('not-a-time')).toBe(false);
+      expect(isTime(null)).toBe(false);
+      expect(isTime(undefined)).toBe(false);
+      expect(isTime(123)).toBe(false);
     });
   });
 });
