@@ -60,41 +60,26 @@ export function isInViewport(element) {
 }
 
 /**
- * Detects and returns information about the current browser.
- * @returns {object} An object containing browser name and version, or 'Unknown'.
+ * Gets the current browser's user agent string.
+ * @returns {string} The user agent string.
  */
-export function getBrowserInfo() {
-  const ua = navigator.userAgent;
-  let browserName = 'Unknown';
-  let version = 'Unknown';
-
-  if (/Edge\/\d./i.test(ua)) {
-    browserName = 'Edge';
-    version = ua.match(/Edge\/(\d+\.\d+)/i)[1];
-  } else if (/MSIE|Trident/i.test(ua)) {
-    browserName = 'IE';
-    version = ua.match(/(?:MSIE |rv:)(\d+\.\d+)/i)[1];
-  } else if (/Chrome/i.test(ua) && !/Edge/i.test(ua)) {
-    browserName = 'Chrome';
-    version = ua.match(/Chrome\/(\d+\.\d+)/i)[1];
-  } else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) {
-    browserName = 'Safari';
-    version = ua.match(/Version\/(\d+\.\d+)/i)[1];
-  } else if (/Firefox/i.test(ua)) {
-    browserName = 'Firefox';
-    version = ua.match(/Firefox\/(\d+\.\d+)/i)[1];
-  } else if (/Opera|OPR/i.test(ua)) {
-    browserName = 'Opera';
-    version = ua.match(/(?:Opera|OPR)\/(\d+\.\d+)/i)[1];
-  }
-
-  return { name: browserName, version: version };
+export function getUserAgent() {
+  return navigator.userAgent;
 }
 
 /**
- * Checks if the current device is a mobile device.
+ * Checks if the current device is a mobile device based on user agent.
  * @returns {boolean} True if it's a mobile device, false otherwise.
  */
-export function isMobileDevice() {
-  return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+export function isMobile() {
+  return /Mobi|Android|iPhone|iPod|Windows Phone/i.test(navigator.userAgent);
 }
+
+/**
+ * Checks if the current device is a tablet device based on user agent.
+ * @returns {boolean} True if it's a tablet device, false otherwise.
+ */
+export function isTablet() {
+  return /(iPad|tablet|playbook|silk)|(android(?!.*mobile))/i.test(navigator.userAgent);
+}
+
