@@ -1,5 +1,5 @@
 
-import { formatNumber, formatDate, formatCurrency, getTranslation, getLocale, pluralize } from './i18n-utils';
+import { formatNumber, formatDate, formatCurrency, getTranslation, getLocale, pluralize, getBrowserLanguage, setTranslation } from './i18n-utils';
 
 describe('i18n-utils', () => {
   // Mock navigator.language for consistent testing
@@ -103,6 +103,32 @@ describe('i18n-utils', () => {
       expect(pluralize(0, 'apple', 'apples')).toBe('apples');
       expect(pluralize(2, 'apple', 'apples')).toBe('apples');
       expect(pluralize(10, 'apple', 'apples')).toBe('apples');
+    });
+  });
+
+  describe('getBrowserLanguage', () => {
+    test('should return the primary language of the browser', () => {
+      Object.defineProperty(navigator, 'language', { value: 'en-US', configurable: true });
+      expect(getBrowserLanguage()).toBe('en');
+
+      Object.defineProperty(navigator, 'language', { value: 'ja-JP', configurable: true });
+      expect(getBrowserLanguage()).toBe('ja');
+    });
+  });
+
+  describe('setTranslation', () => {
+    test('should set a translation for a given key and language', () => {
+      const translations = {
+        en: { greeting: 'Hello' },
+      };
+      setTranslation(translations, 'es', 'greeting', 'Hola');
+      expect(translations.es.greeting).toBe('Hola');
+    });
+
+    test('should create language object if it does not exist', () => {
+      const translations = {};
+      setTranslation(translations, 'fr', 'hello', 'Bonjour');
+      expect(translations.fr.hello).toBe('Bonjour');
     });
   });
 });
