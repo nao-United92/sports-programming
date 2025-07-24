@@ -80,3 +80,85 @@ export function fadeOut(element, duration = 400) {
 
   requestAnimationFrame(animate);
 }
+
+/**
+ * Toggles the slide animation of an element (slide up if visible, slide down if hidden).
+ * @param {HTMLElement} element The HTML element to toggle.
+ * @param {number} [duration=400] The duration of the animation in milliseconds.
+ * @returns {Promise<void>} A Promise that resolves when the animation is complete.
+ */
+export function slideToggle(element, duration = 400) {
+  if (!element) {
+    console.warn('slideToggle: Invalid element provided.');
+    return Promise.resolve();
+  }
+
+  if (element.offsetHeight === 0) {
+    return slideDown(element, duration);
+  } else {
+    return slideUp(element, duration);
+  }
+}
+
+/**
+ * Applies a pulsing animation to an element by repeatedly scaling it up and down.
+ * @param {HTMLElement} element The HTML element to animate.
+ * @param {number} [scale=1.1] The maximum scale factor.
+ * @param {number} [duration=500] The duration of one pulse cycle in milliseconds.
+ * @param {number} [iterations=Infinity] The number of times to repeat the pulse. Use Infinity for continuous.
+ */
+export function pulse(element, scale = 1.1, duration = 500, iterations = Infinity) {
+  if (!element) {
+    console.warn('pulse: Invalid element provided.');
+    return;
+  }
+
+  element.animate([
+    { transform: 'scale(1)' },
+    { transform: `scale(${scale})` },
+    { transform: 'scale(1)' }
+  ], {
+    duration: duration,
+    iterations: iterations,
+    easing: 'ease-in-out'
+  });
+}
+
+// Helper functions for slideToggle (assuming they are defined elsewhere or imported)
+// These are simplified versions for demonstration. In a real scenario, you'd import them.
+function slideDown(element, duration) {
+  return new Promise(resolve => {
+    element.style.height = '0';
+    element.style.overflow = 'hidden';
+    element.style.display = 'block';
+    const startHeight = 0;
+    const endHeight = element.scrollHeight;
+    let start = null;
+    const animate = (currentTime) => {
+      if (!start) start = currentTime;
+      const progress = (currentTime - start) / duration;
+      const currentHeight = startHeight + (endHeight - startHeight) * Math.min(progress, 1);
+      element.style.height = currentHeight + 'px';
+      if (progress < 1) { requestAnimationFrame(animate); } else { element.style.height = ''; element.style.overflow = ''; resolve(); }
+    };
+    requestAnimationFrame(animate);
+  });
+}
+
+function slideUp(element, duration) {
+  return new Promise(resolve => {
+    element.style.height = element.scrollHeight + 'px';
+    element.style.overflow = 'hidden';
+    const startHeight = element.scrollHeight;
+    const endHeight = 0;
+    let start = null;
+    const animate = (currentTime) => {
+      if (!start) start = currentTime;
+      const progress = (currentTime - start) / duration;
+      const currentHeight = startHeight + (endHeight - startHeight) * Math.min(progress, 1);
+      element.style.height = currentHeight + 'px';
+      if (progress < 1) { requestAnimationFrame(animate); } else { element.style.display = 'none'; element.style.height = ''; element.style.overflow = ''; resolve(); }
+    };
+    requestAnimationFrame(animate);
+  });
+}

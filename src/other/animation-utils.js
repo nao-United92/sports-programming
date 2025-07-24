@@ -203,3 +203,51 @@ export function stopAnimations(element) {
     });
   }
 }
+
+/**
+ * Animates a CSS property of an element.
+ * @param {HTMLElement} element The element to animate.
+ * @param {string} property The CSS property to animate (e.g., 'opacity', 'width').
+ * @param {number} from The starting value of the property.
+ * @param {number} to The ending value of the property.
+ * @param {string} unit The unit of the property (e.g., 'px', '%', '').
+ * @param {number} [duration=500] The duration of the animation in milliseconds.
+ * @returns {Promise<void>} A Promise that resolves when the animation is complete.
+ */
+export function animateProperty(element, property, from, to, unit, duration = 500) {
+  return new Promise(resolve => {
+    if (!element) {
+      resolve();
+      return;
+    }
+
+    const start = performance.now();
+
+    function step(currentTime) {
+      const elapsed = currentTime - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const value = from + (to - from) * progress;
+      element.style[property] = `${value}${unit}`;
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        resolve();
+      }
+    }
+
+    requestAnimationFrame(step);
+  });
+}
+
+/**
+ * Stops all animations on an element.
+ * @param {HTMLElement} element The element to stop animations on.
+ */
+export function stopAnimation(element) {
+  if (element && typeof element.getAnimations === 'function') {
+    element.getAnimations().forEach(animation => {
+      animation.cancel();
+    });
+  }
+}

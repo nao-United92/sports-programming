@@ -1,4 +1,4 @@
-import { scrollIntoViewSmoothly, fadeIn, fadeOut, slideDown, slideUp, animateScrollTo, stopAnimations } from './animation-utils.js';
+import { scrollIntoViewSmoothly, fadeIn, fadeOut, slideDown, slideUp, animateScrollTo, stopAnimations, animateProperty, stopAnimation } from './animation-utils.js';
 
 describe('animation-utils', () => {
   it('should scroll an element into view', () => {
@@ -130,6 +130,67 @@ describe('animation-utils', () => {
       el.getAnimations = undefined; 
       stopAnimations(el);
       // No error should be thrown
+    });
+  });
+
+  describe('animateProperty', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('should animate a CSS property', async () => {
+      const el = document.createElement('div');
+      el.style.width = '0px';
+      document.body.appendChild(el);
+
+      const rAFSpy = jest.spyOn(window, 'requestAnimationFrame');
+      rAFSpy.mockImplementation(cb => setTimeout(() => cb(performance.now()), 10));
+
+      const promise = animateProperty(el, 'width', 0, 100, 'px', 100);
+
+      jest.advanceTimersByTime(50);
+      expect(parseFloat(el.style.width)).toBeGreaterThan(0);
+      expect(parseFloat(el.style.width)).toBeLessThan(100);
+
+      jest.advanceTimersByTime(50);
+      await promise;
+
+      expect(el.style.width).toBe('100px');
+      document.body.removeChild(el);
+      rAFSpy.mockRestore();
+    });
+
+    test('should resolve immediately if element is null', async () => {
+      await expect(animateProperty(null, 'width', 0, 100, 'px', 100)).resolves.toBeUndefined();
+    });
+  });
+
+  describe('stopAnimation', () => {
+    test('should cancel all animations on an element', () => {
+      const el = document.createElement('div');
+      const mockAnimation1 = { cancel: jest.fn() };
+      const mockAnimation2 = { cancel: jest.fn() };
+
+      el.getAnimations = jest.fn(() => [mockAnimation1, mockAnimation2]);
+
+      stopAnimation(el);
+
+      expect(mockAnimation1.cancel).toHaveBeenCalledTimes(1);
+      expect(mockAnimation2.cancel).toHaveBeenCalledTimes(1);
+    });
+
+    test('should not throw error if element is null', () => {
+      stopAnimation(null);
+    });
+
+    test('should not throw error if getAnimations is not available', () => {
+      const el = document.createElement('div');
+      el.getAnimations = undefined;
+      stopAnimation(el);
     });
   });
 });
