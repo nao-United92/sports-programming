@@ -1,4 +1,4 @@
-import { uuid, delay, isNil, noop, isEmpty } from './general-utils.js';
+import { uuid, delay, isNil, noop, isEmpty, throttle, debounce } from './general-utils.js';
 
 describe('general-utils', () => {
   describe('uuid', () => {
@@ -75,6 +75,72 @@ describe('general-utils', () => {
       expect(isEmpty({ a: 1 })).toBe(false);
       expect(isEmpty(0)).toBe(false);
       expect(isEmpty(false)).toBe(false);
+    });
+  });
+
+  describe('throttle', () => {
+    jest.useFakeTimers();
+
+    test('should throttle a function', () => {
+      const func = jest.fn();
+      const throttledFunc = throttle(func, 100);
+
+      throttledFunc(); // Called immediately
+      throttledFunc(); // Ignored
+      throttledFunc(); // Ignored
+
+      expect(func).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(50);
+      throttledFunc(); // Ignored
+      expect(func).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(50);
+      throttledFunc(); // Called after throttle period
+      expect(func).toHaveBeenCalledTimes(2);
+    });
+
+    test('should apply the correct context and arguments', () => {
+      const func = jest.fn(function(a, b) { return this.value + a + b; });
+      const throttledFunc = throttle(func, 100);
+      const context = { value: 10 };
+
+      throttledFunc.apply(context, [1, 2]);
+      jest.runAllTimers();
+
+      expect(func).toHaveBeenCalledWith(1, 2);
+      expect(func.mock.results[0].value).toBe(13);
+    });
+  });
+
+  describe('debounce', () => {
+    jest.useFakeTimers();
+
+    test('should debounce a function', () => {
+      const func = jest.fn();
+      const debouncedFunc = debounce(func, 100);
+
+      debouncedFunc();
+      debouncedFunc();
+      debouncedFunc();
+
+      jest.advanceTimersByTime(99);
+      expect(func).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(1);
+      expect(func).toHaveBeenCalledTimes(1);
+    });
+
+    test('should apply the correct context and arguments', () => {
+      const func = jest.fn(function(a, b) { return this.value + a + b; });
+      const debouncedFunc = debounce(func, 100);
+      const context = { value: 10 };
+
+      debouncedFunc.apply(context, [1, 2]);
+      jest.runAllTimers();
+
+      expect(func).toHaveBeenCalledWith(1, 2);
+      expect(func.mock.results[0].value).toBe(13);
     });
   });
 });

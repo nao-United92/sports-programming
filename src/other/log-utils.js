@@ -47,3 +47,34 @@ export function logDebug(...args) {
         console.debug(...args);
     }
 }
+
+/**
+ * Logs tabular data as a table.
+ * @param {Array<object>} data - The data to log as a table.
+ * @param {string[]} [properties] - An optional array of properties to display as columns.
+ */
+export function logTable(data, properties) {
+  if (enableLogging && console.table) {
+    console.table(data, properties);
+  }
+}
+
+/**
+ * Starts a timer for a named operation.
+ * @param {string} label - The label for the timer.
+ */
+export function logTime(label) {
+  if (enableLogging && console.time) {
+    console.time(label);
+  }
+}
+
+/**
+ * Stops a timer and logs the elapsed time.
+ * @param {string} label - The label for the timer to stop.
+ */
+export function logTimeEnd(label) {
+  if (enableLogging && console.timeEnd) {
+    console.timeEnd(label);
+  }
+}
