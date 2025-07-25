@@ -115,6 +115,38 @@ export function isTime(timeString) {
   if (typeof timeString !== 'string') {
     return false;
   }
-  const regex = /^(?:2[0-3]|[01]?[0-9]):[0-5][0-9](?::[0-5][0-9])?$/;
+  const regex = /^(?:2[0-3]|[01][0-9]):[0-5][0-9](?::[0-5][0-9])?$/;
   return regex.test(timeString);
+}
+
+/**
+ * Validates password strength based on a set of criteria.
+ * @param {string} password The password string to validate.
+ * @returns {Array<string>} An array of strings describing unmet requirements. Returns an empty array if the password is strong.
+ */
+export function validatePassword(password) {
+  const errors = [];
+
+  if (typeof password !== 'string') {
+    errors.push('Password must be a string.');
+    return errors;
+  }
+
+  if (password.length < 8) {
+    errors.push('Password must be at least 8 characters long.');
+  }
+  if (!/[A-Z]/.test(password)) {
+    errors.push('Password must contain at least one uppercase letter.');
+  }
+  if (!/[a-z]/.test(password)) {
+    errors.push('Password must contain at least one lowercase letter.');
+  }
+  if (!/[0-9]/.test(password)) {
+    errors.push('Password must contain at least one number.');
+  }
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    errors.push('Password must contain at least one special character.');
+  }
+
+  return errors;
 }

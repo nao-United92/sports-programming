@@ -1,4 +1,4 @@
-import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas } from './number-utils.js';
+import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas, isInteger } from './number-utils.js';
 
 describe('number-utils', () => {
   describe('isNumber', () => {
@@ -167,6 +167,29 @@ describe('number-utils', () => {
       expect(addCommas(null)).toBe('');
       expect(addCommas(undefined)).toBe('');
       expect(addCommas('abc')).toBe('');
+    });
+  });
+
+  describe('isInteger', () => {
+    test('should return true for an integer', () => {
+      expect(isInteger(10)).toBe(true);
+      expect(isInteger(-5)).toBe(true);
+      expect(isInteger(0)).toBe(true);
+    });
+
+    test('should return false for a non-integer', () => {
+      expect(isInteger(10.5)).toBe(false);
+      expect(isInteger(Math.PI)).toBe(false);
+      expect(isInteger(NaN)).toBe(false);
+      expect(isInteger(Infinity)).toBe(false);
+      expect(isInteger(-Infinity)).toBe(false);
+    });
+
+    test('should return false for non-numeric values', () => {
+      expect(isInteger('10')).toBe(false);
+      expect(isInteger(null)).toBe(false);
+      expect(isInteger(undefined)).toBe(false);
+      expect(isInteger(true)).toBe(false);
     });
   });
 });

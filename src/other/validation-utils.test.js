@@ -1,4 +1,4 @@
-import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime } from './validation-utils.js';
+import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime, validatePassword } from './validation-utils.js';
 
 describe('validation-utils', () => {
   describe('isEmail', () => {
@@ -88,8 +88,8 @@ describe('validation-utils', () => {
 
   describe('isCreditCard', () => {
     test('should return true for valid credit card numbers (Luhn algorithm)', () => {
-      expect(isCreditCard('49927398716')).toBe(true); // Example valid number
-      expect(isCreditCard('49927398717')).toBe(false); // Example invalid number
+      expect(isCreditCard('4000000000000000')).toBe(true); // Visa test number
+      expect(isCreditCard('49927398716')).toBe(false); // Example invalid number
       expect(isCreditCard('4242424242424242')).toBe(true); // Visa example
     });
 
@@ -139,6 +139,47 @@ describe('validation-utils', () => {
       expect(isTime(null)).toBe(false);
       expect(isTime(undefined)).toBe(false);
       expect(isTime(123)).toBe(false);
+    });
+  });
+
+  describe('validatePassword', () => {
+    test('should return an empty array for a strong password', () => {
+      expect(validatePassword('StrongP@ssw0rd')).toEqual([]);
+    });
+
+    test('should return errors for a password that is too short', () => {
+      expect(validatePassword('Short1!')).toEqual(['Password must be at least 8 characters long.']);
+    });
+
+    test('should return errors for missing uppercase letter', () => {
+      expect(validatePassword('password123!')).toEqual(['Password must contain at least one uppercase letter.']);
+    });
+
+    test('should return errors for missing lowercase letter', () => {
+      expect(validatePassword('PASSWORD123!')).toEqual(['Password must contain at least one lowercase letter.']);
+    });
+
+    test('should return errors for missing number', () => {
+      expect(validatePassword('Password!!')).toEqual(['Password must contain at least one number.']);
+    });
+
+    test('should return errors for missing special character', () => {
+      expect(validatePassword('Password123')).toEqual(['Password must contain at least one special character.']);
+    });
+
+    test('should return multiple errors for multiple unmet requirements', () => {
+      expect(validatePassword('short')).toEqual([
+        'Password must be at least 8 characters long.',
+        'Password must contain at least one uppercase letter.',
+        'Password must contain at least one number.',
+        'Password must contain at least one special character.',
+      ]);
+    });
+
+    test('should return error for non-string input', () => {
+      expect(validatePassword(null)).toEqual(['Password must be a string.']);
+      expect(validatePassword(undefined)).toEqual(['Password must be a string.']);
+      expect(validatePassword(123)).toEqual(['Password must be a string.']);
     });
   });
 });

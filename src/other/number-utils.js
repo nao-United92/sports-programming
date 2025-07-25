@@ -156,3 +156,12 @@ export function addCommas(num) {
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   return parts.join('.');
 }
+
+/**
+ * Checks if a value is an integer.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is an integer, false otherwise.
+ */
+export function isInteger(value) {
+  return Number.isInteger(value);
+}
