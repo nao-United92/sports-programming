@@ -169,12 +169,12 @@ describe('network-utils', () => {
   });
 
   describe('isOnline', () => {
-    it('should return true when navigator.onLine is true', () => {
+    test('should return true when navigator.onLine is true', () => {
       Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });
       expect(isOnline()).toBe(true);
     });
 
-    it('should return false when navigator.onLine is false', () => {
+    test('should return false when navigator.onLine is false', () => {
       Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
       expect(isOnline()).toBe(false);
     });
