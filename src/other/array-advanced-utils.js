@@ -1,123 +1,54 @@
+/**
+ * 2つの配列をマージして、ソートされた新しい配列を返す
+ * @param {Array} arr1 - 最初の配列
+ * @param {Array} arr2 - 2番目の配列
+ * @returns {Array} - マージされ、ソートされた配列
+ */
+export function mergeAndSort(arr1, arr2) {
+  return [...arr1, ...arr2].sort((a, b) => a - b);
+}
 
 /**
- * Removes duplicate elements from an array, returning a new array with unique elements.
- * @param {Array} arr The input array.
- * @returns {Array} A new array containing only unique elements.
+ * 配列の重複を削除する
+ * @param {Array} arr - 配列
+ * @returns {Array} - 重複が削除された配列
  */
-export function uniqueArray(arr) {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
+export function removeDuplicates(arr) {
   return [...new Set(arr)];
 }
 
 /**
- * Flattens a nested array into a single-level array.
- * @param {Array} arr The array to flatten.
- * @returns {Array} A new, flattened array.
+ * 2つの配列の共通要素を見つける
+ * @param {Array} arr1 - 最初の配列
+ * @param {Array} arr2 - 2番目の配列
+ * @returns {Array} - 共通要素を含む配列
+ */
+export function findCommonElements(arr1, arr2) {
+  const set1 = new Set(arr1);
+  return arr2.filter(element => set1.has(element));
+}
+
+/**
+ * 配列を平坦化する
+ * @param {Array} arr - 多次元配列
+ * @returns {Array} - 平坦化された配列
  */
 export function flattenArray(arr) {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
   return arr.flat(Infinity);
 }
 
 /**
- * Divides an array into smaller chunks of a specified size.
- * @param {Array} arr The array to chunk.
- * @param {number} size The size of each chunk.
- * @returns {Array<Array>} An array of arrays, where each inner array is a chunk.
+ * 配列を特定のサイズのチャンクに分割する
+ * @param {Array} arr - 分割する配列
+ * @param {number} size - チャンクのサイズ
+ * @returns {Array} - チャンクに分割された配列
  */
-export function chunkArray(arr, size) {
-  if (!Array.isArray(arr) || size <= 0) {
-    return [];
+export function chunk(arr, size) {
+  const chunked = [];
+  let index = 0;
+  while (index < arr.length) {
+    chunked.push(arr.slice(index, index + size));
+    index += size;
   }
-  const result = [];
-  for (let i = 0; i < arr.length; i += size) {
-    result.push(arr.slice(i, i + size));
-  }
-  return result;
-}
-
-/**
- * Shuffles the elements of an array randomly in place.
- * @param {Array} arr The array to shuffle.
- * @returns {Array} The shuffled array (same reference as input).
- */
-export function shuffleArray(arr) {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
-  let currentIndex = arr.length,
-    randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex !== 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [arr[currentIndex], arr[randomIndex]] = [
-      arr[randomIndex],
-      arr[currentIndex],
-    ];
-  }
-
-  return arr;
-}
-
-/**
- * Groups the elements of an array based on a given key or function.
- * @param {Array} arr The array to group.
- * @param {string|Function} key The key to group by, or a function that returns the key.
- * @returns {object} An object with the grouped elements.
- */
-export function groupBy(arr, key) {
-  if (!Array.isArray(arr)) {
-    return {};
-  }
-  return arr.reduce((acc, item) => {
-    const group = typeof key === 'function' ? key(item) : item[key];
-    acc[group] = acc[group] || [];
-    acc[group].push(item);
-    return acc;
-  }, {});
-}
-
-/**
- * Creates a new array with all null and undefined values removed.
- * @param {Array} arr The input array.
- * @returns {Array} A new array with null and undefined values removed.
- */
-export function compact(arr) {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
-  return arr.filter(item => item !== null && item !== undefined);
-}
-
-/**
- * Creates a new array with unique values that are the union of the given arrays.
- * @param {...Array} arrays The arrays to union.
- * @returns {Array} A new array containing the union of all unique values.
- */
-export function union(...arrays) {
-  const flattened = arrays.flat();
-  return [...new Set(flattened)];
-}
-
-/**
- * Creates a new array excluding all given values.
- * @param {Array} array The array to inspect.
- * @param {...*} values The values to exclude.
- * @returns {Array} A new array of filtered values.
- */
-export function without(array, ...values) {
-  if (!Array.isArray(array)) {
-    return [];
-  }
-  const excludeSet = new Set(values);
-  return array.filter(item => !excludeSet.has(item));
+  return chunked;
 }
