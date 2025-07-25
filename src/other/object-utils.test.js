@@ -440,9 +440,21 @@ describe('pick', () => {
 });
 
 describe('omit', () => {
-  it('should create an object with omitted properties', () => {
-    const object = { a: 1, b: '2', c: 3 };
-    expect(omit(object, ['a', 'c'])).toEqual({ b: '2' });
+  test('should omit specified keys', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: 2 });
+  });
+
+  test('should not modify the original object', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    omit(obj, ['a']);
+    expect(obj).toEqual({ a: 1, b: 2, c: 3 });
+  });
+
+  test('should return an empty object if input is not an object', () => {
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
+    expect(omit(123, ['a'])).toEqual({});
   });
 });
 

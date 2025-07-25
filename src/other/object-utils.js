@@ -295,6 +295,9 @@ export function pick(object, paths) {
  * @returns {object} Returns the new object.
  */
 export function omit(object, paths) {
+  if (object === null || typeof object !== 'object') {
+    return {};
+  }
   const newObject = { ...object };
   paths.forEach(path => {
     delete newObject[path];
