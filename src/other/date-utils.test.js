@@ -1,4 +1,4 @@
-import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast } from './date-utils.js';
+import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth } from './date-utils.js';
 
 describe('formatDate', () => {
   test('should format a Date object to YYYY-MM-DD string', () => {
@@ -223,6 +223,21 @@ describe('isLeapYear', () => {
   test('should return false for a common year', () => {
     expect(isLeapYear(1900)).toBe(false);
     expect(isLeapYear(2003)).toBe(false);
+  });
+});
+
+describe('getDaysInMonth', () => {
+  test('should return the correct number of days for a given month', () => {
+    expect(getDaysInMonth(2023, 1)).toBe(31); // January
+    expect(getDaysInMonth(2023, 2)).toBe(28); // February (common year)
+    expect(getDaysInMonth(2024, 2)).toBe(29); // February (leap year)
+    expect(getDaysInMonth(2023, 4)).toBe(30); // April
+    expect(getDaysInMonth(2023, 12)).toBe(31); // December
+  });
+
+  test('should return 0 for an invalid month', () => {
+    expect(getDaysInMonth(2023, 0)).toBe(0);
+    expect(getDaysInMonth(2023, 13)).toBe(0);
   });
 });
 });

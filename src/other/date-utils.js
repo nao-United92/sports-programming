@@ -156,3 +156,16 @@ export function isLeapYear(year) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
 
+/**
+ * Returns the number of days in a given month of a given year.
+ * @param {number} year The year.
+ * @param {number} month The month (1-12).
+ * @returns {number} The number of days in the month.
+ */
+export function getDaysInMonth(year, month) {
+  if (month < 1 || month > 12) {
+    return 0; // Invalid month
+  }
+  return new Date(year, month, 0).getDate();
+}
+
