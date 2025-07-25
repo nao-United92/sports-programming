@@ -318,6 +318,8 @@ export function mapObject(object, iteratee) {
   return newObject;
 }
 
+"""}
+
 /**
  * Iterates over properties of `object`, returning an array of all properties `predicate` returns truthy for.
  * @param {object} object The object to iterate over.
@@ -333,5 +335,34 @@ export function filterObject(object, predicate) {
   }
   return newObject;
 }
+
+/**
+ * Performs a deep clone of an object or array.
+ * @param {object|Array} obj The object or array to clone.
+ * @returns {object|Array} A deep clone of the input.
+ */
+export function deepClone(obj) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime());
+  }
+
+  if (obj instanceof RegExp) {
+    return new RegExp(obj);
+  }
+
+  const clone = Array.isArray(obj) ? [] : {};
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      clone[key] = deepClone(obj[key]);
+    }
+  }
+  return clone;
+}
+""
 
 

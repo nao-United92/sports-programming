@@ -461,3 +461,42 @@ describe('filterObject', () => {
     expect(newObj).toEqual({ b: 2, c: 3 });
   });
 });
+
+describe('deepClone', () => {
+  test('should deep clone a simple object', () => {
+    const obj = { a: 1, b: { c: 2 } };
+    const clonedObj = deepClone(obj);
+    expect(clonedObj).toEqual(obj);
+    expect(clonedObj).not.toBe(obj);
+    expect(clonedObj.b).not.toBe(obj.b);
+  });
+
+  test('should deep clone an array with objects', () => {
+    const arr = [1, { a: 2 }, [3, 4]];
+    const clonedArr = deepClone(arr);
+    expect(clonedArr).toEqual(arr);
+    expect(clonedArr).not.toBe(arr);
+    expect(clonedArr[1]).not.toBe(arr[1]);
+    expect(clonedArr[2]).not.toBe(arr[2]);
+  });
+
+  test('should handle null and non-object values', () => {
+    expect(deepClone(null)).toBe(null);
+    expect(deepClone(123)).toBe(123);
+    expect(deepClone('string')).toBe('string');
+  });
+
+  test('should clone Date objects', () => {
+    const date = new Date();
+    const clonedDate = deepClone(date);
+    expect(clonedDate).toEqual(date);
+    expect(clonedDate).not.toBe(date);
+  });
+
+  test('should clone RegExp objects', () => {
+    const regex = /abc/g;
+    const clonedRegex = deepClone(regex);
+    expect(clonedRegex).toEqual(regex);
+    expect(clonedRegex).not.toBe(regex);
+  });
+});

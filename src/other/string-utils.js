@@ -143,3 +143,17 @@ export function kebabCase(str) {
   }
   return str.replace(/([a-z0-9]|(?<=[a-z]))([A-Z])/g, '$1-$2').replace(/_|[\s]+/g, '-').toLowerCase();
 }
+
+/**
+ * Truncates a string to a specified length, appending an ellipsis if truncated.
+ *
+ * @param {string} str
+ * @param {number} maxLength
+ * @returns {string}
+ */
+export function truncate(str, maxLength) {
+  if (typeof str !== 'string' || str.length <= maxLength) {
+    return str;
+  }
+  return str.slice(0, maxLength) + '...';
+}

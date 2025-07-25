@@ -132,3 +132,13 @@ describe('kebabCase', () => {
     expect(kebabCase('__FOO_BAR__')).toBe('--foo-bar--');
   });
 });
+
+describe('truncate', () => {
+  test('should truncate a string', () => {
+    expect(truncate('hello world', 5)).toBe('hello...');
+  });
+
+  test('should not truncate a string if it is shorter than the max length', () => {
+    expect(truncate('hello world', 20)).toBe('hello world');
+  });
+});
