@@ -1,4 +1,4 @@
-import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial, sleep, defer } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial, sleep, defer, partialRight } from './function-utils.js';
 
 describe('sleep', () => {
   test('should resolve after the specified time', async () => {
@@ -186,13 +186,33 @@ describe('function-utils', () => {
 
 describe('defer', () => {
   test('should defer the execution of a function', (done) => {
-    const mockFn = jest.fn();
-    defer(mockFn);
-    expect(mockFn).not.toHaveBeenCalled();
-    setTimeout(() => {
-      expect(mockFn).toHaveBeenCalledTimes(1);
-      done();
-    }, 10);
+      const mockFn = jest.fn();
+      defer(mockFn);
+      expect(mockFn).not.toHaveBeenCalled();
+      setTimeout(() => {
+        expect(mockFn).toHaveBeenCalledTimes(1);
+        done();
+      }, 10);
+    });
   });
-});
+
+  describe('partialRight', () => {
+    test('should partially apply arguments to a function from the right', () => {
+      const greet = (greeting, name) => `${greeting}, ${name}!`;
+      const greetJohn = partialRight(greet, 'John');
+      expect(greetJohn('Hello')).toBe('Hello, John!');
+    });
+
+    test('should handle multiple partial arguments from the right', () => {
+      const sum = (a, b, c) => a + b + c;
+      const add20And30 = partialRight(sum, 20, 30);
+      expect(add20And30(10)).toBe(60);
+    });
+
+    test('should maintain context', () => {
+      const obj = { value: 10, add: function(a, b) { return this.value + a + b; } };
+      const addPartialRight = partialRight(obj.add, 5);
+      expect(addPartialRight.call(obj, 2)).toBe(17);
+    });
+  });
   

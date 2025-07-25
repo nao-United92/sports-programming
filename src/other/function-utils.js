@@ -190,3 +190,15 @@ export function defer(func, ...args) {
   return setTimeout(func, 1, ...args);
 }
 
+/**
+ * Creates a function that invokes `func` with `partials` appended to the arguments it receives.
+ * @param {Function} func The function to partially apply arguments to.
+ * @param {...*} partials The arguments to be partially applied from the right.
+ * @returns {Function} Returns the new partially applied function.
+ */
+export function partialRight(func, ...partials) {
+  return function(...args) {
+    return func.apply(this, args.concat(partials));
+  };
+}
+
