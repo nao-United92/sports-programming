@@ -76,6 +76,7 @@ export function getMonthDifference(date1, date2) {
 /**
  * Formats a Date object into a "YYYY-MM-DD" string.
  * @param {Date} date The Date object to format.
+ * @param {string} [formatStr='YYYY-MM-DD'] The format string. Supported placeholders: YYYY, MM, DD, HH, mm, ss.
  * @returns {string} The formatted date string.
  */
 export function formatDate(date, formatStr = 'YYYY-MM-DD') {

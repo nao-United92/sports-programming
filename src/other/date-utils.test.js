@@ -1,14 +1,19 @@
 import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth } from './date-utils.js';
 
 describe('formatDate', () => {
-  test('should format a Date object to YYYY-MM-DD string', () => {
+  test('should format a Date object to YYYY-MM-DD by default', () => {
     const date = new Date('2023-01-05T10:00:00Z');
     expect(formatDate(date)).toBe('2023-01-05');
   });
 
-  test('should pad month and day with leading zeros', () => {
-    const date = new Date('2023-03-07T10:00:00Z');
-    expect(formatDate(date)).toBe('2023-03-07');
+  test('should format a Date object with custom format string', () => {
+    const date = new Date('2023-01-05T10:05:08Z');
+    expect(formatDate(date, 'YYYY/MM/DD HH:mm:ss')).toBe('2023/01/05 19:05:08');
+  });
+
+  test('should pad month, day, hours, minutes, and seconds with leading zeros', () => {
+    const date = new Date('2023-03-07T03:05:07Z');
+    expect(formatDate(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-03-07 12:05:07');
   });
 
   test('should return empty string for invalid date', () => {
