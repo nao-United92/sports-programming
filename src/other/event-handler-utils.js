@@ -137,4 +137,14 @@ export function onReady(callback) {
   }
 }
 
+/**
+ * Attaches an event listener to an element.
+ * This is an alias for addEvent.
+ * @param {EventTarget} element The element to attach the event listener to.
+ * @param {string} eventType The type of event to listen for (e.g., 'click', 'mouseover').
+ * @param {Function} handler The event handler function.
+ * @param {boolean} [useCapture=false] Whether to use capture phase.
+ */
+export const on = addEvent;
+
 

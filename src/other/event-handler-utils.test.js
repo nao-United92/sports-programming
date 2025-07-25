@@ -1,4 +1,4 @@
-import { preventDefault, stopPropagation, stopEvent, debounce, throttle, addEvent, removeEvent, once, delegate, onReady } from './event-handler-utils.js';
+import { preventDefault, stopPropagation, stopEvent, debounce, throttle, addEvent, removeEvent, once, delegate, onReady, on } from './event-handler-utils.js';
 
 describe('event-handler-utils', () => {
   let mockEvent;
@@ -183,7 +183,7 @@ describe('event-handler-utils', () => {
       childElement.click();
       expect(handler).toHaveBeenCalledTimes(1);
       expect(handler).toHaveBeenCalledWith(expect.any(Event));
-      expect(handler).toHaveBeenCalledOnLastCallWith(expect.objectContaining({ target: childElement }));
+      expect(handler).toHaveBeenCalledWith(expect.objectContaining({ target: childElement }));
     });
 
     test('should not trigger handler if target does not match selector', () => {
@@ -230,6 +230,22 @@ describe('event-handler-utils', () => {
       onReady(callback);
       document.dispatchEvent(new Event('DOMContentLoaded'));
       expect(callback).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('on', () => {
+    it('should attach an event listener to an element', () => {
+      const element = document.createElement('div');
+      const handler = jest.fn();
+      on(element, 'click', handler);
+      element.click();
+      expect(handler).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not throw an error if element is null', () => {
+      const handler = jest.fn();
+      on(null, 'click', handler);
+      // No error should be thrown
     });
   });
 });
