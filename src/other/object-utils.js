@@ -121,7 +121,7 @@ export function setNestedProperty(obj, path, value) {
  * @param {object[]} sources The source objects to merge from.
  * @returns {object} The deeply merged object.
  */
-export function mergeDeep(target, ...sources) {
+export function deepMerge(target, ...sources) {
   if (typeof target !== 'object' || target === null) {
     target = {};
   }
@@ -134,7 +134,7 @@ export function mergeDeep(target, ...sources) {
     for (const key in source) {
       if (Object.prototype.hasOwnProperty.call(source, key)) {
         if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key]) && typeof target[key] === 'object' && target[key] !== null && !Array.isArray(target[key])) {
-          target[key] = mergeDeep(target[key] || {}, source[key]);
+          target[key] = deepMerge(target[key] || {}, source[key]);
         } else if (Array.isArray(source[key]) && Array.isArray(target[key])) {
           target[key] = [...target[key], ...source[key]];
         } else {

@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -245,7 +245,7 @@ describe('array-utils', () => {
 
   describe('compact', () => {
     it('should remove all falsey values from an array', () => {
-      expect(compact([0, 1, false, 2, '', 3, null, 'a', undefined, NaN])).toEqual([1, 2, 3, 'a']);
+      expect(compact([0, 1, false, 2, '', 3, null, undefined, NaN, 'a'])).toEqual([1, 2, 3, 'a']);
     });
 
     it('should return an empty array if all values are falsey', () => {
@@ -350,6 +350,28 @@ describe('array-utils', () => {
       const [truthy, falsy] = partition(null, n => n > 0);
       expect(truthy).toEqual([]);
       expect(falsy).toEqual([]);
+    });
+  });
+
+  describe('flattenDeep', () => {
+    test('should flatten an array to a specified depth', () => {
+      expect(flattenDeep([1, [2, [3, [4]]]], 2)).toEqual([1, 2, 3, [4]]);
+      expect(flattenDeep([1, [2, [3, [4]]]], 1)).toEqual([1, 2, [3, [4]]]);
+      expect(flattenDeep([1, [2, [3, [4]]]], 0)).toEqual([1, [2, [3, [4]]]]);
+    });
+
+    test('should flatten completely if depth is Infinity', () => {
+      expect(flattenDeep([1, [2, [3, [4]]]], Infinity)).toEqual([1, 2, 3, 4]);
+    });
+
+    test('should return an empty array for non-array inputs', () => {
+      expect(flattenDeep(null)).toEqual([]);
+      expect(flattenDeep(undefined)).toEqual([]);
+      expect(flattenDeep(123)).toEqual([]);
+    });
+
+    test('should return an empty array if depth is negative', () => {
+      expect(flattenDeep([1, [2]], -1)).toEqual([]);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, mergeDeep, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues } from './object-utils.js';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues } from './object-utils.js';
 
 describe('isDeepEqual', () => {
   test('should return true for deeply equal objects', () => {
@@ -247,11 +247,11 @@ describe('pick', () => {
   });
 });
 
-describe('mergeDeep', () => {
+describe('deepMerge', () => {
   test('should deeply merge two objects', () => {
     const obj1 = { a: 1, b: { c: 2 } };
     const obj2 = { d: 3, b: { e: 4 } };
-    const merged = mergeDeep(obj1, obj2);
+    const merged = deepMerge(obj1, obj2);
     expect(merged).toEqual({ a: 1, b: { c: 2, e: 4 }, d: 3 });
   });
 
@@ -259,33 +259,33 @@ describe('mergeDeep', () => {
     const obj1 = { a: 1, b: { c: 2 } };
     const obj2 = { d: 3, b: { e: 4 } };
     const obj3 = { f: 5, b: { g: 6 } };
-    const merged = mergeDeep(obj1, obj2, obj3);
+    const merged = deepMerge(obj1, obj2, obj3);
     expect(merged).toEqual({ a: 1, b: { c: 2, e: 4, g: 6 }, d: 3, f: 5 });
   });
 
   test('should overwrite primitive values', () => {
     const obj1 = { a: 1, b: { c: 2 } };
     const obj2 = { a: 10, b: { c: 20 } };
-    const merged = mergeDeep(obj1, obj2);
+    const merged = deepMerge(obj1, obj2);
     expect(merged).toEqual({ a: 10, b: { c: 20 } });
   });
 
   test('should handle arrays by concatenating them', () => {
     const obj1 = { a: [1, 2], b: { c: [3] } };
     const obj2 = { a: [3, 4], b: { c: [4, 5] } };
-    const merged = mergeDeep(obj1, obj2);
+    const merged = deepMerge(obj1, obj2);
     expect(merged).toEqual({ a: [1, 2, 3, 4], b: { c: [3, 4, 5] } });
   });
 
   test('should handle null and undefined values gracefully', () => {
     const obj1 = { a: 1, b: { c: 2 } };
     const obj2 = { b: null, d: undefined };
-    const merged = mergeDeep(obj1, obj2);
+    const merged = deepMerge(obj1, obj2);
     expect(merged).toEqual({ a: 1, b: null, d: undefined });
   });
 
   test('should return a new object if target is not an object', () => {
-    const merged = mergeDeep(null, { a: 1 });
+    const merged = deepMerge(null, { a: 1 });
     expect(merged).toEqual({ a: 1 });
   });
 });
