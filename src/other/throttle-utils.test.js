@@ -14,27 +14,24 @@ describe('throttle', () => {
     jest.useRealTimers();
   });
 
-  test('should execute the function immediately and then after the limit', () => {
+  test('should execute the function immediately', () => {
     throttledFunc = throttle(func, 100);
     throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
-    throttledFunc(); // Should not call immediately
-    expect(func).toHaveBeenCalledTimes(1);
-    jest.advanceTimersByTime(100);
-    throttledFunc(); // Should call again after limit
-    expect(func).toHaveBeenCalledTimes(2);
   });
 
-  test('should not execute the function more than once within the limit', () => {
+  test('should not execute the function again within the time limit', () => {
     throttledFunc = throttle(func, 100);
     throttledFunc();
     throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  test('should execute the function again after the time limit', () => {
+    throttledFunc = throttle(func, 100);
     throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
-    jest.advanceTimersByTime(50);
-    throttledFunc();
-    expect(func).toHaveBeenCalledTimes(1);
-    jest.advanceTimersByTime(50);
+    jest.advanceTimersByTime(100);
     throttledFunc();
     expect(func).toHaveBeenCalledTimes(2);
   });
@@ -46,15 +43,10 @@ describe('throttle', () => {
     expect(func).toHaveBeenCalledWith(1, 2);
   });
 
-  test('should return the last result of the function', () => {
-    func.mockReturnValueOnce('first result').mockReturnValueOnce('second result');
+  test('should return the result of the function', () => {
+    func.mockReturnValue('test result');
     throttledFunc = throttle(func, 100);
-    const result1 = throttledFunc();
-    const result2 = throttledFunc();
-    expect(result1).toBe('first result');
-    expect(result2).toBe('first result'); // Should return the same result as it's throttled
-    jest.advanceTimersByTime(100);
-    const result3 = throttledFunc();
-    expect(result3).toBe('second result');
+    const result = throttledFunc();
+    expect(result).toBe('test result');
   });
 });

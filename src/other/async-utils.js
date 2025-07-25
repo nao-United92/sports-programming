@@ -29,3 +29,29 @@ export async function retry(fn, retries = 3, delayMs = 1000) {
         }
     }
 }
+
+/**
+ * Creates a Promise that rejects with a timeout error if the given promise does not resolve within the specified time.
+ *
+ * @param promise The promise to race against the timeout.
+ * @param ms The timeout in milliseconds.
+ * @returns A new Promise that resolves with the value of the input promise or rejects with a timeout error.
+ */
+export function timeout(promise, ms) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            reject(new Error('Operation timed out'));
+        }, ms);
+
+        promise.then(
+            value => {
+                clearTimeout(timer);
+                resolve(value);
+            },
+            error => {
+                clearTimeout(timer);
+                reject(error);
+            }
+        );
+    });
+}
