@@ -1,7 +1,31 @@
-import { getQueryParam, setQueryParam, removeQueryParam, isAbsoluteUrl, addQueryParams, combineURLs, getDomainFromUrl, isAbsolute, getFragment, setFragment, removeFragment } from './url-utils.js';
+import { getQueryParam, setQueryParam, removeQueryParam, isAbsoluteUrl, addQueryParams, combineURLs, getDomainFromUrl, isAbsolute, getFragment, setFragment, removeFragment, getQueryParams } from './url-utils.js';
 
 describe('url-utils', () => {
   const url = 'https://example.com?a=1&b=2';
+
+  describe('getQueryParams', () => {
+    test('should parse query parameters into an object', () => {
+      const urlWithParams = 'http://example.com?name=John%20Doe&age=30&city=New%20York';
+      expect(getQueryParams(urlWithParams)).toEqual({
+        name: 'John Doe',
+        age: '30',
+        city: 'New York',
+      });
+    });
+
+    test('should return an empty object if no query parameters', () => {
+      const urlNoParams = 'http://example.com';
+      expect(getQueryParams(urlNoParams)).toEqual({});
+    });
+
+    test('should handle empty string as URL', () => {
+      expect(getQueryParams('')).toEqual({});
+    });
+
+    test('should handle invalid URL', () => {
+      expect(getQueryParams('invalid-url')).toEqual({});
+    });
+  });
 
   it('should get a query parameter', () => {
     expect(getQueryParam(url, 'a')).toBe('1');

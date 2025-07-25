@@ -1,4 +1,22 @@
 /**
+ * Parses the query parameters from a URL into an object.
+ * @param {string} url The URL string to parse.
+ * @returns {object} An object containing the query parameters.
+ */
+export function getQueryParams(url) {
+  try {
+    const urlObj = new URL(url);
+    const params = {};
+    for (const [key, value] of urlObj.searchParams.entries()) {
+      params[key] = value;
+    }
+    return params;
+  } catch (e) {
+    return {};
+  }
+}
+
+/**
  * Gets a specific query parameter from a URL.
  *
  * @param url The URL string.
