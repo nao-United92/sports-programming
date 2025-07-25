@@ -301,3 +301,23 @@ export function isElementFullyInViewport(element) {
     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
 }
+
+/**
+ * Checks if a given element is a child of another element.
+ * @param {HTMLElement} child The potential child element.
+ * @param {HTMLElement} parent The potential parent element.
+ * @returns {boolean} True if the child is a descendant of the parent, false otherwise.
+ */
+export function isChildOf(child, parent) {
+  if (!child || !parent) {
+    return false;
+  }
+  let node = child.parentNode;
+  while (node !== null) {
+    if (node === parent) {
+      return true;
+    }
+    node = node.parentNode;
+  }
+  return false;
+}

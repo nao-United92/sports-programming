@@ -1,4 +1,4 @@
-import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml, isElementVisible, hasAttribute, createElementWithAttributes, isElementFullyInViewport } from './dom-utils.js';
+import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml, isElementVisible, hasAttribute, createElementWithAttributes, isElementFullyInViewport, isChildOf } from './dom-utils.js';
 
 describe('dom-utils', () => {
   beforeEach(() => {
@@ -357,6 +357,47 @@ describe('dom-utils', () => {
 
     test('should return false for null element', () => {
       expect(isElementFullyInViewport(null)).toBe(false);
+    });
+  });
+
+  describe('isChildOf', () => {
+    let parentEl, childEl, grandChildEl, unrelatedEl;
+
+    beforeEach(() => {
+      document.body.innerHTML = '';
+      parentEl = createElement('div', { id: 'parent' });
+      childEl = createElement('span', { id: 'child' });
+      grandChildEl = createElement('p', { id: 'grandchild' });
+      unrelatedEl = createElement('div', { id: 'unrelated' });
+
+      parentEl.appendChild(childEl);
+      childEl.appendChild(grandChildEl);
+      document.body.appendChild(parentEl);
+      document.body.appendChild(unrelatedEl);
+    });
+
+    test('should return true if child is a direct child of parent', () => {
+      expect(isChildOf(childEl, parentEl)).toBe(true);
+    });
+
+    test('should return true if child is a grandchild of parent', () => {
+      expect(isChildOf(grandChildEl, parentEl)).toBe(true);
+    });
+
+    test('should return false if child is not a descendant of parent', () => {
+      expect(isChildOf(unrelatedEl, parentEl)).toBe(false);
+      expect(isChildOf(parentEl, childEl)).toBe(false); // Parent is not child of child
+    });
+
+    test('should return false if child is the same as parent', () => {
+      expect(isChildOf(parentEl, parentEl)).toBe(false);
+    });
+
+    test('should return false for null or undefined inputs', () => {
+      expect(isChildOf(null, parentEl)).toBe(false);
+      expect(isChildOf(childEl, null)).toBe(false);
+      expect(isChildOf(undefined, parentEl)).toBe(false);
+      expect(isChildOf(childEl, undefined)).toBe(false);
     });
   });
 });
