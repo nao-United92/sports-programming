@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, unique, flatten, range, compact, sample, pluck, zip } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -215,133 +215,141 @@ describe('array-utils', () => {
       expect(getAverage([1, 'a', 3])).toBeNaN();
     });
   });
-});
 
-describe('unique', () => {
-  it('should remove duplicate values from an array', () => {
-    expect(unique([1, 1, 2, 3, 2, 4, 5, 5])).toEqual([1, 2, 3, 4, 5]);
-    expect(unique(['a', 'b', 'a', 'c', 'b'])).toEqual(['a', 'b', 'c']);
-    expect(unique([])).toEqual([]);
+  describe('range', () => {
+    it('should generate a range of numbers with default step', () => {
+      expect(range(5)).toEqual([0, 1, 2, 3, 4]);
+      expect(range(1, 5)).toEqual([1, 2, 3, 4]);
+    });
+
+    it('should generate a range of numbers with a custom step', () => {
+      expect(range(0, 10, 2)).toEqual([0, 2, 4, 6, 8]);
+      expect(range(1, 10, 2)).toEqual([1, 3, 5, 7, 9]);
+    });
+
+    it('should generate a decreasing range', () => {
+      expect(range(5, 1, -1)).toEqual([5, 4, 3, 2]);
+      expect(range(10, 0, -2)).toEqual([10, 8, 6, 4, 2]);
+    });
+
+    it('should handle empty ranges', () => {
+      expect(range(5, 5)).toEqual([]);
+      expect(range(1, 0)).toEqual([]);
+    });
+
+    it('should handle non-numeric inputs gracefully', () => {
+      expect(range('a', 5)).toEqual([]);
+      expect(range(1, 'b')).toEqual([]);
+    });
   });
 
-  it('should handle non-array inputs', () => {
-    expect(unique(null)).toEqual([]);
-    expect(unique(undefined)).toEqual([]);
-  });
-});
+  describe('compact', () => {
+    it('should remove all falsey values from an array', () => {
+      expect(compact([0, 1, false, 2, '', 3, null, 'a', undefined, NaN])).toEqual([1, 2, 3, 'a']);
+    });
 
-describe('flatten', () => {
-  it('should flatten a nested array', () => {
-    expect(flatten([1, [2, 3], [4, [5]]])).toEqual([1, 2, 3, 4, 5]);
-  });
+    it('should return an empty array if all values are falsey', () => {
+      expect(compact([0, false, '', null, undefined, NaN])).toEqual([]);
+    });
 
-  it('should return an empty array for non-array inputs', () => {
-    expect(flatten(null)).toEqual([]);
-    expect(flatten(undefined)).toEqual([]);
-    expect(flatten(123)).toEqual([]);
-  });
-});
-
-describe('range', () => {
-  it('should generate a range of numbers with default step', () => {
-    expect(range(5)).toEqual([0, 1, 2, 3, 4]);
-    expect(range(1, 5)).toEqual([1, 2, 3, 4]);
+    it('should return an empty array for non-array inputs', () => {
+      expect(compact(null)).toEqual([]);
+      expect(compact(undefined)).toEqual([]);
+      expect(compact(123)).toEqual([]);
+    });
   });
 
-  it('should generate a range of numbers with a custom step', () => {
-    expect(range(0, 10, 2)).toEqual([0, 2, 4, 6, 8]);
-    expect(range(1, 10, 2)).toEqual([1, 3, 5, 7, 9]);
+  describe('sample', () => {
+    it('should return a random element from the array', () => {
+      const arr = [1, 2, 3, 4, 5];
+      const randomElement = sample(arr);
+      expect(arr).toContain(randomElement);
+    });
+
+    it('should return undefined for an empty array', () => {
+      expect(sample([])).toBeUndefined();
+    });
   });
 
-  it('should generate a decreasing range', () => {
-    expect(range(5, 1, -1)).toEqual([5, 4, 3, 2]);
-    expect(range(10, 0, -2)).toEqual([10, 8, 6, 4, 2]);
+  describe('pluck', () => {
+    it('should extract property values from an array of objects', () => {
+      const arr = [{ a: 1 }, { a: 2 }, { a: 3 }];
+      expect(pluck(arr, 'a')).toEqual([1, 2, 3]);
+    });
+
+    it('should return an array of undefined if key does not exist', () => {
+      const arr = [{ a: 1 }, { b: 2 }];
+      expect(pluck(arr, 'a')).toEqual([1, undefined]);
+    });
   });
 
-  it('should handle empty ranges', () => {
-    expect(range(5, 5)).toEqual([]);
-    expect(range(1, 0)).toEqual([]);
+  describe('zip', () => {
+    it('should zip arrays of the same length', () => {
+      expect(zip(['a', 'b'], [1, 2], [true, false])).toEqual([['a', 1, true], ['b', 2, false]]);
+    });
+
+    it('should zip arrays of different lengths', () => {
+      expect(zip(['a', 'b', 'c'], [1, 2])).toEqual([['a', 1], ['b', 2]]);
+    });
+
+    it('should return an empty array if no arrays are provided', () => {
+      expect(zip()).toEqual([]);
+    });
   });
 
-  it('should handle non-numeric inputs gracefully', () => {
-    expect(range('a', 5)).toEqual([]);
-    expect(range(1, 'b')).toEqual([]);
-  });
-});
+  describe('uniqueBy', () => {
+    test('should return a unique array based on the iteratee function', () => {
+      const arr = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }, { id: 1, name: 'c' }];
+      const uniqueArr = uniqueBy(arr, item => item.id);
+      expect(uniqueArr).toEqual([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]);
+    });
 
-describe('compact', () => {
-  it('should remove all falsey values from an array', () => {
-    expect(compact([0, 1, false, 2, '', 3, null, 'a', undefined, NaN])).toEqual([1, 2, 3, 'a']);
-  });
+    test('should handle primitive arrays with iteratee', () => {
+      const arr = [1, 2, 2, 3, 1];
+      const uniqueArr = uniqueBy(arr, item => item);
+      expect(uniqueArr).toEqual([1, 2, 3]);
+    });
 
-  it('should return an empty array if all values are falsey', () => {
-    expect(compact([0, false, '', null, undefined, NaN])).toEqual([]);
-  });
+    test('should return an empty array for an empty input array', () => {
+      expect(uniqueBy([], item => item.id)).toEqual([]);
+    });
 
-  it('should return an empty array for non-array inputs', () => {
-    expect(compact(null)).toEqual([]);
-    expect(compact(undefined)).toEqual([]);
-    expect(compact(123)).toEqual([]);
-  });
-});
-
-describe('sample', () => {
-  it('should return a random element from the array', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const randomElement = sample(arr);
-    expect(arr).toContain(randomElement);
+    test('should handle non-array inputs gracefully', () => {
+      expect(uniqueBy(null, item => item)).toEqual([]);
+      expect(uniqueBy(undefined, item => item)).toEqual([]);
+    });
   });
 
-  it('should return undefined for an empty array', () => {
-    expect(sample([])).toBeUndefined();
-  });
-});
+  describe('partition', () => {
+    test('should partition an array based on a predicate', () => {
+      const numbers = [1, 2, 3, 4, 5, 6];
+      const [even, odd] = partition(numbers, n => n % 2 === 0);
+      expect(even).toEqual([2, 4, 6]);
+      expect(odd).toEqual([1, 3, 5]);
+    });
 
-describe('pluck', () => {
-  it('should extract property values from an array of objects', () => {
-    const arr = [{ a: 1 }, { a: 2 }, { a: 3 }];
-    expect(pluck(arr, 'a')).toEqual([1, 2, 3]);
-  });
+    test('should handle empty array', () => {
+      const [truthy, falsy] = partition([], n => n > 0);
+      expect(truthy).toEqual([]);
+      expect(falsy).toEqual([]);
+    });
 
-  it('should return an array of undefined if key does not exist', () => {
-    const arr = [{ a: 1 }, { b: 2 }];
-    expect(pluck(arr, 'a')).toEqual([1, undefined]);
-  });
-});
+    test('should handle all elements satisfying the predicate', () => {
+      const [truthy, falsy] = partition([1, 2, 3], n => n > 0);
+      expect(truthy).toEqual([1, 2, 3]);
+      expect(falsy).toEqual([]);
+    });
 
-describe('zip', () => {
-  it('should zip arrays of the same length', () => {
-    expect(zip(['a', 'b'], [1, 2], [true, false])).toEqual([['a', 1, true], ['b', 2, false]]);
-  });
+    test('should handle no elements satisfying the predicate', () => {
+      const [truthy, falsy] = partition([-1, -2, -3], n => n > 0);
+      expect(truthy).toEqual([]);
+      expect(falsy).toEqual([-1, -2, -3]);
+    });
 
-  it('should zip arrays of different lengths', () => {
-    expect(zip(['a', 'b', 'c'], [1, 2])).toEqual([['a', 1], ['b', 2]]);
-  });
-
-  it('should return an empty array if no arrays are provided', () => {
-    expect(zip()).toEqual([]);
-  });
-});
-
-describe('uniqueBy', () => {
-  test('should return a unique array based on the iteratee function', () => {
-    const arr = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }, { id: 1, name: 'c' }];
-    const uniqueArr = uniqueBy(arr, item => item.id);
-    expect(uniqueArr).toEqual([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]);
-  });
-
-  test('should handle primitive arrays with iteratee', () => {
-    const arr = [1, 2, 2, 3, 1];
-    const uniqueArr = uniqueBy(arr, item => item);
-    expect(uniqueArr).toEqual([1, 2, 3]);
-  });
-
-  test('should return an empty array for an empty input array', () => {
-    expect(uniqueBy([], item => item.id)).toEqual([]);
-  });
-
-  test('should handle non-array inputs gracefully', () => {
-    expect(uniqueBy(null, item => item)).toEqual([]);
-    expect(uniqueBy(undefined, item => item)).toEqual([]);
+    test('should handle non-array inputs gracefully', () => {
+      const [truthy, falsy] = partition(null, n => n > 0);
+      expect(truthy).toEqual([]);
+      expect(falsy).toEqual([]);
+    });
   });
 });

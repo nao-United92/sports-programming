@@ -228,30 +228,6 @@ export function getAverage(arr) {
 }
 
 /**
- * Returns a new array with duplicate values removed.
- * @param {Array} arr The array to remove duplicates from.
- * @returns {Array} A new array with unique values.
- */
-export function unique(arr) {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
-  return [...new Set(arr)];
-}
-
-/**
- * Flattens a nested array into a single-dimensional array.
- * @param {Array} arr The array to flatten.
- * @returns {Array} The flattened array.
- */
-export function flatten(arr) {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
-  return arr.flat(Infinity);
-}
-
-/**
  * Creates an array of numbers (positive and/or negative) progressing from `start` up to, but not including, `end`.
  * If `end` is not specified, `start` is set to `0` and `end` is set to `start`.
  * If `step` is not specified, it defaults to `1`.
@@ -336,6 +312,9 @@ export function zip(...arrays) {
  * @returns {Array} Returns the new duplicate free array.
  */
 export function uniqueBy(array, iteratee) {
+  if (!Array.isArray(array)) {
+    return [];
+  }
   const seen = new Set();
   return array.filter(item => {
     const key = iteratee(item);
@@ -346,3 +325,26 @@ export function uniqueBy(array, iteratee) {
     return true;
   });
 }
+
+/**
+ * Partitions an array into two arrays based on a predicate function.
+ * @param {Array} array The array to partition.
+ * @param {Function} predicate The function invoked per iteration to determine into which array an element goes.
+ * @returns {Array<Array>} A two-element array. The first element is an array of elements for which `predicate` returned truthy, and the second is an array of elements for which `predicate` returned falsy.
+ */
+export function partition(array, predicate) {
+  const truthy = [];
+  const falsy = [];
+  if (!Array.isArray(array)) {
+    return [truthy, falsy];
+  }
+  array.forEach(item => {
+    if (predicate(item)) {
+      truthy.push(item);
+    } else {
+      falsy.push(item);
+    }
+  });
+  return [truthy, falsy];
+}
+
