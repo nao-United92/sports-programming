@@ -44,8 +44,37 @@ describe('function-utils', () => {
     debounced();
     debounced();
 
+    // 100ms以内に複数回呼び出しても、1回しか実行されないことを確認
     setTimeout(() => {
       expect(callCount).toBe(1);
+      done();
+    }, 150);
+  });
+
+  it('should execute after the wait time if not called again', (done) => {
+    let callCount = 0;
+    const debounced = debounce(() => {
+      callCount++;
+    }, 100);
+
+    debounced();
+    setTimeout(() => {
+      expect(callCount).toBe(1);
+      done();
+    }, 150);
+  });
+
+  it('should pass arguments and context correctly', (done) => {
+    let result = '';
+    const obj = { value: 'test' };
+    const debounced = debounce(function(arg1, arg2) {
+      result = `${this.value}-${arg1}-${arg2}`;
+    }, 100);
+
+    debounced.call(obj, 'a', 'b');
+
+    setTimeout(() => {
+      expect(result).toBe('test-a-b');
       done();
     }, 150);
   });
