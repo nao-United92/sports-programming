@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -372,6 +372,29 @@ describe('array-utils', () => {
 
     test('should return an empty array if depth is negative', () => {
       expect(flattenDeep([1, [2]], -1)).toEqual([]);
+    });
+  });
+
+  describe('union', () => {
+    test('should return a union of multiple arrays', () => {
+      expect(union([1, 2], [2, 3])).toEqual([1, 2, 3]);
+      expect(union([1, 2, 3], [3, 4, 5], [5, 6, 7])).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    });
+
+    test('should handle empty arrays', () => {
+      expect(union([], [1, 2])).toEqual([1, 2]);
+      expect(union([1, 2], [])).toEqual([1, 2]);
+      expect(union([], [])).toEqual([]);
+    });
+
+    test('should handle arrays with duplicate values within themselves', () => {
+      expect(union([1, 1, 2], [2, 3, 3])).toEqual([1, 2, 3]);
+    });
+
+    test('should handle non-array inputs gracefully', () => {
+      expect(union(null, [1, 2])).toEqual([1, 2]);
+      expect(union([1, 2], undefined)).toEqual([1, 2]);
+      expect(union(1, 2)).toEqual([]);
     });
   });
 });
