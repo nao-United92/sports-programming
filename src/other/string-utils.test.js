@@ -1,4 +1,4 @@
-import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID } from './string-utils.js';
+import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate } from './string-utils.js';
 
 describe('removeNonAlphanumeric', () => {
   test('should remove all non-alphanumeric characters from a string', () => {
@@ -114,6 +114,9 @@ describe('camelCase', () => {
     expect(camelCase('hello world')).toBe('helloWorld');
     expect(camelCase('foo-bar')).toBe('fooBar');
     expect(camelCase('__FOO_BAR__')).toBe('__fooBar__');
+    expect(camelCase('alreadyCamelCase')).toBe('alreadyCamelCase');
+    expect(camelCase('foo_bar_baz')).toBe('fooBarBaz');
+    expect(camelCase('  leading and trailing  ')).toBe('leadingAndTrailing');
   });
 });
 
@@ -161,12 +164,9 @@ describe('padLeft', () => {
 });
 
 describe('isUUID', () => {
-  test('should return true for a valid UUID', () => {
-    expect(isUUID('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    }))).toBe(true);
-    expect(isUUID('123e4567-e89b-12d3-a456-426614174000')).toBe(true);
+  test('should return true for a valid UUID v4', () => {
+    expect(isUUID('f47ac10b-58cc-4372-a567-0e02b2c3d479')).toBe(true);
+    expect(isUUID('123e4567-e89b-42d3-a456-426614174000')).toBe(true); // Example UUID v4
   });
 
   test('should return false for an invalid UUID', () => {
@@ -174,11 +174,44 @@ describe('isUUID', () => {
     expect(isUUID('123e4567-e89b-12d3-a456-42661417400')).toBe(false); // Too short
     expect(isUUID('123e4567-e89b-12d3-a456-4266141740000')).toBe(false); // Too long
     expect(isUUID('123e4567-e89b-12d3-a456-42661417400g')).toBe(false); // Invalid character
+    expect(isUUID('f47ac10b-58cc-1372-a567-0e02b2c3d479')).toBe(false); // Invalid version (not 4)
+    expect(isUUID('f47ac10b-58cc-4372-g567-0e02b2c3d479')).toBe(false); // Invalid variant (not 8, 9, a, or b)
   });
 
   test('should return false for non-string inputs', () => {
     expect(isUUID(123)).toBe(false);
     expect(isUUID(null)).toBe(false);
     expect(isUUID(undefined)).toBe(false);
+  });
+});
+
+describe('truncate', () => {
+  test('should truncate a string to the specified length and add ellipsis', () => {
+    expect(truncate('Hello world', 8)).toBe('Hello...');
+    expect(truncate('This is a long string', 13)).toBe('This is a...');
+  });
+
+  test('should handle custom suffix', () => {
+    expect(truncate('Long string example', 10, '--')).toBe('Long stri--');
+  });
+
+  test('should not truncate if the string is shorter than or equal to the max length', () => {
+    expect(truncate('Short', 10)).toBe('Short');
+    expect(truncate('Exact', 5)).toBe('Exact');
+  });
+
+  test('should return an empty string for non-string input', () => {
+    expect(truncate(123, 5)).toBe('');
+    expect(truncate(null, 5)).toBe('');
+    expect(truncate(undefined, 5)).toBe('');
+  });
+
+  test('should return an empty string for invalid maxLength', () => {
+    expect(truncate('Hello', -1)).toBe('');
+    expect(truncate('Hello', 'abc')).toBe('');
+  });
+
+  test('should handle empty string input', () => {
+    expect(truncate('', 5)).toBe('');
   });
 });

@@ -103,7 +103,9 @@ export function camelCase(str) {
   if (typeof str !== 'string' || !str) {
     return '';
   }
-  return str.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
+  return str
+    .replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '')
+    .replace(/^./, (match) => match.toLowerCase());
 }
 
 /**
@@ -163,6 +165,23 @@ export function isUUID(str) {
   }
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(str);
+}
+
+/**
+ * Truncates a string to a specified length, adding an ellipsis if it's cut.
+ *
+ * @param {string} str The input string.
+ * @param {number} maxLength The maximum length of the string before truncation.
+ * @returns {string} The truncated string.
+ */
+export function truncate(str, maxLength, suffix = '...') {
+  if (typeof str !== 'string' || typeof maxLength !== 'number' || maxLength < 0) {
+    return '';
+  }
+  if (str.length <= maxLength) {
+    return str;
+  }
+  return str.slice(0, maxLength - suffix.length) + suffix;
 }
 
 
