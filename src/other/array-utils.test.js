@@ -322,3 +322,26 @@ describe('zip', () => {
     expect(zip()).toEqual([]);
   });
 });
+
+describe('uniqueBy', () => {
+  test('should return a unique array based on the iteratee function', () => {
+    const arr = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }, { id: 1, name: 'c' }];
+    const uniqueArr = uniqueBy(arr, item => item.id);
+    expect(uniqueArr).toEqual([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]);
+  });
+
+  test('should handle primitive arrays with iteratee', () => {
+    const arr = [1, 2, 2, 3, 1];
+    const uniqueArr = uniqueBy(arr, item => item);
+    expect(uniqueArr).toEqual([1, 2, 3]);
+  });
+
+  test('should return an empty array for an empty input array', () => {
+    expect(uniqueBy([], item => item.id)).toEqual([]);
+  });
+
+  test('should handle non-array inputs gracefully', () => {
+    expect(uniqueBy(null, item => item)).toEqual([]);
+    expect(uniqueBy(undefined, item => item)).toEqual([]);
+  });
+});
