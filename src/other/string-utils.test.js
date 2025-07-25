@@ -1,4 +1,22 @@
-import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate } from './string-utils.js';
+import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate } from './string-utils.js';
+
+describe('capitalize', () => {
+  test('should capitalize the first letter of a string', () => {
+    expect(capitalize('hello')).toBe('Hello');
+    expect(capitalize('world')).toBe('World');
+    expect(capitalize('fooBar')).toBe('FooBar');
+  });
+
+  test('should return an empty string for an empty string', () => {
+    expect(capitalize('')).toBe('');
+  });
+
+  test('should return an empty string for non-string inputs', () => {
+    expect(capitalize(123)).toBe('');
+    expect(capitalize(null)).toBe('');
+    expect(capitalize(undefined)).toBe('');
+  });
+});
 
 describe('removeNonAlphanumeric', () => {
   test('should remove all non-alphanumeric characters from a string', () => {
