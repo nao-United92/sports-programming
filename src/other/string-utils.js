@@ -11,19 +11,7 @@ export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-/**
- * Truncates a string to a specified length, appending an ellipsis if truncated.
- *
- * @param {string} str
- * @param {number} maxLength
- * @returns {string}
- */
-export function truncate(str, maxLength) {
-  if (typeof str !== 'string' || str.length <= maxLength) {
-    return str;
-  }
-  return str.slice(0, maxLength) + '...';
-}
+
 
 /**
  * Removes all non-alphanumeric characters from a string.
@@ -115,7 +103,7 @@ export function camelCase(str) {
   if (typeof str !== 'string' || !str) {
     return '';
   }
-  return str.replace(/([-_\s][a-zA-Z])/g, (g) => g.toUpperCase().replace(/[-_\s]/g, '')).replace(/^(.)/, (g) => g.toLowerCase());
+  return str.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
 }
 
 /**
@@ -128,7 +116,7 @@ export function snakeCase(str) {
   if (typeof str !== 'string' || !str) {
     return '';
   }
-  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`).replace(/^_/, '').replace(/\s+/g, '_').replace(/__+/g, '_');
+  return str.replace(/([a-z0-9]|(?<=[a-z0-9]))([A-Z])/g, '$1_$2').toLowerCase().replace(/\s+/g, '_');
 }
 
 /**
@@ -145,15 +133,23 @@ export function kebabCase(str) {
 }
 
 /**
- * Truncates a string to a specified length, appending an ellipsis if truncated.
+ * Pads the left side of a string with a specified character until it reaches a desired length.
  *
- * @param {string} str
- * @param {number} maxLength
- * @returns {string}
+ * @param {string} str The input string.
+ * @param {number} length The desired total length of the string.
+ * @param {string} padChar The character to use for padding. Defaults to a space.
+ * @returns {string} The padded string.
  */
-export function truncate(str, maxLength) {
-  if (typeof str !== 'string' || str.length <= maxLength) {
+export function padLeft(str, length, padChar = ' ') {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  if (str.length >= length) {
     return str;
   }
-  return str.slice(0, maxLength) + '...';
+  const padding = padChar.repeat(length - str.length);
+  return padding + str;
 }
+
+
+

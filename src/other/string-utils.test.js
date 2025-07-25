@@ -1,5 +1,5 @@
 
-import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase } from './string-utils.js';
+import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft } from './string-utils.js';
 
 describe('removeNonAlphanumeric', () => {
   test('should remove all non-alphanumeric characters from a string', () => {
@@ -133,12 +133,30 @@ describe('kebabCase', () => {
   });
 });
 
-describe('truncate', () => {
-  test('should truncate a string', () => {
-    expect(truncate('hello world', 5)).toBe('hello...');
+
+
+describe('padLeft', () => {
+  test('should pad the string on the left with the specified character', () => {
+    expect(padLeft('123', 5, '0')).toBe('00123');
+    expect(padLeft('hello', 10, '-')).toBe('-----hello');
   });
 
-  test('should not truncate a string if it is shorter than the max length', () => {
-    expect(truncate('hello world', 20)).toBe('hello world');
+  test('should use space as default padding character', () => {
+    expect(padLeft('abc', 5)).toBe('  abc');
+  });
+
+  test('should return the original string if its length is greater than or equal to the desired length', () => {
+    expect(padLeft('12345', 3, '0')).toBe('12345');
+    expect(padLeft('short', 5, '*')).toBe('short');
+  });
+
+  test('should handle empty string input', () => {
+    expect(padLeft('', 5, 'x')).toBe('xxxxx');
+  });
+
+  test('should return empty string for non-string input', () => {
+    expect(padLeft(123, 5, '0')).toBe('');
+    expect(padLeft(null, 5, ' ')).toBe('');
+    expect(padLeft(undefined, 5, ' ')).toBe('');
   });
 });
