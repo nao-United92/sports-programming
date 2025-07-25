@@ -150,3 +150,17 @@ export function removeFragment(url) {
     return url;
   }
 }
+
+/**
+ * Checks if a string is a valid URL.
+ * @param {string} url The string to check.
+ * @returns {boolean} True if the string is a valid URL, false otherwise.
+ */
+export function isURL(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

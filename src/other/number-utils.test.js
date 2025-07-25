@@ -148,6 +148,24 @@ describe('number-utils', () => {
     });
   });
 
+  describe('formatCurrency', () => {
+    test('should format a number as currency with default decimals', () => {
+      expect(formatCurrency(1234.56)).toBe('$1234.56');
+      expect(formatCurrency(100)).toBe('$100.00');
+    });
+
+    test('should format a number as currency with custom currency symbol and decimals', () => {
+      expect(formatCurrency(1234.567, '€', 3)).toBe('€1234.567');
+      expect(formatCurrency(99.9, '¥', 0)).toBe('¥100');
+    });
+
+    test('should return empty string for non-number inputs', () => {
+      expect(formatCurrency(null)).toBe('');
+      expect(formatCurrency(undefined)).toBe('');
+      expect(formatCurrency('abc')).toBe('');
+    });
+  });
+
   describe('addCommas', () => {
     test('should add commas to a number', () => {
       expect(addCommas(1000)).toBe('1,000');

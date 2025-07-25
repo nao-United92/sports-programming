@@ -127,4 +127,18 @@ describe('url-utils', () => {
       expect(removeFragment('invalid-url')).toBe('invalid-url');
     });
   });
+
+  describe('isURL', () => {
+    test('should return true for a valid URL', () => {
+      expect(isURL('http://example.com')).toBe(true);
+      expect(isURL('https://www.google.com/search?q=test')).toBe(true);
+    });
+
+    test('should return false for an invalid URL', () => {
+      expect(isURL('invalid-url')).toBe(false);
+      expect(isURL('not-a-url')).toBe(false);
+      expect(isURL(null)).toBe(false);
+      expect(isURL(undefined)).toBe(false);
+    });
+  });
 });
