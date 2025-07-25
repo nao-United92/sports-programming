@@ -365,3 +365,13 @@ export function mapValues(object, iteratee) {
   }
   return newObject;
 }
+
+/**
+ * Merges two or more objects into a new object (shallow merge).
+ * Properties from later objects overwrite properties from earlier objects.
+ * @param {...object} sources The objects to merge.
+ * @returns {object} A new object containing the merged properties.
+ */
+export function merge(...sources) {
+  return Object.assign({}, ...sources);
+}

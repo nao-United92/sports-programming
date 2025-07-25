@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues } from './object-utils.js';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge } from './object-utils.js';
 
 describe('isDeepEqual', () => {
   test('should return true for deeply equal objects', () => {
@@ -483,5 +483,42 @@ describe('mapValues', () => {
 
   it('should handle empty object', () => {
     expect(mapValues({}, (value) => value * 2)).toEqual({});
+  });
+});
+
+describe('merge', () => {
+  test('should merge two objects shallowly', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { c: 3, d: 4 };
+    expect(merge(obj1, obj2)).toEqual({ a: 1, b: 2, c: 3, d: 4 });
+  });
+
+  test('should overwrite properties from earlier objects', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { b: 3, c: 4 };
+    expect(merge(obj1, obj2)).toEqual({ a: 1, b: 3, c: 4 });
+  });
+
+  test('should merge multiple objects', () => {
+    const obj1 = { a: 1 };
+    const obj2 = { b: 2 };
+    const obj3 = { c: 3 };
+    expect(merge(obj1, obj2, obj3)).toEqual({ a: 1, b: 2, c: 3 });
+  });
+
+  test('should handle empty sources', () => {
+    const obj1 = { a: 1 };
+    expect(merge(obj1, {}, { b: 2 })).toEqual({ a: 1, b: 2 });
+  });
+
+  test('should return a new object', () => {
+    const obj1 = { a: 1 };
+    const merged = merge(obj1, { b: 2 });
+    expect(merged).not.toBe(obj1);
+  });
+
+  test('should handle non-object sources gracefully', () => {
+    const obj1 = { a: 1 };
+    expect(merge(obj1, null, { b: 2 }, undefined)).toEqual({ a: 1, b: 2 });
   });
 });
