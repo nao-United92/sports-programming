@@ -118,13 +118,11 @@ export function isDivisibleBy(num, divisor) {
 /**
  * Formats a number as a currency string.
  * @param {number} num The number to format.
- * @param {string} currency The currency symbol (e.g., '
-, '€').
+ * @param {string} currency The currency symbol (e.g., '$', '€').
  * @param {number} [decimals=2] The number of decimal places.
  * @returns {string} The formatted currency string.
  */
-export function toCurrency(num, currency = '
-, decimals = 2) {
+export function toCurrency(num, currency = '$', decimals = 2) {
   if (!isNumber(num)) {
     return '';
   }
@@ -134,13 +132,11 @@ export function toCurrency(num, currency = '
 /**
  * Formats a number as a currency string.
  * @param {number} num The number to format.
- * @param {string} currency The currency symbol (e.g., '
-, '€').
+ * @param {string} currency The currency symbol (e.g., '$', '€').
  * @param {number} [decimals=2] The number of decimal places.
  * @returns {string} The formatted currency string.
  */
-export function formatCurrency(num, currency = '
-, decimals = 2) {
+export function formatCurrency(num, currency = '$', decimals = 2) {
   if (!isNumber(num)) {
     return '';
   }
@@ -156,5 +152,7 @@ export function addCommas(num) {
   if (!isNumber(num)) {
     return '';
   }
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const parts = num.toString().split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return parts.join('.');
 }

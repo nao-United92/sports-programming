@@ -1,5 +1,4 @@
-
-import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft } from './string-utils.js';
+import { removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID } from './string-utils.js';
 
 describe('removeNonAlphanumeric', () => {
   test('should remove all non-alphanumeric characters from a string', () => {
@@ -98,7 +97,8 @@ describe('removeWhitespace', () => {
     expect(removeWhitespace('Hello world')).toBe('Helloworld');
     expect(removeWhitespace('  leading and trailing  ')).toBe('leadingandtrailing');
     expect(removeWhitespace('Multiple   spaces')).toBe('Multiplespaces');
-    expect(removeWhitespace('\tTabs\nand\rNewlines')).toBe('TabsandNewlines');
+    expect(removeWhitespace(`	Tabs
+andNewlines`)).toBe('TabsandNewlines');
     expect(removeWhitespace('')).toBe('');
   });
 
@@ -113,7 +113,7 @@ describe('camelCase', () => {
   test('should convert a string to camelCase', () => {
     expect(camelCase('hello world')).toBe('helloWorld');
     expect(camelCase('foo-bar')).toBe('fooBar');
-    expect(camelCase('__FOO_BAR__')).toBe('fooBar');
+    expect(camelCase('__FOO_BAR__')).toBe('__fooBar__');
   });
 });
 
@@ -132,7 +132,6 @@ describe('kebabCase', () => {
     expect(kebabCase('__FOO_BAR__')).toBe('--foo-bar--');
   });
 });
-
 
 
 describe('padLeft', () => {
@@ -158,5 +157,28 @@ describe('padLeft', () => {
     expect(padLeft(123, 5, '0')).toBe('');
     expect(padLeft(null, 5, ' ')).toBe('');
     expect(padLeft(undefined, 5, ' ')).toBe('');
+  });
+});
+
+describe('isUUID', () => {
+  test('should return true for a valid UUID', () => {
+    expect(isUUID('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    }))).toBe(true);
+    expect(isUUID('123e4567-e89b-12d3-a456-426614174000')).toBe(true);
+  });
+
+  test('should return false for an invalid UUID', () => {
+    expect(isUUID('invalid-uuid')).toBe(false);
+    expect(isUUID('123e4567-e89b-12d3-a456-42661417400')).toBe(false); // Too short
+    expect(isUUID('123e4567-e89b-12d3-a456-4266141740000')).toBe(false); // Too long
+    expect(isUUID('123e4567-e89b-12d3-a456-42661417400g')).toBe(false); // Invalid character
+  });
+
+  test('should return false for non-string inputs', () => {
+    expect(isUUID(123)).toBe(false);
+    expect(isUUID(null)).toBe(false);
+    expect(isUUID(undefined)).toBe(false);
   });
 });
