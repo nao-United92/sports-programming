@@ -115,7 +115,7 @@ export function camelCase(str) {
   if (typeof str !== 'string' || !str) {
     return '';
   }
-  return str.replace(/([-_\s]+(\w)|(^\w))/g, (match, p1, p2) => p2 ? p2.toUpperCase() : '').replace(/^\w/, c => c.toLowerCase());
+  return str.replace(/([-_\s][a-zA-Z])/g, (g) => g.toUpperCase().replace(/[-_\s]/g, '')).replace(/^(.)/, (g) => g.toLowerCase());
 }
 
 /**
@@ -128,5 +128,18 @@ export function snakeCase(str) {
   if (typeof str !== 'string' || !str) {
     return '';
   }
-  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`).replace(/^_/, '');
+  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`).replace(/^_/, '').replace(/\s+/g, '_').replace(/__+/g, '_');
+}
+
+/**
+ * Converts a string to kebab-case.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function kebabCase(str) {
+  if (typeof str !== 'string' || !str) {
+    return '';
+  }
+  return str.replace(/([a-z0-9]|(?<=[a-z]))([A-Z])/g, '$1-$2').replace(/_|[\s]+/g, '-').toLowerCase();
 }

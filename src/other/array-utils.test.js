@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, unique, flatten, range, compact, sample, pluck } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, unique, flatten, range, compact, sample, pluck, zip } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -306,5 +306,19 @@ describe('pluck', () => {
   it('should return an array of undefined if key does not exist', () => {
     const arr = [{ a: 1 }, { b: 2 }];
     expect(pluck(arr, 'a')).toEqual([1, undefined]);
+  });
+});
+
+describe('zip', () => {
+  it('should zip arrays of the same length', () => {
+    expect(zip(['a', 'b'], [1, 2], [true, false])).toEqual([['a', 1, true], ['b', 2, false]]);
+  });
+
+  it('should zip arrays of different lengths', () => {
+    expect(zip(['a', 'b', 'c'], [1, 2])).toEqual([['a', 1], ['b', 2]]);
+  });
+
+  it('should return an empty array if no arrays are provided', () => {
+    expect(zip()).toEqual([]);
   });
 });
