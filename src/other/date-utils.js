@@ -45,6 +45,19 @@ export function isWeekend(date) {
 }
 
 /**
+ * Checks if a given date falls on a weekday (Monday to Friday).
+ * @param {Date} date The Date object to check.
+ * @returns {boolean} True if the date is a weekday, false otherwise.
+ */
+export function isWeekday(date) {
+  if (!(date instanceof Date) || isNaN(date)) {
+    return false;
+  }
+  const day = date.getDay();
+  return day >= 1 && day <= 5; // 1 for Monday, 5 for Friday
+}
+
+/**
  * Adds a specified number of days to a date.
  * @param {Date} date The date to add days to.
  * @param {number} days The number of days to add.
