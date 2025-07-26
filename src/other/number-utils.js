@@ -165,3 +165,21 @@ export function addCommas(num) {
 export function isInteger(value) {
   return Number.isInteger(value);
 }
+
+/**
+ * Checks if a number is positive.
+ * @param {number} num The number to check.
+ * @returns {boolean} True if the number is positive, false otherwise.
+ */
+export function isPositive(num) {
+  return typeof num === 'number' && num > 0;
+}
+
+/**
+ * Checks if a number is negative.
+ * @param {number} num The number to check.
+ * @returns {boolean} True if the number is negative, false otherwise.
+ */
+export function isNegative(num) {
+  return typeof num === 'number' && num < 0;
+}

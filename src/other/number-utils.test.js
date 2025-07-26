@@ -1,4 +1,4 @@
-import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas, isInteger } from './number-utils.js';
+import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas, isInteger, isPositive, isNegative } from './number-utils.js';
 
 describe('number-utils', () => {
   describe('isNumber', () => {
@@ -190,6 +190,48 @@ describe('number-utils', () => {
       expect(isInteger(null)).toBe(false);
       expect(isInteger(undefined)).toBe(false);
       expect(isInteger(true)).toBe(false);
+    });
+  });
+
+  describe('isPositive', () => {
+    test('should return true for a positive number', () => {
+      expect(isPositive(1)).toBe(true);
+      expect(isPositive(0.1)).toBe(true);
+    });
+
+    test('should return false for a negative number', () => {
+      expect(isPositive(-1)).toBe(false);
+    });
+
+    test('should return false for zero', () => {
+      expect(isPositive(0)).toBe(false);
+    });
+
+    test('should return false for non-numbers', () => {
+      expect(isPositive(null)).toBe(false);
+      expect(isPositive(undefined)).toBe(false);
+      expect(isPositive('1')).toBe(false);
+    });
+  });
+
+  describe('isNegative', () => {
+    test('should return true for a negative number', () => {
+      expect(isNegative(-1)).toBe(true);
+      expect(isNegative(-0.1)).toBe(true);
+    });
+
+    test('should return false for a positive number', () => {
+      expect(isNegative(1)).toBe(false);
+    });
+
+    test('should return false for zero', () => {
+      expect(isNegative(0)).toBe(false);
+    });
+
+    test('should return false for non-numbers', () => {
+      expect(isNegative(null)).toBe(false);
+      expect(isNegative(undefined)).toBe(false);
+      expect(isNegative('-1')).toBe(false);
     });
   });
 });
