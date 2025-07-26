@@ -143,4 +143,23 @@ describe('general-utils', () => {
       expect(func.mock.results[0].value).toBe(13);
     });
   });
+
+  describe('randomString', () => {
+    test('should generate a random string of the specified length', () => {
+      const length = 10;
+      const str = randomString(length);
+      expect(str.length).toBe(length);
+      expect(typeof str).toBe('string');
+    });
+
+    test('should generate different strings on subsequent calls', () => {
+      const str1 = randomString(10);
+      const str2 = randomString(10);
+      expect(str1).not.toBe(str2);
+    });
+
+    test('should handle a length of 0', () => {
+      expect(randomString(0)).toBe('');
+    });
+  });
 });

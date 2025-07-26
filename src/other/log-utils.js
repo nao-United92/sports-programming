@@ -78,3 +78,14 @@ export function logTimeEnd(label) {
     console.timeEnd(label);
   }
 }
+
+/**
+ * Logs a message with a timestamp.
+ * @param {...any} args - The arguments to log.
+ */
+export function logWithTimestamp(...args) {
+  if (enableLogging) {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}]`, ...args);
+  }
+}

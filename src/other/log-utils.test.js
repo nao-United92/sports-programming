@@ -97,4 +97,24 @@ describe('log-utils', () => {
       expect(mockTimeEnd).not.toHaveBeenCalled();
     });
   });
+
+  describe('logWithTimestamp', () => {
+    const mockLog = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    afterEach(() => {
+      mockLog.mockClear();
+    });
+
+    test('should log a message with a timestamp', () => {
+      const message = 'Test message';
+      logWithTimestamp(message);
+      expect(mockLog).toHaveBeenCalledWith(expect.stringMatching(/^[\\[.*\\]]$/), message);
+    });
+
+    test('should not log when disabled', () => {
+      setLoggingEnabled(false);
+      logWithTimestamp('should not be logged');
+      expect(mockLog).not.toHaveBeenCalled();
+    });
+  });
 });
