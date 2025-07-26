@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge, hasProperty } from './object-utils.js';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge, hasProperty, keys } from './object-utils.js';
 
 describe('isDeepEqual', () => {
   test('should return true for deeply equal objects', () => {
@@ -568,3 +568,29 @@ describe('mapValues', () => {
       expect(hasProperty(obj, 'a')).toBe(true);
     });
   });
+
+  describe('keys', () => {
+    test('should return an array of own enumerable property names', () => {
+      const obj = { a: 1, b: 'hello', c: true };
+      expect(keys(obj)).toEqual(['a', 'b', 'c']);
+    });
+
+    test('should return an empty array for an empty object', () => {
+      expect(keys({})).toEqual([]);
+    });
+
+    test('should return an empty array for non-object inputs', () => {
+      expect(keys(null)).toEqual([]);
+      expect(keys(undefined)).toEqual([]);
+      expect(keys(123)).toEqual([]);
+      expect(keys('string')).toEqual(['0', '1', '2', '3', '4', '5']); // String primitives have enumerable properties
+    });
+
+    test('should not include inherited properties', () => {
+      const proto = { a: 1 };
+      const obj = Object.create(proto);
+      obj.b = 2;
+      expect(keys(obj)).toEqual(['b']);
+    });
+  });
+});

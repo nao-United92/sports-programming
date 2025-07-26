@@ -390,3 +390,16 @@ export function union(...arrays) {
   return [...new Set(combined)];
 }
 
+/**
+ * Checks if an array contains all elements of another array.
+ * @param {Array} arr The array to check.
+ * @param {Array} elements The elements to check for.
+ * @returns {boolean} True if the array contains all elements, false otherwise.
+ */
+export function containsAll(arr, elements) {
+  if (!Array.isArray(arr) || !Array.isArray(elements)) {
+    return false;
+  }
+  return elements.every(element => arr.includes(element));
+}
+

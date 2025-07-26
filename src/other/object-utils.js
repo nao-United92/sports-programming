@@ -388,3 +388,15 @@ export function merge(...sources) {
 export function hasProperty(obj, prop) {
   return obj !== null && typeof obj === 'object' && Object.prototype.hasOwnProperty.call(obj, prop);
 }
+
+/**
+ * Gets all own enumerable property names of an object.
+ * @param {object} obj The object to query.
+ * @returns {Array<string>} An array of the object's own enumerable property names.
+ */
+export function keys(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return [];
+  }
+  return Object.keys(obj);
+}

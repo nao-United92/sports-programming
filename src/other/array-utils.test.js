@@ -416,4 +416,23 @@ describe('array-utils', () => {
       expect(union(1, 2)).toEqual([]);
     });
   });
+
+  describe('containsAll', () => {
+    test('should return true if the array contains all elements', () => {
+      expect(containsAll([1, 2, 3, 4, 5], [2, 4])).toBe(true);
+      expect(containsAll(['a', 'b', 'c'], ['a', 'c'])).toBe(true);
+      expect(containsAll([1, 2, 3], [])).toBe(true);
+    });
+
+    test('should return false if the array does not contain all elements', () => {
+      expect(containsAll([1, 2, 3], [2, 5])).toBe(false);
+      expect(containsAll(['a', 'b'], ['a', 'c'])).toBe(false);
+    });
+
+    test('should return false for non-array inputs', () => {
+      expect(containsAll(null, [1])).toBe(false);
+      expect(containsAll([1], undefined)).toBe(false);
+      expect(containsAll(123, [1])).toBe(false);
+    });
+  });
 });
