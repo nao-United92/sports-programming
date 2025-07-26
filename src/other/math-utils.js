@@ -137,3 +137,16 @@ export function factorial(num) {
   }
   return result;
 }
+
+/**
+ * Calculates the greatest common divisor (GCD) of two numbers.
+ * @param {number} a The first number.
+ * @param {number} b The second number.
+ * @returns {number} The GCD of the two numbers.
+ */
+export function gcd(a, b) {
+  if (b === 0) {
+    return a;
+  }
+  return gcd(b, a % b);
+}

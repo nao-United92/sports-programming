@@ -49,3 +49,15 @@ export function throttle(func, limit) {
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * Measures the execution time of a function.
+ * @param {Function} func The function to measure.
+ * @returns {number} The execution time in milliseconds.
+ */
+export function measureExecutionTime(func) {
+  const startTime = performance.now();
+  func();
+  const endTime = performance.now();
+  return endTime - startTime;
+}

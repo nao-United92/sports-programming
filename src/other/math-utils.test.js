@@ -234,4 +234,17 @@ describe('math-utils', () => {
       expect(factorial(-1)).toBeNaN();
     });
   });
+
+  describe('gcd', () => {
+    test('should calculate the greatest common divisor of two numbers', () => {
+      expect(gcd(48, 18)).toBe(6);
+      expect(gcd(101, 103)).toBe(1);
+      expect(gcd(10, 5)).toBe(5);
+    });
+
+    test('should handle zero', () => {
+      expect(gcd(10, 0)).toBe(10);
+      expect(gcd(0, 10)).toBe(10);
+    });
+  });
 });
