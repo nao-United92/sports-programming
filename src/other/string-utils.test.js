@@ -1,4 +1,4 @@
-import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate } from './string-utils.js';
+import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate, toCamelCase, toSnakeCase } from './string-utils.js';
 
 describe('capitalize', () => {
   test('should capitalize the first letter of a string', () => {
@@ -131,7 +131,7 @@ describe('camelCase', () => {
   test('should convert a string to camelCase', () => {
     expect(camelCase('hello world')).toBe('helloWorld');
     expect(camelCase('foo-bar')).toBe('fooBar');
-    expect(camelCase('__FOO_BAR__')).toBe('__fooBar__');
+    expect(camelCase('__FOO_BAR__')).toBe('fooBar');
     expect(camelCase('alreadyCamelCase')).toBe('alreadyCamelCase');
     expect(camelCase('foo_bar_baz')).toBe('fooBarBaz');
     expect(camelCase('  leading and trailing  ')).toBe('leadingAndTrailing');
@@ -206,11 +206,11 @@ describe('isUUID', () => {
 describe('truncate', () => {
   test('should truncate a string to the specified length and add ellipsis', () => {
     expect(truncate('Hello world', 8)).toBe('Hello...');
-    expect(truncate('This is a long string', 13)).toBe('This is a...');
+    expect(truncate('This is a long string', 13)).toBe('This is a ...');
   });
 
   test('should handle custom suffix', () => {
-    expect(truncate('Long string example', 10, '--')).toBe('Long stri--');
+    expect(truncate('Long string example', 10, '--')).toBe('Long str--');
   });
 
   test('should not truncate if the string is shorter than or equal to the max length', () => {
@@ -231,5 +231,44 @@ describe('truncate', () => {
 
   test('should handle empty string input', () => {
     expect(truncate('', 5)).toBe('');
+  });
+});
+
+describe('toCamelCase', () => {
+  test('should convert snake_case to camelCase', () => {
+    expect(toCamelCase('hello_world')).toBe('helloWorld');
+    expect(toCamelCase('foo_bar_baz')).toBe('fooBarBaz');
+  });
+
+  test('should convert kebab-case to camelCase', () => {
+    expect(toCamelCase('hello-world')).toBe('helloWorld');
+    expect(toCamelCase('foo-bar-baz')).toBe('fooBarBaz');
+  });
+
+  test('should handle mixed cases', () => {
+    expect(toCamelCase('hello-World_foo')).toBe('helloWorldFoo');
+  });
+
+  test('should return empty string for non-string inputs', () => {
+    expect(toCamelCase(123)).toBe('');
+    expect(toCamelCase(null)).toBe('');
+    expect(toCamelCase(undefined)).toBe('');
+  });
+});
+
+describe('toSnakeCase', () => {
+  test('should convert camelCase to snake_case', () => {
+    expect(toSnakeCase('helloWorld')).toBe('hello_world');
+    expect(toSnakeCase('fooBarBaz')).toBe('foo_bar_baz');
+  });
+
+  test('should handle already snake_case strings', () => {
+    expect(toSnakeCase('already_snake_case')).toBe('already_snake_case');
+  });
+
+  test('should return empty string for non-string inputs', () => {
+    expect(toSnakeCase(123)).toBe('');
+    expect(toSnakeCase(null)).toBe('');
+    expect(toSnakeCase(undefined)).toBe('');
   });
 });

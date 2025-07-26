@@ -121,6 +121,8 @@ export function snakeCase(str) {
   return str.replace(/([a-z0-9]|(?<=[a-z0-9]))([A-Z])/g, '$1_$2').toLowerCase().replace(/\s+/g, '_');
 }
 
+
+
 /**
  * Converts a string to kebab-case.
  *
