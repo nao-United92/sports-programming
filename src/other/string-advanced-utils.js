@@ -79,3 +79,25 @@ export function countWords(str) {
   }
   return str.trim().split(/\s+/).length;
 }
+
+/**
+ * Escapes HTML special characters in a string.
+ * @param {string} str The input string.
+ * @returns {string} The escaped string.
+ */
+export function escapeHTML(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.replace(/[&<>'"/]/g, function(tag) {
+    const a = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;',
+      '/': '&#x2F;',
+    };
+    return a[tag] || tag;
+  });
+}

@@ -36,3 +36,14 @@ describe('chunk', () => {
     expect(chunk([1, 2, 3], 1)).toEqual([[1], [2], [3]]);
   });
 });
+
+describe('difference', () => {
+  test('2つの配列の差分を正しく見つける', () => {
+    expect(difference([1, 2, 3, 4], [2, 4])).toEqual([1, 3]);
+  });
+
+  test('空の配列を扱う', () => {
+    expect(difference([1, 2], [])).toEqual([1, 2]);
+    expect(difference([], [1, 2])).toEqual([]);
+  });
+});

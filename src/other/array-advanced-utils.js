@@ -52,3 +52,14 @@ export function chunk(arr, size) {
   }
   return chunked;
 }
+
+/**
+ * 2つの配列の差分を取得する
+ * @param {Array} arr1 - 最初の配列
+ * @param {Array} arr2 - 2番目の配列
+ * @returns {Array} - 差分を含む配列
+ */
+export function difference(arr1, arr2) {
+  const set2 = new Set(arr2);
+  return arr1.filter(element => !set2.has(element));
+}

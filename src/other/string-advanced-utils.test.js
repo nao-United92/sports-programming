@@ -121,3 +121,18 @@ describe('countWords', () => {
     expect(countWords(123)).toBe(0);
   });
 });
+
+describe('escapeHTML', () => {
+  test('should escape HTML special characters', () => {
+    expect(escapeHTML('<div class="test">Hello & World</div>')).toBe('&lt;div class=&quot;test&quot;&gt;Hello &amp; World&lt;&#x2F;div&gt;');
+  });
+
+  test('should handle empty string', () => {
+    expect(escapeHTML('')).toBe('');
+  });
+
+  test('should handle non-string input', () => {
+    expect(escapeHTML(null)).toBe('');
+    expect(escapeHTML(123)).toBe('');
+  });
+});
