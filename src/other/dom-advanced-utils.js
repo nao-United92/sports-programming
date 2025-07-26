@@ -54,3 +54,21 @@ export function unwrapElement(element) {
   }
   parent.removeChild(element);
 }
+
+/**
+ * Checks if an element is within the viewport.
+ * @param {HTMLElement} element The element to check.
+ * @returns {boolean} True if the element is in the viewport, false otherwise.
+ */
+export function isElementInViewport(element) {
+  if (!element) {
+    return false;
+  }
+  const rect = element.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+}

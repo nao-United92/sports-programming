@@ -1,5 +1,4 @@
-
-import { insertAfter, prependChild, wrapElement, unwrapElement } from './dom-advanced-utils';
+import { insertAfter, prependChild, wrapElement, unwrapElement, isElementInViewport } from './dom-advanced-utils';
 
 describe('insertAfter', () => {
   let parentDiv;
@@ -146,5 +145,71 @@ describe('unwrapElement', () => {
     const initialChildrenCount = parentDiv.children.length;
     unwrapElement(null);
     expect(parentDiv.children.length).toBe(initialChildrenCount);
+  });
+});
+
+describe('isElementInViewport', () => {
+  let element;
+
+  beforeEach(() => {
+    element = document.createElement('div');
+    document.body.appendChild(element);
+    // Mock getBoundingClientRect for the element
+    Object.defineProperty(element, 'getBoundingClientRect', {
+      value: () => ({
+        top: 100,
+        left: 100,
+        bottom: 200,
+        right: 200,
+        width: 100,
+        height: 100,
+        x: 100,
+        y: 100,
+      }),
+      writable: true,
+    });
+    // Mock viewport dimensions
+    Object.defineProperty(window, 'innerHeight', { value: 500, writable: true });
+    Object.defineProperty(window, 'innerWidth', { value: 500, writable: true });
+  });
+
+  afterEach(() => {
+    document.body.removeChild(element);
+  });
+
+  test('should return true if element is fully in viewport', () => {
+    expect(isElementInViewport(element)).toBe(true);
+  });
+
+  test('should return false if element is partially out of viewport (top)', () => {
+    Object.defineProperty(element, 'getBoundingClientRect', {
+      value: () => ({ top: -50, left: 100, bottom: 50, right: 200, width: 100, height: 100, x: -50, y: 100 }),
+    });
+    expect(isElementInViewport(element)).toBe(false);
+  });
+
+  test('should return false if element is partially out of viewport (bottom)', () => {
+    Object.defineProperty(element, 'getBoundingClientRect', {
+      value: () => ({ top: 450, left: 100, bottom: 550, right: 200, width: 100, height: 100, x: 450, y: 100 }),
+    });
+    expect(isElementInViewport(element)).toBe(false);
+  });
+
+  test('should return false if element is partially out of viewport (left)', () => {
+    Object.defineProperty(element, 'getBoundingClientRect', {
+      value: () => ({ top: 100, left: -50, bottom: 200, right: 50, width: 100, height: 100, x: 100, y: -50 }),
+    });
+    expect(isElementInViewport(element)).toBe(false);
+  });
+
+  test('should return false if element is partially out of viewport (right)', () => {
+    Object.defineProperty(element, 'getBoundingClientRect', {
+      value: () => ({ top: 100, left: 450, bottom: 200, right: 550, width: 100, height: 100, x: 100, y: 450 }),
+    });
+    expect(isElementInViewport(element)).toBe(false);
+  });
+
+  test('should return false for null element', () => {
+    expect(isElementInViewport(null)).toBe(false);
   });
 });

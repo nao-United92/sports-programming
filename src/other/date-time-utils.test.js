@@ -139,4 +139,63 @@ describe('date-time-utils', () => {
       expect(end.toISOString()).toBe('2023-01-05T23:59:59.999Z');
     });
   });
+
+  describe('formatRelativeTime', () => {
+    const MOCK_NOW = new Date('2023-10-27T10:00:00Z');
+
+    test('should format to "just now" for very recent times', () => {
+      const date = new Date(MOCK_NOW.getTime() - 30 * 1000); // 30 seconds ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('just now');
+    });
+
+    test('should format to "a minute ago"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 60 * 1000); // 1 minute ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('a minute ago');
+    });
+
+    test('should format to "X minutes ago"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 10 * 60 * 1000); // 10 minutes ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('10 minutes ago');
+    });
+
+    test('should format to "an hour ago"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 70 * 60 * 1000); // 70 minutes ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('an hour ago');
+    });
+
+    test('should format to "X hours ago"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 5 * 60 * 60 * 1000); // 5 hours ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('5 hours ago');
+    });
+
+    test('should format to "yesterday"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 25 * 60 * 60 * 1000); // 25 hours ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('yesterday');
+    });
+
+    test('should format to "X days ago"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 10 * 24 * 60 * 60 * 1000); // 10 days ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('10 days ago');
+    });
+
+    test('should format to "a month ago"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 35 * 24 * 60 * 60 * 1000); // 35 days ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('a month ago');
+    });
+
+    test('should format to "X months ago"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 5 * 30.4 * 24 * 60 * 60 * 1000); // 5 months ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('5 months ago');
+    });
+
+    test('should format to "a year ago"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 370 * 24 * 60 * 60 * 1000); // 370 days ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('a year ago');
+    });
+
+    test('should format to "X years ago"', () => {
+      const date = new Date(MOCK_NOW.getTime() - 3 * 365 * 24 * 60 * 60 * 1000); // 3 years ago
+      expect(formatRelativeTime(date, MOCK_NOW)).toBe('3 years ago');
+    });
+  });
 });
