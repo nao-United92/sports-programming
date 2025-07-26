@@ -1,4 +1,4 @@
-import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial, sleep, defer, partialRight } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial, sleep, defer, partialRight, negate } from './function-utils.js';
 
 describe('sleep', () => {
   test('should resolve after the specified time', async () => {
@@ -242,6 +242,32 @@ describe('defer', () => {
       const obj = { value: 10, add: function(a, b) { return this.value + a + b; } };
       const addPartialRight = partialRight(obj.add, 5);
       expect(addPartialRight.call(obj, 2)).toBe(17);
+    });
+  });
+
+  describe('negate', () => {
+    test('should negate a predicate function', () => {
+      const isEven = (n) => n % 2 === 0;
+      const isOdd = negate(isEven);
+
+      expect(isOdd(2)).toBe(false);
+      expect(isOdd(3)).toBe(true);
+    });
+
+    test('should maintain context', () => {
+      const obj = { value: 10, isGreaterThanValue: function(n) { return n > this.value; } };
+      const isNotGreaterThanValue = negate(obj.isGreaterThanValue);
+
+      expect(isNotGreaterThanValue.call(obj, 5)).toBe(true);
+      expect(isNotGreaterThanValue.call(obj, 15)).toBe(false);
+    });
+
+    test('should handle functions with multiple arguments', () => {
+      const isSumEven = (a, b) => (a + b) % 2 === 0;
+      const isSumOdd = negate(isSumEven);
+
+      expect(isSumOdd(1, 2)).toBe(true);
+      expect(isSumOdd(2, 2)).toBe(false);
     });
   });
   

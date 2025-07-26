@@ -202,3 +202,14 @@ export function partialRight(func, ...partials) {
   };
 }
 
+/**
+ * Creates a function that negates the result of the given function.
+ * @param {Function} predicate The function to negate.
+ * @returns {Function} Returns the new negated function.
+ */
+export function negate(predicate) {
+  return function(...args) {
+    return !predicate.apply(this, args);
+  };
+}
+
