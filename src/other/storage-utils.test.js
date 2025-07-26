@@ -1,4 +1,4 @@
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, setSessionStorageItem, getSessionStorageItem, removeSessionStorageItem, clearLocalStorage, clearSessionStorage, setCookie, getCookie, removeCookie } from './storage-utils.js';
+import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, setSessionStorageItem, getSessionStorageItem, removeSessionStorageItem, clearLocalStorage, clearSessionStorage, setCookie, getCookie, removeCookie, hasLocalStorage, hasSessionStorage } from './storage-utils.js';
 
 describe('storage-utils', () => {
   const localStorageMock = (() => {
@@ -226,6 +226,36 @@ describe('storage-utils', () => {
       setCookie('testRemove', 'value', 7);
       removeCookie('testRemove');
       expect(document.cookie).not.toContain('testRemove');
+    });
+  });
+
+  describe('hasLocalStorage', () => {
+    test('should return true if localStorage is available', () => {
+      expect(hasLocalStorage()).toBe(true);
+    });
+
+    test('should return false if localStorage is not available', () => {
+      const setItemMock = localStorageMock.setItem;
+      localStorageMock.setItem = jest.fn(() => {
+        throw new Error('Quota exceeded');
+      });
+      expect(hasLocalStorage()).toBe(false);
+      localStorageMock.setItem = setItemMock; // Restore mock
+    });
+  });
+
+  describe('hasSessionStorage', () => {
+    test('should return true if sessionStorage is available', () => {
+      expect(hasSessionStorage()).toBe(true);
+    });
+
+    test('should return false if sessionStorage is not available', () => {
+      const setItemMock = sessionStorageMock.setItem;
+      sessionStorageMock.setItem = jest.fn(() => {
+        throw new Error('Quota exceeded');
+      });
+      expect(hasSessionStorage()).toBe(false);
+      sessionStorageMock.setItem = setItemMock; // Restore mock
     });
   });
 });
