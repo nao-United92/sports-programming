@@ -88,3 +88,15 @@ export function dragAndDropUpload(dropArea, onDropCallback) {
     }
   });
 }
+
+/**
+ * Gets the extension of a file from its name.
+ * @param {string} fileName The name of the file.
+ * @returns {string} The file extension (e.g., "txt", "png").
+ */
+export function getFileExtension(fileName) {
+  if (typeof fileName !== 'string' || fileName.lastIndexOf('.') === -1) {
+    return '';
+  }
+  return fileName.slice(fileName.lastIndexOf('.') + 1);
+}

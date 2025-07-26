@@ -158,4 +158,22 @@ describe('file-handling-utils', () => {
       consoleErrorSpy.mockRestore();
     });
   });
+
+  describe('getFileExtension', () => {
+    test('should return the file extension', () => {
+      expect(getFileExtension('document.pdf')).toBe('pdf');
+      expect(getFileExtension('image.jpeg')).toBe('jpeg');
+      expect(getFileExtension('archive.tar.gz')).toBe('gz');
+    });
+
+    test('should return an empty string if there is no extension', () => {
+      expect(getFileExtension('file')).toBe('');
+    });
+
+    test('should return an empty string for invalid input', () => {
+      expect(getFileExtension(null)).toBe('');
+      expect(getFileExtension(undefined)).toBe('');
+      expect(getFileExtension(123)).toBe('');
+    });
+  });
 });
