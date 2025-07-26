@@ -183,3 +183,17 @@ export function isPositive(num) {
 export function isNegative(num) {
   return typeof num === 'number' && num < 0;
 }
+
+/**
+ * Converts a number to its ordinal representation (e.g., 1st, 2nd, 3rd).
+ * @param {number} num The number to convert.
+ * @returns {string} The ordinal string.
+ */
+export function toOrdinal(num) {
+  if (typeof num !== 'number' || !Number.isInteger(num)) {
+    return String(num);
+  }
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = num % 100;
+  return num + (s[(v - 20) % 10] || s[v] || s[0]);
+}

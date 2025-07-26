@@ -403,3 +403,20 @@ export function containsAll(arr, elements) {
   return elements.every(element => arr.includes(element));
 }
 
+/**
+ * Checks if an array is sorted in ascending order.
+ * @param {Array} arr The array to check.
+ * @returns {boolean} True if the array is sorted, false otherwise.
+ */
+export function isSorted(arr) {
+  if (!Array.isArray(arr) || arr.length < 2) {
+    return true;
+  }
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < arr[i - 1]) {
+      return false;
+    }
+  }
+  return true;
+}
+

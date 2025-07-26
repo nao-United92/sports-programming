@@ -435,4 +435,29 @@ describe('array-utils', () => {
       expect(containsAll(123, [1])).toBe(false);
     });
   });
+
+  describe('isSorted', () => {
+    test('should return true for a sorted array', () => {
+      expect(isSorted([1, 2, 3, 4, 5])).toBe(true);
+      expect(isSorted([1, 1, 2, 3])).toBe(true);
+      expect(isSorted([])).toBe(true);
+      expect(isSorted([1])).toBe(true);
+    });
+
+    test('should return false for an unsorted array', () => {
+      expect(isSorted([3, 1, 2])).toBe(false);
+      expect(isSorted([5, 4, 3, 2, 1])).toBe(false);
+    });
+
+    test('should return true for an empty array or single-element array', () => {
+      expect(isSorted([])).toBe(true);
+      expect(isSorted([1])).toBe(true);
+    });
+
+    test('should return false for non-array inputs', () => {
+      expect(isSorted(null)).toBe(true);
+      expect(isSorted(undefined)).toBe(true);
+      expect(isSorted(123)).toBe(true);
+    });
+  });
 });
