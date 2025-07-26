@@ -400,4 +400,64 @@ describe('dom-utils', () => {
       expect(isChildOf(childEl, undefined)).toBe(false);
     });
   });
+
+  describe('hasAttributeValue', () => {
+    test('should return true if the element has the attribute with the specified value', () => {
+      const el = createElement('div', { 'data-test': 'value123' });
+      expect(hasAttributeValue(el, 'data-test', 'value123')).toBe(true);
+    });
+
+    test('should return false if the attribute value does not match', () => {
+      const el = createElement('div', { 'data-test': 'value123' });
+      expect(hasAttributeValue(el, 'data-test', 'otherValue')).toBe(false);
+    });
+
+    test('should return false if the element does not have the attribute', () => {
+      const el = createElement('div');
+      expect(hasAttributeValue(el, 'data-test', 'value123')).toBe(false);
+    });
+
+    test('should return false for null element', () => {
+      expect(hasAttributeValue(null, 'data-test', 'value')).toBe(false);
+    });
+
+    test('should return false for invalid attribute name', () => {
+      const el = createElement('div', { 'data-test': 'value' });
+      expect(hasAttributeValue(el, null, 'value')).toBe(false);
+      expect(hasAttributeValue(el, undefined, 'value')).toBe(false);
+      expect(hasAttributeValue(el, 123, 'value')).toBe(false);
+    });
+  });
+});
+  });
+
+  describe('hasAttributeValue', () => {
+    test('should return true if the element has the attribute with the specified value', () => {
+      const el = createElement('div', { 'data-test': 'value123' });
+      expect(hasAttributeValue(el, 'data-test', 'value123')).toBe(true);
+    });
+
+    test('should return false if the attribute value does not match', () => {
+      const el = createElement('div', { 'data-test': 'value123' });
+      expect(hasAttributeValue(el, 'data-test', 'otherValue')).toBe(false);
+    });
+
+    test('should return false if the element does not have the attribute', () => {
+      const el = createElement('div');
+      expect(hasAttributeValue(el, 'data-test', 'value123')).toBe(false);
+    });
+
+    test('should return false for null element', () => {
+      expect(hasAttributeValue(null, 'data-test', 'value')).toBe(false);
+    });
+
+    test('should return false for invalid attribute name', () => {
+      const el = createElement('div', { 'data-test': 'value' });
+      expect(hasAttributeValue(el, null, 'value')).toBe(false);
+      expect(hasAttributeValue(el, undefined, 'value')).toBe(false);
+      expect(hasAttributeValue(el, 123, 'value')).toBe(false);
+    });
+  });
+});
+  });
 });

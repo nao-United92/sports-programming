@@ -321,3 +321,17 @@ export function isChildOf(child, parent) {
   }
   return false;
 }
+
+/**
+ * Checks if an HTML element has a specific attribute with a specific value.
+ * @param {HTMLElement} element The element to check.
+ * @param {string} attributeName The name of the attribute to check for.
+ * @param {string} attributeValue The value of the attribute to check for.
+ * @returns {boolean} True if the element has the attribute with the specified value, false otherwise.
+ */
+export function hasAttributeValue(element, attributeName, attributeValue) {
+  if (!element || typeof attributeName !== 'string') {
+    return false;
+  }
+  return element.getAttribute(attributeName) === attributeValue;
+}

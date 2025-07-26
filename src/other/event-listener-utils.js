@@ -42,3 +42,31 @@ export function dispatchCustomEvent(element, eventName, detail, bubbles = true, 
     element.dispatchEvent(event);
   }
 }
+
+/**
+ * Adds an event listener to an element that will be executed only once.
+ * @param {EventTarget} element The element to attach the event listener to.
+ * @param {string} eventType The type of event to listen for.
+ * @param {Function} listener The function to call when the event occurs.
+ * @param {boolean|AddEventListenerOptions} [options] An options object that specifies characteristics about the event listener.
+ */
+export function addOneTimeEventListener(element, eventType, listener, options) {
+  if (element && eventType && listener) {
+    const opts = { ...options, once: true };
+    element.addEventListener(eventType, listener, opts);
+  }
+}
+
+/**
+ * Adds an event listener to an element that will be executed only once.
+ * @param {EventTarget} element The element to attach the event listener to.
+ * @param {string} eventType The type of event to listen for.
+ * @param {Function} listener The function to call when the event occurs.
+ * @param {boolean|AddEventListenerOptions} [options] An options object that specifies characteristics about the event listener.
+ */
+export function addOneTimeEventListener(element, eventType, listener, options) {
+  if (element && eventType && listener) {
+    const opts = { ...options, once: true };
+    element.addEventListener(eventType, listener, opts);
+  }
+}

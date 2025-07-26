@@ -1,4 +1,4 @@
-import { addEventListener, removeEventListener, dispatchCustomEvent } from './event-listener-utils.js';
+import { addEventListener, removeEventListener, dispatchCustomEvent, addOneTimeEventListener } from './event-listener-utils.js';
 
 describe('event-listener-utils', () => {
   let element;
@@ -66,6 +66,35 @@ describe('event-listener-utils', () => {
 
     test('should not dispatch event if element is null', () => {
       dispatchCustomEvent(null, 'myCustomEvent', {});
+      // No error should be thrown
+    });
+  });
+
+  describe('addOneTimeEventListener', () => {
+    test('should add an event listener that fires only once', () => {
+      const mockListener = jest.fn();
+      addOneTimeEventListener(element, 'click', mockListener);
+
+      element.click();
+      element.click(); // Click again
+
+      expect(mockListener).toHaveBeenCalledTimes(1);
+    });
+
+    test('should pass options correctly', () => {
+      const mockListener = jest.fn();
+      const options = { capture: true };
+      const addSpy = jest.spyOn(element, 'addEventListener');
+
+      addOneTimeEventListener(element, 'click', mockListener, options);
+
+      expect(addSpy).toHaveBeenCalledWith('click', mockListener, { ...options, once: true });
+      addSpy.mockRestore();
+    });
+
+    test('should not add listener if element is null', () => {
+      const mockListener = jest.fn();
+      addOneTimeEventListener(null, 'click', mockListener);
       // No error should be thrown
     });
   });
