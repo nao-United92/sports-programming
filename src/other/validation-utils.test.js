@@ -1,4 +1,4 @@
-import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime, validatePassword } from './validation-utils.js';
+import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime, validatePassword, isHexColor } from './validation-utils.js';
 
 describe('validation-utils', () => {
   describe('isEmail', () => {
@@ -180,6 +180,36 @@ describe('validation-utils', () => {
       expect(validatePassword(null)).toEqual(['Password must be a string.']);
       expect(validatePassword(undefined)).toEqual(['Password must be a string.']);
       expect(validatePassword(123)).toEqual(['Password must be a string.']);
+    });
+  });
+
+  describe('isHexColor', () => {
+    test('should return true for valid 6-digit hex colors', () => {
+      expect(isHexColor('#FFFFFF')).toBe(true);
+      expect(isHexColor('#000000')).toBe(true);
+      expect(isHexColor('#ABCDEF')).toBe(true);
+      expect(isHexColor('#abcdef')).toBe(true);
+    });
+
+    test('should return true for valid 3-digit hex colors', () => {
+      expect(isHexColor('#FFF')).toBe(true);
+      expect(isHexColor('#000')).toBe(true);
+      expect(isHexColor('#ABC')).toBe(true);
+      expect(isHexColor('#abc')).toBe(true);
+    });
+
+    test('should return false for invalid hex colors', () => {
+      expect(isHexColor('#FFFF')).toBe(false);
+      expect(isHexColor('#FFFFFFF')).toBe(false);
+      expect(isHexColor('#GGGGGG')).toBe(false);
+      expect(isHexColor('FFFFFF')).toBe(false); // Missing #
+      expect(isHexColor('#12345G')).toBe(false);
+    });
+
+    test('should return false for non-string inputs', () => {
+      expect(isHexColor(123)).toBe(false);
+      expect(isHexColor(null)).toBe(false);
+      expect(isHexColor(undefined)).toBe(false);
     });
   });
 });

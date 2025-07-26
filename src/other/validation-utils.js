@@ -150,3 +150,16 @@ export function validatePassword(password) {
 
   return errors;
 }
+
+/**
+ * Checks if a string is a valid hexadecimal color code (e.g., #RRGGBB or #RGB).
+ * @param {string} color The string to validate.
+ * @returns {boolean} True if the string is a valid hex color, false otherwise.
+ */
+export function isHexColor(color) {
+  if (typeof color !== 'string') {
+    return false;
+  }
+  const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+  return hexRegex.test(color);
+}
