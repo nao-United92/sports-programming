@@ -177,10 +177,20 @@ export function difference(arr1, arr2) {
  * @returns {Array} A new array with unique values.
  */
 export function removeDuplicates(arr) {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
   return [...new Set(arr)];
+}
+
+/**
+ * Shuffles an array randomly using the Fisher-Yates (Knuth) algorithm.
+ * @param {Array} array The array to shuffle.
+ * @returns {Array} The shuffled array.
+ */
+export function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }
 
 /**

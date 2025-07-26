@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, shuffleArray } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -33,6 +33,25 @@ describe('array-utils', () => {
       const shuffled = shuffleArray([...arr]);
       expect(shuffled).not.toEqual(arr);
       expect(shuffled.sort()).toEqual(arr.sort());
+      // Ensure the original array is not modified
+      expect(arr).toEqual([1, 2, 3, 4, 5]);
+    });
+
+    it('should return an empty array when given an empty array', () => {
+      expect(shuffleArray([])).toEqual([]);
+    });
+
+    it('should return a single element array when given a single element array', () => {
+      expect(shuffleArray([1])).toEqual([1]);
+    });
+
+    it('should contain all original elements after shuffling', () => {
+      const arr = [10, 20, 30, 40, 50];
+      const shuffled = shuffleArray([...arr]);
+      arr.forEach(element => {
+        expect(shuffled).toContain(element);
+      });
+      expect(shuffled.length).toBe(arr.length);
     });
   });
 
