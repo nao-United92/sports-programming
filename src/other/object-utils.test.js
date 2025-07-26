@@ -593,4 +593,19 @@ describe('mapValues', () => {
       expect(keys(obj)).toEqual(['b']);
     });
   });
+
+  describe('size', () => {
+    test('should return the number of enumerable own properties', () => {
+      expect(size({ a: 1, b: 2 })).toBe(2);
+      expect(size({})).toBe(0);
+    });
+
+    test('should return 0 for non-object inputs', () => {
+      expect(size(null)).toBe(0);
+      expect(size(undefined)).toBe(0);
+      expect(size(123)).toBe(0);
+      expect(size('string')).toBe(0);
+      expect(size([])).toBe(0);
+    });
+  });
 });

@@ -331,4 +331,25 @@ describe('toTitleCase', () => {
       expect(endsWith(123, '3')).toBe(false);
     });
   });
+
+  describe('isNumeric', () => {
+    test('should return true for a string containing only digits', () => {
+      expect(isNumeric('12345')).toBe(true);
+      expect(isNumeric('0')).toBe(true);
+    });
+
+    test('should return false for a string containing non-digits', () => {
+      expect(isNumeric('123a')).toBe(false);
+      expect(isNumeric('1.23')).toBe(false);
+      expect(isNumeric('-123')).toBe(false);
+      expect(isNumeric(' ')).toBe(false);
+      expect(isNumeric('')).toBe(false);
+    });
+
+    test('should return false for non-string inputs', () => {
+      expect(isNumeric(123)).toBe(false);
+      expect(isNumeric(null)).toBe(false);
+      expect(isNumeric(undefined)).toBe(false);
+    });
+  });
 });

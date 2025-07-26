@@ -400,3 +400,15 @@ export function keys(obj) {
   }
   return Object.keys(obj);
 }
+
+/**
+ * Gets the number of enumerable own properties of an object.
+ * @param {object} obj The object to query.
+ * @returns {number} The number of properties.
+ */
+export function size(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return 0;
+  }
+  return Object.keys(obj).length;
+}

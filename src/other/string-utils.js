@@ -227,5 +227,17 @@ export function endsWith(str, suffix) {
   return str.endsWith(suffix);
 }
 
+/**
+ * Checks if a string consists only of numeric characters.
+ * @param {string} str The string to check.
+ * @returns {boolean} True if the string is numeric, false otherwise.
+ */
+export function isNumeric(str) {
+  if (typeof str !== 'string' || str.trim() === '') {
+    return false;
+  }
+  return /^[0-9]+$/.test(str);
+}
+
 
 
