@@ -186,5 +186,20 @@ export function truncate(str, maxLength, suffix = '...') {
   return str.slice(0, maxLength - suffix.length) + suffix;
 }
 
+/**
+ * Converts a string to Title Case.
+ * Each word in the string will have its first letter capitalized.
+ * @param {string} str The input string.
+ * @returns {string} The string in Title Case.
+ */
+export function toTitleCase(str) {
+  if (typeof str !== 'string' || str.length === 0) {
+    return '';
+  }
+  return str.replace(/\w\S*/g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
 
 
