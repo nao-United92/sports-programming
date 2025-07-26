@@ -460,4 +460,32 @@ describe('array-utils', () => {
       expect(isSorted(123)).toBe(true);
     });
   });
+
+  describe('sampleSize', () => {
+    test('should return a random sample of specified size', () => {
+      const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const sample = sampleSize(arr, 3);
+      expect(sample.length).toBe(3);
+      sample.forEach(element => expect(arr).toContain(element));
+    });
+
+    test('should return an empty array if n is 0 or less', () => {
+      const arr = [1, 2, 3];
+      expect(sampleSize(arr, 0)).toEqual([]);
+      expect(sampleSize(arr, -1)).toEqual([]);
+    });
+
+    test('should return the entire array if n is greater than array length', () => {
+      const arr = [1, 2, 3];
+      const sample = sampleSize(arr, 5);
+      expect(sample.length).toBe(3);
+      expect(sample.sort()).toEqual(arr.sort());
+    });
+
+    test('should return an empty array for non-array inputs', () => {
+      expect(sampleSize(null, 2)).toEqual([]);
+      expect(sampleSize(undefined, 2)).toEqual([]);
+      expect(sampleSize(123, 2)).toEqual([]);
+    });
+  });
 });

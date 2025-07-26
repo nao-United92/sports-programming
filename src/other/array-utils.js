@@ -420,3 +420,17 @@ export function isSorted(arr) {
   return true;
 }
 
+/**
+ * Gets a random sample of `n` elements from `array`.
+ * @param {Array} array The array to sample.
+ * @param {number} n The number of elements to sample.
+ * @returns {Array} Returns the random sample.
+ */
+export function sampleSize(array, n = 1) {
+  if (!Array.isArray(array) || array.length === 0 || n <= 0) {
+    return [];
+  }
+  const shuffled = [...array].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
+}
+

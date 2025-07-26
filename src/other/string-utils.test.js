@@ -352,4 +352,17 @@ describe('toTitleCase', () => {
       expect(isNumeric(undefined)).toBe(false);
     });
   });
+
+  describe('repeat', () => {
+    test('should repeat the string n times', () => {
+      expect(repeat('abc', 3)).toBe('abcabcabc');
+      expect(repeat('-', 5)).toBe('-----');
+      expect(repeat('test', 0)).toBe('');
+    });
+
+    test('should return an empty string for invalid input', () => {
+      expect(repeat(null, 2)).toBe('');
+      expect(repeat('abc', -1)).toBe('');
+    });
+  });
 });

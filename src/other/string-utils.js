@@ -239,5 +239,18 @@ export function isNumeric(str) {
   return /^[0-9]+$/.test(str);
 }
 
+/**
+ * Repeats the given string `n` times.
+ * @param {string} str The string to repeat.
+ * @param {number} n The number of times to repeat the string.
+ * @returns {string} The repeated string.
+ */
+export function repeat(str, n) {
+  if (typeof str !== 'string' || n < 0) {
+    return '';
+  }
+  return str.repeat(n);
+}
+
 
 
