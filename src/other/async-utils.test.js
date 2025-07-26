@@ -34,3 +34,19 @@ describe('async-utils', () => {
     await expect(timeout(slowPromise, 100)).rejects.toThrow('Operation timed out');
   });
 });
+
+describe('sleep', () => {
+  jest.useFakeTimers();
+
+  test('should pause execution for the specified duration', async () => {
+    const sleepTime = 2000;
+    const startTime = Date.now();
+
+    const sleepPromise = sleep(sleepTime);
+    jest.advanceTimersByTime(sleepTime);
+    await sleepPromise;
+
+    const endTime = Date.now();
+    expect(endTime - startTime).toBeGreaterThanOrEqual(sleepTime);
+  });
+});
