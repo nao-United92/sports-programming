@@ -378,3 +378,13 @@ export function mapValues(object, iteratee) {
 export function merge(...sources) {
   return Object.assign({}, ...sources);
 }
+
+/**
+ * Checks if an object has a specified property.
+ * @param {object} obj The object to check.
+ * @param {string} prop The name of the property to check for.
+ * @returns {boolean} True if the object has the property, false otherwise.
+ */
+export function hasProperty(obj, prop) {
+  return obj !== null && typeof obj === 'object' && Object.prototype.hasOwnProperty.call(obj, prop);
+}

@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge } from './object-utils.js';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge, hasProperty } from './object-utils.js';
 
 describe('isDeepEqual', () => {
   test('should return true for deeply equal objects', () => {
@@ -498,39 +498,73 @@ describe('mapValues', () => {
   });
 });
 
-describe('merge', () => {
-  test('should merge two objects shallowly', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { c: 3, d: 4 };
-    expect(merge(obj1, obj2)).toEqual({ a: 1, b: 2, c: 3, d: 4 });
+  describe('merge', () => {
+    test('should merge two objects shallowly', () => {
+      const obj1 = { a: 1, b: 2 };
+      const obj2 = { c: 3, d: 4 };
+      expect(merge(obj1, obj2)).toEqual({ a: 1, b: 2, c: 3, d: 4 });
+    });
+
+    test('should overwrite properties from earlier objects', () => {
+      const obj1 = { a: 1, b: 2 };
+      const obj2 = { b: 3, c: 4 };
+      expect(merge(obj1, obj2)).toEqual({ a: 1, b: 3, c: 4 });
+    });
+
+    test('should merge multiple objects', () => {
+      const obj1 = { a: 1 };
+      const obj2 = { b: 2 };
+      const obj3 = { c: 3 };
+      expect(merge(obj1, obj2, obj3)).toEqual({ a: 1, b: 2, c: 3 });
+    });
+
+    test('should handle empty sources', () => {
+      const obj1 = { a: 1 };
+      expect(merge(obj1, {}, { b: 2 })).toEqual({ a: 1, b: 2 });
+    });
+
+    test('should return a new object', () => {
+      const obj1 = { a: 1 };
+      const merged = merge(obj1, { b: 2 });
+      expect(merged).not.toBe(obj1);
+    });
+
+    test('should handle non-object sources gracefully', () => {
+      const obj1 = { a: 1 };
+      expect(merge(obj1, null, { b: 2 }, undefined)).toEqual({ a: 1, b: 2 });
+    });
   });
 
-  test('should overwrite properties from earlier objects', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { b: 3, c: 4 };
-    expect(merge(obj1, obj2)).toEqual({ a: 1, b: 3, c: 4 });
-  });
+  describe('hasProperty', () => {
+    test('should return true if the object has the specified own property', () => {
+      const obj = { a: 1, b: 2 };
+      expect(hasProperty(obj, 'a')).toBe(true);
+    });
 
-  test('should merge multiple objects', () => {
-    const obj1 = { a: 1 };
-    const obj2 = { b: 2 };
-    const obj3 = { c: 3 };
-    expect(merge(obj1, obj2, obj3)).toEqual({ a: 1, b: 2, c: 3 });
-  });
+    test('should return false if the object does not have the specified own property', () => {
+      const obj = { a: 1, b: 2 };
+      expect(hasProperty(obj, 'c')).toBe(false);
+    });
 
-  test('should handle empty sources', () => {
-    const obj1 = { a: 1 };
-    expect(merge(obj1, {}, { b: 2 })).toEqual({ a: 1, b: 2 });
-  });
+    test('should return false for inherited properties', () => {
+      const proto = { a: 1 };
+      const obj = Object.create(proto);
+      obj.b = 2;
+      expect(hasProperty(obj, 'a')).toBe(false);
+    });
 
-  test('should return a new object', () => {
-    const obj1 = { a: 1 };
-    const merged = merge(obj1, { b: 2 });
-    expect(merged).not.toBe(obj1);
-  });
+    test('should return false for null or undefined objects', () => {
+      expect(hasProperty(null, 'a')).toBe(false);
+      expect(hasProperty(undefined, 'a')).toBe(false);
+    });
 
-  test('should handle non-object sources gracefully', () => {
-    const obj1 = { a: 1 };
-    expect(merge(obj1, null, { b: 2 }, undefined)).toEqual({ a: 1, b: 2 });
+    test('should return false for primitive values', () => {
+      expect(hasProperty(123, 'a')).toBe(false);
+      expect(hasProperty('string', 'length')).toBe(false);
+    });
+
+    test('should return true for properties with undefined values', () => {
+      const obj = { a: undefined };
+      expect(hasProperty(obj, 'a')).toBe(true);
+    });
   });
-});
