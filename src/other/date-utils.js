@@ -183,3 +183,33 @@ export function getDaysInMonth(year, month) {
   return new Date(year, month, 0).getDate();
 }
 
+/**
+ * Gets the start of the week for a given date.
+ * @param {Date} date The date to get the start of the week from.
+ * @param {number} [startDay=0] The start day of the week (0 for Sunday, 1 for Monday, etc.). Defaults to Sunday.
+ * @returns {Date} A new Date object representing the start of the week.
+ */
+export function startOfWeek(date, startDay = 0) {
+  const newDate = new Date(date);
+  const day = newDate.getDay();
+  const diff = (day < startDay) ? (7 - startDay + day) : (day - startDay);
+  newDate.setDate(newDate.getDate() - diff);
+  newDate.setHours(0, 0, 0, 0);
+  return newDate;
+}
+
+/**
+ * Gets the end of the week for a given date.
+ * @param {Date} date The date to get the end of the week from.
+ * @param {number} [startDay=0] The start day of the week (0 for Sunday, 1 for Monday, etc.). Defaults to Sunday.
+ * @returns {Date} A new Date object representing the end of the week.
+ */
+export function endOfWeek(date, startDay = 0) {
+  const newDate = new Date(date);
+  const day = newDate.getDay();
+  const diff = (day < startDay) ? (7 - startDay + day) : (day - startDay);
+  newDate.setDate(newDate.getDate() - diff + 6);
+  newDate.setHours(23, 59, 59, 999);
+  return newDate;
+}
+

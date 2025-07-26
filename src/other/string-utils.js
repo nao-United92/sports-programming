@@ -201,5 +201,31 @@ export function toTitleCase(str) {
   });
 }
 
+/**
+ * Checks if a string starts with a specified prefix.
+ * @param {string} str The input string.
+ * @param {string} prefix The prefix to check for.
+ * @returns {boolean} True if the string starts with the prefix, false otherwise.
+ */
+export function startsWith(str, prefix) {
+  if (typeof str !== 'string' || typeof prefix !== 'string') {
+    return false;
+  }
+  return str.startsWith(prefix);
+}
+
+/**
+ * Checks if a string ends with a specified suffix.
+ * @param {string} str The input string.
+ * @param {string} suffix The suffix to check for.
+ * @returns {boolean} True if the string ends with the suffix, false otherwise.
+ */
+export function endsWith(str, suffix) {
+  if (typeof str !== 'string' || typeof suffix !== 'string') {
+    return false;
+  }
+  return str.endsWith(suffix);
+}
+
 
 

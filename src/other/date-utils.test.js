@@ -273,4 +273,44 @@ describe('getDaysInMonth', () => {
     expect(getDaysInMonth(2023, 13)).toBe(0);
   });
 });
+
+describe('startOfWeek', () => {
+  test('should return the start of the week (Sunday as start day)', () => {
+    const date = new Date('2023-10-25T10:00:00Z'); // Wednesday
+    const start = startOfWeek(date);
+    expect(start.toISOString()).toBe('2023-10-22T00:00:00.000Z'); // Sunday
+  });
+
+  test('should return the start of the week (Monday as start day)', () => {
+    const date = new Date('2023-10-25T10:00:00Z'); // Wednesday
+    const start = startOfWeek(date, 1); // Monday
+    expect(start.toISOString()).toBe('2023-10-23T00:00:00.000Z'); // Monday
+  });
+
+  test('should handle dates at the beginning of the week', () => {
+    const date = new Date('2023-10-22T10:00:00Z'); // Sunday
+    const start = startOfWeek(date);
+    expect(start.toISOString()).toBe('2023-10-22T00:00:00.000Z'); // Sunday
+  });
+});
+
+describe('endOfWeek', () => {
+  test('should return the end of the week (Sunday as start day)', () => {
+    const date = new Date('2023-10-25T10:00:00Z'); // Wednesday
+    const end = endOfWeek(date);
+    expect(end.toISOString()).toBe('2023-10-28T23:59:59.999Z'); // Saturday
+  });
+
+  test('should return the end of the week (Monday as start day)', () => {
+    const date = new Date('2023-10-25T10:00:00Z'); // Wednesday
+    const end = endOfWeek(date, 1); // Monday
+    expect(end.toISOString()).toBe('2023-10-29T23:59:59.999Z'); // Sunday
+  });
+
+  test('should handle dates at the end of the week', () => {
+    const date = new Date('2023-10-28T10:00:00Z'); // Saturday
+    const end = endOfWeek(date);
+    expect(end.toISOString()).toBe('2023-10-28T23:59:59.999Z'); // Saturday
+  });
+});
 });

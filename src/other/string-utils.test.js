@@ -290,8 +290,45 @@ describe('toTitleCase', () => {
   });
 
   test('should return empty string for non-string inputs', () => {
-    expect(toTitleCase(123)).toBe('');
-    expect(toTitleCase(null)).toBe('');
-    expect(toTitleCase(undefined)).toBe('');
+      expect(toTitleCase(123)).toBe('');
+      expect(toTitleCase(null)).toBe('');
+      expect(toTitleCase(undefined)).toBe('');
+    });
+  });
+
+  describe('startsWith', () => {
+    test('should return true if the string starts with the prefix', () => {
+      expect(startsWith('hello world', 'hello')).toBe(true);
+      expect(startsWith('foo bar', 'foo')).toBe(true);
+    });
+
+    test('should return false if the string does not start with the prefix', () => {
+      expect(startsWith('hello world', 'world')).toBe(false);
+      expect(startsWith('foo bar', 'baz')).toBe(false);
+    });
+
+    test('should return false for non-string inputs', () => {
+      expect(startsWith(null, 'hello')).toBe(false);
+      expect(startsWith('hello', null)).toBe(false);
+      expect(startsWith(123, '1')).toBe(false);
+    });
+  });
+
+  describe('endsWith', () => {
+    test('should return true if the string ends with the suffix', () => {
+      expect(endsWith('hello world', 'world')).toBe(true);
+      expect(endsWith('foo bar', 'bar')).toBe(true);
+    });
+
+    test('should return false if the string does not end with the suffix', () => {
+      expect(endsWith('hello world', 'hello')).toBe(false);
+      expect(endsWith('foo bar', 'baz')).toBe(false);
+    });
+
+    test('should return false for non-string inputs', () => {
+      expect(endsWith(null, 'world')).toBe(false);
+      expect(endsWith('world', null)).toBe(false);
+      expect(endsWith(123, '3')).toBe(false);
+    });
   });
 });
