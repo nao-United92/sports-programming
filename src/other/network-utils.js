@@ -35,6 +35,24 @@ export async function postJSON(url, data) {
 }
 
 /**
+ * Gets the public IP address of the user.
+ * @returns {Promise<string|null>} A promise that resolves with the public IP address, or null if it cannot be fetched.
+ */
+export async function getPublicIpAddress() {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error('Failed to fetch public IP address:', error);
+    return null;
+  }
+}
+
+/**
  * Checks if the browser is online.
  * @returns {boolean} True if online, false otherwise.
  */

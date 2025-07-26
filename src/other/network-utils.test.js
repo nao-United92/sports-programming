@@ -1,4 +1,4 @@
-import { getJSON, postJSON, isOnline, getQueryParams, getNetworkType, isValidUrl, getBatteryLevel, ping, getBandwidth, downloadFile, uploadFile } from './network-utils.js';
+import { getJSON, postJSON, isOnline } from './network-utils.js';
 
 describe('getBatteryLevel', () => {
   test('should return the battery level if available', async () => {
@@ -280,6 +280,56 @@ describe('network-utils', () => {
       jest.runAllTimers();
       await expect(promise).resolves.toBe(false);
       jest.useRealTimers();
+    });
+  });
+
+  describe('getPublicIpAddress', () => {
+    test('should return the public IP address', async () => {
+      const mockIp = '192.168.1.1';
+      fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ ip: mockIp }) });
+      await expect(getPublicIpAddress()).resolves.toBe(mockIp);
+    });
+
+    test('should return null if fetching IP fails', async () => {
+      fetch.mockResolvedValueOnce({ ok: false, status: 500 });
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(getPublicIpAddress()).resolves.toBeNull();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
+    });
+
+    test('should return null on network error', async () => {
+      fetch.mockRejectedValueOnce(new Error('Network down'));
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(getPublicIpAddress()).resolves.toBeNull();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
+    });
+  });
+});
+  });
+
+  describe('getPublicIpAddress', () => {
+    test('should return the public IP address', async () => {
+      const mockIp = '192.168.1.1';
+      fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ ip: mockIp }) });
+      await expect(getPublicIpAddress()).resolves.toBe(mockIp);
+    });
+
+    test('should return null if fetching IP fails', async () => {
+      fetch.mockResolvedValueOnce({ ok: false, status: 500 });
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(getPublicIpAddress()).resolves.toBeNull();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
+    });
+
+    test('should return null on network error', async () => {
+      fetch.mockRejectedValueOnce(new Error('Network down'));
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      await expect(getPublicIpAddress()).resolves.toBeNull();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
   });
 });

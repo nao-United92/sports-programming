@@ -163,3 +163,17 @@ export function isHexColor(color) {
   const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
   return hexRegex.test(color);
 }
+
+/**
+ * Checks if a string is a valid JSON.
+ * @param {string} str The string to check.
+ * @returns {boolean} True if the string is a valid JSON, false otherwise.
+ */
+export function isJSON(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}

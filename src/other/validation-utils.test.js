@@ -212,4 +212,19 @@ describe('validation-utils', () => {
       expect(isHexColor(undefined)).toBe(false);
     });
   });
+
+  describe('isJSON', () => {
+    test('should return true for a valid JSON string', () => {
+      expect(isJSON('{"a":1}')).toBe(true);
+    });
+
+    test('should return false for an invalid JSON string', () => {
+      expect(isJSON('{"a":1')).toBe(false);
+    });
+
+    test('should return false for non-string inputs', () => {
+      expect(isJSON(null)).toBe(false);
+      expect(isJSON(123)).toBe(false);
+    });
+  });
 });
