@@ -258,4 +258,29 @@ describe('storage-utils', () => {
       sessionStorageMock.setItem = setItemMock; // Restore mock
     });
   });
+
+  describe('getAllLocalStorageItems', () => {
+    test('should retrieve all items from localStorage', () => {
+      setLocalStorageItem('key1', 'value1');
+      setLocalStorageItem('key2', { data: 'value2' });
+
+      const allItems = getAllLocalStorageItems();
+      expect(allItems).toEqual({
+        key1: 'value1',
+        key2: { data: 'value2' },
+      });
+    });
+
+    test('should return an empty object if localStorage is empty', () => {
+      expect(getAllLocalStorageItems()).toEqual({});
+    });
+
+    test('should handle non-JSON string values gracefully', () => {
+      localStorage.setItem('rawString', 'just a string');
+      const allItems = getAllLocalStorageItems();
+      expect(allItems).toEqual({ rawString: 'just a string' });
+    });
+  });
+});
+  });
 });

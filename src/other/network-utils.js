@@ -1,4 +1,3 @@
-
 /**
  * URLからJSONデータを取得します。
  * @param {string} url - データを取得するURL。
@@ -119,7 +118,8 @@ export async function ping(url, timeout = 5000) {
     });
     clearTimeout(id);
     return response.ok;
-  } catch (error) {
+  }
+  catch (error) {
     return false;
   }
 }
@@ -185,3 +185,10 @@ export async function uploadFile(url, file, fieldName = 'file') {
   return response.json();
 }
 
+/**
+ * Checks if the current host is localhost.
+ * @returns {boolean} True if the host is localhost, false otherwise.
+ */
+export function isLocalhost() {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+}

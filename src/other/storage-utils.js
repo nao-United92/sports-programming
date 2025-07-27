@@ -169,3 +169,16 @@ export function hasSessionStorage() {
     return false;
   }
 }
+
+/**
+ * Retrieves all items from localStorage.
+ * @returns {object} An object containing all key-value pairs from localStorage.
+ */
+export function getAllLocalStorageItems() {
+  const items = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    items[key] = getLocalStorageItem(key);
+  }
+  return items;
+}

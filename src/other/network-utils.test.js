@@ -1,4 +1,4 @@
-import { getJSON, postJSON, isOnline } from './network-utils.js';
+import { getJSON, postJSON, isOnline, isLocalhost } from './network-utils.js';
 
 describe('getBatteryLevel', () => {
   test('should return the battery level if available', async () => {
@@ -306,30 +306,35 @@ describe('network-utils', () => {
       consoleErrorSpy.mockRestore();
     });
   });
-});
-  });
 
-  describe('getPublicIpAddress', () => {
-    test('should return the public IP address', async () => {
-      const mockIp = '192.168.1.1';
-      fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ ip: mockIp }) });
-      await expect(getPublicIpAddress()).resolves.toBe(mockIp);
+  describe('isLocalhost', () => {
+    let originalLocation;
+
+    beforeAll(() => {
+      originalLocation = window.location;
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { ...window.location },
+      });
     });
 
-    test('should return null if fetching IP fails', async () => {
-      fetch.mockResolvedValueOnce({ ok: false, status: 500 });
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      await expect(getPublicIpAddress()).resolves.toBeNull();
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      consoleErrorSpy.mockRestore();
+    afterAll(() => {
+      Object.defineProperty(window, 'location', { value: originalLocation });
     });
 
-    test('should return null on network error', async () => {
-      fetch.mockRejectedValueOnce(new Error('Network down'));
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      await expect(getPublicIpAddress()).resolves.toBeNull();
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      consoleErrorSpy.mockRestore();
+    test('should return true for localhost', () => {
+      window.location.hostname = 'localhost';
+      expect(isLocalhost()).toBe(true);
+    });
+
+    test('should return true for 127.0.0.1', () => {
+      window.location.hostname = '127.0.0.1';
+      expect(isLocalhost()).toBe(true);
+    });
+
+    test('should return false for other hosts', () => {
+      window.location.hostname = 'example.com';
+      expect(isLocalhost()).toBe(false);
     });
   });
 });
