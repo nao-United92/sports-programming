@@ -1,4 +1,4 @@
-import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime, validatePassword, isHexColor } from './validation-utils.js';
+import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime, validatePassword, isHexColor, isUUID } from './validation-utils.js';
 
 describe('validation-utils', () => {
   describe('isEmail', () => {
@@ -225,6 +225,28 @@ describe('validation-utils', () => {
     test('should return false for non-string inputs', () => {
       expect(isJSON(null)).toBe(false);
       expect(isJSON(123)).toBe(false);
+    });
+  });
+
+  describe('isUUID', () => {
+    test('should return true for a valid UUID v4', () => {
+      expect(isUUID('f47ac10b-58cc-4372-a567-0e02b2c3d479')).toBe(true);
+      expect(isUUID('123e4567-e89b-42d3-a456-426614174000')).toBe(true); // Example UUID v4
+    });
+
+    test('should return false for an invalid UUID', () => {
+      expect(isUUID('invalid-uuid')).toBe(false);
+      expect(isUUID('123e4567-e89b-12d3-a456-42661417400')).toBe(false); // Too short
+      expect(isUUID('123e4567-e89b-12d3-a456-4266141740000')).toBe(false); // Too long
+      expect(isUUID('123e4567-e89b-12d3-a456-42661417400g')).toBe(false); // Invalid character
+      expect(isUUID('f47ac10b-58cc-1372-a567-0e02b2c3d479')).toBe(false); // Invalid version (not 4)
+      expect(isUUID('f47ac10b-58cc-4372-g567-0e02b2c3d479')).toBe(false); // Invalid variant (not 8, 9, a, or b)
+    });
+
+    test('should return false for non-string inputs', () => {
+      expect(isUUID(123)).toBe(false);
+      expect(isUUID(null)).toBe(false);
+      expect(isUUID(undefined)).toBe(false);
     });
   });
 });

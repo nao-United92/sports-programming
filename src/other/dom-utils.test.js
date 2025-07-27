@@ -428,36 +428,31 @@ describe('dom-utils', () => {
       expect(hasAttributeValue(el, 123, 'value')).toBe(false);
     });
   });
-});
-  });
 
-  describe('hasAttributeValue', () => {
-    test('should return true if the element has the attribute with the specified value', () => {
-      const el = createElement('div', { 'data-test': 'value123' });
-      expect(hasAttributeValue(el, 'data-test', 'value123')).toBe(true);
+  describe('getScrollPosition', () => {
+    test('should return the scroll position of the document', () => {
+      // Mock window and document scroll properties
+      Object.defineProperty(window, 'scrollX', { value: 100, writable: true });
+      Object.defineProperty(window, 'scrollY', { value: 200, writable: true });
+      Object.defineProperty(document.documentElement, 'scrollLeft', { value: 100, writable: true });
+      Object.defineProperty(document.documentElement, 'scrollTop', { value: 200, writable: true });
+
+      const scrollPos = getScrollPosition();
+      expect(scrollPos).toEqual({ x: 100, y: 200 });
     });
 
-    test('should return false if the attribute value does not match', () => {
-      const el = createElement('div', { 'data-test': 'value123' });
-      expect(hasAttributeValue(el, 'data-test', 'otherValue')).toBe(false);
-    });
-
-    test('should return false if the element does not have the attribute', () => {
+    test('should return the scroll position of a specific element', () => {
       const el = createElement('div');
-      expect(hasAttributeValue(el, 'data-test', 'value123')).toBe(false);
+      el.scrollLeft = 50;
+      el.scrollTop = 75;
+
+      const scrollPos = getScrollPosition(el);
+      expect(scrollPos).toEqual({ x: 50, y: 75 });
     });
 
-    test('should return false for null element', () => {
-      expect(hasAttributeValue(null, 'data-test', 'value')).toBe(false);
+    test('should return {x: 0, y: 0} for null or undefined element', () => {
+      expect(getScrollPosition(null)).toEqual({ x: 0, y: 0 });
+      expect(getScrollPosition(undefined)).toEqual({ x: 0, y: 0 });
     });
-
-    test('should return false for invalid attribute name', () => {
-      const el = createElement('div', { 'data-test': 'value' });
-      expect(hasAttributeValue(el, null, 'value')).toBe(false);
-      expect(hasAttributeValue(el, undefined, 'value')).toBe(false);
-      expect(hasAttributeValue(el, 123, 'value')).toBe(false);
-    });
-  });
-});
   });
 });

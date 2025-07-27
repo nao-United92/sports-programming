@@ -335,3 +335,23 @@ export function hasAttributeValue(element, attributeName, attributeValue) {
   }
   return element.getAttribute(attributeName) === attributeValue;
 }
+
+/**
+ * Gets the current scroll position of the document or a specific element.
+ * @param {HTMLElement} [element=document.documentElement] The element to get the scroll position from. Defaults to document.documentElement.
+ * @returns {{x: number, y: number}} An object with x (horizontal) and y (vertical) scroll positions.
+ */
+export function getScrollPosition(element = document.documentElement) {
+  if (element === document.documentElement) {
+    return {
+      x: window.scrollX || window.pageXOffset || document.documentElement.scrollLeft,
+      y: window.scrollY || window.pageYOffset || document.documentElement.scrollTop,
+    };
+  } else if (element) {
+    return {
+      x: element.scrollLeft,
+      y: element.scrollTop,
+    };
+  }
+  return { x: 0, y: 0 };
+}
