@@ -182,3 +182,17 @@ export function isURL(url) {
     return false;
   }
 }
+
+/**
+ * Checks if a string is a valid URL.
+ * @param {string} url The string to check.
+ * @returns {boolean} True if the string is a valid URL, false otherwise.
+ */
+export function isValidURL(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

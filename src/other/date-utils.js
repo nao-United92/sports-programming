@@ -213,3 +213,16 @@ export function endOfWeek(date, startDay = 0) {
   return newDate;
 }
 
+/**
+ * Returns the quarter of the year for a given date.
+ * @param {Date} date The date to get the quarter from.
+ * @returns {number} The quarter number (1-4).
+ */
+export function getQuarter(date) {
+  if (!(date instanceof Date) || isNaN(date)) {
+    return NaN;
+  }
+  const month = date.getMonth() + 1; // getMonth() returns 0-11
+  return Math.ceil(month / 3);
+}
+

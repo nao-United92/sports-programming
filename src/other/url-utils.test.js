@@ -165,4 +165,18 @@ describe('url-utils', () => {
       expect(isURL(undefined)).toBe(false);
     });
   });
+
+  describe('isValidURL', () => {
+    test('should return true for a valid URL', () => {
+      expect(isValidURL('http://example.com')).toBe(true);
+      expect(isValidURL('https://www.google.com/search?q=test')).toBe(true);
+    });
+
+    test('should return false for an invalid URL', () => {
+      expect(isValidURL('invalid-url')).toBe(false);
+      expect(isValidURL('not-a-url')).toBe(false);
+      expect(isValidURL(null)).toBe(false);
+      expect(isValidURL(undefined)).toBe(false);
+    });
+  });
 });

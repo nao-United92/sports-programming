@@ -45,7 +45,7 @@ describe('date-utils', () => {
 
     test('should return NaN for invalid dates', () => {
       expect(getMonthDifference(new Date('invalid'), new Date())).toBeNaN();
-      expect(getMonthDifference(new Date(), new Date('invalid'))).toBeNaN();
+      expect(getMonthDifference(new Date(), new Date('invalid')).toBeNaN();
     });
   });
 
@@ -208,7 +208,7 @@ describe('isValidDate', () => {
 });
 
 describe('isToday', () => {
-  test('should return true for today\'s date', () => {
+  test('should return true for today's date', () => {
     expect(isToday(new Date())).toBe(true);
   });
 
@@ -313,4 +313,22 @@ describe('endOfWeek', () => {
     expect(end.toISOString()).toBe('2023-10-28T23:59:59.999Z'); // Saturday
   });
 });
+
+describe('getQuarter', () => {
+  test('should return the correct quarter for a given date', () => {
+    expect(getQuarter(new Date('2023-01-15'))).toBe(1); // January
+    expect(getQuarter(new Date('2023-03-31'))).toBe(1); // March
+    expect(getQuarter(new Date('2023-04-01'))).toBe(2); // April
+    expect(getQuarter(new Date('2023-06-30'))).toBe(2); // June
+    expect(getQuarter(new Date('2023-07-01'))).toBe(3); // July
+    expect(getQuarter(new Date('2023-09-30'))).toBe(3); // September
+    expect(getQuarter(new Date('2023-10-01'))).toBe(4); // October
+    expect(getQuarter(new Date('2023-12-31'))).toBe(4); // December
+  });
+
+  test('should return NaN for invalid dates', () => {
+    expect(getQuarter(new Date('invalid'))).toBeNaN();
+    expect(getQuarter(null)).toBeNaN();
+    expect(getQuarter(undefined)).toBeNaN();
+  });
 });
