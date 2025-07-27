@@ -365,4 +365,17 @@ describe('toTitleCase', () => {
       expect(repeat('abc', -1)).toBe('');
     });
   });
+
+  describe('escapeHTML', () => {
+    test('should escape HTML special characters', () => {
+      expect(escapeHTML('<script>alert("XSS")</script>')).toBe('&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;');
+      expect(escapeHTML('"' + "'" + '<>')).toBe('&quot;&#39;&lt;&gt;');
+    });
+
+    test('should return an empty string for non-string input', () => {
+      expect(escapeHTML(123)).toBe('');
+      expect(escapeHTML(null)).toBe('');
+      expect(escapeHTML(undefined)).toBe('');
+    });
+  });
 });

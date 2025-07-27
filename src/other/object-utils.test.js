@@ -608,4 +608,34 @@ describe('mapValues', () => {
       expect(size([])).toBe(0);
     });
   });
+
+  describe('isEmpty', () => {
+    test('should return true for null or undefined', () => {
+      expect(isEmpty(null)).toBe(true);
+      expect(isEmpty(undefined)).toBe(true);
+    });
+
+    test('should return true for an empty string', () => {
+      expect(isEmpty('')).toBe(true);
+    });
+
+    test('should return true for an empty array', () => {
+      expect(isEmpty([])).toBe(true);
+    });
+
+    test('should return true for an empty object', () => {
+      expect(isEmpty({})).toBe(true);
+    });
+
+    test('should return false for non-empty strings, arrays, and objects', () => {
+      expect(isEmpty('hello')).toBe(false);
+      expect(isEmpty([1, 2])).toBe(false);
+      expect(isEmpty({ a: 1 })).toBe(false);
+    });
+
+    test('should return false for numbers and booleans', () => {
+      expect(isEmpty(0)).toBe(false);
+      expect(isEmpty(false)).toBe(false);
+    });
+  });
 });
