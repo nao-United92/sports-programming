@@ -58,15 +58,27 @@ export function addOneTimeEventListener(element, eventType, listener, options) {
 }
 
 /**
- * Adds an event listener to an element that will be executed only once.
+ * Adds an event listener to an element.
  * @param {EventTarget} element The element to attach the event listener to.
  * @param {string} eventType The type of event to listen for.
  * @param {Function} listener The function to call when the event occurs.
  * @param {boolean|AddEventListenerOptions} [options] An options object that specifies characteristics about the event listener.
  */
-export function addOneTimeEventListener(element, eventType, listener, options) {
+export function on(element, eventType, listener, options) {
   if (element && eventType && listener) {
-    const opts = { ...options, once: true };
-    element.addEventListener(eventType, listener, opts);
+    element.addEventListener(eventType, listener, options);
+  }
+}
+
+/**
+ * Removes an event listener from an element.
+ * @param {EventTarget} element The element to remove the event listener from.
+ * @param {string} eventType The type of event to remove.
+ * @param {Function} listener The listener function to remove.
+ * @param {boolean|EventListenerOptions} [options] An options object that specifies characteristics about the event listener.
+ */
+export function off(element, eventType, listener, options) {
+  if (element && eventType && listener) {
+    element.removeEventListener(eventType, listener, options);
   }
 }

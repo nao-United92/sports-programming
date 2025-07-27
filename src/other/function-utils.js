@@ -213,3 +213,9 @@ export function negate(predicate) {
   };
 }
 
+/**
+ * A no-operation function. Returns undefined.
+ * @returns {undefined} Nothing.
+ */
+export function noop() {}
+

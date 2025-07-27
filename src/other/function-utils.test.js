@@ -270,4 +270,15 @@ describe('defer', () => {
       expect(isSumOdd(2, 2)).toBe(false);
     });
   });
+
+  describe('noop', () => {
+    test('should be a no-operation function', () => {
+      expect(noop()).toBeUndefined();
+    });
+
+    test('should not throw errors when called with arguments', () => {
+      expect(() => noop(1, 2, 3)).not.toThrow();
+    });
+  });
+});
   
