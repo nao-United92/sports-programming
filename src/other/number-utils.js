@@ -197,3 +197,12 @@ export function toOrdinal(num) {
   const v = num % 100;
   return num + (s[(v - 20) % 10] || s[v] || s[0]);
 }
+
+/**
+ * Calculates the sum of numbers.
+ * @param {...number} numbers The numbers to sum.
+ * @returns {number} The sum of the numbers.
+ */
+export function sum(...numbers) {
+  return numbers.reduce((acc, num) => acc + (isNumber(num) ? num : 0), 0);
+}

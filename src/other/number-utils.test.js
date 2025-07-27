@@ -256,4 +256,30 @@ describe('number-utils', () => {
       expect(toOrdinal(null)).toBe('null');
     });
   });
+
+  describe('sum', () => {
+    it('should return the sum of all numbers', () => {
+      expect(sum(1, 2, 3, 4, 5)).toBe(15);
+    });
+
+    it('should handle a single number', () => {
+      expect(sum(10)).toBe(10);
+    });
+
+    it('should handle negative numbers', () => {
+      expect(sum(-1, -2, -3)).toBe(-6);
+    });
+
+    it('should handle zero', () => {
+      expect(sum(0, 0, 0)).toBe(0);
+    });
+
+    it('should handle non-numeric inputs by treating them as 0', () => {
+      expect(sum(1, '2', 3, null, undefined)).toBe(4);
+    });
+
+    it('should return 0 if no arguments are provided', () => {
+      expect(sum()).toBe(0);
+    });
+  });
 });

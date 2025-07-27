@@ -434,3 +434,16 @@ export function sampleSize(array, n = 1) {
   return shuffled.slice(0, n);
 }
 
+/**
+ * Flattens a nested array up to a specified depth.
+ * @param {Array} arr The array to flatten.
+ * @param {number} depth The maximum flattening depth.
+ * @returns {Array} Returns the new flattened array.
+ */
+export function flatten(arr, depth = 1) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return arr.flat(depth);
+}
+

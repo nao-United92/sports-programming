@@ -488,4 +488,24 @@ describe('array-utils', () => {
       expect(sampleSize(123, 2)).toEqual([]);
     });
   });
+
+  describe('flatten', () => {
+    it('should flatten an array to a specified depth', () => {
+      const arr = [1, [2, [3, [4]]]];
+      expect(flatten(arr, 1)).toEqual([1, 2, [3, [4]]]);
+      expect(flatten(arr, 2)).toEqual([1, 2, 3, [4]]);
+      expect(flatten(arr, Infinity)).toEqual([1, 2, 3, 4]);
+    });
+
+    it('should default to a depth of 1', () => {
+      const arr = [1, [2, [3]]];
+      expect(flatten(arr)).toEqual([1, 2, [3]]);
+    });
+
+    it('should return an empty array for non-array inputs', () => {
+      expect(flatten(null)).toEqual([]);
+      expect(flatten(undefined)).toEqual([]);
+      expect(flatten(123)).toEqual([]);
+    });
+  });
 });
