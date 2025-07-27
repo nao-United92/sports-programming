@@ -191,4 +191,22 @@ describe('random-utils', () => {
       expect(Object.values(Colors)).toContain(randomColor);
     });
   });
+
+  describe('randomBoolean', () => {
+    test('should return true when Math.random() is >= 0.5', () => {
+      mockMathRandom.mockReturnValue(0.5);
+      expect(randomBoolean()).toBe(true);
+
+      mockMathRandom.mockReturnValue(0.99);
+      expect(randomBoolean()).toBe(true);
+    });
+
+    test('should return false when Math.random() is < 0.5', () => {
+      mockMathRandom.mockReturnValue(0.49);
+      expect(randomBoolean()).toBe(false);
+
+      mockMathRandom.mockReturnValue(0.01);
+      expect(randomBoolean()).toBe(false);
+    });
+  });
 });

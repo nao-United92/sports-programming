@@ -150,3 +150,12 @@ export function gcd(a, b) {
   }
   return gcd(b, a % b);
 }
+
+/**
+ * Checks if a number is even.
+ * @param {number} num The number to check.
+ * @returns {boolean} True if the number is even, false otherwise.
+ */
+export function isEven(num) {
+  return typeof num === 'number' && num % 2 === 0;
+}

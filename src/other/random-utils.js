@@ -126,3 +126,11 @@ export function randomEnum(enumeration) {
   const randomIndex = Math.floor(Math.random() * values.length);
   return values[randomIndex];
 }
+
+/**
+ * Generates a random boolean value.
+ * @returns {boolean} A random boolean (true or false).
+ */
+export function randomBoolean() {
+  return Math.random() >= 0.5;
+}
