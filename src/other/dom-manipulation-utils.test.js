@@ -234,4 +234,43 @@ describe('dom-manipulation-utils', () => {
       expect(wrapElement(innerEl, null)).toBeNull();
     });
   });
+
+  describe('insertAfter', () => {
+    it('should insert a new element after a reference element', () => {
+      const refEl = createElement('p', { id: 'ref' });
+      const newEl = createElement('span', { id: 'new' });
+      container.appendChild(refEl);
+
+      insertAfter(newEl, refEl);
+      expect(container.children[0]).toBe(refEl);
+      expect(container.children[1]).toBe(newEl);
+      expect(container.children.length).toBe(2);
+    });
+
+    it('should insert at the end if reference element is the last child', () => {
+      const refEl = createElement('p', { id: 'ref' });
+      const newEl = createElement('span', { id: 'new' });
+      container.appendChild(refEl);
+
+      insertAfter(newEl, refEl);
+      expect(container.lastChild).toBe(newEl);
+    });
+
+    it('should return null if newElement is null', () => {
+      const refEl = createElement('p');
+      container.appendChild(refEl);
+      expect(insertAfter(null, refEl)).toBeNull();
+    });
+
+    it('should return null if referenceElement is null', () => {
+      const newEl = createElement('span');
+      expect(insertAfter(newEl, null)).toBeNull();
+    });
+
+    it('should return null if referenceElement has no parent', () => {
+      const newEl = createElement('span');
+      const refEl = createElement('p'); // Not appended to DOM
+      expect(insertAfter(newEl, refEl)).toBeNull();
+    });
+  });
 });

@@ -139,3 +139,17 @@ export function wrapElement(elementToWrap, wrapperElement) {
   wrapperElement.appendChild(elementToWrap);
   return wrapperElement;
 }
+
+/**
+ * Inserts a new element after a reference element.
+ * @param {HTMLElement} newElement The element to insert.
+ * @param {HTMLElement} referenceElement The element after which to insert the new element.
+ * @returns {HTMLElement|null} The new element if successful, null otherwise.
+ */
+export function insertAfter(newElement, referenceElement) {
+  if (!newElement || !referenceElement || !referenceElement.parentNode) {
+    return null;
+  }
+  referenceElement.parentNode.insertBefore(newElement, referenceElement.nextSibling);
+  return newElement;
+}
