@@ -93,4 +93,16 @@ describe('browser-utils', () => {
       expect(params).toEqual({ name: '', age: '', });
     });
   });
+
+  describe('isOnline', () => {
+    test('should return true when navigator.onLine is true', () => {
+      Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });
+      expect(isOnline()).toBe(true);
+    });
+
+    test('should return false when navigator.onLine is false', () => {
+      Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
+      expect(isOnline()).toBe(false);
+    });
+  });
 });

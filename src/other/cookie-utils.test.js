@@ -93,4 +93,16 @@ describe('cookie-utils', () => {
       expect(getAllCookies()).toEqual({ emptyCookie: '' });
     });
   });
+
+  describe('areCookiesEnabled', () => {
+    test('should return true if cookies are enabled', () => {
+      Object.defineProperty(navigator, 'cookieEnabled', { value: true, configurable: true });
+      expect(areCookiesEnabled()).toBe(true);
+    });
+
+    test('should return false if cookies are disabled', () => {
+      Object.defineProperty(navigator, 'cookieEnabled', { value: false, configurable: true });
+      expect(areCookiesEnabled()).toBe(false);
+    });
+  });
 });

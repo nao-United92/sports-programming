@@ -66,4 +66,12 @@ export function getAllCookies() {
   return result;
 }
 
+/**
+ * Checks if cookies are enabled in the browser.
+ * @returns {boolean} True if cookies are enabled, false otherwise.
+ */
+export function areCookiesEnabled() {
+  return navigator.cookieEnabled;
+}
+
 

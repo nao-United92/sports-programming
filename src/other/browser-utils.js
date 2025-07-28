@@ -101,3 +101,11 @@ export function getURLParameters(url) {
   return params;
 }
 
+/**
+ * Checks if the browser is online.
+ * @returns {boolean} True if online, false otherwise.
+ */
+export function isOnline() {
+  return navigator.onLine;
+}
+
