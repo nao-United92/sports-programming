@@ -1,4 +1,3 @@
-
 import {
   on,
   off,
@@ -7,6 +6,7 @@ import {
   toggleClass,
   hasClass,
   once,
+  setAttribute
 } from './dom-class-event-utils';
 
 describe('dom-class-event-utils', () => {
@@ -182,6 +182,28 @@ describe('dom-class-event-utils', () => {
 
     test('should not throw error if element is null', () => {
       expect(() => once(null, 'click', handler)).not.toThrow();
+    });
+  });
+
+  describe('setAttribute', () => {
+    test('should set an attribute on an element', () => {
+      setAttribute(element, 'data-test', 'value');
+      expect(element.getAttribute('data-test')).toBe('value');
+    });
+
+    test('should update an existing attribute', () => {
+      element.setAttribute('id', 'old-id');
+      setAttribute(element, 'id', 'new-id');
+      expect(element.id).toBe('new-id');
+    });
+
+    test('should not throw error if element is null', () => {
+      expect(() => setAttribute(null, 'data-test', 'value')).not.toThrow();
+    });
+
+    test('should not throw error if attributeName is null or undefined', () => {
+      expect(() => setAttribute(element, null, 'value')).not.toThrow();
+      expect(() => setAttribute(element, undefined, 'value')).not.toThrow();
     });
   });
 });

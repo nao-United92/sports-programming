@@ -117,3 +117,16 @@ export function randomString(length) {
   }
   return result;
 }
+
+/**
+ * Checks if a value is a plain object (created by Object constructor or null prototype).
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a plain object, false otherwise.
+ */
+export function isPlainObject(value) {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === null || proto === Object.prototype;
+}

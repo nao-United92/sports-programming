@@ -1,4 +1,3 @@
-
 /**
  * Attaches an event listener to an element, supporting event delegation.
  * @param {HTMLElement} element The element to attach the listener to.
@@ -51,7 +50,8 @@ export function off(element, eventName, handler) {
     } else {
       element.removeEventListener(eventName, handler);
     }
-  } else {
+  }
+  else {
     element.removeEventListener(eventName, handler);
   }
 }
@@ -113,4 +113,16 @@ export function hasClass(element, className) {
 export function once(element, eventName, handler) {
   if (!element) return;
   element.addEventListener(eventName, handler, { once: true });
+}
+
+/**
+ * Sets an attribute on an HTML element.
+ * @param {HTMLElement} element The element to set the attribute on.
+ * @param {string} attributeName The name of the attribute.
+ * @param {string} value The value of the attribute.
+ */
+export function setAttribute(element, attributeName, value) {
+  if (element && attributeName) {
+    element.setAttribute(attributeName, value);
+  }
 }
