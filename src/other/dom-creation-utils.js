@@ -118,3 +118,21 @@ export function insertBefore(newElement, referenceElement) {
   referenceElement.parentNode.insertBefore(newElement, referenceElement);
   return newElement;
 }
+
+/**
+ * Creates a new HTML element with optional attributes and inner HTML content.
+ * @param {string} tagName The tag name of the element to create (e.g., 'div', 'span').
+ * @param {object} [attributes={}] An object of attribute key-value pairs.
+ * @param {string} [innerHTML=''] The inner HTML content for the element.
+ * @returns {HTMLElement} The newly created HTMLElement.
+ */
+export function createElementWithHTML(tagName, attributes = {}, innerHTML = '') {
+  const element = document.createElement(tagName);
+  for (const key in attributes) {
+    if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+      element.setAttribute(key, attributes[key]);
+    }
+  }
+  element.innerHTML = innerHTML;
+  return element;
+}

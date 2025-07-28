@@ -226,4 +226,30 @@ describe('dom-creation-utils', () => {
       expect(insertBefore(createElement('span'), createElement('p'))).toBeNull(); // No parent
     });
   });
+
+  describe('createElementWithHTML', () => {
+    test('should create an element with inner HTML content', () => {
+      const el = createElementWithHTML('div', {}, '<span>Hello</span>');
+      expect(el.tagName).toBe('DIV');
+      expect(el.innerHTML).toBe('<span>Hello</span>');
+    });
+
+    test('should create an element with attributes and inner HTML', () => {
+      const el = createElementWithHTML('p', { id: 'my-paragraph' }, '<strong>Important</strong> text.');
+      expect(el.id).toBe('my-paragraph');
+      expect(el.innerHTML).toBe('<strong>Important</strong> text.');
+    });
+
+    test('should create an empty element if no HTML is provided', () => {
+      const el = createElementWithHTML('span');
+      expect(el.tagName).toBe('SPAN');
+      expect(el.innerHTML).toBe('');
+    });
+
+    test('should handle empty attributes object', () => {
+      const el = createElementWithHTML('a', {}, 'Link');
+      expect(el.tagName).toBe('A');
+      expect(el.innerHTML).toBe('Link');
+    });
+  });
 });

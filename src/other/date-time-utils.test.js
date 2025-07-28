@@ -1,4 +1,3 @@
-
 import {
   formatDateCustom,
   addDays,
@@ -6,6 +5,7 @@ import {
   isToday,
   startOfDay,
   endOfDay,
+  getCurrentTimestamp
 } from './date-time-utils';
 
 describe('date-time-utils', () => {
@@ -196,6 +196,16 @@ describe('date-time-utils', () => {
     test('should format to "X years ago"', () => {
       const date = new Date(MOCK_NOW.getTime() - 3 * 365 * 24 * 60 * 60 * 1000); // 3 years ago
       expect(formatRelativeTime(date, MOCK_NOW)).toBe('3 years ago');
+    });
+  });
+
+  describe('getCurrentTimestamp', () => {
+    test('should return the current timestamp', () => {
+      const now = Date.now();
+      const timestamp = getCurrentTimestamp();
+      // Allow for a small difference due to execution time
+      expect(timestamp).toBeGreaterThanOrEqual(now);
+      expect(timestamp).toBeLessThanOrEqual(now + 10); // Within 10ms
     });
   });
 });

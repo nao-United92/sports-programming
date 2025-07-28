@@ -124,3 +124,12 @@ export function formatRelativeTime(date, now = new Date()) {
     return `${years} years ago`;
   }
 }
+
+/**
+ * Gets the current timestamp in milliseconds.
+ * @returns {number} The current timestamp.
+ */
+export function getCurrentTimestamp() {
+  return Date.now();
+}
+
