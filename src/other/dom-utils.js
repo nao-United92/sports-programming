@@ -355,3 +355,23 @@ export function getScrollPosition(element = document.documentElement) {
   }
   return { x: 0, y: 0 };
 }
+
+/**
+ * Checks if a given element is a descendant of another element.
+ * @param {HTMLElement} descendant The potential descendant element.
+ * @param {HTMLElement} ancestor The potential ancestor element.
+ * @returns {boolean} True if the descendant is a descendant of the ancestor, false otherwise.
+ */
+export function isDescendant(descendant, ancestor) {
+  if (!descendant || !ancestor) {
+    return false;
+  }
+  let node = descendant.parentNode;
+  while (node !== null) {
+    if (node === ancestor) {
+      return true;
+    }
+    node = node.parentNode;
+  }
+  return false;
+}

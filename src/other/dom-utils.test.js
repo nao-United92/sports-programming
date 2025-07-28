@@ -1,4 +1,4 @@
-import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml, isElementVisible, hasAttribute, createElementWithAttributes, isElementFullyInViewport, isChildOf } from './dom-utils.js';
+import { selectElement, selectAllElements, createElement, appendChild, removeElement, show, hide, toggle, addClass, removeClass, hasClass, setAttributes, appendChildren, getStyle, setStyle, getText, setText, getHtml, setHtml, isElementVisible, hasAttribute, createElementWithAttributes, isElementFullyInViewport, isChildOf, hasAttributeValue, getScrollPosition, isDescendant } from './dom-utils.js';
 
 describe('dom-utils', () => {
   beforeEach(() => {
@@ -430,13 +430,30 @@ describe('dom-utils', () => {
   });
 
   describe('getScrollPosition', () => {
+    let originalScrollX, originalScrollY, originalScrollLeft, originalScrollTop;
+
+    beforeEach(() => {
+      originalScrollX = window.scrollX;
+      originalScrollY = window.scrollY;
+      originalScrollLeft = document.documentElement.scrollLeft;
+      originalScrollTop = document.documentElement.scrollTop;
+
+      Object.defineProperty(window, 'scrollX', { value: 0, writable: true });
+      Object.defineProperty(window, 'scrollY', { value: 0, writable: true });
+      Object.defineProperty(document.documentElement, 'scrollLeft', { value: 0, writable: true });
+      Object.defineProperty(document.documentElement, 'scrollTop', { value: 0, writable: true });
+    });
+
+    afterEach(() => {
+      Object.defineProperty(window, 'scrollX', { value: originalScrollX, writable: true });
+      Object.defineProperty(window, 'scrollY', { value: originalScrollY, writable: true });
+      Object.defineProperty(document.documentElement, 'scrollLeft', { value: originalScrollLeft, writable: true });
+      Object.defineProperty(document.documentElement, 'scrollTop', { value: originalScrollTop, writable: true });
+    });
+
     test('should return the scroll position of the document', () => {
-      // Mock window and document scroll properties
       Object.defineProperty(window, 'scrollX', { value: 100, writable: true });
       Object.defineProperty(window, 'scrollY', { value: 200, writable: true });
-      Object.defineProperty(document.documentElement, 'scrollLeft', { value: 100, writable: true });
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 200, writable: true });
-
       const scrollPos = getScrollPosition();
       expect(scrollPos).toEqual({ x: 100, y: 200 });
     });
@@ -453,6 +470,47 @@ describe('dom-utils', () => {
     test('should return {x: 0, y: 0} for null or undefined element', () => {
       expect(getScrollPosition(null)).toEqual({ x: 0, y: 0 });
       expect(getScrollPosition(undefined)).toEqual({ x: 0, y: 0 });
+    });
+  });
+
+  describe('isDescendant', () => {
+    let ancestorEl, descendantEl, grandDescendantEl, unrelatedEl;
+
+    beforeEach(() => {
+      document.body.innerHTML = '';
+      ancestorEl = createElement('div', { id: 'ancestor' });
+      descendantEl = createElement('span', { id: 'descendant' });
+      grandDescendantEl = createElement('p', { id: 'grand-descendant' });
+      unrelatedEl = createElement('div', { id: 'unrelated' });
+
+      ancestorEl.appendChild(descendantEl);
+      descendantEl.appendChild(grandDescendantEl);
+      document.body.appendChild(ancestorEl);
+      document.body.appendChild(unrelatedEl);
+    });
+
+    test('should return true if descendant is a direct child of ancestor', () => {
+      expect(isDescendant(descendantEl, ancestorEl)).toBe(true);
+    });
+
+    test('should return true if descendant is a grand-child of ancestor', () => {
+      expect(isDescendant(grandDescendantEl, ancestorEl)).toBe(true);
+    });
+
+    test('should return false if descendant is not a descendant of ancestor', () => {
+      expect(isDescendant(unrelatedEl, ancestorEl)).toBe(false);
+      expect(isDescendant(ancestorEl, descendantEl)).toBe(false); // Ancestor is not descendant of descendant
+    });
+
+    test('should return false if descendant is the same as ancestor', () => {
+      expect(isDescendant(ancestorEl, ancestorEl)).toBe(false);
+    });
+
+    test('should return false for null or undefined inputs', () => {
+      expect(isDescendant(null, ancestorEl)).toBe(false);
+      expect(isDescendant(descendantEl, null)).toBe(false);
+      expect(isDescendant(undefined, ancestorEl)).toBe(false);
+      expect(isDescendant(descendantEl, undefined)).toBe(false);
     });
   });
 });
