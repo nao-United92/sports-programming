@@ -100,4 +100,22 @@ describe('dom-event-utils', () => {
       consoleWarnSpy.mockRestore();
     });
   });
+
+  describe('preventDefault', () => {
+    test('should call preventDefault on the event object', () => {
+      const mockEvent = { preventDefault: jest.fn() };
+      preventDefault(mockEvent);
+      expect(mockEvent.preventDefault).toHaveBeenCalledTimes(1);
+    });
+
+    test('should not throw error if event is null or undefined', () => {
+      expect(() => preventDefault(null)).not.toThrow();
+      expect(() => preventDefault(undefined)).not.toThrow();
+    });
+
+    test('should not throw error if event.preventDefault is not a function', () => {
+      const mockEvent = {};
+      expect(() => preventDefault(mockEvent)).not.toThrow();
+    });
+  });
 });

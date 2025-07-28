@@ -224,4 +224,23 @@ describe('type-checking-utils', () => {
       expect(isIterable(true)).toBe(false);
     });
   });
+
+  describe('isDate', () => {
+    test('should return true for a valid Date object', () => {
+      expect(isDate(new Date())).toBe(true);
+      expect(isDate(new Date('2023-01-01'))).toBe(true);
+    });
+
+    test('should return false for an invalid Date object', () => {
+      expect(isDate(new Date('invalid'))).toBe(false);
+    });
+
+    test('should return false for non-Date objects', () => {
+      expect(isDate(null)).toBe(false);
+      expect(isDate(undefined)).toBe(false);
+      expect(isDate('2023-01-01')).toBe(false);
+      expect(isDate(123)).toBe(false);
+      expect(isDate({})).toBe(false);
+    });
+  });
 });

@@ -118,3 +118,12 @@ export function isPromise(value) {
 export function isIterable(value) {
   return value !== null && typeof value[Symbol.iterator] === 'function';
 }
+
+/**
+ * Checks if a value is a Date object.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a Date object, false otherwise.
+ */
+export function isDate(value) {
+  return value instanceof Date && !isNaN(value);
+}

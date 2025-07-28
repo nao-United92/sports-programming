@@ -41,7 +41,7 @@ export function addEventListenerOnce(element, eventType, listener, options) {
 
 /**
  * Dispatches a custom event on a given HTML element.
- * @param {EventTarget} element The HTML element or EventTarget to dispatch the event on.
+ * @param {EventTarget} element The HTML element or EventTarget to dispatch the event on..
  * @param {string} eventName The name of the custom event.
  * @param {object} [detail={}] An object containing custom data to pass with the event.
  */
@@ -56,4 +56,14 @@ export function dispatchCustomEvent(element, eventName, detail = {}) {
     cancelable: true, // Allow the event to be cancelled
   });
   element.dispatchEvent(event);
+}
+
+/**
+ * Prevents the default action of an event.
+ * @param {Event} event The event object.
+ */
+export function preventDefault(event) {
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault();
+  }
 }
