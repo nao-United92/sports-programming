@@ -251,3 +251,20 @@ export function stopAnimation(element) {
     });
   }
 }
+
+/**
+ * Toggles the slide animation of an element (slideUp if visible, slideDown if hidden).
+ * @param {HTMLElement} element The HTML element to toggle.
+ * @param {number} [duration=400] The duration of the animation in milliseconds.
+ * @returns {Promise<void>} A Promise that resolves when the animation is complete.
+ */
+export function slideToggle(element, duration = 400) {
+  if (!element) {
+    return Promise.resolve();
+  }
+  if (element.offsetHeight === 0) {
+    return slideDown(element, duration);
+  } else {
+    return slideUp(element, duration);
+  }
+}

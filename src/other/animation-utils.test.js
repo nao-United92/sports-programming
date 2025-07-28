@@ -193,4 +193,38 @@ describe('animation-utils', () => {
       stopAnimation(el);
     });
   });
+
+  describe('slideToggle', () => {
+    test('should slide down if element is hidden', async () => {
+      const el = document.createElement('div');
+      el.style.display = 'none';
+      el.style.height = '0px';
+      el.innerHTML = '<div style="height: 50px;">Content</div>';
+      document.body.appendChild(el);
+
+      await slideToggle(el, 10);
+
+      expect(el.style.display).toBe('block');
+      expect(el.style.height).toBe('');
+      document.body.removeChild(el);
+    });
+
+    test('should slide up if element is visible', async () => {
+      const el = document.createElement('div');
+      el.style.display = 'block';
+      el.style.height = '50px';
+      el.innerHTML = '<div style="height: 50px;">Content</div>';
+      document.body.appendChild(el);
+
+      await slideToggle(el, 10);
+
+      expect(el.style.display).toBe('none');
+      expect(el.style.height).toBe('');
+      document.body.removeChild(el);
+    });
+
+    test('should resolve immediately if element is null', async () => {
+      await expect(slideToggle(null, 10)).resolves.toBeUndefined();
+    });
+  });
 });

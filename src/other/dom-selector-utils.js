@@ -23,3 +23,16 @@ export function selectAllElements(selector, parent = document) {
   }
   return parent.querySelectorAll(selector);
 }
+
+/**
+ * Finds the closest ancestor of an element that matches a CSS selector.
+ * @param {HTMLElement} element The starting element.
+ * @param {string} selector The CSS selector to match against.
+ * @returns {HTMLElement|null} The closest matching ancestor, or null if not found.
+ */
+export function closest(element, selector) {
+  if (!element || typeof element.closest !== 'function') {
+    return null;
+  }
+  return element.closest(selector);
+}
