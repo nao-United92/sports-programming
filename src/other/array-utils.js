@@ -447,3 +447,17 @@ export function flatten(arr, depth = 1) {
   return arr.flat(depth);
 }
 
+/**
+ * Gets the element at the nth position of an array. 
+ * If n is negative, the nth element from the end is returned.
+ * @param {Array} arr The array to query.
+ * @param {number} n The index of the element to return.
+ * @returns {*} Returns the nth element of `array`.
+ */
+export function getNthElement(arr, n = 0) {
+  if (!Array.isArray(arr)) {
+    return undefined;
+  }
+  const index = n < 0 ? arr.length + n : n;
+  return arr[index];
+}

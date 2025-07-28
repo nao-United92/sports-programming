@@ -133,7 +133,8 @@ export function kebabCase(str) {
   if (typeof str !== 'string' || !str) {
     return '';
   }
-  return str.replace(/([a-z0-9]|(?<=[a-z]))([A-Z])/g, '$1-$2').replace(/_|[\s]+/g, '-').toLowerCase();
+  return str.replace(/([a-z0-9]|(?<=[a-z]))([A-Z])/g, '$1-$2').replace(/_|[
+\s]+/g, '-').toLowerCase();
 }
 
 /**
@@ -269,5 +270,18 @@ export function escapeHTML(str) {
     .replace(/'/g, '&#39;');
 }
 
-
-
+/**
+ * Converts a string into a URL-friendly slug.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function slugify(str) {
+  if (typeof str !== 'string' || !str) {
+    return '';
+  }
+  return str
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '');
+}

@@ -1,4 +1,4 @@
-import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate, toCamelCase, toSnakeCase, toTitleCase } from './string-utils.js';
+import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate, toCamelCase, toSnakeCase, toTitleCase, slugify } from './string-utils.js';
 
 describe('capitalize', () => {
   test('should capitalize the first letter of a string', () => {
@@ -116,7 +116,7 @@ describe('removeWhitespace', () => {
     expect(removeWhitespace('  leading and trailing  ')).toBe('leadingandtrailing');
     expect(removeWhitespace('Multiple   spaces')).toBe('Multiplespaces');
     expect(removeWhitespace(`	Tabs
-andNewlines`)).toBe('TabsandNewlines');
+andNewlines`)).toBe('TabsandNewlines');
     expect(removeWhitespace('')).toBe('');
   });
 
@@ -376,6 +376,21 @@ describe('toTitleCase', () => {
       expect(escapeHTML(123)).toBe('');
       expect(escapeHTML(null)).toBe('');
       expect(escapeHTML(undefined)).toBe('');
+    });
+  });
+
+  describe('slugify', () => {
+    test('should convert a string to a URL-friendly slug', () => {
+      expect(slugify('Hello World')).toBe('hello-world');
+      expect(slugify('  leading and trailing spaces  ')).toBe('leading-and-trailing-spaces');
+      expect(slugify('special!@#characters')).toBe('specialcharacters');
+      expect(slugify('MiXeD CaSe')).toBe('mixed-case');
+    });
+
+    test('should return an empty string for non-string inputs', () => {
+      expect(slugify(123)).toBe('');
+      expect(slugify(null)).toBe('');
+      expect(slugify(undefined)).toBe('');
     });
   });
 });
