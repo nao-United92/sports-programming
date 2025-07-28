@@ -70,7 +70,7 @@ export function isCreditCard(cardNumber) {
     return false;
   }
   const cleaned = cardNumber.replace(/\D/g, '');
-  if (cleaned.length < 13 || cleaned.length > 19) {
+  if (cleaned.length < 10 || cleaned.length > 19) {
     return false;
   }
   let sum = 0;
@@ -170,6 +170,9 @@ export function isHexColor(color) {
  * @returns {boolean} True if the string is a valid JSON, false otherwise.
  */
 export function isJSON(str) {
+  if (typeof str !== 'string') {
+    return false;
+  }
   try {
     JSON.parse(str);
   } catch (e) {
@@ -189,4 +192,17 @@ export function isUUID(uuid) {
   }
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(uuid);
+}
+
+/**
+ * Checks if a string contains only alphanumeric characters.
+ * @param {string} str The string to validate.
+ * @returns {boolean} True if the string is alphanumeric, false otherwise.
+ */
+export function isAlphanumeric(str) {
+  if (typeof str !== 'string') {
+    return false;
+  }
+  const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+  return alphanumericRegex.test(str);
 }

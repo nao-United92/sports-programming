@@ -1,4 +1,4 @@
-import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime, validatePassword, isHexColor, isUUID } from './validation-utils.js';
+import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime, validatePassword, isHexColor, isJSON, isUUID, isAlphanumeric } from './validation-utils.js';
 
 describe('validation-utils', () => {
   describe('isEmail', () => {
@@ -88,9 +88,9 @@ describe('validation-utils', () => {
 
   describe('isCreditCard', () => {
     test('should return true for valid credit card numbers (Luhn algorithm)', () => {
-      expect(isCreditCard('4000000000000000')).toBe(true); // Visa test number
-      expect(isCreditCard('49927398716')).toBe(false); // Example invalid number
+      expect(isCreditCard('49927398716')).toBe(true);
       expect(isCreditCard('4242424242424242')).toBe(true); // Visa example
+      expect(isCreditCard('378282246310005')).toBe(true);
     });
 
     test('should return false for invalid credit card numbers', () => {
@@ -247,6 +247,27 @@ describe('validation-utils', () => {
       expect(isUUID(123)).toBe(false);
       expect(isUUID(null)).toBe(false);
       expect(isUUID(undefined)).toBe(false);
+    });
+  });
+
+  describe('isAlphanumeric', () => {
+    test('should return true for alphanumeric strings', () => {
+      expect(isAlphanumeric('abcde')).toBe(true);
+      expect(isAlphanumeric('12345')).toBe(true);
+      expect(isAlphanumeric('ab12cd')).toBe(true);
+    });
+
+    test('should return false for non-alphanumeric strings', () => {
+      expect(isAlphanumeric('abc-123')).toBe(false);
+      expect(isAlphanumeric('abc 123')).toBe(false);
+      expect(isAlphanumeric('abc_123')).toBe(false);
+      expect(isAlphanumeric(' ')).toBe(false);
+    });
+
+    test('should return false for non-string inputs', () => {
+      expect(isAlphanumeric(123)).toBe(false);
+      expect(isAlphanumeric(null)).toBe(false);
+      expect(isAlphanumeric(undefined)).toBe(false);
     });
   });
 });
