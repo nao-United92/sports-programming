@@ -136,3 +136,26 @@ describe('escapeHTML', () => {
     expect(escapeHTML(123)).toBe('');
   });
 });
+
+describe('toTitleCase', () => {
+  test('should convert a string to title case', () => {
+    expect(toTitleCase('hello world')).toBe('Hello World');
+    expect(toTitleCase('this is a test string')).toBe('This Is A Test String');
+    expect(toTitleCase('another-example-string')).toBe('Another-Example-String');
+    expect(toTitleCase('already Title Case')).toBe('Already Title Case');
+  });
+
+  test('should handle empty string', () => {
+    expect(toTitleCase('')).toBe('');
+  });
+
+  test('should handle single word string', () => {
+    expect(toTitleCase('word')).toBe('Word');
+  });
+
+  test('should return empty string for non-string inputs', () => {
+      expect(toTitleCase(123)).toBe('');
+      expect(toTitleCase(null)).toBe('');
+      expect(toTitleCase(undefined)).toBe('');
+    });
+  });

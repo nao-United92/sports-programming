@@ -165,4 +165,39 @@ describe('object-array-utils', () => {
       expect(newObj).toEqual({ a: 1 });
     });
   });
+
+  describe('containsObjectByKey', () => {
+    const arr = [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+      { id: 3, name: 'Charlie' },
+    ];
+
+    test('should return true if an object with the key-value pair is found', () => {
+      expect(containsObjectByKey(arr, 'id', 2)).toBe(true);
+      expect(containsObjectByKey(arr, 'name', 'Alice')).toBe(true);
+    });
+
+    test('should return false if no object with the key-value pair is found', () => {
+      expect(containsObjectByKey(arr, 'id', 99)).toBe(false);
+      expect(containsObjectByKey(arr, 'name', 'David')).toBe(false);
+    });
+
+    test('should return false if the key does not exist in any object', () => {
+      expect(containsObjectByKey(arr, 'age', 30)).toBe(false);
+    });
+
+    test('should return false for non-array input', () => {
+      expect(containsObjectByKey(null, 'id', 1)).toBe(false);
+      expect(containsObjectByKey(undefined, 'id', 1)).toBe(false);
+      expect(containsObjectByKey({}, 'id', 1)).toBe(false);
+    });
+
+    test('should handle objects with null or undefined values', () => {
+      const arrWithNull = [{ id: 1, value: null }, { id: 2, value: undefined }];
+      expect(containsObjectByKey(arrWithNull, 'value', null)).toBe(true);
+      expect(containsObjectByKey(arrWithNull, 'value', undefined)).toBe(true);
+      expect(containsObjectByKey(arrWithNull, 'value', 'someValue')).toBe(false);
+    });
+  });
 });

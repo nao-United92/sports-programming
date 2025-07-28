@@ -128,3 +128,17 @@ export function pick(obj, keys) {
   }
   return newObj;
 }
+
+/**
+ * Checks if an array of objects contains an object with a specific key-value pair.
+ * @param {Array<object>} arr The array of objects to search.
+ * @param {string} key The key to check.
+ * @param {*} value The value to match.
+ * @returns {boolean} True if an object with the key-value pair is found, false otherwise.
+ */
+export function containsObjectByKey(arr, key, value) {
+  if (!Array.isArray(arr)) {
+    return false;
+  }
+  return arr.some(obj => obj && obj[key] === value);
+}
