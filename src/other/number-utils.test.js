@@ -282,4 +282,32 @@ describe('number-utils', () => {
       expect(sum()).toBe(0);
     });
   });
+
+  describe('isPowerOfTwo', () => {
+    test('should return true for powers of two', () => {
+      expect(isPowerOfTwo(1)).toBe(true);
+      expect(isPowerOfTwo(2)).toBe(true);
+      expect(isPowerOfTwo(4)).toBe(true);
+      expect(isPowerOfTwo(8)).toBe(true);
+      expect(isPowerOfTwo(1024)).toBe(true);
+    });
+
+    test('should return false for non-powers of two', () => {
+      expect(isPowerOfTwo(0)).toBe(false);
+      expect(isPowerOfTwo(3)).toBe(false);
+      expect(isPowerOfTwo(5)).toBe(false);
+      expect(isPowerOfTwo(6)).toBe(false);
+      expect(isPowerOfTwo(1000)).toBe(false);
+    });
+
+    test('should return false for negative numbers', () => {
+      expect(isPowerOfTwo(-2)).toBe(false);
+      expect(isPowerOfTwo(-4)).toBe(false);
+    });
+
+    test('should return false for non-integer numbers', () => {
+      expect(isPowerOfTwo(2.5)).toBe(false);
+      expect(isPowerOfTwo(0.5)).toBe(false);
+    });
+  });
 });

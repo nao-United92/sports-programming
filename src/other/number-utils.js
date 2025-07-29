@@ -206,3 +206,12 @@ export function toOrdinal(num) {
 export function sum(...numbers) {
   return numbers.reduce((acc, num) => acc + (isNumber(num) ? num : 0), 0);
 }
+
+/**
+ * Checks if a number is a power of two.
+ * @param {number} num The number to check.
+ * @returns {boolean} True if the number is a power of two, false otherwise.
+ */
+export function isPowerOfTwo(num) {
+  return num > 0 && (num & (num - 1)) === 0;
+}
