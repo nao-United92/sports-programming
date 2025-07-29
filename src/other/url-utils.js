@@ -210,3 +210,17 @@ export function isExternalLink(url) {
     return false;
   }
 }
+
+/**
+ * Gets the base URL (protocol + hostname + port) from a given URL.
+ * @param {string} url The URL string.
+ * @returns {string} The base URL.
+ */
+export function getBaseUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.origin;
+  } catch (e) {
+    return '';
+  }
+}

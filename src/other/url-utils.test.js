@@ -215,4 +215,18 @@ describe('url-utils', () => {
       expect(isExternalLink(undefined)).toBe(false);
     });
   });
+
+  describe('getBaseUrl', () => {
+    test('should return the base URL for a valid URL', () => {
+      expect(getBaseUrl('https://www.example.com/path/to/page.html?query=string#hash')).toBe('https://www.example.com');
+      expect(getBaseUrl('http://localhost:8080/api/data')).toBe('http://localhost:8080');
+      expect(getBaseUrl('ftp://ftp.example.org/file.txt')).toBe('ftp://ftp.example.org');
+    });
+
+    test('should return an empty string for an invalid URL', () => {
+      expect(getBaseUrl('invalid-url')).toBe('');
+      expect(getBaseUrl(null)).toBe('');
+      expect(getBaseUrl(undefined)).toBe('');
+    });
+  });
 });
