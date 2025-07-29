@@ -285,3 +285,29 @@ export function slugify(str) {
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '');
 }
+
+/**
+ * Converts a string from snake_case or kebab-case to camelCase.
+ *
+ * @param {string} str The input string.
+ * @returns {string} The camelCased string.
+ */
+export function toCamelCase(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.replace(/[-_](.)/g, (_, char) => char.toUpperCase());
+}
+
+/**
+ * Converts a string from camelCase to snake_case.
+ *
+ * @param {string} str The input string.
+ * @returns {string} The snake_cased string.
+ */
+export function toSnakeCase(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
+}

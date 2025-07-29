@@ -393,4 +393,3 @@ describe('toTitleCase', () => {
       expect(slugify(undefined)).toBe('');
     });
   });
-});

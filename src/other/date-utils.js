@@ -226,3 +226,20 @@ export function getQuarter(date) {
   return Math.ceil(month / 3);
 }
 
+/**
+ * Checks if a given date is within a specified date range (inclusive).
+ * @param {Date} date The date to check.
+ * @param {Date} startDate The start date of the range.
+ * @param {Date} endDate The end date of the range.
+ * @returns {boolean} True if the date is within the range, false otherwise.
+ */
+export function isDateInRange(date, startDate, endDate) {
+  if (!isValidDate(date) || !isValidDate(startDate) || !isValidDate(endDate)) {
+    return false;
+  }
+  const time = date.getTime();
+  const start = startDate.getTime();
+  const end = endDate.getTime();
+  return time >= start && time <= end;
+}
+
