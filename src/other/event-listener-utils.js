@@ -82,3 +82,28 @@ export function off(element, eventType, listener, options) {
     element.removeEventListener(eventType, listener, options);
   }
 }
+
+/**
+ * Attaches an event listener that fires when a click occurs outside the specified element.
+ * @param {HTMLElement} element The element to monitor for outside clicks.
+ * @param {Function} callback The function to call when an outside click occurs.
+ * @param {EventTarget} [triggerElement=document] The element that triggers the event listener (e.g., document or a specific parent).
+ */
+export function onClickOutside(element, callback, triggerElement = document) {
+  if (!element || !callback) {
+    return;
+  }
+
+  const handleClick = (event) => {
+    if (!element.contains(event.target) && event.target !== element) {
+      callback(event);
+    }
+  };
+
+  triggerElement.addEventListener('click', handleClick);
+
+  // Return a function to remove the event listener
+  return () => {
+    triggerElement.removeEventListener('click', handleClick);
+  };
+}

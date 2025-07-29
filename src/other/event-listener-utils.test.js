@@ -125,4 +125,51 @@ describe('event-listener-utils', () => {
       // No error should be thrown
     });
   });
+
+  describe('onClickOutside', () => {
+    let outsideElement;
+
+    beforeEach(() => {
+      outsideElement = document.createElement('div');
+      document.body.appendChild(outsideElement);
+    });
+
+    afterEach(() => {
+      document.body.removeChild(outsideElement);
+    });
+
+    test('should call callback when clicking outside the element', () => {
+      const removeListener = onClickOutside(element, listener);
+      outsideElement.click();
+      expect(listener).toHaveBeenCalledTimes(1);
+      removeListener(); // Clean up the event listener
+    });
+
+    test('should not call callback when clicking inside the element', () => {
+      const removeListener = onClickOutside(element, listener);
+      element.click();
+      expect(listener).not.toHaveBeenCalled();
+      removeListener(); // Clean up the event listener
+    });
+
+    test('should not call callback when clicking on the element itself', () => {
+      const removeListener = onClickOutside(element, listener);
+      element.click();
+      expect(listener).not.toHaveBeenCalled();
+      removeListener(); // Clean up the event listener
+    });
+
+    test('should remove the event listener when the returned function is called', () => {
+      const removeListener = onClickOutside(element, listener);
+      removeListener();
+      outsideElement.click();
+      expect(listener).not.toHaveBeenCalled();
+    });
+
+    test('should not throw error if element is null', () => {
+      onClickOutside(null, listener);
+      outsideElement.click();
+      // No error should be thrown
+    });
+  });
 });
