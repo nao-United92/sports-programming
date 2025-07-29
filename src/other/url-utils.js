@@ -196,3 +196,17 @@ export function isValidURL(url) {
     return false;
   }
 }
+
+/**
+ * Checks if a given URL is an external link (i.e., not on the same domain).
+ * @param {string} url The URL string to check.
+ * @returns {boolean} True if the URL is an external link, false otherwise.
+ */
+export function isExternalLink(url) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname !== window.location.hostname;
+  } catch (e) {
+    return false;
+  }
+}
