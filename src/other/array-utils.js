@@ -461,3 +461,16 @@ export function getNthElement(arr, n = 0) {
   const index = n < 0 ? arr.length + n : n;
   return arr[index];
 }
+
+/**
+ * Checks if one array is a subset of another array.
+ * @param {Array} superset The array to check against.
+ * @param {Array} subset The array to check if it's a subset.
+ * @returns {boolean} True if the subset is a subset of the superset, false otherwise.
+ */
+export function isSubset(superset, subset) {
+  if (!Array.isArray(superset) || !Array.isArray(subset)) {
+    return false;
+  }
+  return subset.every(val => superset.includes(val));
+}

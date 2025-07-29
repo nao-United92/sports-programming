@@ -502,10 +502,29 @@ describe('array-utils', () => {
       expect(flatten(arr)).toEqual([1, 2, [3]]);
     });
 
-    it('should return an empty array for non-array inputs', () => {
+    test('should return an empty array for non-array inputs', () => {
       expect(flatten(null)).toEqual([]);
       expect(flatten(undefined)).toEqual([]);
       expect(flatten(123)).toEqual([]);
+    });
+  });
+
+  describe('isSubset', () => {
+    test('should return true if the subset is a subset of the superset', () => {
+      expect(isSubset([1, 2, 3, 4, 5], [2, 4])).toBe(true);
+      expect(isSubset(['a', 'b', 'c'], ['a', 'c'])).toBe(true);
+      expect(isSubset([1, 2, 3], [])).toBe(true);
+    });
+
+    test('should return false if the subset is not a subset of the superset', () => {
+      expect(isSubset([1, 2, 3], [2, 5])).toBe(false);
+      expect(isSubset(['a', 'b'], ['a', 'c'])).toBe(false);
+    });
+
+    test('should return false for non-array inputs', () => {
+      expect(isSubset(null, [1])).toBe(false);
+      expect(isSubset([1], undefined)).toBe(false);
+      expect(isSubset(123, [1])).toBe(false);
     });
   });
 });
