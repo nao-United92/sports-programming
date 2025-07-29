@@ -182,3 +182,37 @@ export function getAllLocalStorageItems() {
   }
   return items;
 }
+
+/**
+ * Sets an item in localStorage with an expiry time.
+ * @param {string} key The key to store the item under.
+ * @param {*} value The value to store.
+ * @param {number} ttl The time to live in milliseconds.
+ */
+export function setWithExpiry(key, value, ttl) {
+  const now = new Date();
+  const item = {
+    value: value,
+    expiry: now.getTime() + ttl,
+  };
+  localStorage.setItem(key, JSON.stringify(item));
+}
+
+/**
+ * Gets an item from localStorage that was set with an expiry time.
+ * @param {string} key The key of the item to retrieve.
+ * @returns {*} The retrieved value, or null if not found or expired.
+ */
+export function getWithExpiry(key) {
+  const itemStr = localStorage.getItem(key);
+  if (!itemStr) {
+    return null;
+  }
+  const item = JSON.parse(itemStr);
+  const now = new Date();
+  if (now.getTime() > item.expiry) {
+    localStorage.removeItem(key);
+    return null;
+  }
+  return item.value;
+}

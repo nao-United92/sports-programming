@@ -281,6 +281,62 @@ describe('storage-utils', () => {
       expect(allItems).toEqual({ rawString: 'just a string' });
     });
   });
+
+  describe('setWithExpiry and getWithExpiry', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+      localStorageMock.clear();
+    });
+
+    afterEach(() => {
+      jest.runOnlyPendingTimers();
+      jest.useRealTimers();
+    });
+
+    test('setWithExpiry should store item with expiry', () => {
+      const testKey = 'expiringItem';
+      const testValue = { data: 'secret' };
+      const ttl = 1000 * 60 * 60; // 1 hour
+
+      setWithExpiry(testKey, testValue, ttl);
+
+      const storedItem = JSON.parse(localStorageMock.getItem(testKey));
+      expect(storedItem.value).toEqual(testValue);
+      expect(storedItem.expiry).toBeGreaterThan(Date.now());
+    });
+
+    test('getWithExpiry should retrieve item if not expired', () => {
+      const testKey = 'expiringItem';
+      const testValue = { data: 'secret' };
+      const ttl = 1000 * 60 * 60; // 1 hour
+
+      setWithExpiry(testKey, testValue, ttl);
+      jest.advanceTimersByTime(ttl / 2); // Advance time, but not past expiry
+
+      expect(getWithExpiry(testKey)).toEqual(testValue);
+    });
+
+    test('getWithExpiry should return null and remove item if expired', () => {
+      const testKey = 'expiringItem';
+      const testValue = { data: 'secret' };
+      const ttl = 1000 * 60 * 60; // 1 hour
+
+      setWithExpiry(testKey, testValue, ttl);
+      jest.advanceTimersByTime(ttl + 1); // Advance time past expiry
+
+      expect(getWithExpiry(testKey)).toBeNull();
+      expect(localStorageMock.removeItem).toHaveBeenCalledWith(testKey);
+    });
+
+    test('getWithExpiry should return null if item does not exist', () => {
+      expect(getWithExpiry('nonExistentExpiringItem')).toBeNull();
+    });
+
+    test('getWithExpiry should handle malformed stored data', () => {
+      localStorage.setItem('malformedItem', 'not json');
+      expect(getWithExpiry('malformedItem')).toBeNull();
+    });
+  });
 });
   });
 });
