@@ -430,3 +430,23 @@ export function isEmpty(value) {
   }
   return false;
 }
+
+/**
+ * Recursively freezes an object to make it immutable.
+ * @param {object} obj The object to freeze.
+ * @returns {object} The frozen object.
+ */
+export function deepFreeze(obj) {
+  if (typeof obj !== 'object' || obj === null || Object.isFrozen(obj)) {
+    return obj;
+  }
+
+  Object.freeze(obj);
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      deepFreeze(obj[key]);
+    }
+  }
+  return obj;
+}

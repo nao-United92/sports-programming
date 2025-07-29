@@ -638,4 +638,59 @@ describe('mapValues', () => {
       expect(isEmpty(false)).toBe(false);
     });
   });
+
+  describe('deepFreeze', () => {
+    test('should deeply freeze an object', () => {
+      const obj = {
+        a: 1,
+        b: {
+          c: 2,
+          d: [3, { e: 4 }],
+        },
+      };
+      deepFreeze(obj);
+
+      expect(Object.isFrozen(obj)).toBe(true);
+      expect(Object.isFrozen(obj.b)).toBe(true);
+      expect(Object.isFrozen(obj.b.d)).toBe(true);
+      expect(Object.isFrozen(obj.b.d[1])).toBe(true);
+
+      // Attempting to modify should throw an error in strict mode
+      // In non-strict mode, it would fail silently
+      const attemptModify = () => {
+        obj.a = 10;
+        obj.b.c = 20;
+        obj.b.d.push(5);
+        obj.b.d[1].e = 40;
+      };
+
+      // In a Jest environment, which typically runs in strict mode,
+      // these assignments will throw TypeError.
+      expect(() => { obj.a = 10; }).toThrow(TypeError);
+      expect(() => { obj.b.c = 20; }).toThrow(TypeError);
+      expect(() => { obj.b.d.push(5); }).toThrow(TypeError);
+      expect(() => { obj.b.d[1].e = 40; }).toThrow(TypeError);
+    });
+
+    test('should return the same object reference', () => {
+      const obj = { a: 1 };
+      const frozenObj = deepFreeze(obj);
+      expect(frozenObj).toBe(obj);
+    });
+
+    test('should handle non-object values', () => {
+      expect(deepFreeze(123)).toBe(123);
+      expect(deepFreeze('string')).toBe('string');
+      expect(deepFreeze(null)).toBe(null);
+      expect(deepFreeze(undefined)).toBe(undefined);
+    });
+
+    test('should handle already frozen objects', () => {
+      const obj = { a: 1 };
+      Object.freeze(obj);
+      const frozenObj = deepFreeze(obj);
+      expect(Object.isFrozen(frozenObj)).toBe(true);
+      expect(frozenObj).toBe(obj);
+    });
+  });
 });
