@@ -127,3 +127,12 @@ export function isIterable(value) {
 export function isDate(value) {
   return value instanceof Date && !isNaN(value);
 }
+
+/**
+ * Checks if a value is a Map object.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a Map object, false otherwise.
+ */
+export function isMap(value) {
+  return value instanceof Map;
+}

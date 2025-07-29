@@ -243,4 +243,22 @@ describe('type-checking-utils', () => {
       expect(isDate({})).toBe(false);
     });
   });
+
+  describe('isMap', () => {
+    test('should return true for a Map object', () => {
+      expect(isMap(new Map())).toBe(true);
+      expect(isMap(new Map([['key', 'value']]))).toBe(true);
+    });
+
+    test('should return false for non-Map objects', () => {
+      expect(isMap(null)).toBe(false);
+      expect(isMap(undefined)).toBe(false);
+      expect(isMap({})).toBe(false);
+      expect(isMap([])).toBe(false);
+      expect(isMap(new Set())).toBe(false);
+      expect(isMap(new Date())).toBe(false);
+      expect(isMap('string')).toBe(false);
+      expect(isMap(123)).toBe(false);
+    });
+  });
 });
