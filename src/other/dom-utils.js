@@ -385,3 +385,19 @@ export function isElementFocused(element) {
   return element === document.activeElement;
 }
 
+/**
+ * Checks if an element is scrollable.
+ * @param {HTMLElement} element The element to check.
+ * @returns {boolean} True if the element is scrollable, false otherwise.
+ */
+export function isScrollable(element) {
+  if (!element || element.nodeType !== 1) {
+    return false;
+  }
+  const style = window.getComputedStyle(element);
+  return (
+    (style.overflowY !== 'visible' && style.overflowY !== 'hidden' && element.scrollHeight > element.clientHeight) ||
+    (style.overflowX !== 'visible' && style.overflowX !== 'hidden' && element.scrollWidth > element.clientWidth)
+  );
+}
+

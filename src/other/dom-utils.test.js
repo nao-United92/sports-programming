@@ -542,4 +542,43 @@ describe('dom-utils', () => {
       expect(isElementFocused(null)).toBe(false);
     });
   });
+
+  describe('isScrollable', () => {
+    let scrollableDiv, nonScrollableDiv;
+
+    beforeEach(() => {
+      scrollableDiv = document.createElement('div');
+      scrollableDiv.style.width = '100px';
+      scrollableDiv.style.height = '100px';
+      scrollableDiv.style.overflow = 'auto';
+      scrollableDiv.innerHTML = '<div style="width: 200px; height: 200px;"></div>';
+      document.body.appendChild(scrollableDiv);
+
+      nonScrollableDiv = document.createElement('div');
+      nonScrollableDiv.style.width = '100px';
+      nonScrollableDiv.style.height = '100px';
+      nonScrollableDiv.style.overflow = 'hidden'; // or 'visible'
+      nonScrollableDiv.innerHTML = '<div style="width: 50px; height: 50px;"></div>';
+      document.body.appendChild(nonScrollableDiv);
+    });
+
+    afterEach(() => {
+      document.body.removeChild(scrollableDiv);
+      document.body.removeChild(nonScrollableDiv);
+    });
+
+    test('should return true for a scrollable element', () => {
+      expect(isScrollable(scrollableDiv)).toBe(true);
+    });
+
+    test('should return false for a non-scrollable element', () => {
+      expect(isScrollable(nonScrollableDiv)).toBe(false);
+    });
+
+    test('should return false for null or non-element inputs', () => {
+      expect(isScrollable(null)).toBe(false);
+      expect(isScrollable(undefined)).toBe(false);
+      expect(isScrollable(document.createTextNode('text'))).toBe(false);
+    });
+  });
 });
