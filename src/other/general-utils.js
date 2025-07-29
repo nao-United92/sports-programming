@@ -130,3 +130,12 @@ export function isPlainObject(value) {
   const proto = Object.getPrototypeOf(value);
   return proto === null || proto === Object.prototype;
 }
+
+/**
+ * Checks if a value is a Promise.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a Promise, false otherwise.
+ */
+export function isPromise(value) {
+  return value && typeof value.then === 'function' && typeof value.catch === 'function';
+}

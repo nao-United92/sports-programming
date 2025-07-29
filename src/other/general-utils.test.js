@@ -198,4 +198,28 @@ describe('general-utils', () => {
       expect(isPlainObject(new Set())).toBe(false);
     });
   });
+
+  describe('isPromise', () => {
+    test('should return true for a Promise object', () => {
+      const promise = Promise.resolve();
+      expect(isPromise(promise)).toBe(true);
+    });
+
+    test('should return true for an async function call', async () => {
+      async function asyncFunc() { return 1; }
+      expect(isPromise(asyncFunc())).toBe(true);
+    });
+
+    test('should return false for non-Promise objects', () => {
+      expect(isPromise(null)).toBe(false);
+      expect(isPromise(undefined)).toBe(false);
+      expect(isPromise(123)).toBe(false);
+      expect(isPromise('string')).toBe(false);
+      expect(isPromise(true)).toBe(false);
+      expect(isPromise({})).toBe(false);
+      expect(isPromise([])).toBe(false);
+      expect(isPromise({ then: () => {}, catch: 123 })).toBe(false); // Missing catch function
+      expect(isPromise({ then: 123, catch: () => {} })).toBe(false); // Missing then function
+    });
+  });
 });
