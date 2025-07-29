@@ -40,3 +40,17 @@ export function getDevicePixelRatio() {
 export function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
+
+/**
+ * Gets the user's operating system.
+ * @returns {string} The name of the OS (e.g., 'Windows', 'Mac OS', 'Linux', 'Android', 'iOS', 'Unknown').
+ */
+export function getOS() {
+  const userAgent = window.navigator.userAgent;
+  if (userAgent.indexOf('Windows NT') !== -1) return 'Windows';
+  if (userAgent.indexOf('Mac OS X') !== -1) return 'Mac OS';
+  if (userAgent.indexOf('Linux') !== -1) return 'Linux';
+  if (userAgent.indexOf('Android') !== -1) return 'Android';
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) return 'iOS';
+  return 'Unknown';
+}
