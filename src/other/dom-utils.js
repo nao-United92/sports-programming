@@ -375,3 +375,13 @@ export function isDescendant(descendant, ancestor) {
   }
   return false;
 }
+
+/**
+ * Checks if an element is currently focused.
+ * @param {HTMLElement} element The element to check.
+ * @returns {boolean} True if the element is focused, false otherwise.
+ */
+export function isElementFocused(element) {
+  return element === document.activeElement;
+}
+

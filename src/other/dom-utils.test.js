@@ -513,4 +513,33 @@ describe('dom-utils', () => {
       expect(isDescendant(descendantEl, undefined)).toBe(false);
     });
   });
+
+  describe('isElementFocused', () => {
+    let inputElement;
+
+    beforeEach(() => {
+      inputElement = document.createElement('input');
+      document.body.appendChild(inputElement);
+      inputElement.focus();
+    });
+
+    afterEach(() => {
+      document.body.removeChild(inputElement);
+    });
+
+    test('should return true if the element is focused', () => {
+      expect(isElementFocused(inputElement)).toBe(true);
+    });
+
+    test('should return false if the element is not focused', () => {
+      const anotherElement = document.createElement('button');
+      document.body.appendChild(anotherElement);
+      expect(isElementFocused(anotherElement)).toBe(false);
+      document.body.removeChild(anotherElement);
+    });
+
+    test('should return false for null element', () => {
+      expect(isElementFocused(null)).toBe(false);
+    });
+  });
 });
