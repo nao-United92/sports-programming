@@ -1,9 +1,22 @@
 /**
+ * Checks if a string contains only alphanumeric characters.
+ * @param {string} str The string to validate.
+ * @returns {boolean} True if the string is alphanumeric, false otherwise.
+ */
+export function isAlphanumeric(str) {
+  if (typeof str !== 'string') {
+    return false;
+  }
+  const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+  return alphanumericRegex.test(str);
+}
+
+/**
  * Checks if a string is a valid email address.
  * @param {string} email The string to validate.
  * @returns {boolean} True if the string is a valid email, false otherwise.
  */
-export function isEmail(email) {
+export function isValidEmail(email) {
   if (typeof email !== 'string') {
     return false;
   }

@@ -1,21 +1,21 @@
 import { isEmail, isPhoneNumber, isUrl, isStrongPassword, isCreditCard, isDate, isTime, validatePassword, isHexColor, isJSON, isUUID, isAlphanumeric } from './validation-utils.js';
 
 describe('validation-utils', () => {
-  describe('isEmail', () => {
+  describe('isValidEmail', () => {
     test('should return true for valid emails', () => {
-      expect(isEmail('test@example.com')).toBe(true);
-      expect(isEmail('john.doe@sub.domain.co.uk')).toBe(true);
-      expect(isEmail('user123@domain-name.com')).toBe(true);
+      expect(isValidEmail('test@example.com')).toBe(true);
+      expect(isValidEmail('john.doe@sub.domain.co.uk')).toBe(true);
+      expect(isValidEmail('user123@domain-name.com')).toBe(true);
     });
 
     test('should return false for invalid emails', () => {
-      expect(isEmail('invalid-email')).toBe(false);
-      expect(isEmail('test@.com')).toBe(false);
-      expect(isEmail('@example.com')).toBe(false);
-      expect(isEmail('test@example')).toBe(false);
-      expect(isEmail(null)).toBe(false);
-      expect(isEmail(undefined)).toBe(false);
-      expect(isEmail(123)).toBe(false);
+      expect(isValidEmail('invalid-email')).toBe(false);
+      expect(isValidEmail('test@.com')).toBe(false);
+      expect(isValidEmail('@example.com')).toBe(false);
+      expect(isValidEmail('test@example')).toBe(false);
+      expect(isValidEmail(null)).toBe(false);
+      expect(isValidEmail(undefined)).toBe(false);
+      expect(isValidEmail(123)).toBe(false);
     });
   });
 
