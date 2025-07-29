@@ -243,3 +243,15 @@ export function isDateInRange(date, startDate, endDate) {
   return time >= start && time <= end;
 }
 
+/**
+ * Checks if a given date is the first day of the month.
+ * @param {Date} date The date to check.
+ * @returns {boolean} True if the date is the first day of the month, false otherwise.
+ */
+export function isFirstDayOfMonth(date) {
+  if (!isValidDate(date)) {
+    return false;
+  }
+  return date.getDate() === 1;
+}
+
