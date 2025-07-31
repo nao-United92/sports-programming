@@ -1,3 +1,4 @@
+import { clone, hasCircularReference } from './object-utils';
 
 describe('clone', () => {
   test('should shallow clone a simple object', () => {
@@ -21,5 +22,48 @@ describe('clone', () => {
     expect(clone(null)).toBe(null);
     expect(clone(123)).toBe(123);
     expect(clone('string')).toBe('string');
+  });
+});
+
+describe('hasCircularReference', () => {
+  test('should return false for an object with no circular reference', () => {
+    const obj = { a: 1, b: { c: 2 } };
+    expect(hasCircularReference(obj)).toBe(false);
+  });
+
+  test('should return true for an object with a direct circular reference', () => {
+    const obj = {};
+    obj.a = obj;
+    expect(hasCircularReference(obj)).toBe(true);
+  });
+
+  test('should return true for an object with a nested circular reference', () => {
+    const obj = {};
+    const obj2 = { a: obj };
+    obj.b = obj2;
+    expect(hasCircularReference(obj)).toBe(true);
+  });
+
+  test('should return false for an object with repeated but not circular references', () => {
+    const common = { x: 1 };
+    const obj = { a: common, b: common };
+    expect(hasCircularReference(obj)).toBe(false);
+  });
+
+  test('should handle arrays with circular references', () => {
+    const arr = [];
+    arr.push(arr);
+    expect(hasCircularReference(arr)).toBe(true);
+  });
+
+  test('should handle null and non-object values', () => {
+    expect(hasCircularReference(null)).toBe(false);
+    expect(hasCircularReference(123)).toBe(false);
+    expect(hasCircularReference('string')).toBe(false);
+  });
+
+  test('should handle objects with Date and RegExp objects', () => {
+    const obj = { d: new Date(), r: new RegExp('abc') };
+    expect(hasCircularReference(obj)).toBe(false);
   });
 });

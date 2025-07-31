@@ -572,3 +572,35 @@ export function clone(obj) {
   }
   return { ...obj };
 }
+
+/**
+ * Checks if an object contains circular references.
+ * @param {object} obj The object to check.
+ * @returns {boolean} True if the object contains circular references, false otherwise.
+ */
+export function hasCircularReference(obj) {
+  const seen = new WeakSet();
+
+  function detect(current) {
+    if (typeof current !== 'object' || current === null) {
+      return false;
+    }
+
+    if (seen.has(current)) {
+      return true;
+    }
+
+    seen.add(current);
+
+    for (const key in current) {
+      if (Object.prototype.hasOwnProperty.call(current, key)) {
+        if (detect(current[key])) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  return detect(obj);
+}
