@@ -543,4 +543,28 @@ describe('array-utils', () => {
       expect(average(undefined)).toBe(0);
     });
   });
+
+  describe('getNthElement', () => {
+    const arr = [1, 2, 3, 4, 5];
+
+    test('should get the element at the specified index', () => {
+      expect(getNthElement(arr, 0)).toBe(1);
+      expect(getNthElement(arr, 2)).toBe(3);
+    });
+
+    test('should get the element from the end if the index is negative', () => {
+      expect(getNthElement(arr, -1)).toBe(5);
+      expect(getNthElement(arr, -3)).toBe(3);
+    });
+
+    test('should return undefined for out-of-bounds index', () => {
+      expect(getNthElement(arr, 10)).toBeUndefined();
+      expect(getNthElement(arr, -10)).toBeUndefined();
+    });
+
+    test('should return undefined for non-array inputs', () => {
+      expect(getNthElement(null, 1)).toBeUndefined();
+      expect(getNthElement(undefined, 1)).toBeUndefined();
+    });
+  });
 });

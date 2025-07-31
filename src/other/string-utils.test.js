@@ -420,3 +420,43 @@ describe('toTitleCase', () => {
       expect(slugify(undefined)).toBe('');
     });
   });
+
+  describe('toCamelCase', () => {
+    test('should convert snake_case to camelCase', () => {
+      expect(toCamelCase('hello_world')).toBe('helloWorld');
+      expect(toCamelCase('foo_bar_baz')).toBe('fooBarBaz');
+    });
+
+    test('should convert kebab-case to camelCase', () => {
+      expect(toCamelCase('hello-world')).toBe('helloWorld');
+      expect(toCamelCase('foo-bar-baz')).toBe('fooBarBaz');
+    });
+
+    test('should handle mixed cases', () => {
+      expect(toCamelCase('hello-World_foo')).toBe('helloWorldFoo');
+    });
+
+    test('should return empty string for non-string inputs', () => {
+      expect(toCamelCase(123)).toBe('');
+      expect(toCamelCase(null)).toBe('');
+      expect(toCamelCase(undefined)).toBe('');
+    });
+  });
+
+  describe('toSnakeCase', () => {
+    test('should convert camelCase to snake_case', () => {
+      expect(toSnakeCase('helloWorld')).toBe('hello_world');
+      expect(toSnakeCase('fooBarBaz')).toBe('foo_bar_baz');
+    });
+
+    test('should handle already snake_case strings', () => {
+      expect(toSnakeCase('already_snake_case')).toBe('already_snake_case');
+    });
+
+    test('should return empty string for non-string inputs', () => {
+      expect(toSnakeCase(123)).toBe('');
+      expect(toSnakeCase(null)).toBe('');
+      expect(toSnakeCase(undefined)).toBe('');
+    });
+  });
+});
