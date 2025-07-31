@@ -1,9 +1,9 @@
 /**
- * Throttles a function, ensuring it's called at most once in a specified time period.
- * Useful for rate-limiting events that fire frequently, such as scroll or resize events.
+ * Throttles a function, ensuring it's called at most once within a specified time period.
+ * Useful for limiting the rate of events like scroll, resize, or mousemove.
  *
  * @param {Function} func The function to throttle.
- * @param {number} limit The minimum time interval between calls.
+ * @param {number} limit The time in milliseconds to throttle invocations to.
  * @returns {Function} The throttled function.
  */
 export function throttle(func, limit) {
@@ -13,9 +13,11 @@ export function throttle(func, limit) {
   return function(...args) {
     const context = this;
     if (!inThrottle) {
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
       lastResult = func.apply(context, args);
+      inThrottle = true;
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
     }
     return lastResult;
   };
