@@ -51,6 +51,30 @@ describe('array-utils', () => {
     });
   });
 
+  describe('shuffleArray', () => {
+    it('should shuffle an array', () => {
+      const arr = [1, 2, 3, 4, 5];
+      const shuffled = shuffleArray([...arr]);
+      expect(shuffled).not.toEqual(arr);
+      expect(shuffled.sort()).toEqual(arr.sort());
+    });
+
+    it('should return an empty array when given an empty array', () => {
+      expect(shuffleArray([])).toEqual([]);
+    });
+
+    it('should return the same array when given an array with one element', () => {
+      expect(shuffleArray([1])).toEqual([1]);
+    });
+
+    it('should contain the same elements after shuffling', () => {
+      const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const shuffled = shuffleArray([...arr]);
+      expect(shuffled.length).toBe(arr.length);
+      expect(shuffled.sort()).toEqual(arr.sort());
+    });
+  });
+
   describe('uniqueArray', () => {
     it('should return an array with unique values', () => {
       expect(uniqueArray([1, 2, 2, 3, 3, 3])).toEqual([1, 2, 3]);
@@ -512,6 +536,21 @@ describe('array-utils', () => {
       expect(isSubset(null, [1])).toBe(false);
       expect(isSubset([1], undefined)).toBe(false);
       expect(isSubset(123, [1])).toBe(false);
+    });
+  });
+
+  describe('chunkArray', () => {
+    it('should chunk an array into smaller arrays', () => {
+      expect(chunkArray([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]]);
+      expect(chunkArray([1, 2, 3, 4, 5], 3)).toEqual([[1, 2, 3], [4, 5]]);
+      expect(chunkArray([1, 2, 3], 1)).toEqual([[1], [2], [3]]);
+    });
+
+    it('should return an empty array for invalid inputs', () => {
+      expect(chunkArray([], 2)).toEqual([]);
+      expect(chunkArray([1, 2, 3], 0)).toEqual([]);
+      expect(chunkArray(null, 2)).toEqual([]);
+      expect(chunkArray(undefined, 2)).toEqual([]);
     });
   });
 

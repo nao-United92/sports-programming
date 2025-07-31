@@ -96,6 +96,23 @@ export function getAverage(arr) {
 }
 
 /**
+ * Divides an array into smaller chunks of a specified size.
+ * @param {Array} array The array to chunk.
+ * @param {number} size The size of each chunk.
+ * @returns {Array<Array>} An array of chunks.
+ */
+export function chunkArray(array, size) {
+  if (!Array.isArray(array) || size <= 0) {
+    return [];
+  }
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+}
+
+/**
  * Creates an array of numbers (positive and/or negative) progressing from `start` up to, but not including, `end`.
  * If `end` is not specified, `start` is set to `0` and `end` is set to `start`.
  * If `step` is not specified, it defaults to `1`.
