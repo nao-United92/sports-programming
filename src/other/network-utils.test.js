@@ -337,4 +337,25 @@ describe('network-utils', () => {
       expect(isLocalhost()).toBe(false);
     });
   });
+
+  describe('getJSON', () => {
+    beforeEach(() => {
+      fetch.mockClear();
+    });
+
+    it('should fetch JSON data from a URL', async () => {
+      const mockData = { message: 'Success' };
+      fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockData) });
+
+      const data = await getJSON('https://example.com/data.json');
+      expect(data).toEqual(mockData);
+      expect(fetch).toHaveBeenCalledWith('https://example.com/data.json');
+    });
+
+    it('should throw an error for a non-OK response', async () => {
+      fetch.mockResolvedValueOnce({ ok: false, status: 404 });
+
+      await expect(getJSON('https://example.com/nonexistent.json')).rejects.toThrow('HTTP error! status: 404');
+    });
+  });
 });

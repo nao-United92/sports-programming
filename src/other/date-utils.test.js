@@ -379,4 +379,22 @@ describe('date-utils', () => {
       expect(getQuarter(undefined)).toBeNaN();
     });
   });
+
+  describe('isFirstDayOfMonth', () => {
+    test('should return true if the date is the first day of the month', () => {
+      expect(isFirstDayOfMonth(new Date('2023-01-01'))).toBe(true);
+      expect(isFirstDayOfMonth(new Date('2023-02-01'))).toBe(true);
+    });
+
+    test('should return false if the date is not the first day of the month', () => {
+      expect(isFirstDayOfMonth(new Date('2023-01-02'))).toBe(false);
+      expect(isFirstDayOfMonth(new Date('2023-02-15'))).toBe(false);
+    });
+
+    test('should return false for invalid dates', () => {
+      expect(isFirstDayOfMonth(new Date('invalid'))).toBe(false);
+      expect(isFirstDayOfMonth(null)).toBe(false);
+      expect(isFirstDayOfMonth(undefined)).toBe(false);
+    });
+  });
 });

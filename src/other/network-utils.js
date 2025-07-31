@@ -192,3 +192,17 @@ export async function uploadFile(url, file, fieldName = 'file') {
 export function isLocalhost() {
   return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 }
+
+/**
+ * URLからJSONデータを非同期で取得します。
+ * @param {string} url - データを取得するURL。
+ * @returns {Promise<any>} - JSONデータで解決されるPromise。
+ * @throws {Error} - ネットワークレスポンスがokでない場合にエラーをスローします。
+ */
+export async function getJSON(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+}
