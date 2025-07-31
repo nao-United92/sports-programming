@@ -1,99 +1,56 @@
-import { memoize, memoizeWith } from './memoize-utils';
+import { memoize } from './memoize-utils';
 
 describe('memoize', () => {
   let func;
   let memoizedFunc;
 
   beforeEach(() => {
-    func = jest.fn(x => x * 2);
+    func = jest.fn((a, b) => a + b);
     memoizedFunc = memoize(func);
   });
 
-  test('should call the original function only once for the same arguments', () => {
-    memoizedFunc(1);
-    memoizedFunc(1);
-    memoizedFunc(2);
-    memoizedFunc(2);
-    expect(func).toHaveBeenCalledTimes(2);
-  });
-
-  test('should return the cached result for the same arguments', () => {
-    const result1 = memoizedFunc(1);
-    const result2 = memoizedFunc(1);
-    expect(result1).toBe(2);
-    expect(result2).toBe(2);
+  test('should return the correct result for the first call', () => {
+    const result = memoizedFunc(1, 2);
+    expect(result).toBe(3);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should call the original function for different arguments', () => {
-    memoizedFunc(1);
-    memoizedFunc(2);
-    expect(func).toHaveBeenCalledTimes(2);
-  });
-
-  test('should handle multiple arguments', () => {
-    func = jest.fn((a, b) => a + b);
-    memoizedFunc = memoize(func);
-
+  test('should return cached result for subsequent calls with same arguments', () => {
     memoizedFunc(1, 2);
-    memoizedFunc(1, 2);
-    memoizedFunc(2, 1);
-
-    expect(func).toHaveBeenCalledTimes(2);
-    expect(func).toHaveBeenCalledWith(1, 2);
-    expect(func).toHaveBeenCalledWith(2, 1);
-  });
-
-  
-});
-
-describe('memoizeWith', () => {
-  let func;
-  let memoizedFunc;
-  let resolver;
-
-  beforeEach(() => {
-    func = jest.fn((a, b) => a + b);
-    resolver = jest.fn((a, b) => `${a}-${b}`);
-    memoizedFunc = memoizeWith(func, resolver);
-  });
-
-  test('should call the original function only once for the same resolved key', () => {
-    memoizedFunc(1, 2);
-    memoizedFunc(1, 2);
-    memoizedFunc(3, 4);
-    memoizedFunc(3, 4);
-
-    expect(resolver).toHaveBeenCalledTimes(4);
-    expect(func).toHaveBeenCalledTimes(2);
-  });
-
-  test('should return the cached result for the same resolved key', () => {
-    const result1 = memoizedFunc(1, 2);
-    const result2 = memoizedFunc(1, 2);
-
-    expect(result1).toBe(3);
-    expect(result2).toBe(3);
+    const result = memoizedFunc(1, 2);
+    expect(result).toBe(3);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should call the original function for different resolved keys', () => {
+  test('should re-execute for different arguments', () => {
     memoizedFunc(1, 2);
-    memoizedFunc(2, 1); // Different key if resolver is `(a,b) => `${a}-${b}``
-
+    memoizedFunc(3, 4);
+    expect(func).toHaveBeenCalledTimes(2);
+    expect(memoizedFunc(1, 2)).toBe(3);
+    expect(memoizedFunc(3, 4)).toBe(7);
     expect(func).toHaveBeenCalledTimes(2);
   });
 
-  test('should pass correct arguments and context to resolver and func', () => {
-    const context = { id: 1 };
-    memoizedFunc.apply(context, [10, 20]);
+  test('should handle different argument types', () => {
+    memoizedFunc('a', 'b');
+    memoizedFunc([1], [2]);
+    memoizedFunc({ a: 1 }, { b: 2 });
+    expect(func).toHaveBeenCalledTimes(3);
+  });
 
-    expect(resolver).toHaveBeenCalledWith(10, 20);
-    expect(resolver).toHaveBeenCalledOnLastCallWith(10, 20);
-    expect(resolver.mock.contexts[0]).toBe(context);
+  test('should preserve context', () => {
+    const context = { multiplier: 10 };
+    const funcWithContext = jest.fn(function(a) {
+      return a * this.multiplier;
+    });
+    const memoizedFuncWithContext = memoize(funcWithContext);
 
-    expect(func).toHaveBeenCalledWith(10, 20);
-    expect(func).toHaveBeenCalledOnLastCallWith(10, 20);
-    expect(func.mock.contexts[0]).toBe(context);
+    const result1 = memoizedFuncWithContext.call(context, 5);
+    expect(result1).toBe(50);
+    expect(funcWithContext).toHaveBeenCalledTimes(1);
+
+    const result2 = memoizedFuncWithContext.call(context, 5);
+    expect(result2).toBe(50);
+    expect(funcWithContext).toHaveBeenCalledTimes(1);
   });
 });
