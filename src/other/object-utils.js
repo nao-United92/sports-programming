@@ -452,6 +452,24 @@ export function deepFreeze(obj) {
 }
 
 /**
+ * Assigns default properties to an object for undefined properties.
+ * @param {object} obj The target object.
+ * @param {object} defaultProps The object containing default properties.
+ * @returns {object} The modified object with default properties applied.
+ */
+export function defaults(obj, defaultProps) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+  for (const key in defaultProps) {
+    if (Object.prototype.hasOwnProperty.call(defaultProps, key) && obj[key] === undefined) {
+      obj[key] = defaultProps[key];
+    }
+  }
+  return obj;
+}
+
+/**
  * Checks if two objects are equal (deep comparison).
  *
  * @param {object} obj1 The first object.

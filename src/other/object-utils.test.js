@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge, hasProperty, keys, isEqual } from './object-utils.js';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge, hasProperty, keys, isEqual, deepFreeze, defaults } from './object-utils.js';
 
 describe('isDeepEqual', () => {
   test('should return true for deeply equal objects', () => {
@@ -713,6 +713,49 @@ describe('mapValues', () => {
       const arr3 = [1, { a: 3 }];
       expect(isEqual(arr1, arr2)).toBe(true);
       expect(isEqual(arr1, arr3)).toBe(false);
+    });
+  });
+
+  describe('defaults', () => {
+    test('should assign default properties if they are undefined or missing', () => {
+      const obj = { a: 1, b: undefined };
+      const defaultProps = { b: 2, c: 3 };
+      defaults(obj, defaultProps);
+      expect(obj).toEqual({ a: 1, b: 2, c: 3 });
+    });
+
+    test('should not overwrite existing properties', () => {
+      const obj = { a: 1, b: 5 };
+      const defaultProps = { b: 2, c: 3 };
+      defaults(obj, defaultProps);
+      expect(obj).toEqual({ a: 1, b: 5, c: 3 });
+    });
+
+    test('should return the modified object', () => {
+      const obj = { a: 1 };
+      const defaultProps = { b: 2 };
+      const result = defaults(obj, defaultProps);
+      expect(result).toBe(obj);
+    });
+
+    test('should handle empty defaultProps', () => {
+      const obj = { a: 1 };
+      const defaultProps = {};
+      defaults(obj, defaultProps);
+      expect(obj).toEqual({ a: 1 });
+    });
+
+    test('should handle empty obj', () => {
+      const obj = {};
+      const defaultProps = { a: 1 };
+      defaults(obj, defaultProps);
+      expect(obj).toEqual({ a: 1 });
+    });
+
+    test('should handle null or non-object inputs for obj', () => {
+      expect(defaults(null, { a: 1 })).toBe(null);
+      expect(defaults(undefined, { a: 1 })).toBe(undefined);
+      expect(defaults(123, { a: 1 })).toBe(123);
     });
   });
 
