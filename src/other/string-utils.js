@@ -369,3 +369,17 @@ export function insertString(originalString, stringToInsert, index) {
   }
   return originalString.substring(0, index) + stringToInsert + originalString.substring(index);
 }
+
+/**
+ * Removes emojis from a string.
+ * @param {string} str The input string.
+ * @returns {string} The string with emojis removed.
+ */
+export function removeEmojis(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  // Regex to match most common emojis and other symbols
+  const emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+  return str.replace(emojiRegex, '');
+}

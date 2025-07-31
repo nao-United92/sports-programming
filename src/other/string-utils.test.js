@@ -513,4 +513,23 @@ describe('toTitleCase', () => {
       expect(insertString('abc', null, 0)).toBe('abc');
     });
   });
+
+  describe('removeEmojis', () => {
+    test('should remove emojis from a string', () => {
+      expect(removeEmojis('Hello 👋 world 🌍')).toBe('Hello  world ');
+      expect(removeEmojis('Test with emojis: 👍😊🎉')).toBe('Test with emojis: ');
+      expect(removeEmojis('No emojis here.')).toBe('No emojis here.');
+      expect(removeEmojis('Emojis with numbers: 1️⃣2️⃣3️⃣')).toBe('Emojis with numbers: ');
+    });
+
+    test('should return an empty string for non-string inputs', () => {
+      expect(removeEmojis(123)).toBe('');
+      expect(removeEmojis(null)).toBe('');
+      expect(removeEmojis(undefined)).toBe('');
+    });
+
+    test('should handle empty string', () => {
+      expect(removeEmojis('')).toBe('');
+    });
+  });
 });
