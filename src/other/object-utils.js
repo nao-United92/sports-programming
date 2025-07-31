@@ -507,6 +507,28 @@ export function isEqual(obj1, obj2) {
 }
 
 /**
+ * Creates a new object with all null, undefined, and empty string values removed.
+ * @param {object} obj The object to compact.
+ * @returns {object} A new object with compacted values.
+ */
+export function compactObject(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  const newObj = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (value !== null && value !== undefined && value !== '') {
+        newObj[key] = value;
+      }
+    }
+  }
+  return newObj;
+}
+
+/**
  * Safely gets a nested property from an object using a dot-separated path.
  * Alias for getNestedProperty.
  * @param {object} obj The object to query.

@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge, hasProperty, keys, isEqual, deepFreeze, defaults } from './object-utils.js';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge, hasProperty, keys, isEqual, deepFreeze, defaults, compactObject } from './object-utils.js';
 
 describe('isDeepEqual', () => {
   test('should return true for deeply equal objects', () => {
@@ -844,6 +844,39 @@ describe('mapValues', () => {
     test('should return false for numbers and booleans', () => {
       expect(isEmpty(0)).toBe(false);
       expect(isEmpty(false)).toBe(false);
+    });
+  });
+
+  describe('compactObject', () => {
+    test('should remove null, undefined, and empty string values', () => {
+      const obj = { a: 1, b: null, c: undefined, d: 'hello', e: '', f: 0, g: false };
+      const compacted = compactObject(obj);
+      expect(compacted).toEqual({ a: 1, d: 'hello', f: 0, g: false });
+    });
+
+    test('should return an empty object if all values are null, undefined, or empty string', () => {
+      const obj = { a: null, b: undefined, c: '' };
+      const compacted = compactObject(obj);
+      expect(compacted).toEqual({});
+    });
+
+    test('should return the same object if no values need to be removed', () => {
+      const obj = { a: 1, b: 'hello' };
+      const compacted = compactObject(obj);
+      expect(compacted).toEqual(obj);
+    });
+
+    test('should handle non-object inputs by returning them as is', () => {
+      expect(compactObject(null)).toBe(null);
+      expect(compactObject(undefined)).toBe(undefined);
+      expect(compactObject(123)).toBe(123);
+      expect(compactObject('string')).toBe('string');
+    });
+
+    test('should not modify the original object', () => {
+      const obj = { a: 1, b: null };
+      compactObject(obj);
+      expect(obj).toEqual({ a: 1, b: null });
     });
   });
 
