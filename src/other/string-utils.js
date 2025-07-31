@@ -337,3 +337,35 @@ export function toSnakeCase(str) {
   }
   return str.replace(/([A-Z])/g, '_$1').toLowerCase();
 }
+
+/**
+ * Removes extra spaces from a string, including leading/trailing and multiple internal spaces.
+ * @param {string} str The input string.
+ * @returns {string} The string with extra spaces removed.
+ */
+export function removeExtraSpaces(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.trim().replace(/\s\s+/g, ' ');
+}
+
+/**
+ * Inserts a string into another string at a specified index.
+ * @param {string} originalString The original string.
+ * @param {string} stringToInsert The string to insert.
+ * @param {number} index The index at which to insert the string.
+ * @returns {string} The new string with the inserted string.
+ */
+export function insertString(originalString, stringToInsert, index) {
+  if (typeof originalString !== 'string' || typeof stringToInsert !== 'string') {
+    return originalString;
+  }
+  if (index < 0) {
+    index = 0;
+  }
+  if (index > originalString.length) {
+    index = originalString.length;
+  }
+  return originalString.substring(0, index) + stringToInsert + originalString.substring(index);
+}

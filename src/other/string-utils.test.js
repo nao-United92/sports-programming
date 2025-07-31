@@ -1,4 +1,4 @@
-import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate, toCamelCase, toSnakeCase, toTitleCase, slugify, mask } from './string-utils.js';
+import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate, toCamelCase, toSnakeCase, toTitleCase, slugify, mask, removeExtraSpaces, insertString } from './string-utils.js';
 
 describe('capitalize', () => {
   test('should capitalize the first letter of a string', () => {
@@ -457,6 +457,60 @@ describe('toTitleCase', () => {
       expect(toSnakeCase(123)).toBe('');
       expect(toSnakeCase(null)).toBe('');
       expect(toSnakeCase(undefined)).toBe('');
+    });
+  });
+
+  describe('removeExtraSpaces', () => {
+    test('should remove leading and trailing spaces', () => {
+      expect(removeExtraSpaces('  hello world  ')).toBe('hello world');
+    });
+
+    test('should replace multiple internal spaces with a single space', () => {
+      expect(removeExtraSpaces('hello   world')).toBe('hello world');
+      expect(removeExtraSpaces('  a   b    c  ')).toBe('a b c');
+    });
+
+    test('should handle string with no extra spaces', () => {
+      expect(removeExtraSpaces('hello world')).toBe('hello world');
+    });
+
+    test('should handle empty string', () => {
+      expect(removeExtraSpaces('')).toBe('');
+    });
+
+    test('should return empty string for non-string inputs', () => {
+      expect(removeExtraSpaces(123)).toBe('');
+      expect(removeExtraSpaces(null)).toBe('');
+      expect(removeExtraSpaces(undefined)).toBe('');
+    });
+  });
+
+  describe('insertString', () => {
+    test('should insert a string at the specified index', () => {
+      expect(insertString('hello', '--', 2)).toBe('he--llo');
+      expect(insertString('world', 'xyz', 0)).toBe('xyzworld');
+      expect(insertString('foo', 'bar', 3)).toBe('foobar');
+    });
+
+    test('should handle index out of bounds (negative)', () => {
+      expect(insertString('hello', '--', -1)).toBe('--hello');
+    });
+
+    test('should handle index out of bounds (greater than length)', () => {
+      expect(insertString('hello', '--', 10)).toBe('hello--');
+    });
+
+    test('should handle empty original string', () => {
+      expect(insertString('', 'abc', 0)).toBe('abc');
+    });
+
+    test('should handle empty string to insert', () => {
+      expect(insertString('hello', '', 2)).toBe('hello');
+    });
+
+    test('should return original string for non-string inputs', () => {
+      expect(insertString(123, 'abc', 0)).toBe(123);
+      expect(insertString('abc', null, 0)).toBe('abc');
     });
   });
 });
