@@ -215,3 +215,20 @@ export function sum(...numbers) {
 export function isPowerOfTwo(num) {
   return num > 0 && (num & (num - 1)) === 0;
 }
+
+/**
+ * Checks if a number is between two other numbers (inclusive).
+ *
+ * @param {number} num The number to check.
+ * @param {number} a The first bound.
+ * @param {number} b The second bound.
+ * @returns {boolean} True if the number is between the bounds, false otherwise.
+ */
+export function isBetween(num, a, b) {
+  if (!isNumber(num) || !isNumber(a) || !isNumber(b)) {
+    return false;
+  }
+  const min = Math.min(a, b);
+  const max = Math.max(a, b);
+  return num >= min && num <= max;
+}

@@ -1,4 +1,4 @@
-import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge, hasProperty, keys } from './object-utils.js';
+import { deepClone, isEmptyObject, getNestedProperty, toCamelCaseKeys, setNestedProperty, omit, pick, deepMerge, invertObject, shallowEqual, isObject, isDeepEqual, renameKey, mapObject, filterObject, mapKeys, mapValues, merge, hasProperty, keys, isEqual } from './object-utils.js';
 
 describe('isDeepEqual', () => {
   test('should return true for deeply equal objects', () => {
@@ -691,6 +691,28 @@ describe('mapValues', () => {
       const frozenObj = deepFreeze(obj);
       expect(Object.isFrozen(frozenObj)).toBe(true);
       expect(frozenObj).toBe(obj);
+    });
+  });
+
+  describe('isEqual', () => {
+    test('should return true for equal objects', () => {
+      const obj1 = { a: 1, b: { c: 2 } };
+      const obj2 = { a: 1, b: { c: 2 } };
+      expect(isEqual(obj1, obj2)).toBe(true);
+    });
+
+    test('should return false for unequal objects', () => {
+      const obj1 = { a: 1, b: { c: 2 } };
+      const obj2 = { a: 1, b: { c: 3 } };
+      expect(isEqual(obj1, obj2)).toBe(false);
+    });
+
+    test('should handle arrays', () => {
+      const arr1 = [1, { a: 2 }];
+      const arr2 = [1, { a: 2 }];
+      const arr3 = [1, { a: 3 }];
+      expect(isEqual(arr1, arr2)).toBe(true);
+      expect(isEqual(arr1, arr3)).toBe(false);
     });
   });
 });

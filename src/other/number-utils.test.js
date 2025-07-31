@@ -1,4 +1,4 @@
-import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas, isInteger, isPositive, isNegative } from './number-utils.js';
+import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas, isInteger, isPositive, isNegative, isBetween } from './number-utils.js';
 
 describe('number-utils', () => {
   describe('isNumber', () => {
@@ -308,6 +308,27 @@ describe('number-utils', () => {
     test('should return false for non-integer numbers', () => {
       expect(isPowerOfTwo(2.5)).toBe(false);
       expect(isPowerOfTwo(0.5)).toBe(false);
+    });
+  });
+
+  describe('isBetween', () => {
+    test('should return true if the number is between the bounds', () => {
+      expect(isBetween(5, 1, 10)).toBe(true);
+      expect(isBetween(1, 1, 10)).toBe(true);
+      expect(isBetween(10, 1, 10)).toBe(true);
+      expect(isBetween(5, 10, 1)).toBe(true); // Unordered bounds
+    });
+
+    test('should return false if the number is outside the bounds', () => {
+      expect(isBetween(0, 1, 10)).toBe(false);
+      expect(isBetween(11, 1, 10)).toBe(false);
+    });
+
+    test('should return false for non-number inputs', () => {
+      expect(isBetween(null, 1, 10)).toBe(false);
+      expect(isBetween(5, null, 10)).toBe(false);
+      expect(isBetween(5, 1, null)).toBe(false);
+      expect(isBetween(undefined, 1, 10)).toBe(false);
     });
   });
 });
