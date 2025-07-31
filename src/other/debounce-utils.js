@@ -11,7 +11,7 @@ export function debounce(func, delay, immediate = false) {
   let timeout;
   let result;
 
-  return function(...args) {
+  const debounced = function(...args) {
     const context = this;
     const later = function() {
       timeout = null;
@@ -30,4 +30,11 @@ export function debounce(func, delay, immediate = false) {
 
     return result;
   };
+
+  debounced.cancel = function() {
+    clearTimeout(timeout);
+    timeout = null;
+  };
+
+  return debounced;
 }

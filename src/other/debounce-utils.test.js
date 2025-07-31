@@ -41,6 +41,33 @@ describe('debounce', () => {
     expect(func).toHaveBeenCalledTimes(1);
   });
 
+  test('should not execute again immediately if called multiple times with immediate true', () => {
+    debouncedFunc = debounce(func, 100, true);
+    debouncedFunc();
+    debouncedFunc();
+    debouncedFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  test('should execute after delay if immediate is true and called again after delay', () => {
+    debouncedFunc = debounce(func, 100, true);
+    debouncedFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+    jest.advanceTimersByTime(100);
+    debouncedFunc();
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  test('should cancel the debounced function', () => {
+    debouncedFunc = debounce(func, 100);
+    debouncedFunc();
+    debouncedFunc.cancel();
+    jest.advanceTimersByTime(100);
+    expect(func).not.toHaveBeenCalled();
+  });
+
   test('should pass arguments and context correctly', () => {
     debouncedFunc = debounce(func, 100);
     const context = { key: 'value' };
