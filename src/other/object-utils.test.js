@@ -715,4 +715,49 @@ describe('mapValues', () => {
       expect(isEqual(arr1, arr3)).toBe(false);
     });
   });
+
+  describe('size', () => {
+    test('should return the number of enumerable own properties', () => {
+      expect(size({ a: 1, b: 2 })).toBe(2);
+      expect(size({})).toBe(0);
+    });
+
+    test('should return 0 for non-object inputs', () => {
+      expect(size(null)).toBe(0);
+      expect(size(undefined)).toBe(0);
+      expect(size(123)).toBe(0);
+      expect(size('string')).toBe(6);
+      expect(size([])).toBe(0);
+    });
+  });
+
+  describe('isEmpty', () => {
+    test('should return true for null or undefined', () => {
+      expect(isEmpty(null)).toBe(true);
+      expect(isEmpty(undefined)).toBe(true);
+    });
+
+    test('should return true for an empty string', () => {
+      expect(isEmpty('')).toBe(true);
+    });
+
+    test('should return true for an empty array', () => {
+      expect(isEmpty([])).toBe(true);
+    });
+
+    test('should return true for an empty object', () => {
+      expect(isEmpty({})).toBe(true);
+    });
+
+    test('should return false for non-empty strings, arrays, and objects', () => {
+      expect(isEmpty('hello')).toBe(false);
+      expect(isEmpty([1, 2])).toBe(false);
+      expect(isEmpty({ a: 1 })).toBe(false);
+    });
+
+    test('should return false for numbers and booleans', () => {
+      expect(isEmpty(0)).toBe(false);
+      expect(isEmpty(false)).toBe(false);
+    });
+  });
 });

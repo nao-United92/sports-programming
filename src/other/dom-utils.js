@@ -401,3 +401,17 @@ export function isScrollable(element) {
   );
 }
 
+/**
+ * Wraps an HTML element with another HTML element.
+ * @param {HTMLElement} target The element to be wrapped.
+ * @param {HTMLElement} wrapper The wrapping element.
+ * @returns {HTMLElement} The wrapper element.
+ */
+export function wrapElement(target, wrapper) {
+  if (target && wrapper && target.parentNode) {
+    target.parentNode.insertBefore(wrapper, target);
+    wrapper.appendChild(target);
+  }
+  return wrapper;
+}
+

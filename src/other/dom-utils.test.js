@@ -581,4 +581,39 @@ describe('dom-utils', () => {
       expect(isScrollable(document.createTextNode('text'))).toBe(false);
     });
   });
+
+  describe('wrapElement', () => {
+    let targetElement, wrapperElement;
+
+    beforeEach(() => {
+      document.body.innerHTML = '<div id="container"><p id="target">This is the target.</p></div>';
+      targetElement = document.getElementById('target');
+      wrapperElement = document.createElement('div');
+      wrapperElement.id = 'wrapper';
+    });
+
+    test('should wrap the target element with the wrapper element', () => {
+      wrapElement(targetElement, wrapperElement);
+      const container = document.getElementById('container');
+      expect(container.children.length).toBe(1);
+      expect(container.children[0].id).toBe('wrapper');
+      expect(wrapperElement.children.length).toBe(1);
+      expect(wrapperElement.children[0].id).toBe('target');
+    });
+
+    test('should not wrap if target or wrapper is null', () => {
+      const originalHtml = document.body.innerHTML;
+      wrapElement(null, wrapperElement);
+      expect(document.body.innerHTML).toBe(originalHtml);
+      wrapElement(targetElement, null);
+      expect(document.body.innerHTML).toBe(originalHtml);
+    });
+
+    test('should not wrap if target has no parent', () => {
+      const isolatedElement = document.createElement('p');
+      const originalHtml = document.body.innerHTML;
+      wrapElement(isolatedElement, wrapperElement);
+      expect(document.body.innerHTML).toBe(originalHtml);
+    });
+  });
 });
