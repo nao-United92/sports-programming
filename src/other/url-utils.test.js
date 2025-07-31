@@ -229,4 +229,54 @@ describe('url-utils', () => {
       expect(getBaseUrl(undefined)).toBe('');
     });
   });
+
+  describe('isValidURL', () => {
+    test('should return true for a valid URL', () => {
+      expect(isValidURL('http://example.com')).toBe(true);
+      expect(isValidURL('https://www.google.com/search?q=test')).toBe(true);
+    });
+
+    test('should return false for an invalid URL', () => {
+      expect(isValidURL('invalid-url')).toBe(false);
+      expect(isValidURL('not-a-url')).toBe(false);
+      expect(isValidURL(null)).toBe(false);
+      expect(isValidURL(undefined)).toBe(false);
+    });
+  });
+
+  describe('isExternalLink', () => {
+    // Mock window.location.hostname for testing
+    const originalHostname = window.location.hostname;
+    beforeAll(() => {
+      Object.defineProperty(window.location, 'hostname', {
+        writable: true,
+        value: 'localhost',
+      });
+    });
+
+    afterAll(() => {
+      Object.defineProperty(window.location, 'hostname', {
+        writable: true,
+        value: originalHostname,
+      });
+    });
+
+    test('should return true for an external link', () => {
+      expect(isExternalLink('http://example.com')).toBe(true);
+      expect(isExternalLink('https://www.google.com')).toBe(true);
+      expect(isExternalLink('http://sub.example.com')).toBe(true); // Different subdomain
+    });
+
+    test('should return false for an internal link', () => {
+      expect(isExternalLink('http://localhost/path')).toBe(false);
+      expect(isExternalLink('https://localhost:8080/path')).toBe(false);
+      expect(isExternalLink('/relative/path')).toBe(false);
+    });
+
+    test('should return false for invalid URLs', () => {
+      expect(isExternalLink('invalid-url')).toBe(false);
+      expect(isExternalLink(null)).toBe(false);
+      expect(isExternalLink(undefined)).toBe(false);
+    });
+  });
 });

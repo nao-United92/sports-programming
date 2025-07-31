@@ -270,4 +270,22 @@ describe('validation-utils', () => {
       expect(isAlphanumeric(undefined)).toBe(false);
     });
   });
+
+  describe('isEmail', () => {
+    test('should return true for valid emails', () => {
+      expect(isEmail('test@example.com')).toBe(true);
+      expect(isEmail('john.doe@sub.domain.co.uk')).toBe(true);
+      expect(isEmail('user123@domain-name.com')).toBe(true);
+    });
+
+    test('should return false for invalid emails', () => {
+      expect(isEmail('invalid-email')).toBe(false);
+      expect(isEmail('test@.com')).toBe(false);
+      expect(isEmail('@example.com')).toBe(false);
+      expect(isEmail('test@example')).toBe(false);
+      expect(isEmail(null)).toBe(false);
+      expect(isEmail(undefined)).toBe(false);
+      expect(isEmail(123)).toBe(false);
+    });
+  });
 });
