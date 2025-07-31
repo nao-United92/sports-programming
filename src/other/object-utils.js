@@ -505,3 +505,24 @@ export function isEqual(obj1, obj2) {
 
   return true;
 }
+
+/**
+ * Safely gets a nested property from an object using a dot-separated path.
+ * Alias for getNestedProperty.
+ * @param {object} obj The object to query.
+ * @param {string} path The dot-separated path to the property (e.g., 'user.address.street').
+ * @param {*} [defaultValue] The default value to return if the property is not found.
+ * @returns {*} The value of the nested property, or defaultValue if not found.
+ */
+export const get = getNestedProperty;
+
+/**
+ * Safely sets a nested property on an object using a dot-separated path.
+ * If intermediate objects do not exist, they will be created.
+ * Alias for setNestedProperty.
+ * @param {object} obj The object to modify.
+ * @param {string} path The dot-separated path to the property (e.g., 'user.address.street').
+ * @param {*} value The value to set.
+ * @returns {object} The modified object.
+ */
+export const set = setNestedProperty;

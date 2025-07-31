@@ -759,6 +759,49 @@ describe('mapValues', () => {
     });
   });
 
+  describe('defaults', () => {
+    test('should assign default properties if they are undefined or missing', () => {
+      const obj = { a: 1, b: undefined };
+      const defaultProps = { b: 2, c: 3 };
+      defaults(obj, defaultProps);
+      expect(obj).toEqual({ a: 1, b: 2, c: 3 });
+    });
+
+    test('should not overwrite existing properties', () => {
+      const obj = { a: 1, b: 5 };
+      const defaultProps = { b: 2, c: 3 };
+      defaults(obj, defaultProps);
+      expect(obj).toEqual({ a: 1, b: 5, c: 3 });
+    });
+
+    test('should return the modified object', () => {
+      const obj = { a: 1 };
+      const defaultProps = { b: 2 };
+      const result = defaults(obj, defaultProps);
+      expect(result).toBe(obj);
+    });
+
+    test('should handle empty defaultProps', () => {
+      const obj = { a: 1 };
+      const defaultProps = {};
+      defaults(obj, defaultProps);
+      expect(obj).toEqual({ a: 1 });
+    });
+
+    test('should handle empty obj', () => {
+      const obj = {};
+      const defaultProps = { a: 1 };
+      defaults(obj, defaultProps);
+      expect(obj).toEqual({ a: 1 });
+    });
+
+    test('should handle null or non-object inputs for obj', () => {
+      expect(defaults(null, { a: 1 })).toBe(null);
+      expect(defaults(undefined, { a: 1 })).toBe(undefined);
+      expect(defaults(123, { a: 1 })).toBe(123);
+    });
+  });
+
   describe('size', () => {
     test('should return the number of enumerable own properties', () => {
       expect(size({ a: 1, b: 2 })).toBe(2);
@@ -801,6 +844,79 @@ describe('mapValues', () => {
     test('should return false for numbers and booleans', () => {
       expect(isEmpty(0)).toBe(false);
       expect(isEmpty(false)).toBe(false);
+    });
+  });
+
+  describe('get', () => {
+    const obj = {
+      user: {
+        id: 1,
+        name: 'John Doe',
+        address: {
+          city: 'New York',
+          zip: '10001'
+        }
+      },
+      settings: {
+        theme: 'dark'
+      }
+    };
+
+    test('should return the value of a nested property', () => {
+      expect(get(obj, 'user.name')).toBe('John Doe');
+      expect(get(obj, 'user.address.city')).toBe('New York');
+    });
+
+    test('should return undefined if property not found and no default value', () => {
+      expect(get(obj, 'user.address.street')).toBeUndefined();
+      expect(get(obj, 'nonexistent.path')).toBeUndefined();
+    });
+
+    test('should return default value if property not found', () => {
+      expect(get(obj, 'user.address.street', 'N/A')).toBe('N/A');
+      expect(get(obj, 'nonexistent.path', null)).toBe(null);
+    });
+
+    test('should handle null or undefined objects gracefully', () => {
+      expect(get(null, 'user.name')).toBeUndefined();
+      expect(get(undefined, 'user.name')).toBeUndefined();
+      expect(get(null, 'user.name', 'default')).toBe('default');
+    });
+
+    test('should return the object itself if path is empty', () => {
+      expect(get(obj, '')).toEqual(obj);
+    });
+  });
+
+  describe('set', () => {
+    test('should set a top-level property', () => {
+      const obj = {};
+      set(obj, 'name', 'John');
+      expect(obj).toEqual({ name: 'John' });
+    });
+
+    test('should set a nested property, creating intermediate objects', () => {
+      const obj = {};
+      set(obj, 'user.address.city', 'New York');
+      expect(obj).toEqual({ user: { address: { city: 'New York' } } });
+    });
+
+    test('should update an existing nested property', () => {
+      const obj = { user: { name: 'John' } };
+      set(obj, 'user.name', 'Jane');
+      expect(obj).toEqual({ user: { name: 'Jane' } });
+    });
+
+    test('should handle non-object initial values by overwriting', () => {
+      const obj = { user: null };
+      set(obj, 'user.name', 'John');
+      expect(obj).toEqual({ user: { name: 'John' } });
+    });
+
+    test('should return the modified object', () => {
+      const obj = {};
+      const result = set(obj, 'a', 1);
+      expect(result).toBe(obj);
     });
   });
 });
