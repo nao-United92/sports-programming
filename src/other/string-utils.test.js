@@ -1,4 +1,4 @@
-import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate, toCamelCase, toSnakeCase, toTitleCase, slugify } from './string-utils.js';
+import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate, toCamelCase, toSnakeCase, toTitleCase, slugify, mask } from './string-utils.js';
 
 describe('capitalize', () => {
   test('should capitalize the first letter of a string', () => {
@@ -15,6 +15,33 @@ describe('capitalize', () => {
     expect(capitalize(123)).toBe('');
     expect(capitalize(null)).toBe('');
     expect(capitalize(undefined)).toBe('');
+  });
+});
+
+describe('mask', () => {
+  test('should mask a portion of the string with the default mask character', () => {
+    expect(mask('1234567890', 2, 6)).toBe('12****890');
+  });
+
+  test('should mask a portion of the string with a custom mask character', () => {
+    expect(mask('1234567890', 2, 6, '#')).toBe('12####890');
+  });
+
+  test('should handle start and end indices out of bounds', () => {
+    expect(mask('12345', -2, 3)).toBe('***45');
+    expect(mask('12345', 2, 10)).toBe('12***');
+    expect(mask('12345', -2, 10)).toBe('*****');
+  });
+
+  test('should return the original string if start >= end', () => {
+    expect(mask('12345', 3, 2)).toBe('12345');
+    expect(mask('12345', 3, 3)).toBe('12345');
+  });
+
+  test('should return an empty string for non-string inputs', () => {
+    expect(mask(12345, 2, 4)).toBe('');
+    expect(mask(null, 2, 4)).toBe('');
+    expect(mask(undefined, 2, 4)).toBe('');
   });
 });
 

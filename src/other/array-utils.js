@@ -474,3 +474,18 @@ export function isSubset(superset, subset) {
   }
   return subset.every(val => superset.includes(val));
 }
+
+/**
+ * Calculates the average of an array of numbers.
+ *
+ * @param {number[]} arr The array of numbers.
+ * @returns {number} The average of the numbers, or 0 if the array is empty.
+ */
+export function average(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return 0;
+  }
+
+  const sum = arr.reduce((acc, val) => acc + val, 0);
+  return sum / arr.length;
+}

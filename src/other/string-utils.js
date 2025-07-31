@@ -11,6 +11,32 @@ export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+/**
+ * Masks a portion of a string with a character.
+ *
+ * @param {string} str The input string.
+ * @param {number} start The starting index of the portion to be masked.
+ * @param {number} end The ending index of the portion to be masked.
+ * @param {string} maskChar The character to use for masking. Defaults to '*'.
+ * @returns {string} The masked string.
+ */
+export function mask(str, start, end, maskChar = '*') {
+  if (typeof str !== 'string' || str.length === 0) {
+    return '';
+  }
+
+  const startIdx = Math.max(0, start);
+  const endIdx = Math.min(str.length, end);
+
+  if (startIdx >= endIdx) {
+    return str;
+  }
+
+  const maskLength = endIdx - startIdx;
+  const maskedPortion = maskChar.repeat(maskLength);
+
+  return str.substring(0, startIdx) + maskedPortion + str.substring(endIdx);
+}
 
 
 /**

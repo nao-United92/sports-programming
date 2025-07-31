@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, shuffleArray } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, uniqueArray, shuffle, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, shuffleArray, average } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -525,6 +525,22 @@ describe('array-utils', () => {
       expect(isSubset(null, [1])).toBe(false);
       expect(isSubset([1], undefined)).toBe(false);
       expect(isSubset(123, [1])).toBe(false);
+    });
+  });
+
+  describe('average', () => {
+    test('should return the average of an array of numbers', () => {
+      expect(average([1, 2, 3, 4, 5])).toBe(3);
+      expect(average([10, 20, 30])).toBe(20);
+    });
+
+    test('should return 0 for an empty array', () => {
+      expect(average([])).toBe(0);
+    });
+
+    test('should handle non-array inputs gracefully', () => {
+      expect(average(null)).toBe(0);
+      expect(average(undefined)).toBe(0);
     });
   });
 });
