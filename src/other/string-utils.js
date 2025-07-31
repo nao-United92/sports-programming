@@ -201,9 +201,10 @@ export function isUUID(str) {
  *
  * @param {string} str The input string.
  * @param {number} maxLength The maximum length of the string before truncation.
+ * @param {string} [suffix='...'] The suffix to add if the string is truncated.
  * @returns {string} The truncated string.
  */
-export function truncate(str, maxLength, suffix = '...') {
+export function truncateString(str, maxLength, suffix = '...') {
   if (typeof str !== 'string' || typeof maxLength !== 'number' || maxLength < 0) {
     return '';
   }

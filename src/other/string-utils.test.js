@@ -230,34 +230,34 @@ describe('isUUID', () => {
   });
 });
 
-describe('truncate', () => {
+describe('truncateString', () => {
   test('should truncate a string to the specified length and add ellipsis', () => {
-    expect(truncate('Hello world', 8)).toBe('Hello...');
-    expect(truncate('This is a long string', 13)).toBe('This is a ...');
+    expect(truncateString('Hello world', 8)).toBe('Hello...');
+    expect(truncateString('This is a long string', 13)).toBe('This is a ...');
   });
 
   test('should handle custom suffix', () => {
-    expect(truncate('Long string example', 10, '--')).toBe('Long str--');
+    expect(truncateString('Long string example', 10, '--')).toBe('Long str--');
   });
 
   test('should not truncate if the string is shorter than or equal to the max length', () => {
-    expect(truncate('Short', 10)).toBe('Short');
-    expect(truncate('Exact', 5)).toBe('Exact');
+    expect(truncateString('Short', 10)).toBe('Short');
+    expect(truncateString('Exact', 5)).toBe('Exact');
   });
 
   test('should return an empty string for non-string input', () => {
-    expect(truncate(123, 5)).toBe('');
-    expect(truncate(null, 5)).toBe('');
-    expect(truncate(undefined, 5)).toBe('');
+    expect(truncateString(123, 5)).toBe('');
+    expect(truncateString(null, 5)).toBe('');
+    expect(truncateString(undefined, 5)).toBe('');
   });
 
   test('should return an empty string for invalid maxLength', () => {
-    expect(truncate('Hello', -1)).toBe('');
-    expect(truncate('Hello', 'abc')).toBe('');
+    expect(truncateString('Hello', -1)).toBe('');
+    expect(truncateString('Hello', 'abc')).toBe('');
   });
 
   test('should handle empty string input', () => {
-    expect(truncate('', 5)).toBe('');
+    expect(truncateString('', 5)).toBe('');
   });
 });
 
