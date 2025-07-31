@@ -548,3 +548,27 @@ export const get = getNestedProperty;
  * @returns {object} The modified object.
  */
 export const set = setNestedProperty;
+
+/**
+ * Performs a deep comparison between two values to determine if they are equivalent.
+ * Alias for isDeepEqual.
+ * @param {*} a The first value to compare.
+ * @param {*} b The second value to compare.
+ * @returns {boolean} True if the values are equivalent, false otherwise.
+ */
+export const deepEqual = isDeepEqual;
+
+/**
+ * Creates a shallow clone of an object or array.
+ * @param {object|Array} obj The object or array to clone.
+ * @returns {object|Array} A shallow clone of the input.
+ */
+export function clone(obj) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return [...obj];
+  }
+  return { ...obj };
+}
