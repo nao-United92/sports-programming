@@ -1,4 +1,4 @@
-import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncate, toCamelCase, toSnakeCase, toTitleCase, slugify, mask, removeExtraSpaces, insertString } from './string-utils.js';
+import { capitalize, removeNonAlphanumeric, reverseString, isPalindrome, countOccurrences, countWords, removeWhitespace, camelCase, snakeCase, kebabCase, padLeft, isUUID, truncateString, toCamelCase, toSnakeCase, toTitleCase, slugify, mask, removeExtraSpaces, insertString, removeEmojis, capitalizeFirstLetter, truncate } from './string-utils.js';
 
 describe('capitalize', () => {
   test('should capitalize the first letter of a string', () => {
@@ -142,8 +142,7 @@ describe('removeWhitespace', () => {
     expect(removeWhitespace('Hello world')).toBe('Helloworld');
     expect(removeWhitespace('  leading and trailing  ')).toBe('leadingandtrailing');
     expect(removeWhitespace('Multiple   spaces')).toBe('Multiplespaces');
-    expect(removeWhitespace(`	Tabs
-andNewlines`)).toBe('TabsandNewlines');
+    expect(removeWhitespace(`	Tabs\nandNewlines`)).toBe('TabsandNewlines');
     expect(removeWhitespace('')).toBe('');
   });
 
@@ -532,4 +531,51 @@ describe('toTitleCase', () => {
       expect(removeEmojis('')).toBe('');
     });
   });
-});
+
+  describe('capitalizeFirstLetter', () => {
+    test('should capitalize the first letter of a string', () => {
+      expect(capitalizeFirstLetter('hello')).toBe('Hello');
+      expect(capitalizeFirstLetter('world')).toBe('World');
+      expect(capitalizeFirstLetter('fooBar')).toBe('FooBar');
+    });
+
+    test('should return an empty string for an empty string', () => {
+      expect(capitalizeFirstLetter('')).toBe('');
+    });
+
+    test('should return an empty string for non-string inputs', () => {
+      expect(capitalizeFirstLetter(123)).toBe('');
+      expect(capitalizeFirstLetter(null)).toBe('');
+      expect(capitalizeFirstLetter(undefined)).toBe('');
+    });
+  });
+
+  describe('truncate', () => {
+    test('should truncate a string to the specified length and add ellipsis', () => {
+      expect(truncate('Hello world', 8)).toBe('Hello...');
+      expect(truncate('This is a long string', 13)).toBe('This is a ...');
+    });
+
+    test('should handle custom ellipsis', () => {
+      expect(truncate('Long string example', 10, '--')).toBe('Long str--');
+    });
+
+    test('should not truncate if the string is shorter than or equal to the max length', () => {
+      expect(truncate('Short', 10)).toBe('Short');
+      expect(truncate('Exact', 5)).toBe('Exact');
+    });
+
+    test('should return an empty string for non-string input', () => {
+      expect(truncate(123, 5)).toBe('');
+      expect(truncate(null, 5)).toBe('');
+      expect(truncate(undefined, 5)).toBe('');
+    });
+
+    test('should return an empty string for invalid maxLength', () => {
+      expect(truncate('Hello', -1)).toBe('');
+    });
+
+    test('should handle empty string input', () => {
+      expect(truncate('', 5)).toBe('');
+    });
+  });

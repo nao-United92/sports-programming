@@ -159,8 +159,7 @@ export function kebabCase(str) {
   if (typeof str !== 'string' || !str) {
     return '';
   }
-  return str.replace(/([a-z0-9]|(?<=[a-z]))([A-Z])/g, '$1-$2').replace(/_|[
-\s]+/g, '-').toLowerCase();
+  return str.replace(/([a-z0-9]|(?<=[a-z]))([A-Z])/g, '$1-$2').replace(/_|[\n\s]+/g, '-').toLowerCase();
 }
 
 /**
@@ -383,4 +382,33 @@ export function removeEmojis(str) {
   // Regex to match most common emojis and other symbols
   const emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
   return str.replace(emojiRegex, '');
+}
+
+/**
+ * Capitalizes the first letter of a string.
+ * @param {string} str The input string.
+ * @returns {string} The string with the first letter capitalized.
+ */
+export function capitalizeFirstLetter(str) {
+  if (typeof str !== 'string' || str.length === 0) {
+    return '';
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Truncates a string to a specified length, adding an ellipsis if it's cut.
+ * @param {string} str The input string.
+ * @param {number} maxLength The maximum length of the string before truncation.
+ * @param {string} [ellipsis='...'] The string to append if truncation occurs.
+ * @returns {string} The truncated string.
+ */
+export function truncate(str, maxLength, ellipsis = '...') {
+  if (typeof str !== 'string' || maxLength < 0) {
+    return '';
+  }
+  if (str.length <= maxLength) {
+    return str;
+  }
+  return str.slice(0, maxLength - ellipsis.length) + ellipsis;
 }
