@@ -1,46 +1,49 @@
-import { once } from './once-utils';
+import { once } from './once-utils.js';
 
 describe('once', () => {
-  let func;
-  let onceFunc;
+  test('should call the original function only once', () => {
+    const myMock = jest.fn();
+    const onceFn = once(myMock);
 
-  beforeEach(() => {
-    func = jest.fn((a, b) => a + b);
-    onceFunc = once(func);
+    onceFn();
+    onceFn();
+    onceFn();
+
+    expect(myMock).toHaveBeenCalledTimes(1);
   });
 
-  test('should call the function only once', () => {
-    onceFunc(1, 2);
-    onceFunc(3, 4);
-    onceFunc(5, 6);
+  test('should return the result of the first call on subsequent calls', () => {
+    let i = 0;
+    const func = () => ++i;
+    const onceFn = once(func);
 
-    expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenCalledWith(1, 2);
+    const result1 = onceFn();
+    const result2 = onceFn();
+    const result3 = onceFn();
+
+    expect(result1).toBe(1);
+    expect(result2).toBe(1);
+    expect(result3).toBe(1);
   });
 
-  test('should return the result of the first invocation for subsequent calls', () => {
-    const result1 = onceFunc(1, 2);
-    const result2 = onceFunc(3, 4);
-    const result3 = onceFunc(5, 6);
+  test('should pass arguments to the original function', () => {
+    const myMock = jest.fn();
+    const onceFn = once(myMock);
 
-    expect(result1).toBe(3);
-    expect(result2).toBe(3);
-    expect(result3).toBe(3);
+    onceFn(1, 2, 3);
+    onceFn(4, 5, 6); // This call should be ignored
+
+    expect(myMock).toHaveBeenCalledWith(1, 2, 3);
+    expect(myMock).not.toHaveBeenCalledWith(4, 5, 6);
   });
 
-  test('should preserve context', () => {
-    const context = { multiplier: 10 };
-    const funcWithContext = jest.fn(function(a) {
-      return a * this.multiplier;
-    });
-    const onceFuncWithContext = once(funcWithContext);
+  test('should maintain the `this` context', () => {
+    const myMock = jest.fn(function() { return this.value; });
+    const context = { value: 42, onceFn: once(myMock) };
 
-    const result1 = onceFuncWithContext.call(context, 5);
-    expect(result1).toBe(50);
-    expect(funcWithContext).toHaveBeenCalledTimes(1);
+    const result = context.onceFn();
 
-    const result2 = onceFuncWithContext.call(context, 10);
-    expect(result2).toBe(50);
-    expect(funcWithContext).toHaveBeenCalledTimes(1);
+    expect(myMock).toHaveBeenCalledTimes(1);
+    expect(result).toBe(42);
   });
 });
