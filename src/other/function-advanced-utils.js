@@ -70,3 +70,27 @@ export function once(func) {
     return result;
   };
 }
+
+/**
+ * Performs left-to-right function composition. The leftmost function may have any arity;
+ * the remaining functions must be unary.
+ * @param {...Function} fns The functions to compose.
+ * @returns {Function} A function that is the composition of the arguments.
+ */
+export function pipe(...fns) {
+  return function(initialValue) {
+    return fns.reduce((acc, fn) => fn(acc), initialValue);
+  };
+}
+
+/**
+ * Performs right-to-left function composition. The rightmost function may have any arity;
+ * the remaining functions must be unary.
+ * @param {...Function} fns The functions to compose.
+ * @returns {Function} A function that is the composition of the arguments.
+ */
+export function compose(...fns) {
+  return function(initialValue) {
+    return fns.reduceRight((acc, fn) => fn(acc), initialValue);
+  };
+}

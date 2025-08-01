@@ -1,4 +1,4 @@
-import { debounce, throttle, memoize, once } from './function-advanced-utils';
+import { debounce, throttle, memoize, once, pipe, compose } from './function-advanced-utils';
 
 describe('debounce', () => {
   jest.useFakeTimers();
@@ -129,5 +129,65 @@ describe('once', () => {
 
     const result2 = onceFunc(3, 4);
     expect(result2).toBe(3);
+  });
+});
+
+describe('pipe', () => {
+  test('should compose functions from left to right', () => {
+    const add1 = (x) => x + 1;
+    const multiply2 = (x) => x * 2;
+    const subtract3 = (x) => x - 3;
+
+    const piped = pipe(add1, multiply2, subtract3);
+
+    expect(piped(5)).toBe((5 + 1) * 2 - 3); // (6 * 2) - 3 = 12 - 3 = 9
+  });
+
+  test('should handle a single function', () => {
+    const add1 = (x) => x + 1;
+    const piped = pipe(add1);
+    expect(piped(10)).toBe(11);
+  });
+
+  test('should handle no functions', () => {
+    const piped = pipe();
+    expect(piped(10)).toBe(10);
+  });
+
+  test('should pass initial value correctly', () => {
+    const toString = (x) => String(x);
+    const addExclamation = (str) => str + '!';
+    const piped = pipe(toString, addExclamation);
+    expect(piped(123)).toBe('123!');
+  });
+});
+
+describe('compose', () => {
+  test('should compose functions from right to left', () => {
+    const add1 = (x) => x + 1;
+    const multiply2 = (x) => x * 2;
+    const subtract3 = (x) => x - 3;
+
+    const composed = compose(subtract3, multiply2, add1);
+
+    expect(composed(5)).toBe((5 + 1) * 2 - 3); // (6 * 2) - 3 = 12 - 3 = 9
+  });
+
+  test('should handle a single function', () => {
+    const add1 = (x) => x + 1;
+    const composed = compose(add1);
+    expect(composed(10)).toBe(11);
+  });
+
+  test('should handle no functions', () => {
+    const composed = compose();
+    expect(composed(10)).toBe(10);
+  });
+
+  test('should pass initial value correctly', () => {
+    const toString = (x) => String(x);
+    const addExclamation = (str) => str + '!';
+    const composed = compose(addExclamation, toString);
+    expect(composed(123)).toBe('123!');
   });
 });
