@@ -1,40 +1,32 @@
 /**
- * Debounces a function, delaying its execution until after a specified time has passed since the last invocation.
- * Useful for limiting the rate at which a function is called, especially for events like window resizing, scrolling, or typing.
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was invoked.
  *
  * @param {Function} func The function to debounce.
- * @param {number} delay The number of milliseconds to delay.
- * @param {boolean} [immediate=false] If true, func is invoked immediately, otherwise invoked after delay.
- * @returns {Function} The debounced function.
+ * @param {number} wait The number of milliseconds to delay.
+ * @param {boolean} [immediate=false] Trigger the function on the leading edge instead of the trailing.
+ * @returns {Function} Returns the new debounced function.
  */
-export function debounce(func, delay, immediate = false) {
+export function debounce(func, wait, immediate = false) {
   let timeout;
-  let result;
 
-  const debounced = function(...args) {
+  return function(...args) {
     const context = this;
-    const later = function() {
+
+    const later = () => {
       timeout = null;
       if (!immediate) {
-        result = func.apply(context, args);
+        func.apply(context, args);
       }
     };
 
     const callNow = immediate && !timeout;
+
     clearTimeout(timeout);
-    timeout = setTimeout(later, delay);
+    timeout = setTimeout(later, wait);
 
     if (callNow) {
-      result = func.apply(context, args);
+      func.apply(context, args);
     }
-
-    return result;
   };
-
-  debounced.cancel = function() {
-    clearTimeout(timeout);
-    timeout = null;
-  };
-
-  return debounced;
 }
