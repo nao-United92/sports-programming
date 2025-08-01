@@ -1,34 +1,69 @@
 import {
-  formatDateCustom,
+  formatDate,
   addDays,
   diffDays,
   isToday,
   startOfDay,
   endOfDay,
-  getCurrentTimestamp
+  formatRelativeTime,
+  getCurrentTimestamp,
+  isSameDay
 } from './date-time-utils';
 
 describe('date-time-utils', () => {
-  describe('formatDateCustom', () => {
+  describe('formatDate', () => {
     it('should format a date with YYYY-MM-DD HH:mm:ss format', () => {
       const date = new Date('2023-01-05T14:30:15');
-      expect(formatDateCustom(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-01-05 14:30:15');
+      expect(formatDate(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-01-05 14:30:15');
     });
 
     it('should format a date with YYYY/MM/DD format', () => {
       const date = new Date('2023-01-05T14:30:15');
-      expect(formatDateCustom(date, 'YYYY/MM/DD')).toBe('2023/01/05');
+      expect(formatDate(date, 'YYYY/MM/DD')).toBe('2023/01/05');
     });
 
     it('should handle single digit month/day/hour/minute/second with padding', () => {
       const date = new Date('2023-09-01T01:02:03');
-      expect(formatDateCustom(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-09-01 01:02:03');
+      expect(formatDate(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-09-01 01:02:03');
     });
 
     it('should return empty string for invalid date', () => {
-      expect(formatDateCustom(new Date('invalid'), 'YYYY-MM-DD')).toBe('');
-      expect(formatDateCustom(null, 'YYYY-MM-DD')).toBe('');
-      expect(formatDateCustom(undefined, 'YYYY-MM-DD')).toBe('');
+      expect(formatDate(new Date('invalid'), 'YYYY-MM-DD')).toBe('');
+      expect(formatDate(null, 'YYYY-MM-DD')).toBe('');
+      expect(formatDate(undefined, 'YYYY-MM-DD')).toBe('');
+    });
+  });
+
+  describe('isSameDay', () => {
+    test('should return true for two dates on the same day', () => {
+      const date1 = new Date('2023-01-01T10:00:00');
+      const date2 = new Date('2023-01-01T15:30:00');
+      expect(isSameDay(date1, date2)).toBe(true);
+    });
+
+    test('should return false for two dates on different days', () => {
+      const date1 = new Date('2023-01-01');
+      const date2 = new Date('2023-01-02');
+      expect(isSameDay(date1, date2)).toBe(false);
+    });
+
+    test('should return false for two dates on different months', () => {
+      const date1 = new Date('2023-01-01');
+      const date2 = new Date('2023-02-01');
+      expect(isSameDay(date1, date2)).toBe(false);
+    });
+
+    test('should return false for two dates on different years', () => {
+      const date1 = new Date('2023-01-01');
+      const date2 = new Date('2024-01-01');
+      expect(isSameDay(date1, date2)).toBe(false);
+    });
+
+    test('should return false for invalid date inputs', () => {
+      expect(isSameDay(new Date('invalid'), new Date())).toBe(false);
+      expect(isSameDay(new Date(), new Date('invalid'))).toBe(false);
+      expect(isSameDay(null, new Date())).toBe(false);
+      expect(isSameDay(new Date(), undefined)).toBe(false);
     });
   });
 
@@ -83,12 +118,12 @@ describe('date-time-utils', () => {
   });
 
   describe('isToday', () => {
-    let mockDate;
+    let _Date;
 
     beforeAll(() => {
       // Mock Date to control 'today' for testing
-      const MOCK_DATE = new Date('2023-03-15T10:00:00Z');
-      const _Date = Date;
+      _Date = Date; // Store original Date
+      const MOCK_DATE = new _Date('2023-03-15T10:00:00Z');
       global.Date = jest.fn((dateString) => {
         if (dateString) {
           return new _Date(dateString);
@@ -100,11 +135,11 @@ describe('date-time-utils', () => {
     });
 
     afterAll(() => {
-      global.Date = Date; // Restore original Date
+      global.Date = _Date; // Restore original Date
     });
 
     it('should return true if the date is today', () => {
-      const today = new Date('2023-03-15T15:00:00Z'); // Same day as mock
+      const today = new Date(Date.now()); // Use the mocked Date.now()
       expect(isToday(today)).toBe(true);
     });
 
@@ -126,17 +161,29 @@ describe('date-time-utils', () => {
 
   describe('startOfDay', () => {
     it('should return the date at the beginning of the day', () => {
-      const date = new Date('2023-01-05T14:30:15.123Z');
+      const date = new Date('2023-01-05T14:30:15.123'); // Use local time string
       const start = startOfDay(date);
-      expect(start.toISOString()).toBe('2023-01-05T00:00:00.000Z');
+      expect(start.getFullYear()).toBe(2023);
+      expect(start.getMonth()).toBe(0);
+      expect(start.getDate()).toBe(5);
+      expect(start.getHours()).toBe(0);
+      expect(start.getMinutes()).toBe(0);
+      expect(start.getSeconds()).toBe(0);
+      expect(start.getMilliseconds()).toBe(0);
     });
   });
 
   describe('endOfDay', () => {
     it('should return the date at the end of the day', () => {
-      const date = new Date('2023-01-05T14:30:15.123Z');
+      const date = new Date('2023-01-05T14:30:15.123'); // Use local time string
       const end = endOfDay(date);
-      expect(end.toISOString()).toBe('2023-01-05T23:59:59.999Z');
+      expect(end.getFullYear()).toBe(2023);
+      expect(end.getMonth()).toBe(0);
+      expect(end.getDate()).toBe(5);
+      expect(end.getHours()).toBe(23);
+      expect(end.getMinutes()).toBe(59);
+      expect(end.getSeconds()).toBe(59);
+      expect(end.getMilliseconds()).toBe(999);
     });
   });
 

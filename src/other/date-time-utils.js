@@ -5,7 +5,7 @@
  * @param {string} format The format string (e.g., 'YYYY-MM-DD HH:mm:ss').
  * @returns {string} The formatted date string.
  */
-export function formatDateCustom(date, format) {
+export function formatDate(date, format) {
   if (!(date instanceof Date) || isNaN(date)) {
     return '';
   }
@@ -24,6 +24,23 @@ export function formatDateCustom(date, format) {
     .replace(/HH/g, hours)
     .replace(/mm/g, minutes)
     .replace(/ss/g, seconds);
+}
+
+/**
+ * Checks if two Date objects represent the same day (ignoring time).
+ * @param {Date} date1 The first Date object.
+ * @param {Date} date2 The second Date object.
+ * @returns {boolean} True if both dates are on the same day, false otherwise.
+ */
+export function isSameDay(date1, date2) {
+  if (!(date1 instanceof Date) || isNaN(date1) || !(date2 instanceof Date) || isNaN(date2)) {
+    return false;
+  }
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
 }
 
 /**
@@ -56,7 +73,7 @@ export function diffDays(date1, date2) {
  * @returns {boolean} True if the date is today, false otherwise.
  */
 export function isToday(date) {
-  const today = new Date();
+  const today = new Date(Date.now());
   return (
     date.getDate() === today.getDate() &&
     date.getMonth() === today.getMonth() &&
