@@ -1,56 +1,66 @@
-import { memoize } from './memoize-utils';
+
+import { memoize } from './memoize-utils.js';
 
 describe('memoize', () => {
-  let func;
-  let memoizedFunc;
+  test('should memoize a simple function', () => {
+    const func = jest.fn(x => x * 2);
+    const memoizedFunc = memoize(func);
 
-  beforeEach(() => {
-    func = jest.fn((a, b) => a + b);
-    memoizedFunc = memoize(func);
-  });
-
-  test('should return the correct result for the first call', () => {
-    const result = memoizedFunc(1, 2);
-    expect(result).toBe(3);
+    expect(memoizedFunc(2)).toBe(4);
+    expect(memoizedFunc(2)).toBe(4);
     expect(func).toHaveBeenCalledTimes(1);
-  });
 
-  test('should return cached result for subsequent calls with same arguments', () => {
-    memoizedFunc(1, 2);
-    const result = memoizedFunc(1, 2);
-    expect(result).toBe(3);
-    expect(func).toHaveBeenCalledTimes(1);
-  });
-
-  test('should re-execute for different arguments', () => {
-    memoizedFunc(1, 2);
-    memoizedFunc(3, 4);
+    expect(memoizedFunc(3)).toBe(6);
+    expect(memoizedFunc(3)).toBe(6);
     expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  test('should use a resolver function to determine the cache key', () => {
+    const func = jest.fn(obj => obj.a);
+    const memoizedFunc = memoize(func, obj => obj.id);
+
+    const obj1 = { id: 1, a: 1 };
+    const obj2 = { id: 1, a: 2 }; // Same id, different 'a' value
+    const obj3 = { id: 2, a: 3 };
+
+    expect(memoizedFunc(obj1)).toBe(1);
+    expect(memoizedFunc(obj2)).toBe(1); // Should return cached value from obj1
+    expect(func).toHaveBeenCalledTimes(1);
+
+    expect(memoizedFunc(obj3)).toBe(3);
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  test('should expose the cache on the memoized function', () => {
+    const func = x => x;
+    const memoizedFunc = memoize(func);
+
+    memoizedFunc('a');
+    expect(memoizedFunc.cache.has('a')).toBe(true);
+    expect(memoizedFunc.cache.get('a')).toBe('a');
+  });
+
+  test('should handle multiple arguments when no resolver is provided (uses first arg as key)', () => {
+    const func = jest.fn((a, b) => a + b);
+    const memoizedFunc = memoize(func);
+
     expect(memoizedFunc(1, 2)).toBe(3);
-    expect(memoizedFunc(3, 4)).toBe(7);
-    expect(func).toHaveBeenCalledTimes(2);
+    expect(memoizedFunc(1, 10)).toBe(3); // Second arg is ignored, returns cached result
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should handle different argument types', () => {
-    memoizedFunc('a', 'b');
-    memoizedFunc([1], [2]);
-    memoizedFunc({ a: 1 }, { b: 2 });
-    expect(func).toHaveBeenCalledTimes(3);
-  });
-
-  test('should preserve context', () => {
-    const context = { multiplier: 10 };
-    const funcWithContext = jest.fn(function(a) {
-      return a * this.multiplier;
+  test('should maintain the `this` context', () => {
+    const func = jest.fn(function(x) {
+      return this.multiplier * x;
     });
-    const memoizedFuncWithContext = memoize(funcWithContext);
 
-    const result1 = memoizedFuncWithContext.call(context, 5);
-    expect(result1).toBe(50);
-    expect(funcWithContext).toHaveBeenCalledTimes(1);
+    const context = {
+      multiplier: 10,
+      memoized: memoize(func)
+    };
 
-    const result2 = memoizedFuncWithContext.call(context, 5);
-    expect(result2).toBe(50);
-    expect(funcWithContext).toHaveBeenCalledTimes(1);
+    expect(context.memoized(2)).toBe(20);
+    expect(context.memoized(2)).toBe(20);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 });
