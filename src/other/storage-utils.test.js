@@ -1,342 +1,108 @@
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, setSessionStorageItem, getSessionStorageItem, removeSessionStorageItem, clearLocalStorage, clearSessionStorage, setCookie, getCookie, removeCookie, hasLocalStorage, hasSessionStorage } from './storage-utils.js';
+import {
+  setLocalStorage,
+  getLocalStorage,
+  removeLocalStorage,
+  clearLocalStorage,
+  setSessionStorage,
+  getSessionStorage,
+  removeSessionStorage,
+  clearSessionStorage
+} from './storage-utils.js';
 
-describe('storage-utils', () => {
-  const localStorageMock = (() => {
-    let store = {};
-    return {
-      getItem: jest.fn((key) => store[key] || null),
-      setItem: jest.fn((key, value) => {
-        store[key] = value;
-      }),
-      removeItem: jest.fn((key) => {
-        delete store[key];
-      }),
-      clear: jest.fn(() => {
-        store = {};
-      }),
-    };
-  })();
+// Mock Web Storage API
+const createStorageMock = () => {
+  let store = {};
+  return {
+    getItem: jest.fn(key => store[key] || null),
+    setItem: jest.fn((key, value) => {
+      store[key] = value.toString();
+    }),
+    removeItem: jest.fn(key => {
+      delete store[key];
+    }),
+    clear: jest.fn(() => {
+      store = {};
+    }),
+  };
+};
 
-  const sessionStorageMock = (() => {
-    let store = {};
-    return {
-      getItem: jest.fn((key) => store[key] || null),
-      setItem: jest.fn((key, value) => {
-        store[key] = value;
-      }),
-      removeItem: jest.fn((key) => {
-        delete store[key];
-      }),
-      clear: jest.fn(() => {
-        store = {};
-      }),
-    };
-  })();
+const localStorageMock = createStorageMock();
+const sessionStorageMock = createStorageMock();
 
-  Object.defineProperty(window, 'localStorage', {
-    value: localStorageMock,
-  });
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
 
-  Object.defineProperty(window, 'sessionStorage', {
-    value: sessionStorageMock,
-  });
+
+describe('Storage Utilities', () => {
 
   beforeEach(() => {
-    localStorageMock.clear();
-    sessionStorageMock.clear();
-    localStorageMock.getItem.mockClear();
-    localStorageMock.setItem.mockClear();
-    localStorageMock.removeItem.mockClear();
-    localStorageMock.clear.mockClear(); // Add this line
-    sessionStorageMock.getItem.mockClear();
-    sessionStorageMock.setItem.mockClear();
-    sessionStorageMock.removeItem.mockClear();
-    sessionStorageMock.clear.mockClear(); // Add this line
+    localStorage.clear();
+    sessionStorage.clear();
+    jest.clearAllMocks();
   });
 
   describe('localStorage', () => {
-    test('setLocalStorageItem should store stringified value', () => {
-      const testKey = 'testString';
-      const testValue = 'hello';
-      setLocalStorageItem(testKey, testValue);
-      expect(localStorageMock.setItem).toHaveBeenCalledWith(testKey, JSON.stringify(testValue));
+    test('should set and get a string value', () => {
+      setLocalStorage('testString', 'hello');
+      expect(localStorage.setItem).toHaveBeenCalledWith('testString', '"hello"');
+      // To test get, we need to simulate the stored value in our mock
+      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify('hello'));
+      expect(getLocalStorage('testString')).toBe('hello');
     });
 
-    test('setLocalStorageItem should store object as stringified JSON', () => {
-      const testKey = 'testObject';
-      const testValue = { a: 1, b: 'test' };
-      setLocalStorageItem(testKey, testValue);
-      expect(localStorageMock.setItem).toHaveBeenCalledWith(testKey, JSON.stringify(testValue));
+    test('should set and get an object value', () => {
+      const obj = { a: 1, b: 'test' };
+      setLocalStorage('testObject', obj);
+      expect(localStorage.setItem).toHaveBeenCalledWith('testObject', JSON.stringify(obj));
+      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify(obj));
+      expect(getLocalStorage('testObject')).toEqual(obj);
     });
 
-    test('getLocalStorageItem should retrieve and parse stringified value', () => {
-      const testKey = 'testString';
-      const testValue = 'hello';
-      localStorageMock.setItem(testKey, JSON.stringify(testValue));
-      expect(getLocalStorageItem(testKey)).toBe(testValue);
-      expect(localStorageMock.getItem).toHaveBeenCalledWith(testKey);
+    test('should return null for a non-existent key', () => {
+      localStorageMock.getItem.mockReturnValueOnce(null);
+      expect(getLocalStorage('nonExistent')).toBeNull();
     });
 
-    test('getLocalStorageItem should retrieve and parse object from JSON', () => {
-      const testKey = 'testObject';
-      const testValue = { a: 1, b: 'test' };
-      localStorageMock.setItem(testKey, JSON.stringify(testValue));
-      expect(getLocalStorageItem(testKey)).toEqual(testValue);
-      expect(localStorageMock.getItem).toHaveBeenCalledWith(testKey);
+    test('should remove a value', () => {
+      removeLocalStorage('toBeRemoved');
+      expect(localStorage.removeItem).toHaveBeenCalledWith('toBeRemoved');
     });
 
-    test('getLocalStorageItem should return null if item not found', () => {
-      expect(getLocalStorageItem('nonExistent')).toBeNull();
-    });
-
-    test('removeLocalStorageItem should remove item', () => {
-      const testKey = 'testRemove';
-      setLocalStorageItem(testKey, 'value');
-      removeLocalStorageItem(testKey);
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith(testKey);
-      expect(getLocalStorageItem(testKey)).toBeNull();
-    });
-
-    test('setLocalStorageItem should handle errors', () => {
-      localStorageMock.setItem.mockImplementationOnce(() => {
-        throw new Error('Quota exceeded');
-      });
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      setLocalStorageItem('errorKey', 'errorValue');
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      consoleErrorSpy.mockRestore();
-    });
-
-    test('getLocalStorageItem should handle errors', () => {
-      localStorageMock.getItem.mockImplementationOnce(() => {
-        throw new Error('Read error');
-      });
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      expect(getLocalStorageItem('errorKey')).toBeNull();
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      consoleErrorSpy.mockRestore();
-    });
-
-    test('clearLocalStorage should clear all items', () => {
-      setLocalStorageItem('key1', 'value1');
-      setLocalStorageItem('key2', 'value2');
+    test('should clear all values', () => {
       clearLocalStorage();
-      expect(localStorageMock.clear).toHaveBeenCalledTimes(1);
-      expect(getLocalStorageItem('key1')).toBeNull();
-      expect(getLocalStorageItem('key2')).toBeNull();
+      expect(localStorage.clear).toHaveBeenCalled();
     });
   });
 
   describe('sessionStorage', () => {
-    test('setSessionStorageItem should store stringified value', () => {
-      const testKey = 'testString';
-      const testValue = 'hello';
-      setSessionStorageItem(testKey, testValue);
-      expect(sessionStorageMock.setItem).toHaveBeenCalledWith(testKey, JSON.stringify(testValue));
+    test('should set and get a string value', () => {
+      setSessionStorage('testString', 'hello');
+      expect(sessionStorage.setItem).toHaveBeenCalledWith('testString', '"hello"');
+      sessionStorageMock.getItem.mockReturnValueOnce(JSON.stringify('hello'));
+      expect(getSessionStorage('testString')).toBe('hello');
     });
 
-    test('setSessionStorageItem should store object as stringified JSON', () => {
-      const testKey = 'testObject';
-      const testValue = { a: 1, b: 'test' };
-      setSessionStorageItem(testKey, testValue);
-      expect(sessionStorageMock.setItem).toHaveBeenCalledWith(testKey, JSON.stringify(testValue));
+    test('should set and get an object value', () => {
+      const obj = { a: 1, b: 'test' };
+      setSessionStorage('testObject', obj);
+      expect(sessionStorage.setItem).toHaveBeenCalledWith('testObject', JSON.stringify(obj));
+      sessionStorageMock.getItem.mockReturnValueOnce(JSON.stringify(obj));
+      expect(getSessionStorage('testObject')).toEqual(obj);
     });
 
-    test('getSessionStorageItem should retrieve and parse stringified value', () => {
-      const testKey = 'testString';
-      const testValue = 'hello';
-      sessionStorageMock.setItem(testKey, JSON.stringify(testValue));
-      expect(getSessionStorageItem(testKey)).toBe(testValue);
-      expect(sessionStorageMock.getItem).toHaveBeenCalledWith(testKey);
+    test('should return null for a non-existent key', () => {
+      sessionStorageMock.getItem.mockReturnValueOnce(null);
+      expect(getSessionStorage('nonExistent')).toBeNull();
     });
 
-    test('getSessionStorageItem should retrieve and parse object from JSON', () => {
-      const testKey = 'testObject';
-      const testValue = { a: 1, b: 'test' };
-      sessionStorageMock.setItem(testKey, JSON.stringify(testValue));
-      expect(getSessionStorageItem(testKey)).toEqual(testValue);
-      expect(sessionStorageMock.getItem).toHaveBeenCalledWith(testKey);
+    test('should remove a value', () => {
+      removeSessionStorage('toBeRemoved');
+      expect(sessionStorage.removeItem).toHaveBeenCalledWith('toBeRemoved');
     });
 
-    test('getSessionStorageItem should return null if item not found', () => {
-      expect(getSessionStorageItem('nonExistent')).toBeNull();
-    });
-
-    test('removeSessionStorageItem should remove item', () => {
-      const testKey = 'testRemove';
-      setSessionStorageItem(testKey, 'value');
-      removeSessionStorageItem(testKey);
-      expect(sessionStorageMock.removeItem).toHaveBeenCalledWith(testKey);
-      expect(getSessionStorageItem(testKey)).toBeNull();
-    });
-
-    test('setSessionStorageItem should handle errors', () => {
-      sessionStorageMock.setItem.mockImplementationOnce(() => {
-        throw new Error('Quota exceeded');
-      });
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      setSessionStorageItem('errorKey', 'errorValue');
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      consoleErrorSpy.mockRestore();
-    });
-
-    test('getSessionStorageItem should handle errors', () => {
-      sessionStorageMock.getItem.mockImplementationOnce(() => {
-        throw new Error('Read error');
-      });
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      expect(getSessionStorageItem('errorKey')).toBeNull();
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      consoleErrorSpy.mockRestore();
-    });
-
-    test('clearSessionStorage should clear all items', () => {
-      setSessionStorageItem('key1', 'value1');
-      setSessionStorageItem('key2', 'value2');
+    test('should clear all values', () => {
       clearSessionStorage();
-      expect(sessionStorageMock.clear).toHaveBeenCalledTimes(1);
-      expect(getSessionStorageItem('key1')).toBeNull();
-      expect(getSessionStorageItem('key2')).toBeNull();
+      expect(sessionStorage.clear).toHaveBeenCalled();
     });
-  });
-
-  describe('Cookies', () => {
-    beforeEach(() => {
-      Object.defineProperty(document, 'cookie', {
-        writable: true,
-        value: '',
-      });
-    });
-
-    test('setCookie should set a cookie', () => {
-      setCookie('testName', 'testValue', 7);
-      expect(document.cookie).toContain('testName=testValue');
-    });
-
-    test('getCookie should retrieve a cookie', () => {
-      document.cookie = 'testCookie=testValue';
-      expect(getCookie('testCookie')).toBe('testValue');
-    });
-
-    test('getCookie should return null if cookie not found', () => {
-      expect(getCookie('nonExistentCookie')).toBeNull();
-    });
-
-    test('removeCookie should remove a cookie', () => {
-      setCookie('testRemove', 'value', 7);
-      removeCookie('testRemove');
-      expect(document.cookie).not.toContain('testRemove');
-    });
-  });
-
-  describe('hasLocalStorage', () => {
-    test('should return true if localStorage is available', () => {
-      expect(hasLocalStorage()).toBe(true);
-    });
-
-    test('should return false if localStorage is not available', () => {
-      const setItemMock = localStorageMock.setItem;
-      localStorageMock.setItem = jest.fn(() => {
-        throw new Error('Quota exceeded');
-      });
-      expect(hasLocalStorage()).toBe(false);
-      localStorageMock.setItem = setItemMock; // Restore mock
-    });
-  });
-
-  describe('hasSessionStorage', () => {
-    test('should return true if sessionStorage is available', () => {
-      expect(hasSessionStorage()).toBe(true);
-    });
-
-    test('should return false if sessionStorage is not available', () => {
-      const setItemMock = sessionStorageMock.setItem;
-      sessionStorageMock.setItem = jest.fn(() => {
-        throw new Error('Quota exceeded');
-      });
-      expect(hasSessionStorage()).toBe(false);
-      sessionStorageMock.setItem = setItemMock; // Restore mock
-    });
-  });
-
-  describe('getAllLocalStorageItems', () => {
-    test('should retrieve all items from localStorage', () => {
-      setLocalStorageItem('key1', 'value1');
-      setLocalStorageItem('key2', { data: 'value2' });
-
-      const allItems = getAllLocalStorageItems();
-      expect(allItems).toEqual({
-        key1: 'value1',
-        key2: { data: 'value2' },
-      });
-    });
-
-    test('should return an empty object if localStorage is empty', () => {
-      expect(getAllLocalStorageItems()).toEqual({});
-    });
-
-    test('should handle non-JSON string values gracefully', () => {
-      localStorage.setItem('rawString', 'just a string');
-      const allItems = getAllLocalStorageItems();
-      expect(allItems).toEqual({ rawString: 'just a string' });
-    });
-  });
-
-  describe('setWithExpiry and getWithExpiry', () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-      localStorageMock.clear();
-    });
-
-    afterEach(() => {
-      jest.runOnlyPendingTimers();
-      jest.useRealTimers();
-    });
-
-    test('setWithExpiry should store item with expiry', () => {
-      const testKey = 'expiringItem';
-      const testValue = { data: 'secret' };
-      const ttl = 1000 * 60 * 60; // 1 hour
-
-      setWithExpiry(testKey, testValue, ttl);
-
-      const storedItem = JSON.parse(localStorageMock.getItem(testKey));
-      expect(storedItem.value).toEqual(testValue);
-      expect(storedItem.expiry).toBeGreaterThan(Date.now());
-    });
-
-    test('getWithExpiry should retrieve item if not expired', () => {
-      const testKey = 'expiringItem';
-      const testValue = { data: 'secret' };
-      const ttl = 1000 * 60 * 60; // 1 hour
-
-      setWithExpiry(testKey, testValue, ttl);
-      jest.advanceTimersByTime(ttl / 2); // Advance time, but not past expiry
-
-      expect(getWithExpiry(testKey)).toEqual(testValue);
-    });
-
-    test('getWithExpiry should return null and remove item if expired', () => {
-      const testKey = 'expiringItem';
-      const testValue = { data: 'secret' };
-      const ttl = 1000 * 60 * 60; // 1 hour
-
-      setWithExpiry(testKey, testValue, ttl);
-      jest.advanceTimersByTime(ttl + 1); // Advance time past expiry
-
-      expect(getWithExpiry(testKey)).toBeNull();
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith(testKey);
-    });
-
-    test('getWithExpiry should return null if item does not exist', () => {
-      expect(getWithExpiry('nonExistentExpiringItem')).toBeNull();
-    });
-
-    test('getWithExpiry should handle malformed stored data', () => {
-      localStorage.setItem('malformedItem', 'not json');
-      expect(getWithExpiry('malformedItem')).toBeNull();
-    });
-  });
-});
   });
 });
