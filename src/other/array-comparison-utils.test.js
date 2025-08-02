@@ -1,88 +1,90 @@
-import { areArraysEqual, areArraysEqualUnordered } from './array-comparison-utils';
+import { isEqualArray, isEqualArrayDeep } from './array-comparison-utils.js';
 
-describe('areArraysEqual', () => {
-  test('should return true for identical arrays', () => {
-    expect(areArraysEqual([1, 2, 3], [1, 2, 3])).toBe(true);
+describe('Array Comparison Utilities', () => {
+  describe('isEqualArray', () => {
+    test('should return true for two identical arrays of primitives', () => {
+      expect(isEqualArray([1, 2, 3], [1, 2, 3])).toBe(true);
+    });
+
+    test('should return false for arrays with different elements', () => {
+      expect(isEqualArray([1, 2, 3], [1, 2, 4])).toBe(false);
+    });
+
+    test('should return false for arrays with different order', () => {
+      expect(isEqualArray([1, 2, 3], [1, 3, 2])).toBe(false);
+    });
+
+    test('should return false for arrays of different lengths', () => {
+      expect(isEqualArray([1, 2], [1, 2, 3])).toBe(false);
+      expect(isEqualArray([1, 2, 3], [1, 2])).toBe(false);
+    });
+
+    test('should return true for two empty arrays', () => {
+      expect(isEqualArray([], [])).toBe(true);
+    });
+
+    test('should return false for arrays containing objects (shallow comparison)', () => {
+      const obj1 = { a: 1 };
+      const obj2 = { a: 1 };
+      expect(isEqualArray([obj1], [obj1])).toBe(true);
+      expect(isEqualArray([obj1], [obj2])).toBe(false); // Different object references
+    });
+
+    test('should return false for non-array inputs', () => {
+      expect(isEqualArray(null, [])).toBe(false);
+      expect(isEqualArray([], undefined)).toBe(false);
+      expect(isEqualArray('string', 'string')).toBe(false);
+    });
   });
 
-  test('should return false for arrays with different elements', () => {
-    expect(areArraysEqual([1, 2, 3], [1, 2, 4])).toBe(false);
-  });
+  describe('isEqualArrayDeep', () => {
+    test('should return true for two identical arrays of primitives', () => {
+      expect(isEqualArrayDeep([1, 2, 3], [1, 2, 3])).toBe(true);
+    });
 
-  test('should return false for arrays with different lengths', () => {
-    expect(areArraysEqual([1, 2, 3], [1, 2])).toBe(false);
-  });
+    test('should return true for arrays with identical nested arrays', () => {
+      expect(isEqualArrayDeep([1, [2, 3]], [1, [2, 3]])).toBe(true);
+    });
 
-  test('should return true for empty arrays', () => {
-    expect(areArraysEqual([], [])).toBe(true);
-  });
+    test('should return true for arrays with identical nested objects', () => {
+      expect(isEqualArrayDeep([1, { a: 2, b: 3 }], [1, { a: 2, b: 3 }])).toBe(true);
+    });
 
-  test('should handle arrays with different order', () => {
-    expect(areArraysEqual([1, 2, 3], [3, 2, 1])).toBe(false);
-  });
+    test('should return true for arrays with complex nested structures', () => {
+      const arr1 = [1, [2, { x: 10, y: [11, 12] }], { z: [13, { w: 14 }] }];
+      const arr2 = [1, [2, { x: 10, y: [11, 12] }], { z: [13, { w: 14 }] }];
+      expect(isEqualArrayDeep(arr1, arr2)).toBe(true);
+    });
 
-  test('should handle arrays with mixed types', () => {
-    expect(areArraysEqual([1, '2', true], [1, '2', true])).toBe(true);
-    expect(areArraysEqual([1, '2', true], [1, '2', false])).toBe(false);
-  });
+    test('should return false for arrays with different nested array elements', () => {
+      expect(isEqualArrayDeep([1, [2, 3]], [1, [2, 4]])).toBe(false);
+    });
 
-  test('should handle arrays with objects (shallow comparison)', () => {
-    const obj1 = { a: 1 };
-    const obj2 = { a: 1 };
-    expect(areArraysEqual([obj1], [obj1])).toBe(true);
-    expect(areArraysEqual([obj1], [obj2])).toBe(false); // Different object references
-  });
+    test('should return false for arrays with different nested object properties', () => {
+      expect(isEqualArrayDeep([1, { a: 2, b: 3 }], [1, { a: 2, b: 4 }])).toBe(false);
+    });
 
-  test('should return false for non-array inputs', () => {
-    expect(areArraysEqual(null, [])).toBe(false);
-    expect(areArraysEqual([], undefined)).toBe(false);
-    expect(areArraysEqual('string', [])).toBe(false);
-  });
-});
+    test('should return false for arrays with different nested object keys', () => {
+      expect(isEqualArrayDeep([1, { a: 2 }], [1, { b: 2 }])).toBe(false);
+    });
 
-describe('areArraysEqualUnordered', () => {
-  test('should return true for identical arrays', () => {
-    expect(areArraysEqualUnordered([1, 2, 3], [1, 2, 3])).toBe(true);
-  });
+    test('should return false for arrays of different lengths', () => {
+      expect(isEqualArrayDeep([1, 2], [1, 2, 3])).toBe(false);
+    });
 
-  test('should return true for arrays with same elements in different order', () => {
-    expect(areArraysEqualUnordered([1, 2, 3], [3, 1, 2])).toBe(true);
-  });
+    test('should return true for two empty arrays', () => {
+      expect(isEqualArrayDeep([], [])).toBe(true);
+    });
 
-  test('should return false for arrays with different elements', () => {
-    expect(areArraysEqualUnordered([1, 2, 3], [1, 2, 4])).toBe(false);
-  });
+    test('should return false for non-array inputs', () => {
+      expect(isEqualArrayDeep(null, [])).toBe(false);
+      expect(isEqualArrayDeep([], undefined)).toBe(false);
+    });
 
-  test('should return false for arrays with different lengths', () => {
-    expect(areArraysEqualUnordered([1, 2, 3], [1, 2])).toBe(false);
-  });
-
-  test('should return true for empty arrays', () => {
-    expect(areArraysEqualUnordered([], [])).toBe(true);
-  });
-
-  test('should handle arrays with duplicate elements', () => {
-    expect(areArraysEqualUnordered([1, 2, 2], [2, 1, 2])).toBe(true);
-    expect(areArraysEqualUnordered([1, 2, 2], [1, 1, 2])).toBe(false);
-  });
-
-  test('should handle arrays with mixed types', () => {
-    expect(areArraysEqualUnordered([1, '2', true], [true, 1, '2'])).toBe(true);
-    expect(areArraysEqualUnordered([1, '2', true], [false, 1, '2'])).toBe(false);
-  });
-
-  test('should handle arrays with objects (shallow comparison)', () => {
-    const obj1 = { a: 1 };
-    const obj2 = { b: 2 };
-    const obj3 = { a: 1 }; // Different reference
-    expect(areArraysEqualUnordered([obj1, obj2], [obj2, obj1])).toBe(true);
-    expect(areArraysEqualUnordered([obj1], [obj3])).toBe(true); // JSON.stringify will make them equal
-    expect(areArraysEqualUnordered([obj1, { c: 3 }], [{ c: 3 }, obj1])).toBe(true);
-  });
-
-  test('should return false for non-array inputs', () => {
-    expect(areArraysEqualUnordered(null, [])).toBe(false);
-    expect(areArraysEqualUnordered([], undefined)).toBe(false);
-    expect(areArraysEqualUnordered('string', [])).toBe(false);
+    test('should handle null/undefined values within arrays', () => {
+      expect(isEqualArrayDeep([1, null, 3], [1, null, 3])).toBe(true);
+      expect(isEqualArrayDeep([1, undefined, 3], [1, undefined, 3])).toBe(true);
+      expect(isEqualArrayDeep([1, null, 3], [1, undefined, 3])).toBe(false);
+    });
   });
 });
