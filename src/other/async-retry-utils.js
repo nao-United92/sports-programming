@@ -1,12 +1,12 @@
 /**
- * Retries an asynchronous function a specified number of times with a delay between retries.
- * @param {Function} asyncFn The asynchronous function to retry. It should return a Promise.
- * @param {Object} options Options for retrying.
+ * Attempts to execute an async function, retrying a specified number of times on failure.
+ * @param {Function} asyncFn The async function to execute.
+ * @param {object} [options={}] Options for the retry mechanism.
  * @param {number} [options.retries=3] The maximum number of retries.
- * @param {number} [options.delay=1000] The delay in milliseconds between retries.
- * @returns {Promise<any>} A Promise that resolves with the result of asyncFn or rejects if all retries fail.
+ * @param {number} [options.delay=0] The delay in milliseconds between retries.
+ * @returns {Promise<*>} A promise that resolves with the result of the async function, or rejects if all retries fail.
  */
-export async function retry(asyncFn, { retries = 3, delay = 1000 } = {}) {
+export async function asyncRetry(asyncFn, { retries = 3, delay = 0 } = {}) {
   let lastError;
   for (let i = 0; i <= retries; i++) {
     try {
@@ -14,9 +14,12 @@ export async function retry(asyncFn, { retries = 3, delay = 1000 } = {}) {
     } catch (error) {
       lastError = error;
       if (i < retries) {
-        await new Promise(resolve => setTimeout(resolve, delay));
+        if (delay > 0) {
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      } else {
+        throw lastError;
       }
     }
   }
-  throw lastError; // Re-throw the last error if all retries fail
 }

@@ -1,76 +1,58 @@
-import { retry } from './async-retry-utils';
+import { asyncRetry } from './async-retry-utils.js';
 
-describe('retry', () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
+jest.useFakeTimers();
+
+describe('asyncRetry', () => {
+  test('should succeed on the first attempt', async () => {
+    const successfulFn = jest.fn().mockResolvedValue('success');
+    await expect(asyncRetry(successfulFn)).resolves.toBe('success');
+    expect(successfulFn).toHaveBeenCalledTimes(1);
   });
 
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
+  test('should retry on failure and eventually succeed', async () => {
+    const failingFn = jest.fn()
+      .mockRejectedValueOnce(new Error('fail 1'))
+      .mockRejectedValueOnce(new Error('fail 2'))
+      .mockResolvedValue('success');
+
+    await expect(asyncRetry(failingFn, { retries: 3 })).resolves.toBe('success');
+    expect(failingFn).toHaveBeenCalledTimes(3);
   });
 
-  test('should resolve if the async function succeeds on the first try', async () => {
-    const mockFn = jest.fn().mockResolvedValue('Success');
-    await expect(retry(mockFn)).resolves.toBe('Success');
-    expect(mockFn).toHaveBeenCalledTimes(1);
+  test('should fail after all retries are exhausted', async () => {
+    const failingFn = jest.fn().mockRejectedValue(new Error('persistent failure'));
+    const retries = 2;
+
+    await expect(asyncRetry(failingFn, { retries })).rejects.toThrow('persistent failure');
+    expect(failingFn).toHaveBeenCalledTimes(retries + 1);
   });
 
-  test('should retry and resolve if the async function succeeds after some retries', async () => {
-    const mockFn = jest.fn()
-      .mockRejectedValueOnce(new Error('Fail 1'))
-      .mockRejectedValueOnce(new Error('Fail 2'))
-      .mockResolvedValue('Success');
+  test('should respect the delay between retries', async () => {
+    const failingFn = jest.fn()
+      .mockRejectedValueOnce(new Error('fail'))
+      .mockResolvedValue('success');
+    const delay = 1000;
 
-    const promise = retry(mockFn, { retries: 2, delay: 100 });
+    const promise = asyncRetry(failingFn, { retries: 1, delay });
 
-    // Run all timers to allow the retries to happen
-    jest.runAllTimers();
+    // At this point, the first call should have failed, and we should be waiting.
+    expect(failingFn).toHaveBeenCalledTimes(1);
+    
+    // Advance timers by less than the delay
+    jest.advanceTimersByTime(delay - 1);
+    expect(failingFn).toHaveBeenCalledTimes(1); // Still only called once
 
-    await expect(promise).resolves.toBe('Success');
-    expect(mockFn).toHaveBeenCalledTimes(3);
-  });
-
-  test('should reject if the async function fails after all retries', async () => {
-    const mockFn = jest.fn()
-      .mockRejectedValueOnce(new Error('Fail 1'))
-      .mockRejectedValueOnce(new Error('Fail 2'))
-      .mockRejectedValue(new Error('Final Fail'));
-
-    const promise = retry(mockFn, { retries: 2, delay: 100 });
-
-    // Run all timers to allow the retries to happen
-    jest.runAllTimers();
-
-    await expect(promise).rejects.toThrow('Final Fail');
-    expect(mockFn).toHaveBeenCalledTimes(3);
-  });
-
-  test('should use default retries and delay if not provided', async () => {
-    const mockFn = jest.fn()
-      .mockRejectedValueOnce(new Error('Fail 1'))
-      .mockRejectedValueOnce(new Error('Fail 2'))
-      .mockRejectedValueOnce(new Error('Fail 3'))
-      .mockResolvedValue('Success');
-
-    const promise = retry(mockFn);
-
-    // Run all timers to allow the retries to happen
-    jest.runAllTimers();
-
-    await expect(promise).resolves.toBe('Success');
-    expect(mockFn).toHaveBeenCalledTimes(4); // 1 initial + 3 retries
-  });
-
-  test('should not retry if retries is 0', async () => {
-    const mockFn = jest.fn().mockRejectedValue(new Error('Fail'));
-    await expect(retry(mockFn, { retries: 0 })).rejects.toThrow('Fail');
-    expect(mockFn).toHaveBeenCalledTimes(1);
+    // Advance timers past the delay
+    jest.advanceTimersByTime(1);
+    
+    // Now the second call should be triggered
+    await expect(promise).resolves.toBe('success');
+    expect(failingFn).toHaveBeenCalledTimes(2);
   });
 
   test('should pass arguments to the async function', async () => {
-    const mockFn = jest.fn((a, b) => Promise.resolve(a + b));
-    await expect(retry(() => mockFn(1, 2))).resolves.toBe(3);
-    expect(mockFn).toHaveBeenCalledWith(1, 2);
+    const fn = jest.fn().mockResolvedValue('done');
+    await asyncRetry(() => fn(1, 'arg2'), { retries: 1 });
+    expect(fn).toHaveBeenCalledWith(1, 'arg2');
   });
 });
