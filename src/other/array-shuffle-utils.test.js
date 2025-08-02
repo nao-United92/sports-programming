@@ -1,56 +1,43 @@
-import { shuffleArray } from './array-shuffle-utils';
+import { shuffle } from './array-shuffle-utils.js';
 
-describe('shuffleArray', () => {
-  test('should return an array of the same length', () => {
-    const originalArray = [1, 2, 3, 4, 5];
-    const shuffledArray = shuffleArray([...originalArray]);
-    expect(shuffledArray.length).toBe(originalArray.length);
-  });
+describe('Array Shuffle Utilities', () => {
+  describe('shuffle', () => {
+    test('should return a new array with the same elements', () => {
+      const originalArray = [1, 2, 3, 4, 5];
+      const shuffledArray = shuffle(originalArray);
 
-  test('should contain the same elements as the original array', () => {
-    const originalArray = [1, 2, 3, 4, 5];
-    const shuffledArray = shuffleArray([...originalArray]);
-    expect(shuffledArray.sort()).toEqual(originalArray.sort());
-  });
+      expect(shuffledArray).not.toBe(originalArray); // Should be a new array
+      expect(shuffledArray.length).toBe(originalArray.length);
+      expect(shuffledArray).toEqual(expect.arrayContaining(originalArray)); // Same elements
+    });
 
-  test('should return a different order for a non-empty array (probabilistic)', () => {
-    const originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    let isShuffled = false;
-    // Run multiple times to increase probability of different order
-    for (let i = 0; i < 10; i++) {
-      const shuffledArray = shuffleArray([...originalArray]);
-      if (!shuffledArray.every((val, index) => val === originalArray[index])) {
-        isShuffled = true;
-        break;
+    test('should return a randomly ordered array (probabilistic test)', () => {
+      const originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      let isShuffled = false;
+      for (let i = 0; i < 100; i++) { // Run multiple times to increase confidence
+        const shuffledArray = shuffle(originalArray);
+        if (shuffledArray.join(',') !== originalArray.join(',')) {
+          isShuffled = true;
+          break;
+        }
       }
-    }
-    expect(isShuffled).toBe(true);
-  });
+      expect(isShuffled).toBe(true);
+    });
 
-  test('should handle an empty array', () => {
-    const originalArray = [];
-    const shuffledArray = shuffleArray([...originalArray]);
-    expect(shuffledArray).toEqual([]);
-  });
+    test('should handle an empty array', () => {
+      expect(shuffle([])).toEqual([]);
+    });
 
-  test('should handle an array with one element', () => {
-    const originalArray = [1];
-    const shuffledArray = shuffleArray([...originalArray]);
-    expect(shuffledArray).toEqual([1]);
-  });
+    test('should handle an array with a single element', () => {
+      expect(shuffle([1])).toEqual([1]);
+    });
 
-  test('should not modify the original array if a copy is passed', () => {
-    const originalArray = [1, 2, 3];
-    const arrayCopy = [...originalArray];
-    shuffleArray(arrayCopy);
-    expect(originalArray).toEqual([1, 2, 3]);
-  });
-
-  test('should return an empty array for non-array input', () => {
-    expect(shuffleArray(null)).toEqual([]);
-    expect(shuffleArray(undefined)).toEqual([]);
-    expect(shuffleArray('string')).toEqual([]);
-    expect(shuffleArray(123)).toEqual([]);
-    expect(shuffleArray({})).toEqual([]);
+    test('should handle non-array input gracefully', () => {
+      expect(shuffle(null)).toEqual([]);
+      expect(shuffle(undefined)).toEqual([]);
+      expect(shuffle('string')).toEqual([]);
+      expect(shuffle(123)).toEqual([]);
+      expect(shuffle({})).toEqual([]);
+    });
   });
 });

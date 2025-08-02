@@ -1,15 +1,16 @@
 /**
- * Shuffles the elements of an array in place using the Fisher-Yates (Knuth) shuffle algorithm.
+ * Creates a shuffled copy of `array` using a version of the Fisher-Yates shuffle.
  * @param {Array} array The array to shuffle.
- * @returns {Array} The shuffled array.
+ * @returns {Array} Returns the new shuffled array.
  */
-export function shuffleArray(array) {
+export function shuffle(array) {
   if (!Array.isArray(array)) {
     return [];
   }
 
-  let currentIndex = array.length,
-    randomIndex;
+  const shuffledArray = [...array];
+  let currentIndex = shuffledArray.length;
+  let randomIndex;
 
   // While there remain elements to shuffle.
   while (currentIndex !== 0) {
@@ -18,11 +19,11 @@ export function shuffleArray(array) {
     currentIndex--;
 
     // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
+    [shuffledArray[currentIndex], shuffledArray[randomIndex]] = [
+      shuffledArray[randomIndex],
+      shuffledArray[currentIndex],
     ];
   }
 
-  return array;
+  return shuffledArray;
 }
