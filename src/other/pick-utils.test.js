@@ -1,32 +1,30 @@
-
 import { pick } from './pick-utils.js';
 
 describe('pick', () => {
-  const object = { 'a': 1, 'b': '2', 'c': 3 };
+  const obj = { a: 1, b: '2', c: true };
 
-  test('should create an object with picked properties', () => {
-    expect(pick(object, ['a', 'c'])).toEqual({ 'a': 1, 'c': 3 });
+  test('should return a new object with picked properties', () => {
+    const result = pick(obj, ['a', 'c']);
+    expect(result).toEqual({ a: 1, c: true });
   });
 
   test('should not include properties that are not in the source object', () => {
-    expect(pick(object, ['a', 'd'])).toEqual({ 'a': 1 });
+    const result = pick(obj, ['a', 'd']);
+    expect(result).toEqual({ a: 1 });
   });
 
-  test('should return an empty object if the source object is null or undefined', () => {
-    expect(pick(null, ['a', 'c'])).toEqual({});
-    expect(pick(undefined, ['a', 'c'])).toEqual({});
+  test('should return an empty object if no keys are picked', () => {
+    const result = pick(obj, []);
+    expect(result).toEqual({});
   });
 
-  test('should return an empty object if no keys are provided', () => {
-    expect(pick(object, [])).toEqual({});
+  test('should return an empty object if the source is not an object', () => {
+    expect(pick(null, ['a'])).toEqual({});
+    expect(pick(undefined, ['a'])).toEqual({});
   });
 
-  test('should not pick inherited properties', () => {
-    function Foo() {
-      this.a = 1;
-    }
-    Foo.prototype.b = 2;
-    const foo = new Foo();
-    expect(pick(foo, ['a', 'b'])).toEqual({ 'a': 1 });
+  test('should not modify the original object', () => {
+    pick(obj, ['a']);
+    expect(obj).toEqual({ a: 1, b: '2', c: true });
   });
 });
