@@ -1,21 +1,9 @@
 /**
- * Gets a cookie by name.
- * @param {string} name The name of the cookie to get.
- * @returns {string|null} The value of the cookie, or null if not found.
- */
-export function getCookie(name) {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-  if (match) {
-    return decodeURIComponent(match[2]);
-  }
-  return null;
-}
-
-/**
- * Sets a cookie.
+ * Sets a cookie with the given name, value, and options.
+ *
  * @param {string} name The name of the cookie.
  * @param {string} value The value of the cookie.
- * @param {object} [options] Options for the cookie.
+ * @param {object} [options={}] Optional settings for the cookie.
  * @param {number} [options.days] The number of days until the cookie expires.
  * @param {string} [options.path] The path for the cookie.
  */
@@ -25,53 +13,42 @@ export function setCookie(name, value, options = {}) {
   if (options.days) {
     const date = new Date();
     date.setTime(date.getTime() + (options.days * 24 * 60 * 60 * 1000));
-    cookieString += '; expires=' + date.toUTCString();
-  } else {
-    const date = new Date();
-    date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000));
-    cookieString += '; expires=' + date.toUTCString();
+    cookieString += `; expires=${date.toUTCString()}`;
   }
 
   if (options.path) {
-    cookieString += '; path=' + options.path;
-  } else {
-    cookieString += '; path=/';
+    cookieString += `; path=${options.path}`;
   }
 
   document.cookie = cookieString;
 }
 
 /**
- * Deletes a cookie by name.
+ * Gets the value of a cookie by its name.
+ *
+ * @param {string} name The name of the cookie to retrieve.
+ * @returns {string|null} The value of the cookie, or null if not found.
+ */
+export function getCookie(name) {
+  const nameEQ = `${encodeURIComponent(name)}=`;
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1, c.length);
+    }
+    if (c.indexOf(nameEQ) === 0) {
+      return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+  }
+  return null;
+}
+
+/**
+ * Deletes a cookie by its name.
+ *
  * @param {string} name The name of the cookie to delete.
  */
 export function deleteCookie(name) {
   setCookie(name, '', { days: -1 });
 }
-
-/**
- * Gets all cookies as an object.
- * @returns {object} An object containing all cookies as key-value pairs.
- */
-export function getAllCookies() {
-  const cookies = document.cookie.split(';');
-  const result = {};
-  for (let i = 0; i < cookies.length; i++) {
-    let cookie = cookies[i].trim();
-    const [name, value] = cookie.split('=');
-    if (name) {
-      result[decodeURIComponent(name)] = decodeURIComponent(value || '');
-    }
-  }
-  return result;
-}
-
-/**
- * Checks if cookies are enabled in the browser.
- * @returns {boolean} True if cookies are enabled, false otherwise.
- */
-export function areCookiesEnabled() {
-  return navigator.cookieEnabled;
-}
-
-
