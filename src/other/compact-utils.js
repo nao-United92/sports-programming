@@ -1,7 +1,6 @@
-
 /**
- * Creates an array with all falsey values removed.
- * The values false, null, 0, "", undefined, and NaN are falsey.
+ * Creates a new array with all falsy values removed.
+ * The values `false`, `null`, `0`, `""`, `undefined`, and `NaN` are falsy.
  *
  * @param {Array} array The array to compact.
  * @returns {Array} Returns the new array of filtered values.
