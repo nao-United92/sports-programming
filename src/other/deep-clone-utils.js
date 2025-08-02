@@ -1,33 +1,40 @@
-
 /**
- * Creates a deep copy of a value.
+ * Creates a deep clone of a value.
  *
  * @param {*} value The value to clone.
  * @returns {*} Returns the deep cloned value.
  */
 export function deepClone(value) {
-  if (value === null || typeof value !== 'object') {
-    return value;
-  }
+  const memo = new WeakMap();
 
-  if (value instanceof Date) {
-    return new Date(value.getTime());
-  }
-
-  if (value instanceof RegExp) {
-    return new RegExp(value);
-  }
-
-  if (Array.isArray(value)) {
-    return value.map(item => deepClone(item));
-  }
-
-  const clonedObject = Object.create(Object.getPrototypeOf(value));
-  for (const key in value) {
-    if (Object.prototype.hasOwnProperty.call(value, key)) {
-      clonedObject[key] = deepClone(value[key]);
+  function clone(obj) {
+    if (obj === null || typeof obj !== 'object') {
+      return obj;
     }
+
+    if (memo.has(obj)) {
+      return memo.get(obj);
+    }
+
+    if (obj instanceof Date) {
+      return new Date(obj.getTime());
+    }
+
+    if (obj instanceof RegExp) {
+      return new RegExp(obj.source, obj.flags);
+    }
+
+    const newObj = Array.isArray(obj) ? [] : {};
+    memo.set(obj, newObj);
+
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        newObj[key] = clone(obj[key]);
+      }
+    }
+
+    return newObj;
   }
 
-  return clonedObject;
+  return clone(value);
 }
