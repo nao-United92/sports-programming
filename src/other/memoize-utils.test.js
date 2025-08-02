@@ -1,66 +1,78 @@
-
 import { memoize } from './memoize-utils.js';
 
 describe('memoize', () => {
-  test('should memoize a simple function', () => {
-    const func = jest.fn(x => x * 2);
-    const memoizedFunc = memoize(func);
+  test('should memoize a simple function with a single primitive argument', () => {
+    const mockFn = jest.fn(x => x * 2);
+    const memoizedFn = memoize(mockFn);
 
-    expect(memoizedFunc(2)).toBe(4);
-    expect(memoizedFunc(2)).toBe(4);
-    expect(func).toHaveBeenCalledTimes(1);
+    expect(memoizedFn(2)).toBe(4);
+    expect(mockFn).toHaveBeenCalledTimes(1);
 
-    expect(memoizedFunc(3)).toBe(6);
-    expect(memoizedFunc(3)).toBe(6);
-    expect(func).toHaveBeenCalledTimes(2);
-  });
+    expect(memoizedFn(2)).toBe(4);
+    expect(mockFn).toHaveBeenCalledTimes(1); // Should not be called again
 
-  test('should use a resolver function to determine the cache key', () => {
-    const func = jest.fn(obj => obj.a);
-    const memoizedFunc = memoize(func, obj => obj.id);
-
-    const obj1 = { id: 1, a: 1 };
-    const obj2 = { id: 1, a: 2 }; // Same id, different 'a' value
-    const obj3 = { id: 2, a: 3 };
-
-    expect(memoizedFunc(obj1)).toBe(1);
-    expect(memoizedFunc(obj2)).toBe(1); // Should return cached value from obj1
-    expect(func).toHaveBeenCalledTimes(1);
-
-    expect(memoizedFunc(obj3)).toBe(3);
-    expect(func).toHaveBeenCalledTimes(2);
+    expect(memoizedFn(3)).toBe(6);
+    expect(mockFn).toHaveBeenCalledTimes(2); // Called for the new argument
   });
 
   test('should expose the cache on the memoized function', () => {
-    const func = x => x;
-    const memoizedFunc = memoize(func);
+    const memoizedFn = memoize(x => x);
+    memoizedFn(1);
+    expect(memoizedFn.cache.has(1)).toBe(true);
+    expect(memoizedFn.cache.get(1)).toBe(1);
+  });
 
-    memoizedFunc('a');
-    expect(memoizedFunc.cache.has('a')).toBe(true);
-    expect(memoizedFunc.cache.get('a')).toBe('a');
+  test('should use a custom resolver function to generate the cache key', () => {
+    const mockFn = jest.fn((obj) => obj.value);
+    const resolver = (obj) => obj.id;
+    const memoizedFn = memoize(mockFn, resolver);
+
+    const obj1 = { id: 'a', value: 1 };
+    const obj2 = { id: 'a', value: 2 }; // Same id, different value
+    const obj3 = { id: 'b', value: 3 };
+
+    expect(memoizedFn(obj1)).toBe(1);
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    // Since resolver uses 'id', this should hit the cache
+    expect(memoizedFn(obj2)).toBe(1);
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    // This should be a new call
+    expect(memoizedFn(obj3)).toBe(3);
+    expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
   test('should handle multiple arguments when no resolver is provided (uses first arg as key)', () => {
-    const func = jest.fn((a, b) => a + b);
-    const memoizedFunc = memoize(func);
+    const mockFn = jest.fn((a, b) => a + b);
+    const memoizedFn = memoize(mockFn);
 
-    expect(memoizedFunc(1, 2)).toBe(3);
-    expect(memoizedFunc(1, 10)).toBe(3); // Second arg is ignored, returns cached result
-    expect(func).toHaveBeenCalledTimes(1);
+    expect(memoizedFn(2, 3)).toBe(5);
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    // This will hit the cache because the first argument (2) is the same
+    expect(memoizedFn(2, 5)).toBe(5);
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    expect(memoizedFn(4, 1)).toBe(5);
+    expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
-  test('should maintain the `this` context', () => {
-    const func = jest.fn(function(x) {
-      return this.multiplier * x;
+  test('should maintain the `this` context of the memoized function', () => {
+    const mockFn = jest.fn(function(val) {
+      return this.multiplier * val;
     });
 
     const context = {
       multiplier: 10,
-      memoized: memoize(func)
+      memoizedFn: memoize(mockFn)
     };
 
-    expect(context.memoized(2)).toBe(20);
-    expect(context.memoized(2)).toBe(20);
-    expect(func).toHaveBeenCalledTimes(1);
+    expect(context.memoizedFn(2)).toBe(20);
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    // Call again to check cache
+    expect(context.memoizedFn(2)).toBe(20);
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 });
