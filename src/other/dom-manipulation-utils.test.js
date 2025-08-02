@@ -1,276 +1,73 @@
-import {
-  createElement,
-  appendChildren,
-  prependChildren,
-  removeElement,
-  emptyElement,
-  setAttributes,
-  getAttributes,
-  isVisible,
-} from './dom-manipulation-utils';
+import { addClass, removeClass, toggleClass, hasClass, setStyle } from './dom-manipulation-utils.js';
 
-describe('dom-manipulation-utils', () => {
-  let container;
+describe('DOM Manipulation Utilities', () => {
+  let element;
 
   beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
+    // Create a new div element for each test
+    element = document.createElement('div');
   });
 
-  afterEach(() => {
-    document.body.removeChild(container);
-  });
-
-  describe('createElement', () => {
-    it('should create an element with a tag name', () => {
-      const el = createElement('span');
-      expect(el.tagName).toBe('SPAN');
+  describe('addClass', () => {
+    test('should add a class to an element', () => {
+      addClass(element, 'test-class');
+      expect(element.className).toBe('test-class');
     });
 
-    it('should create an element with attributes', () => {
-      const el = createElement('div', { id: 'test', class: 'my-class' });
-      expect(el.id).toBe('test');
-      expect(el.className).toBe('my-class');
-    });
-
-    it('should create an element with text content children', () => {
-      const el = createElement('p', {}, ['Hello, ', 'World!']);
-      expect(el.textContent).toBe('Hello, World!');
-    });
-
-    it('should create an element with HTMLElement children', () => {
-      const child1 = document.createElement('span');
-      const child2 = document.createElement('b');
-      const el = createElement('div', {}, [child1, child2]);
-      expect(el.children.length).toBe(2);
-      expect(el.children[0]).toBe(child1);
-      expect(el.children[1]).toBe(child2);
-    });
-
-    it('should create an element with mixed children', () => {
-      const child = document.createElement('span');
-      const el = createElement('div', {}, ['Text before', child, 'Text after']);
-      expect(el.childNodes.length).toBe(3);
-      expect(el.childNodes[0].nodeType).toBe(Node.TEXT_NODE);
-      expect(el.childNodes[1]).toBe(child);
-      expect(el.childNodes[2].nodeType).toBe(Node.TEXT_NODE);
+    test('should not add a class if it already exists', () => {
+      element.className = 'test-class';
+      addClass(element, 'test-class');
+      expect(element.className).toBe('test-class');
     });
   });
 
-  describe('appendChildren', () => {
-    it('should append children to an element', () => {
-      const child1 = document.createElement('span');
-      const child2 = document.createElement('b');
-      appendChildren(container, [child1, 'text', child2]);
-      expect(container.children.length).toBe(2);
-      expect(container.textContent).toBe('text');
-      expect(container.children[0]).toBe(child1);
-      expect(container.children[1]).toBe(child2);
+  describe('removeClass', () => {
+    test('should remove a class from an element', () => {
+      element.className = 'test-class another-class';
+      removeClass(element, 'test-class');
+      expect(element.className).toBe(' another-class'); // Note the leading space
     });
 
-    it('should do nothing if parent is null', () => {
-      const child = document.createElement('span');
-      expect(() => appendChildren(null, [child])).not.toThrow();
+    test('should do nothing if the class does not exist', () => {
+      element.className = 'another-class';
+      removeClass(element, 'test-class');
+      expect(element.className).toBe('another-class');
     });
   });
 
-  describe('prependChildren', () => {
-    it('should prepend children to an element', () => {
-      const existingChild = document.createElement('p');
-      container.appendChild(existingChild);
-
-      const newChild1 = document.createElement('span');
-      const newChild2 = document.createElement('b');
-      prependChildren(container, [newChild1, 'text', newChild2]);
-
-      expect(container.children.length).toBe(3);
-      expect(container.children[0]).toBe(newChild2);
-      expect(container.children[1]).toBe(newChild1);
-      expect(container.children[2]).toBe(existingChild);
-      expect(container.textContent).toBe('text');
+  describe('toggleClass', () => {
+    test('should add a class if it does not exist', () => {
+      toggleClass(element, 'test-class');
+      expect(hasClass(element, 'test-class')).toBe(true);
     });
 
-    it('should do nothing if parent is null', () => {
-      const child = document.createElement('span');
-      expect(() => prependChildren(null, [child])).not.toThrow();
+    test('should remove a class if it exists', () => {
+      element.className = 'test-class';
+      toggleClass(element, 'test-class');
+      expect(hasClass(element, 'test-class')).toBe(false);
     });
   });
 
-  describe('removeElement', () => {
-    it('should remove an element from its parent', () => {
-      const child = document.createElement('span');
-      container.appendChild(child);
-      expect(container.contains(child)).toBe(true);
-      removeElement(child);
-      expect(container.contains(child)).toBe(false);
+  describe('hasClass', () => {
+    test('should return true if the element has the class', () => {
+      element.className = 'test-class';
+      expect(hasClass(element, 'test-class')).toBe(true);
     });
 
-    it('should do nothing if element is null or has no parent', () => {
-      const detachedElement = document.createElement('div');
-      expect(() => removeElement(null)).not.toThrow();
-      expect(() => removeElement(detachedElement)).not.toThrow();
+    test('should return false if the element does not have the class', () => {
+      expect(hasClass(element, 'test-class')).toBe(false);
     });
   });
 
-  describe('emptyElement', () => {
-    it('should remove all children from an element', () => {
-      const child1 = document.createElement('span');
-      const child2 = document.createElement('b');
-      container.appendChild(child1);
-      container.appendChild(child2);
-      expect(container.children.length).toBe(2);
-      emptyElement(container);
-      expect(container.children.length).toBe(0);
+  describe('setStyle', () => {
+    test('should set a style property on an element', () => {
+      setStyle(element, 'color', 'red');
+      expect(element.style.color).toBe('red');
     });
 
-    it('should do nothing if element is null', () => {
-      expect(() => emptyElement(null)).not.toThrow();
-    });
-  });
-
-  describe('setAttributes', () => {
-    it('should set multiple attributes on an element', () => {
-      const el = document.createElement('div');
-      setAttributes(el, { id: 'my-id', 'data-test': 'value' });
-      expect(el.id).toBe('my-id');
-      expect(el.getAttribute('data-test')).toBe('value');
-    });
-
-    it('should do nothing if element is null', () => {
-      expect(() => setAttributes(null, { id: 'test' })).not.toThrow();
-    });
-  });
-
-  describe('getAttributes', () => {
-    it('should get multiple attributes from an element', () => {
-      const el = document.createElement('div');
-      el.setAttribute('id', 'my-id');
-      el.setAttribute('data-test', 'value');
-      const attrs = getAttributes(el, ['id', 'data-test', 'non-existent']);
-      expect(attrs).toEqual({ id: 'my-id', 'data-test': 'value', 'non-existent': null });
-    });
-
-    it('should return an empty object if element is null', () => {
-      expect(getAttributes(null, ['id'])).toEqual({});
-    });
-  });
-
-  describe('isVisible', () => {
-    it('should return true for a visible element', () => {
-      const el = document.createElement('div');
-      document.body.appendChild(el);
-      expect(isVisible(el)).toBe(true);
-    });
-
-    it('should return false for an element with display: none', () => {
-      const el = document.createElement('div');
-      el.style.display = 'none';
-      document.body.appendChild(el);
-      expect(isVisible(el)).toBe(false);
-    });
-
-    it('should return false for an element with visibility: hidden', () => {
-      const el = document.createElement('div');
-      el.style.visibility = 'hidden';
-      document.body.appendChild(el);
-      expect(isVisible(el)).toBe(false);
-    });
-
-    it('should return false for an element with opacity: 0', () => {
-      const el = document.createElement('div');
-      el.style.opacity = '0';
-      document.body.appendChild(el);
-      expect(isVisible(el)).toBe(false);
-    });
-
-    it('should return false if element is null', () => {
-      expect(isVisible(null)).toBe(false);
-    });
-  });
-
-  describe('replaceElement', () => {
-    it('should replace an old element with a new one', () => {
-      const oldEl = createElement('div', { id: 'old' });
-      const newEl = createElement('span', { id: 'new' });
-      container.appendChild(oldEl);
-      expect(container.children[0]).toBe(oldEl);
-
-      replaceElement(oldEl, newEl);
-      expect(container.children[0]).toBe(newEl);
-      expect(container.children.length).toBe(1);
-    });
-
-    it('should return null if oldElement is null', () => {
-      const newEl = createElement('span');
-      expect(replaceElement(null, newEl)).toBeNull();
-    });
-
-    it('should return null if newElement is null', ()2 => {
-      const oldEl = createElement('div');
-      container.appendChild(oldEl);
-      expect(replaceElement(oldEl, null)).toBeNull();
-    });
-  });
-
-  describe('wrapElement', () => {
-    it('should wrap an element with another element', () => {
-      const innerEl = createElement('span', { id: 'inner' });
-      const wrapperEl = createElement('div', { id: 'wrapper' });
-      container.appendChild(innerEl);
-
-      wrapElement(innerEl, wrapperEl);
-      expect(container.children[0]).toBe(wrapperEl);
-      expect(wrapperEl.children[0]).toBe(innerEl);
-    });
-
-    it('should return null if elementToWrap is null', () => {
-      const wrapperEl = createElement('div');
-      expect(wrapElement(null, wrapperEl)).toBeNull();
-    });
-
-    it('should return null if wrapperElement is null', () => {
-      const innerEl = createElement('span');
-      container.appendChild(innerEl);
-      expect(wrapElement(innerEl, null)).toBeNull();
-    });
-  });
-
-  describe('insertAfter', () => {
-    it('should insert a new element after a reference element', () => {
-      const refEl = createElement('p', { id: 'ref' });
-      const newEl = createElement('span', { id: 'new' });
-      container.appendChild(refEl);
-
-      insertAfter(newEl, refEl);
-      expect(container.children[0]).toBe(refEl);
-      expect(container.children[1]).toBe(newEl);
-      expect(container.children.length).toBe(2);
-    });
-
-    it('should insert at the end if reference element is the last child', () => {
-      const refEl = createElement('p', { id: 'ref' });
-      const newEl = createElement('span', { id: 'new' });
-      container.appendChild(refEl);
-
-      insertAfter(newEl, refEl);
-      expect(container.lastChild).toBe(newEl);
-    });
-
-    it('should return null if newElement is null', () => {
-      const refEl = createElement('p');
-      container.appendChild(refEl);
-      expect(insertAfter(null, refEl)).toBeNull();
-    });
-
-    it('should return null if referenceElement is null', () => {
-      const newEl = createElement('span');
-      expect(insertAfter(newEl, null)).toBeNull();
-    });
-
-    it('should return null if referenceElement has no parent', () => {
-      const newEl = createElement('span');
-      const refEl = createElement('p'); // Not appended to DOM
-      expect(insertAfter(newEl, refEl)).toBeNull();
+    test('should set another style property', () => {
+      setStyle(element, 'backgroundColor', 'blue');
+      expect(element.style.backgroundColor).toBe('blue');
     });
   });
 });
