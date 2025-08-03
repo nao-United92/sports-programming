@@ -1,4 +1,4 @@
-import { clone, hasCircularReference } from './object-utils';
+import { clone, hasCircularReference, isPlainObject } from './object-utils';
 
 describe('clone', () => {
   test('should shallow clone a simple object', () => {
@@ -65,5 +65,36 @@ describe('hasCircularReference', () => {
   test('should handle objects with Date and RegExp objects', () => {
     const obj = { d: new Date(), r: new RegExp('abc') };
     expect(hasCircularReference(obj)).toBe(false);
+  });
+});
+
+describe('isPlainObject', () => {
+  test('should return true for a plain object', () => {
+    expect(isPlainObject({})).toBe(true);
+    expect(isPlainObject(new Object())).toBe(true);
+  });
+
+  test('should return false for an array', () => {
+    expect(isPlainObject([])).toBe(false);
+  });
+
+  test('should return false for null', () => {
+    expect(isPlainObject(null)).toBe(false);
+  });
+
+  test('should return false for functions', () => {
+    expect(isPlainObject(() => {})).toBe(false);
+  });
+
+  test('should return false for class instances', () => {
+    class MyClass {}
+    expect(isPlainObject(new MyClass())).toBe(false);
+  });
+
+  test('should return false for other types', () => {
+    expect(isPlainObject(1)).toBe(false);
+    expect(isPlainObject('string')).toBe(false);
+    expect(isPlainObject(true)).toBe(false);
+    expect(isPlainObject(undefined)).toBe(false);
   });
 });

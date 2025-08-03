@@ -578,6 +578,19 @@ export function clone(obj) {
  * @param {object} obj The object to check.
  * @returns {boolean} True if the object contains circular references, false otherwise.
  */
+/**
+ * Checks if a value is a plain object.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a plain object, false otherwise.
+ */
+export function isPlainObject(value) {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === null || proto === Object.prototype;
+}
+
 export function hasCircularReference(obj) {
   const seen = new WeakSet();
 
