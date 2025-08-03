@@ -4,7 +4,7 @@
  * @param value The value to check.
  * @returns True if the value is a number, false otherwise.
  */
-export function isNumber(value) {
+function isNumber(value) {
     return typeof value === 'number' && !isNaN(value);
 }
 
@@ -16,7 +16,7 @@ export function isNumber(value) {
  * @param max The maximum allowed value.
  * @returns The clamped number.
  */
-export function clamp(num, min, max) {
+function clamp(num, min, max) {
     return Math.min(Math.max(num, min), max);
 }
 
@@ -27,7 +27,7 @@ export function clamp(num, min, max) {
  * @param max The maximum value (inclusive).
  * @returns A random integer.
  */
-export function getRandomInt(min, max) {
+function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -40,7 +40,7 @@ export function getRandomInt(min, max) {
  * @param decimals The number of decimal places.
  * @returns The formatted number as a string.
  */
-export function formatNumber(num, decimals) {
+function formatNumber(num, decimals) {
     if (!isNumber(num)) {
         return '';
     }
@@ -53,7 +53,7 @@ export function formatNumber(num, decimals) {
  * @param num The number to check.
  * @returns True if the number is even, false otherwise.
  */
-export function isEven(num) {
+function isEven(num) {
   return isNumber(num) && num % 2 === 0;
 }
 
@@ -63,7 +63,7 @@ export function isEven(num) {
  * @param num The number to check.
  * @returns True if the number is odd, false otherwise.
  */
-export function isOdd(num) {
+function isOdd(num) {
   return isNumber(num) && num % 2 !== 0;
 }
 
@@ -73,7 +73,7 @@ export function isOdd(num) {
  * @param {number} [decimals=0] The number of decimal places to include.
  * @returns {string} The percentage string.
  */
-export function toPercentage(num, decimals = 0) {
+function toPercentage(num, decimals = 0) {
   if (!isNumber(num)) {
     return '';
   }
@@ -87,8 +87,25 @@ export function toPercentage(num, decimals = 0) {
  * @param {number} max The maximum value of the range.
  * @returns {boolean} True if the number is within the range, false otherwise.
  */
-export function isInRange(num, min, max) {
-  return isNumber(num) && num >= min && num <= max;
+function isInRange(num, min, max) {
+  return num >= min && num <= max;
+}
+
+/**
+ * Calculates the average of numbers.
+ * @param {...number} numbers The numbers to average.
+ * @returns {number} The average of the numbers.
+ */
+function average(...numbers) {
+  if (numbers.length === 0) {
+    return 0;
+  }
+  const numericValues = numbers.filter(isNumber);
+  if (numericValues.length === 0) {
+    return 0;
+  }
+  const total = sum(...numericValues);
+  return total / numericValues.length;
 }
 
 /**
@@ -97,7 +114,7 @@ export function isInRange(num, min, max) {
  * @param {number} decimalPlaces The number of decimal places to round to.
  * @returns {number} The rounded number.
  */
-export function roundToDecimalPlace(num, decimalPlaces) {
+function roundToDecimalPlace(num, decimalPlaces) {
   if (!isNumber(num) || !isNumber(decimalPlaces) || decimalPlaces < 0) {
     return NaN;
   }
@@ -111,18 +128,18 @@ export function roundToDecimalPlace(num, decimalPlaces) {
  * @param {number} divisor The number to divide by.
  * @returns {boolean} True if the number is divisible by the divisor, false otherwise.
  */
-export function isDivisibleBy(num, divisor) {
+function isDivisibleBy(num, divisor) {
   return isNumber(num) && isNumber(divisor) && divisor !== 0 && num % divisor === 0;
 }
 
 /**
  * Formats a number as a currency string.
  * @param {number} num The number to format.
- * @param {string} currency The currency symbol (e.g., '$', '€').
+ * @param {string} currency The currency symbol (e.g., ', '€').
  * @param {number} [decimals=2] The number of decimal places.
  * @returns {string} The formatted currency string.
  */
-export function toCurrency(num, currency = '$', decimals = 2) {
+function toCurrency(num, currency = ', decimals = 2) {
   if (!isNumber(num)) {
     return '';
   }
@@ -132,11 +149,11 @@ export function toCurrency(num, currency = '$', decimals = 2) {
 /**
  * Formats a number as a currency string.
  * @param {number} num The number to format.
- * @param {string} currency The currency symbol (e.g., '$', '€').
+ * @param {string} currency The currency symbol (e.g., ', '€').
  * @param {number} [decimals=2] The number of decimal places.
  * @returns {string} The formatted currency string.
  */
-export function formatCurrency(num, currency = '$', decimals = 2) {
+function formatCurrency(num, currency = ', decimals = 2) {
   if (!isNumber(num)) {
     return '';
   }
@@ -148,7 +165,7 @@ export function formatCurrency(num, currency = '$', decimals = 2) {
  * @param {number} num The number to format.
  * @returns {string} The number with commas.
  */
-export function addCommas(num) {
+function addCommas(num) {
   if (!isNumber(num)) {
     return '';
   }
@@ -162,7 +179,7 @@ export function addCommas(num) {
  * @param {*} value The value to check.
  * @returns {boolean} True if the value is an integer, false otherwise.
  */
-export function isInteger(value) {
+function isInteger(value) {
   return Number.isInteger(value);
 }
 
@@ -171,7 +188,7 @@ export function isInteger(value) {
  * @param {number} num The number to check.
  * @returns {boolean} True if the number is positive, false otherwise.
  */
-export function isPositive(num) {
+function isPositive(num) {
   return typeof num === 'number' && num > 0;
 }
 
@@ -180,7 +197,7 @@ export function isPositive(num) {
  * @param {number} num The number to check.
  * @returns {boolean} True if the number is negative, false otherwise.
  */
-export function isNegative(num) {
+function isNegative(num) {
   return typeof num === 'number' && num < 0;
 }
 
@@ -189,7 +206,7 @@ export function isNegative(num) {
  * @param {number} num The number to convert.
  * @returns {string} The ordinal string.
  */
-export function toOrdinal(num) {
+function toOrdinal(num) {
   if (typeof num !== 'number' || !Number.isInteger(num)) {
     return String(num);
   }
@@ -203,7 +220,7 @@ export function toOrdinal(num) {
  * @param {...number} numbers The numbers to sum.
  * @returns {number} The sum of the numbers.
  */
-export function sum(...numbers) {
+function sum(...numbers) {
   return numbers.reduce((acc, num) => acc + (isNumber(num) ? num : 0), 0);
 }
 
@@ -212,19 +229,18 @@ export function sum(...numbers) {
  * @param {number} num The number to check.
  * @returns {boolean} True if the number is a power of two, false otherwise.
  */
-export function isPowerOfTwo(num) {
+function isPowerOfTwo(num) {
   return num > 0 && (num & (num - 1)) === 0;
 }
 
 /**
  * Checks if a number is between two other numbers (inclusive).
- *
  * @param {number} num The number to check.
  * @param {number} a The first bound.
  * @param {number} b The second bound.
  * @returns {boolean} True if the number is between the bounds, false otherwise.
  */
-export function isBetween(num, a, b) {
+function isBetween(num, a, b) {
   if (!isNumber(num) || !isNumber(a) || !isNumber(b)) {
     return false;
   }
@@ -232,3 +248,27 @@ export function isBetween(num, a, b) {
   const max = Math.max(a, b);
   return num >= min && num <= max;
 }
+
+module.exports = {
+  isNumber,
+  clamp,
+  getRandomInt,
+  formatNumber,
+  isEven,
+  isOdd,
+  toPercentage,
+  isInRange,
+  average,
+  roundToDecimalPlace,
+  isDivisibleBy,
+  toCurrency,
+  formatCurrency,
+  addCommas,
+  isInteger,
+  isPositive,
+  isNegative,
+  toOrdinal,
+  sum,
+  isPowerOfTwo,
+  isBetween,
+};

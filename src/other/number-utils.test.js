@@ -1,4 +1,4 @@
-import { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas, isInteger, isPositive, isNegative, isBetween } from './number-utils.js';
+const { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas, isInteger, isPositive, isNegative, isBetween, average, sum, toOrdinal, isPowerOfTwo } = require('./number-utils.js');
 
 describe('number-utils', () => {
   describe('isNumber', () => {
@@ -329,6 +329,36 @@ describe('number-utils', () => {
       expect(isBetween(5, null, 10)).toBe(false);
       expect(isBetween(5, 1, null)).toBe(false);
       expect(isBetween(undefined, 1, 10)).toBe(false);
+    });
+  });
+
+  describe('average', () => {
+    test('should return the average of all numbers', () => {
+      expect(average(1, 2, 3, 4, 5)).toBe(3);
+    });
+
+    test('should handle a single number', () => {
+      expect(average(10)).toBe(10);
+    });
+
+    test('should handle negative numbers', () => {
+      expect(average(-1, -2, -3)).toBe(-2);
+    });
+
+    test('should handle zero', () => {
+      expect(average(0, 0, 0)).toBe(0);
+    });
+
+    test('should handle non-numeric inputs by ignoring them', () => {
+      expect(average(1, '2', 3, null, undefined)).toBe(2);
+    });
+
+    test('should return 0 if no arguments are provided', () => {
+      expect(average()).toBe(0);
+    });
+
+    test('should return 0 if no numeric arguments are provided', () => {
+      expect(average('a', 'b', null)).toBe(0);
     });
   });
 });
