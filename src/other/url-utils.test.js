@@ -1,4 +1,4 @@
-import { getQueryParams, objectToQueryString } from './url-utils.js';
+const { getQueryParams, objectToQueryString, isHttps } = require('./url-utils.js');
 
 describe('URL Utilities', () => {
   describe('getQueryParams', () => {
@@ -32,6 +32,20 @@ describe('URL Utilities', () => {
     test('should handle special characters in values', () => {
       const obj = { q: 'hello world', lang: 'en' };
       expect(objectToQueryString(obj)).toBe('q=hello+world&lang=en');
+    });
+  });
+
+  describe('isHttps', () => {
+    test('should return true for HTTPS URLs', () => {
+      expect(isHttps('https://example.com')).toBe(true);
+    });
+
+    test('should return false for HTTP URLs', () => {
+      expect(isHttps('http://example.com')).toBe(false);
+    });
+
+    test('should return false for invalid URLs', () => {
+      expect(isHttps('not a url')).toBe(false);
     });
   });
 });
