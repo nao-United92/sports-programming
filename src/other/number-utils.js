@@ -249,6 +249,26 @@ function isBetween(num, a, b) {
   return num >= min && num <= max;
 }
 
+/**
+ * Checks if a number is divisible by another number.
+ * @param {number} num The number to check.
+ * @param {number} divisor The number to divide by.
+ * @returns {boolean} True if the number is divisible by the divisor, false otherwise.
+ */
+function isDivisibleBy(num, divisor) {
+  return isNumber(num) && isNumber(divisor) && divisor !== 0 && num % divisor === 0;
+}
+
+/**
+ * Counts the number of decimal places in a number.
+ * @param {number} num The number to check.
+ * @returns {number} The number of decimal places.
+ */
+function countDecimals(num) {
+  if (Math.floor(num) === num) return 0;
+  return num.toString().split(".")[1].length || 0;
+}
+
 module.exports = {
   isNumber,
   clamp,
@@ -271,4 +291,5 @@ module.exports = {
   sum,
   isPowerOfTwo,
   isBetween,
+  countDecimals,
 };

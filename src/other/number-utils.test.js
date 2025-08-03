@@ -1,4 +1,4 @@
-const { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas, isInteger, isPositive, isNegative, isBetween, average, sum, toOrdinal, isPowerOfTwo } = require('./number-utils.js');
+const { isNumber, clamp, getRandomInt, formatNumber, isEven, isOdd, toPercentage, isInRange, roundToDecimalPlace, isDivisibleBy, toCurrency, addCommas, isInteger, isPositive, isNegative, isBetween, average, sum, toOrdinal, isPowerOfTwo, countDecimals } = require('./number-utils.js');
 
 describe('number-utils', () => {
   describe('isNumber', () => {
