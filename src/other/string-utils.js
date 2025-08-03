@@ -13,4 +13,18 @@ function truncate(str, maxLength, suffix = '...') {
   return str.slice(0, maxLength - suffix.length) + suffix;
 }
 
-module.exports = { truncate };
+/**
+ * Converts a string to camelCase.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} The camelCased string.
+ */
+function toCamelCase(str) {
+  return str.replace(/([-_][a-z])/ig, ($1) => {
+    return $1.toUpperCase()
+      .replace('-', '')
+      .replace('_', '');
+  });
+}
+
+module.exports = { truncate, toCamelCase };

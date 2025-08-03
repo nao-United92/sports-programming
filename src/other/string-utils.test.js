@@ -1,4 +1,4 @@
-const { truncate } = require('./string-utils');
+const { truncate, toCamelCase } = require('./string-utils');
 
 describe('truncate', () => {
   test('should truncate a string that is longer than the max length', () => {
@@ -11,5 +11,15 @@ describe('truncate', () => {
 
   test('should use a custom suffix', () => {
     expect(truncate('hello world', 8, '--')).toBe('hello --');
+  });
+});
+
+describe('toCamelCase', () => {
+  test('should convert a kebab-case string to camelCase', () => {
+    expect(toCamelCase('hello-world')).toBe('helloWorld');
+  });
+
+  test('should convert a snake_case string to camelCase', () => {
+    expect(toCamelCase('hello_world')).toBe('helloWorld');
   });
 });
