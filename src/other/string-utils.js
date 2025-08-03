@@ -1,26 +1,16 @@
 /**
- * Converts the first character of `string` to upper case and the remaining
- * to lower case.
+ * Truncates a string to a specified length, appending a suffix if truncated.
  *
- * @param {string} [string=''] The string to capitalize.
- * @returns {string} Returns the capitalized string.
+ * @param {string} str The string to truncate.
+ * @param {number} maxLength The maximum length of the string.
+ * @param {string} [suffix='...'] The suffix to append if the string is truncated.
+ * @returns {string} The truncated string.
  */
-export function capitalize(string) {
-  if (typeof string !== 'string' || string.length === 0) {
-    return '';
+function truncate(str, maxLength, suffix = '...') {
+  if (str.length <= maxLength) {
+    return str;
   }
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  return str.slice(0, maxLength - suffix.length) + suffix;
 }
 
-/**
- * Converts `string` to camel case.
- *
- * @param {string} [string=''] The string to convert.
- * @returns {string} Returns the camel cased string.
- */
-export function camelCase(string) {
-  if (typeof string !== 'string' || string.length === 0) {
-    return '';
-  }
-  return string.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
-}
+module.exports = { truncate };
