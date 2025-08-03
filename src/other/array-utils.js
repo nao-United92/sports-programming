@@ -88,7 +88,7 @@ export function removeAllOccurrences(arr, element) {
  * @returns {number} The average of the numbers. Returns NaN if the array is empty or contains non-numeric values.
  */
 export function getAverage(arr) {
-  if (!Array.isArray(arr) || arr.length === 0 || arr.some(isNaN)) {
+  if (!Array.isArray(arr) || arr.length === 0 || arr.some(val => typeof val !== 'number' || isNaN(val))) {
     return NaN;
   }
   const sum = arr.reduce((total, num) => total + num, 0);
@@ -266,91 +266,6 @@ export function union(...arrays) {
 }
 
 /**
- * Checks if an array contains all elements of another array.
- * @param {Array} arr The array to check.
- * @param {Array} elements The elements to check for.
- * @returns {boolean} True if the array contains all elements, false otherwise.
- */
-export function containsAll(arr, elements) {
-  if (!Array.isArray(arr) || !Array.isArray(elements)) {
-    return false;
-  }
-  return elements.every(element => arr.includes(element));
-}
-
-/**
- * Checks if an array is sorted in ascending order.
- * @param {Array} arr The array to check.
- * @returns {boolean} True if the array is sorted, false otherwise.
- */
-export function isSorted(arr) {
-  if (!Array.isArray(arr) || arr.length < 2) {
-    return true;
-  }
-  for (let i = 1; i < arr.length; i++) {
-    if (arr[i] < arr[i - 1]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-/**
- * Gets a random sample of `n` elements from `array`.
- * @param {Array} array The array to sample.
- * @param {number} n The number of elements to sample.
- * @returns {Array} Returns the random sample.
- */
-export function sampleSize(array, n = 1) {
-  if (!Array.isArray(array) || array.length === 0 || n <= 0) {
-    return [];
-  }
-  const shuffled = [...array].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, n);
-}
-
-/**
- * Flattens a nested array up to a specified depth.
- * @param {Array} arr The array to flatten.
- * @param {number} depth The maximum flattening depth.
- * @returns {Array} Returns the new flattened array.
- */
-export function flatten(arr, depth = 1) {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
-  return arr.flat(depth);
-}
-
-/**
- * Gets the element at the nth position of an array. 
- * If n is negative, the nth element from the end is returned.
- * @param {Array} arr The array to query.
- * @param {number} n The index of the element to return.
- * @returns {*} Returns the nth element of `array`.
- */
-export function getNthElement(arr, n = 0) {
-  if (!Array.isArray(arr)) {
-    return undefined;
-  }
-  const index = n < 0 ? arr.length + n : n;
-  return arr[index];
-}
-
-/**
- * Checks if one array is a subset of another array.
- * @param {Array} superset The array to check against.
- * @param {Array} subset The array to check if it's a subset.
- * @returns {boolean} True if the subset is a subset of the superset, false otherwise.
- */
-export function isSubset(superset, subset) {
-  if (!Array.isArray(superset) || !Array.isArray(subset)) {
-    return false;
-  }
-  return subset.every(val => superset.includes(val));
-}
-
-/**
  * Calculates the average of an array of numbers.
  *
  * @param {number[]} arr The array of numbers.
@@ -363,4 +278,45 @@ export function average(arr) {
 
   const sum = arr.reduce((acc, val) => acc + val, 0);
   return sum / arr.length;
+}
+
+export const uniqueArray = removeDuplicates;
+
+export function flattenArray(arr) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return arr.flat(Infinity);
+}
+
+export function sumArray(arr) {
+  if (!Array.isArray(arr)) {
+    return 0;
+  }
+  return arr.reduce((acc, val) => (typeof val === 'number' && !isNaN(val) ? acc + val : acc), 0);
+}
+
+export const removeFalsy = compact;
+
+export function contains(arr, element) {
+  if (!Array.isArray(arr)) {
+    return false;
+  }
+  return arr.includes(element);
+}
+
+export function intersection(arr1, arr2) {
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    return [];
+  }
+  const set1 = new Set(arr1);
+  return arr2.filter(element => set1.has(element));
+}
+
+export function difference(arr1, arr2) {
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    return [];
+  }
+  const set2 = new Set(arr2);
+  return arr1.filter(element => !set2.has(element));
 }

@@ -376,20 +376,10 @@ export function isDescendant(descendant, ancestor) {
   return false;
 }
 
-/**
- * Checks if an element is currently focused.
- * @param {HTMLElement} element The element to check.
- * @returns {boolean} True if the element is focused, false otherwise.
- */
 export function isElementFocused(element) {
   return element === document.activeElement;
 }
 
-/**
- * Checks if an element is scrollable.
- * @param {HTMLElement} element The element to check.
- * @returns {boolean} True if the element is scrollable, false otherwise.
- */
 export function isScrollable(element) {
   if (!element || element.nodeType !== 1) {
     return false;
@@ -401,12 +391,6 @@ export function isScrollable(element) {
   );
 }
 
-/**
- * Wraps an HTML element with another HTML element.
- * @param {HTMLElement} target The element to be wrapped.
- * @param {HTMLElement} wrapper The wrapping element.
- * @returns {HTMLElement} The wrapper element.
- */
 export function wrapElement(target, wrapper) {
   if (target && wrapper && target.parentNode) {
     target.parentNode.insertBefore(wrapper, target);
@@ -414,4 +398,3 @@ export function wrapElement(target, wrapper) {
   }
   return wrapper;
 }
-

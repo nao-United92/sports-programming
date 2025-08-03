@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, uniqueArray, shuffleArray, flattenArray, sumArray, chunkArray, removeFalsy, contains, intersection, difference, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {

@@ -4,10 +4,19 @@
  * @returns {object} An object containing form data.
  */
 export function serializeForm(formElement) {
-  const formData = new FormData(formElement);
   const data = {};
-  for (const [key, value] of formData.entries()) {
-    data[key] = value;
+  const elements = formElement.elements;
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    if (element.name) {
+      if (element.type === 'select-multiple') {
+        data[element.name] = Array.from(element.options)
+          .filter(option => option.selected)
+          .map(option => option.value);
+      } else {
+        data[element.name] = element.value;
+      }
+    }
   }
   return data;
 }
@@ -136,7 +145,7 @@ export function clearForm(formElement) {
     if (input.type === 'checkbox' || input.type === 'radio') {
       input.checked = false;
     } else if (input.tagName.toLowerCase() === 'select') {
-      input.selectedIndex = -1;
+      input.selectedIndex = 0;
     } else {
       input.value = '';
     }
