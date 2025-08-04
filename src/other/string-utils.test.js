@@ -1,25 +1,23 @@
-const { truncate, toCamelCase } = require('./string-utils');
+import { truncate, isPalindrome } from './string-utils.js';
 
-describe('truncate', () => {
-  test('should truncate a string that is longer than the max length', () => {
-    expect(truncate('hello world', 5)).toBe('he...');
+describe('string-utils', () => {
+  describe('truncate', () => {
+    it('should truncate a string if it is longer than the specified number', () => {
+      expect(truncate('Hello World', 5)).toBe('Hello...');
+    });
+
+    it('should not truncate a string if it is shorter than or equal to the specified number', () => {
+      expect(truncate('Hello', 10)).toBe('Hello');
+    });
   });
 
-  test('should not truncate a string that is shorter than the max length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
-  });
+  describe('isPalindrome', () => {
+    it('should return true for a palindrome', () => {
+      expect(isPalindrome('A man, a plan, a canal: Panama')).toBe(true);
+    });
 
-  test('should use a custom suffix', () => {
-    expect(truncate('hello world', 8, '--')).toBe('hello --');
-  });
-});
-
-describe('toCamelCase', () => {
-  test('should convert a kebab-case string to camelCase', () => {
-    expect(toCamelCase('hello-world')).toBe('helloWorld');
-  });
-
-  test('should convert a snake_case string to camelCase', () => {
-    expect(toCamelCase('hello_world')).toBe('helloWorld');
+    it('should return false for a non-palindrome', () => {
+      expect(isPalindrome('hello world')).toBe(false);
+    });
   });
 });
