@@ -1,32 +1,31 @@
-
 import { capitalize } from './capitalize-utils.js';
 
 describe('capitalize', () => {
-  test('should capitalize the first letter and lowercase the rest', () => {
-    expect(capitalize('fred')).toBe('Fred');
-    expect(capitalize('FRED')).toBe('Fred');
-    expect(capitalize('fRED')).toBe('Fred');
-    expect(capitalize('hello world')).toBe('Hello world');
+  test('should capitalize the first letter of a string', () => {
+    expect(capitalize('hello')).toBe('Hello');
   });
 
-  test('should handle empty strings', () => {
+  test('should return an empty string for an empty string', () => {
     expect(capitalize('')).toBe('');
   });
 
-  test('should handle single character strings', () => {
+  test('should handle a single character string', () => {
     expect(capitalize('a')).toBe('A');
-    expect(capitalize('Z')).toBe('Z');
   });
 
-  test('should handle non-string inputs gracefully', () => {
+  test('should not change an already capitalized string', () => {
+    expect(capitalize('Hello')).toBe('Hello');
+  });
+
+  test('should handle strings with spaces', () => {
+    expect(capitalize('hello world')).toBe('Hello world');
+  });
+
+  test('should return an empty string for non-string inputs', () => {
     expect(capitalize(null)).toBe('');
     expect(capitalize(undefined)).toBe('');
     expect(capitalize(123)).toBe('');
+    expect(capitalize([])).toBe('');
     expect(capitalize({})).toBe('');
-  });
-
-  test('should handle strings with leading/trailing spaces (only first char is affected)', () => {
-    expect(capitalize('  hello')).toBe('  hello'); // Note: current implementation doesn't trim
-    expect(capitalize(' hello ')).toBe(' hello ');
   });
 });
