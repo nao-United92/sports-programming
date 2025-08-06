@@ -1,54 +1,43 @@
+
 /**
- * Sets a cookie with the given name, value, and options.
+ * Sets a cookie.
  *
  * @param {string} name The name of the cookie.
  * @param {string} value The value of the cookie.
- * @param {object} [options={}] Optional settings for the cookie.
- * @param {number} [options.days] The number of days until the cookie expires.
- * @param {string} [options.path] The path for the cookie.
+ * @param {number} days The number of days until the cookie expires.
  */
-export function setCookie(name, value, options = {}) {
-  let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
-
-  if (options.days) {
+export const setCookie = (name, value, days) => {
+  let expires = '';
+  if (days) {
     const date = new Date();
-    date.setTime(date.getTime() + (options.days * 24 * 60 * 60 * 1000));
-    cookieString += `; expires=${date.toUTCString()}`;
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = '; expires=' + date.toUTCString();
   }
-
-  if (options.path) {
-    cookieString += `; path=${options.path}`;
-  }
-
-  document.cookie = cookieString;
-}
+  document.cookie = name + '=' + (value || '') + expires + '; path=/';
+};
 
 /**
- * Gets the value of a cookie by its name.
+ * Gets a cookie by name.
  *
- * @param {string} name The name of the cookie to retrieve.
- * @returns {string|null} The value of the cookie, or null if not found.
+ * @param {string} name The name of the cookie to get.
+ * @returns {string | null} The value of the cookie, or null if not found.
  */
-export function getCookie(name) {
-  const nameEQ = `${encodeURIComponent(name)}=`;
+export const getCookie = (name) => {
+  const nameEQ = name + '=';
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
-    while (c.charAt(0) === ' ') {
-      c = c.substring(1, c.length);
-    }
-    if (c.indexOf(nameEQ) === 0) {
-      return decodeURIComponent(c.substring(nameEQ.length, c.length));
-    }
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
   }
   return null;
-}
+};
 
 /**
- * Deletes a cookie by its name.
+ * Deletes a cookie by name.
  *
  * @param {string} name The name of the cookie to delete.
  */
-export function deleteCookie(name) {
-  setCookie(name, '', { days: -1 });
-}
+export const deleteCookie = (name) => {
+  document.cookie = name + '=; Max-Age=-99999999;';
+};
