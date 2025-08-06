@@ -1,51 +1,47 @@
-import { parseQueryString, stringifyQueryString } from './query-string-utils.js';
+import { objectToQueryString, queryStringToObject } from './query-string-utils.js';
 
-describe('Query String Utilities', () => {
-  describe('parseQueryString', () => {
-    test('should parse a simple query string', () => {
-      expect(parseQueryString('a=1&b=2')).toEqual({ a: '1', b: '2' });
+describe('queryString', () => {
+  describe('objectToQueryString', () => {
+    it('should convert an object to a query string', () => {
+      const obj = { a: 1, b: 'hello', c: true };
+      expect(objectToQueryString(obj)).toBe('a=1&b=hello&c=true');
     });
 
-    test('should handle a query string with a leading question mark', () => {
-      expect(parseQueryString('?a=1&b=2')).toEqual({ a: '1', b: '2' });
+    it('should handle an empty object', () => {
+      expect(objectToQueryString({})).toBe('');
     });
 
-    test('should handle URI encoded components', () => {
-      expect(parseQueryString('name=John%20Doe&city=New%20York')).toEqual({ name: 'John Doe', city: 'New York' });
+    it('should handle special characters', () => {
+      const obj = { 'a b': 'c&d' };
+      expect(objectToQueryString(obj)).toBe('a%20b=c%26d');
     });
 
-    test('should handle keys without values', () => {
-      expect(parseQueryString('a=&b=2')).toEqual({ a: '', b: '2' });
-    });
-
-    test('should return an empty object for an empty or invalid query string', () => {
-      expect(parseQueryString('')).toEqual({});
-      expect(parseQueryString('?')).toEqual({});
-      expect(parseQueryString(null)).toEqual({});
-      expect(parseQueryString(undefined)).toEqual({});
+    it('should return an empty string for non-object inputs', () => {
+      expect(objectToQueryString(null)).toBe('');
+      expect(objectToQueryString(undefined)).toBe('');
+      expect(objectToQueryString(123)).toBe('');
     });
   });
 
-  describe('stringifyQueryString', () => {
-    test('should stringify a simple object', () => {
-      expect(stringifyQueryString({ a: 1, b: 2 })).toBe('a=1&b=2');
+  describe('queryStringToObject', () => {
+    it('should convert a query string to an object', () => {
+      const queryString = 'a=1&b=hello&c=true';
+      expect(queryStringToObject(queryString)).toEqual({ a: '1', b: 'hello', c: 'true' });
     });
 
-    test('should URI encode keys and values', () => {
-      expect(stringifyQueryString({ 'full name': 'John Doe', 'city/state': 'New York' })).toBe('full%20name=John%20Doe&city%2Fstate=New%20York');
+    it('should handle an empty query string', () => {
+      expect(queryStringToObject('')).toEqual({});
     });
 
-    test('should handle an empty object', () => {
-      expect(stringifyQueryString({})).toBe('');
+    it('should handle special characters', () => {
+      const queryString = 'a%20b=c%26d';
+      expect(queryStringToObject(queryString)).toEqual({ 'a b': 'c&d' });
     });
 
-    test('should handle values that are empty strings', () => {
-      expect(stringifyQueryString({ a: '', b: '2' })).toBe('a=&b=2');
-    });
-
-    test('should return an empty string for null or undefined input', () => {
-      expect(stringifyQueryString(null)).toBe('');
-      expect(stringifyQueryString(undefined)).toBe('');
+    it('should return an empty object for non-string inputs', () => {
+      expect(queryStringToObject(null)).toEqual({});
+      expect(queryStringToObject(undefined)).toEqual({});
+      expect(queryStringToObject(123)).toEqual({});
     });
   });
 });
