@@ -1,4 +1,4 @@
-import { isPalindrome } from './string-utils.js';
+import { isPalindrome, toSnakeCase } from './string-utils.js';
 
 describe('isPalindrome', () => {
   it('should return true for a simple palindrome', () => {
@@ -35,5 +35,33 @@ describe('isPalindrome', () => {
 
   it('should return false for undefined', () => {
     expect(isPalindrome(undefined)).toBe(false);
+  });
+});
+
+describe('toSnakeCase', () => {
+  it('should convert a camelCase string to snake_case', () => {
+    expect(toSnakeCase('camelCaseString')).toBe('camel_case_string');
+  });
+
+  it('should convert a PascalCase string to snake_case', () => {
+    expect(toSnakeCase('PascalCaseString')).toBe('pascal_case_string');
+  });
+
+  it('should convert a string with spaces to snake_case', () => {
+    expect(toSnakeCase('string with spaces')).toBe('string with spaces');
+  });
+
+  it('should handle an empty string', () => {
+    expect(toSnakeCase('')).toBe('');
+  });
+
+  it('should handle a string that is already snake_case', () => {
+    expect(toSnakeCase('already_snake_case')).toBe('already_snake_case');
+  });
+
+  it('should return an empty string for non-string inputs', () => {
+    expect(toSnakeCase(null)).toBe('');
+    expect(toSnakeCase(undefined)).toBe('');
+    expect(toSnakeCase(123)).toBe('');
   });
 });

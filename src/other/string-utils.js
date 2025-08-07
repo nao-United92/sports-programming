@@ -13,3 +13,15 @@ export function isPalindrome(str) {
   const cleanedStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
   return cleanedStr === cleanedStr.split('').reverse().join('');
 }
+
+/**
+ * Converts a string to snake_case.
+ * @param {string} str The string to convert.
+ * @returns {string} The snake_case string.
+ */
+export function toSnakeCase(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.replace(/([A-Z])/g, (match, p1, offset) => (offset > 0 ? '_' : '') + p1.toLowerCase());
+}
