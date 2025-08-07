@@ -1,30 +1,15 @@
-
 /**
- * Truncates a string to a specified length, appending an ellipsis if truncated.
+ * Checks if a given string is a palindrome.
+ * A palindrome is a word, phrase, number, or other sequence of characters
+ * which reads the same backward as forward, ignoring punctuation, case, and spacing.
  *
- * @param {string} str The string to truncate.
- * @param {number} maxLength The maximum length of the string.
- * @returns {string} The truncated string.
+ * @param {string} str The string to check.
+ * @returns {boolean} True if the string is a palindrome, false otherwise.
  */
-export const truncateString = (str, maxLength) => {
-  if (typeof str !== 'string' || typeof maxLength !== 'number' || maxLength < 0) {
-    return '';
+export function isPalindrome(str) {
+  if (typeof str !== 'string') {
+    return false;
   }
-  if (str.length <= maxLength) {
-    return str;
-  }
-  return str.substring(0, maxLength) + '...';
-};
-
-/**
- * Capitalizes the first letter of a string.
- *
- * @param {string} str The string to capitalize.
- * @returns {string} The string with the first letter capitalized.
- */
-export const capitalizeFirstLetter = (str) => {
-  if (typeof str !== 'string' || str.length === 0) {
-    return '';
-  }
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
+  const cleanedStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return cleanedStr === cleanedStr.split('').reverse().join('');
+}

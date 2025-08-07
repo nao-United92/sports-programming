@@ -1,55 +1,39 @@
-import { truncateString, capitalizeFirstLetter } from './string-utils.js';
+import { isPalindrome } from './string-utils.js';
 
-describe('stringUtils', () => {
-  describe('truncateString', () => {
-    it('should truncate a string and append ellipsis', () => {
-      expect(truncateString('hello world', 5)).toBe('hello...');
-    });
-
-    it('should not truncate if string length is less than or equal to maxLength', () => {
-      expect(truncateString('hello', 5)).toBe('hello');
-      expect(truncateString('hi', 5)).toBe('hi');
-    });
-
-    it('should return an empty string for non-string input', () => {
-      expect(truncateString(null, 5)).toBe('');
-      expect(truncateString(undefined, 5)).toBe('');
-      expect(truncateString(123, 5)).toBe('');
-    });
-
-    it('should return an empty string for invalid maxLength', () => {
-      expect(truncateString('hello', -1)).toBe('');
-      expect(truncateString('hello', null)).toBe('');
-      expect(truncateString('hello', undefined)).toBe('');
-    });
-
-    it('should return an empty string if maxLength is 0', () => {
-      expect(truncateString('hello', 0)).toBe('...');
-    });
+describe('isPalindrome', () => {
+  it('should return true for a simple palindrome', () => {
+    expect(isPalindrome('madam')).toBe(true);
   });
 
-  describe('capitalizeFirstLetter', () => {
-    it('should capitalize the first letter of a string', () => {
-      expect(capitalizeFirstLetter('hello')).toBe('Hello');
-      expect(capitalizeFirstLetter('world')).toBe('World');
-    });
+  it('should return true for a palindrome with mixed case', () => {
+    expect(isPalindrome('Madam')).toBe(true);
+  });
 
-    it('should return an empty string for an empty string', () => {
-      expect(capitalizeFirstLetter('')).toBe('');
-    });
+  it('should return true for a palindrome with spaces and punctuation', () => {
+    expect(isPalindrome('A man, a plan, a canal: Panama')).toBe(true);
+  });
 
-    it('should return an empty string for non-string input', () => {
-      expect(capitalizeFirstLetter(null)).toBe('');
-      expect(capitalizeFirstLetter(undefined)).toBe('');
-      expect(capitalizeFirstLetter(123)).toBe('');
-    });
+  it('should return true for an empty string', () => {
+    expect(isPalindrome('')).toBe(true);
+  });
 
-    it('should handle strings with only one character', () => {
-      expect(capitalizeFirstLetter('a')).toBe('A');
-    });
+  it('should return true for a single character string', () => {
+    expect(isPalindrome('a')).toBe(true);
+  });
 
-    it('should handle strings that are already capitalized', () => {
-      expect(capitalizeFirstLetter('Hello')).toBe('Hello');
-    });
+  it('should return false for a non-palindrome string', () => {
+    expect(isPalindrome('hello')).toBe(false);
+  });
+
+  it('should return false for numbers', () => {
+    expect(isPalindrome(123)).toBe(false);
+  });
+
+  it('should return false for null', () => {
+    expect(isPalindrome(null)).toBe(false);
+  });
+
+  it('should return false for undefined', () => {
+    expect(isPalindrome(undefined)).toBe(false);
   });
 });
