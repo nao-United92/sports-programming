@@ -1,26 +1,17 @@
 /**
- * Generates a random integer between `min` and `max` (inclusive).
- * @param {number} min The minimum value.
- * @param {number} max The maximum value.
- * @returns {number} A random integer.
+ * Shuffles an array randomly using the Fisher-Yates (Knuth) algorithm.
+ * Creates a new array with the shuffled elements, without modifying the original array.
+ * @param {Array} array The array to shuffle.
+ * @returns {Array} A new array with the shuffled elements.
  */
-export function randomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-/**
- * Generates a random string of a specified length.
- * @param {number} length The length of the string to generate.
- * @param {string} [characters='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'] The characters to use for the string.
- * @returns {string} The random string.
- */
-export function randomString(length, characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
-  let result = '';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+export function shuffle(array) {
+  if (!Array.isArray(array)) {
+    return [];
   }
-  return result;
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
 }
