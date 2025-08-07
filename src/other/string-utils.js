@@ -25,3 +25,15 @@ export function toSnakeCase(str) {
   }
   return str.replace(/([A-Z])/g, (match, p1, offset) => (offset > 0 ? '_' : '') + p1.toLowerCase());
 }
+
+/**
+ * Capitalizes the first letter of a string.
+ * @param {string} str The string to capitalize.
+ * @returns {string} The string with the first letter capitalized.
+ */
+export function capitalizeFirstLetter(str) {
+  if (typeof str !== 'string' || str.length === 0) {
+    return '';
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

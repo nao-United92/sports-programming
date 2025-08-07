@@ -1,4 +1,4 @@
-import { isPalindrome, toSnakeCase } from './string-utils.js';
+import { isPalindrome, toSnakeCase, capitalizeFirstLetter } from './string-utils.js';
 
 describe('isPalindrome', () => {
   it('should return true for a simple palindrome', () => {
@@ -63,5 +63,30 @@ describe('toSnakeCase', () => {
     expect(toSnakeCase(null)).toBe('');
     expect(toSnakeCase(undefined)).toBe('');
     expect(toSnakeCase(123)).toBe('');
+  });
+});
+
+describe('capitalizeFirstLetter', () => {
+  it('should capitalize the first letter of a string', () => {
+    expect(capitalizeFirstLetter('hello')).toBe('Hello');
+    expect(capitalizeFirstLetter('world')).toBe('World');
+  });
+
+  it('should handle an empty string', () => {
+    expect(capitalizeFirstLetter('')).toBe('');
+  });
+
+  it('should handle a single character string', () => {
+    expect(capitalizeFirstLetter('a')).toBe('A');
+  });
+
+  it('should return an empty string for non-string inputs', () => {
+    expect(capitalizeFirstLetter(null)).toBe('');
+    expect(capitalizeFirstLetter(undefined)).toBe('');
+    expect(capitalizeFirstLetter(123)).toBe('');
+  });
+
+  it('should not change the rest of the string', () => {
+    expect(capitalizeFirstLetter('hello world')).toBe('Hello world');
   });
 });
