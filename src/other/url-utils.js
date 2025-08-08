@@ -1,16 +1,28 @@
 /**
- * Parses the query parameters from a URL string and returns them as an object.
- * @param {string} url The URL string to parse. If not provided, uses window.location.search.
- * @returns {object} An object containing the parsed query parameters.
+ * URLのクエリ文字列を解析し、キーと値のペアを持つオブジェクトを返します。
+ * @param {string} url - 解析するURL。
+ * @returns {object} クエリパラメータのキーと値のペアを持つオブジェクト。
  */
-export function parseQueryParams(url) {
-  const queryString = url ? url.split('?')[1] : '';
-  const params = {};
-  if (queryString) {
-    queryString.split('&').forEach(pair => {
-      const [key, value] = pair.split('=').map(decodeURIComponent);
-      params[key] = value || '';
-    });
+export function getQueryParams(url) {
+  const queryString = url.split('?')[1];
+  if (!queryString) {
+    return {};
   }
-  return params;
+  const params = new URLSearchParams(queryString);
+  const queryParams = {};
+  for (const [key, value] of params.entries()) {
+    queryParams[key] = value;
+  }
+  return queryParams;
+}
+
+/**
+ * オブジェクトをURLのクエリ文字列に変換します。
+ * @param {object} obj - クエリ文字列に変換するオブジェクト。
+ * @returns {string} URLのクエリ文字列。
+ */
+export function objectToQueryString(obj) {
+  return Object.keys(obj)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
+    .join('&');
 }
