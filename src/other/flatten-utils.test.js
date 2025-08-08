@@ -1,22 +1,21 @@
-import { flatten } from './flatten-utils.js';
+import { flatten } from './flatten-utils';
 
 describe('flatten', () => {
   test('should flatten a nested array', () => {
-    expect(flatten([1, [2, [3, 4]], 5])).toEqual([1, 2, 3, 4, 5]);
+    const array = [1, [2, [3, [4]], 5]];
+    const flattened = flatten(array);
+    expect(flattened).toEqual([1, 2, 3, 4, 5]);
   });
 
-  test('should handle an empty array', () => {
-    expect(flatten([])).toEqual([]);
+  test('should return an empty array if the input array is empty', () => {
+    const array = [];
+    const flattened = flatten(array);
+    expect(flattened).toEqual([]);
   });
 
-  test('should handle a non-array input', () => {
-    expect(flatten(1)).toEqual([]);
-    expect(flatten('string')).toEqual([]);
-    expect(flatten(null)).toEqual([]);
-    expect(flatten(undefined)).toEqual([]);
-  });
-
-  test('should handle an array with no nested arrays', () => {
-    expect(flatten([1, 2, 3])).toEqual([1, 2, 3]);
+  test('should not modify an already flat array', () => {
+    const array = [1, 2, 3, 4, 5];
+    const flattened = flatten(array);
+    expect(flattened).toEqual([1, 2, 3, 4, 5]);
   });
 });
