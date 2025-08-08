@@ -1,5 +1,6 @@
 export const memoize = (func) => {
   const cache = {};
+
   return (...args) => {
     const key = JSON.stringify(args);
     if (cache[key]) {
