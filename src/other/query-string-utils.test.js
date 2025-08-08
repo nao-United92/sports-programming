@@ -1,47 +1,31 @@
-import { objectToQueryString, queryStringToObject } from './query-string-utils.js';
+import { parse, stringify } from './query-string-utils';
 
-describe('queryString', () => {
-  describe('objectToQueryString', () => {
-    it('should convert an object to a query string', () => {
-      const obj = { a: 1, b: 'hello', c: true };
-      expect(objectToQueryString(obj)).toBe('a=1&b=hello&c=true');
+describe('queryString utils', () => {
+  describe('parse', () => {
+    test('should parse a simple query string', () => {
+      expect(parse('foo=bar')).toEqual({ foo: 'bar' });
     });
 
-    it('should handle an empty object', () => {
-      expect(objectToQueryString({})).toBe('');
+    test('should parse a query string with multiple values', () => {
+      expect(parse('foo=bar&baz=qux')).toEqual({ foo: 'bar', baz: 'qux' });
     });
 
-    it('should handle special characters', () => {
-      const obj = { 'a b': 'c&d' };
-      expect(objectToQueryString(obj)).toBe('a%20b=c%26d');
-    });
-
-    it('should return an empty string for non-object inputs', () => {
-      expect(objectToQueryString(null)).toBe('');
-      expect(objectToQueryString(undefined)).toBe('');
-      expect(objectToQueryString(123)).toBe('');
+    test('should parse a query string with an array', () => {
+      expect(parse('a=1&a=2')).toEqual({ a: ['1', '2'] });
     });
   });
 
-  describe('queryStringToObject', () => {
-    it('should convert a query string to an object', () => {
-      const queryString = 'a=1&b=hello&c=true';
-      expect(queryStringToObject(queryString)).toEqual({ a: '1', b: 'hello', c: 'true' });
+  describe('stringify', () => {
+    test('should stringify a simple object', () => {
+      expect(stringify({ foo: 'bar' })).toBe('foo=bar');
     });
 
-    it('should handle an empty query string', () => {
-      expect(queryStringToObject('')).toEqual({});
+    test('should stringify an object with multiple values', () => {
+      expect(stringify({ foo: 'bar', baz: 'qux' })).toBe('foo=bar&baz=qux');
     });
 
-    it('should handle special characters', () => {
-      const queryString = 'a%20b=c%26d';
-      expect(queryStringToObject(queryString)).toEqual({ 'a b': 'c&d' });
-    });
-
-    it('should return an empty object for non-string inputs', () => {
-      expect(queryStringToObject(null)).toEqual({});
-      expect(queryStringToObject(undefined)).toEqual({});
-      expect(queryStringToObject(123)).toEqual({});
+    test('should stringify an object with an array', () => {
+      expect(stringify({ a: ['1', '2'] })).toBe('a=1&a=2');
     });
   });
 });

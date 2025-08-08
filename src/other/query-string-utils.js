@@ -1,33 +1,31 @@
-
-/**
- * Converts an object to a query string.
- *
- * @param {object} obj The object to convert.
- * @returns {string} The query string.
- */
-export const objectToQueryString = (obj) => {
-  if (obj === null || typeof obj !== 'object') {
-    return '';
+export const parse = (queryString) => {
+  const params = new URLSearchParams(queryString);
+  const result = {};
+  for (const [key, value] of params.entries()) {
+    if (result[key]) {
+      if (Array.isArray(result[key])) {
+        result[key].push(value);
+      } else {
+        result[key] = [result[key], value];
+      }
+    } else {
+      result[key] = value;
+    }
   }
-  return Object.keys(obj)
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
-    .join('&');
+  return result;
 };
 
-/**
- * Converts a query string to an object.
- *
- * @param {string} queryString The query string to convert.
- * @returns {object} The object.
- */
-export const queryStringToObject = (queryString) => {
-  if (typeof queryString !== 'string') {
-    return {};
+export const stringify = (obj) => {
+  const params = new URLSearchParams();
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (Array.isArray(value)) {
+        value.forEach(v => params.append(key, v));
+      } else {
+        params.append(key, value);
+      }
+    }
   }
-  return (queryString || '').split('&').reduce((acc, curr) => {
-    if (curr === '') return acc;
-    const [key, value] = curr.split('=');
-    acc[decodeURIComponent(key)] = decodeURIComponent(value || '');
-    return acc;
-  }, {});
+  return params.toString();
 };
