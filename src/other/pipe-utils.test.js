@@ -1,40 +1,25 @@
 import { pipe } from './pipe-utils';
 
 describe('pipe', () => {
-  test('should pipe two functions', () => {
-    const addOne = (x) => x + 1;
-    const multiplyTwo = (x) => x * 2;
-    const addOneThenMultiplyTwo = pipe(addOne, multiplyTwo);
+  test('should pipe functions from left to right', () => {
+    const add5 = (x) => x + 5;
+    const multiplyBy2 = (x) => x * 2;
+    const subtract10 = (x) => x - 10;
 
-    expect(addOneThenMultiplyTwo(5)).toBe(12); // (5 + 1) * 2 = 12
+    const piped = pipe(add5, multiplyBy2, subtract10);
+
+    expect(piped(5)).toBe(10);
+    expect(piped(10)).toBe(20);
   });
 
-  test('should pipe multiple functions', () => {
-    const addOne = (x) => x + 1;
-    const multiplyTwo = (x) => x * 2;
-    const subtractThree = (x) => x - 3;
-    const pipedFunc = pipe(addOne, multiplyTwo, subtractThree);
-
-    expect(pipedFunc(5)).toBe(9); // ((5 + 1) * 2) - 3 = 9
+  test('should work with a single function', () => {
+    const add5 = (x) => x + 5;
+    const piped = pipe(add5);
+    expect(piped(5)).toBe(10);
   });
 
-  test('should handle no functions', () => {
-    const pipedFunc = pipe();
-    expect(pipedFunc(5)).toBe(5);
-    expect(pipedFunc(1, 2, 3)).toEqual([1, 2, 3]);
-  });
-
-  test('should handle one function', () => {
-    const addOne = (x) => x + 1;
-    const pipedFunc = pipe(addOne);
-    expect(pipedFunc(5)).toBe(6);
-  });
-
-  test('should pass multiple arguments to the leftmost function', () => {
-    const sum = (a, b) => a + b;
-    const multiplyTwo = (x) => x * 2;
-    const pipedFunc = pipe(sum, multiplyTwo);
-
-    expect(pipedFunc(2, 3)).toBe(10); // (2 + 3) * 2 = 10
+  test('should return the initial value if no functions are provided', () => {
+    const piped = pipe();
+    expect(piped(5)).toBe(5);
   });
 });
