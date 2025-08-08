@@ -1,9 +1,9 @@
-import { curry } from './curry-utils.js';
+import { curry } from './curry-utils';
 
 describe('curry', () => {
-  test('should curry a function with multiple arguments', () => {
+  test('should curry a function with a specified arity', () => {
     const add = (a, b, c) => a + b + c;
-    const curriedAdd = curry(add);
+    const curriedAdd = curry(add, 3);
 
     expect(curriedAdd(1)(2)(3)).toBe(6);
     expect(curriedAdd(1, 2)(3)).toBe(6);
@@ -11,23 +11,37 @@ describe('curry', () => {
     expect(curriedAdd(1, 2, 3)).toBe(6);
   });
 
-  test('should maintain context (this) if applicable', () => {
-    const obj = {
-      name: 'test',
-      greet: function(greeting, punctuation) {
-        return `${greeting}, ${this.name}${punctuation}`;
-      },
-    };
+  test('should curry a function using its length property as arity', () => {
+    const multiply = (a, b) => a * b;
+    const curriedMultiply = curry(multiply);
 
-    const curriedGreet = curry(obj.greet);
-    const boundGreet = curriedGreet.bind(obj);
-
-    expect(boundGreet('Hello')('!')).toBe('Hello, test!');
+    expect(curriedMultiply(2)(3)).toBe(6);
+    expect(curriedMultiply(2, 3)).toBe(6);
   });
 
-  test('should work with functions having no arguments', () => {
-    const sayHello = () => 'Hello';
-    const curriedSayHello = curry(sayHello);
-    expect(curriedSayHello()).toBe('Hello');
+  test('should preserve the context (this binding)', () => {
+    const obj = {
+      x: 10,
+      add: curry(function(a, b) {
+        return this.x + a + b;
+      })
+    };
+
+    expect(obj.add(1)(2)).toBe(13);
+    expect(obj.add(1, 2)).toBe(13);
+  });
+
+  test('should handle functions with no arguments', () => {
+    const greet = () => 'Hello';
+    const curriedGreet = curry(greet);
+
+    expect(curriedGreet()).toBe('Hello');
+  });
+
+  test('should handle functions with more arguments than arity', () => {
+    const sum = (a, b) => a + b;
+    const curriedSum = curry(sum, 2);
+
+    expect(curriedSum(1, 2, 3)).toBe(3); // Only first two arguments are used
   });
 });
