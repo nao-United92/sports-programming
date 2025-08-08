@@ -1,9 +1,17 @@
-export const get = (obj, path, defaultValue) => {
-  const travel = (regexp) =>
-    String.prototype.split
-      .call(path, regexp)
-      .filter(Boolean)
-      .reduce((res, key) => (res !== null && res !== undefined ? res[key] : res), obj);
-  const result = travel(/[,[\u005D]+?/) || travel(/\\./);
-  return result === undefined || result === obj ? defaultValue : result;
+export const get = (obj, path, defaultValue = undefined) => {
+  if (path === '' || path === null || path === undefined) {
+    return defaultValue;
+  }
+
+  const pathParts = Array.isArray(path) ? path : path.replace(/\\[(\\d+)\\]/g, '.$1').split('.').filter(Boolean);
+
+  let current = obj;
+  for (let i = 0; i < pathParts.length; i++) {
+    const part = pathParts[i];
+    if (current === null || current === undefined) {
+      return defaultValue;
+    }
+    current = current[part];
+  }
+  return current === undefined ? defaultValue : current;
 };

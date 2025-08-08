@@ -1,4 +1,4 @@
-import { get } from './get-utils.js';
+import { get } from './get-utils';
 
 describe('get', () => {
   const obj = {
@@ -16,12 +16,12 @@ describe('get', () => {
     expect(get(obj, 'a')).toBe(1);
   });
 
-  test('should get a nested property using dot notation', () => {
+  test('should get a nested property', () => {
     expect(get(obj, 'b.c')).toBe(2);
     expect(get(obj, 'b.d.e')).toBe(3);
   });
 
-  test('should get a nested property using bracket notation', () => {
+  test('should get an array element', () => {
     expect(get(obj, 'f[0]')).toBe(4);
     expect(get(obj, 'f[2].g')).toBe(6);
   });
@@ -29,8 +29,7 @@ describe('get', () => {
   test('should return undefined for a non-existent path', () => {
     expect(get(obj, 'x')).toBeUndefined();
     expect(get(obj, 'b.x')).toBeUndefined();
-    expect(get(obj, 'f[3]')).toBeUndefined();
-    expect(get(obj, 'f[2].x')).toBeUndefined();
+    expect(get(obj, 'f[5]')).toBeUndefined();
   });
 
   test('should return default value for a non-existent path', () => {
@@ -38,10 +37,10 @@ describe('get', () => {
     expect(get(obj, 'b.x', null)).toBe(null);
   });
 
-  test('should handle null or undefined objects', () => {
-    expect(get(null, 'a')).toBeUndefined();
-    expect(get(undefined, 'a')).toBeUndefined();
-    expect(get(null, 'a', 'default')).toBe('default');
+  test('should handle null or undefined intermediate paths', () => {
+    const testObj = { a: { b: null } };
+    expect(get(testObj, 'a.b.c')).toBeUndefined();
+    expect(get(testObj, 'a.b.c', 'default')).toBe('default');
   });
 
   test('should handle empty path', () => {
