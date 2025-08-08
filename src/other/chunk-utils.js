@@ -1,10 +1,9 @@
 export const chunk = (array, size) => {
-  if (!Array.isArray(array) || size <= 0) {
-    return [];
+  const chunked = [];
+  let index = 0;
+  while (index < array.length) {
+    chunked.push(array.slice(index, index + size));
+    index += size;
   }
-  const result = [];
-  for (let i = 0; i < array.length; i += size) {
-    result.push(array.slice(i, i + size));
-  }
-  return result;
+  return chunked;
 };

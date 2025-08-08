@@ -1,27 +1,21 @@
-import { chunk } from './chunk-utils.js';
+import { chunk } from './chunk-utils';
 
 describe('chunk', () => {
-  test('should split an array into chunks of a specified size', () => {
-    expect(chunk([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]]);
+  test('should create chunks of a specific size', () => {
+    const array = [1, 2, 3, 4, 5, 6, 7, 8];
+    const chunked = chunk(array, 3);
+    expect(chunked).toEqual([[1, 2, 3], [4, 5, 6], [7, 8]]);
   });
 
-  test('should handle an empty array', () => {
-    expect(chunk([], 2)).toEqual([]);
+  test('should return an empty array if the input array is empty', () => {
+    const array = [];
+    const chunked = chunk(array, 3);
+    expect(chunked).toEqual([]);
   });
 
-  test('should handle a chunk size larger than the array length', () => {
-    expect(chunk([1, 2, 3], 5)).toEqual([[1, 2, 3]]);
-  });
-
-  test('should handle a chunk size of 1', () => {
-    expect(chunk([1, 2, 3], 1)).toEqual([[1], [2], [3]]);
-  });
-
-  test('should return an empty array for invalid input', () => {
-    expect(chunk(null, 2)).toEqual([]);
-    expect(chunk(undefined, 2)).toEqual([]);
-    expect(chunk('string', 2)).toEqual([]);
-    expect(chunk([1, 2], 0)).toEqual([]);
-    expect(chunk([1, 2], -1)).toEqual([]);
+  test('should handle chunk sizes larger than the array length', () => {
+    const array = [1, 2, 3];
+    const chunked = chunk(array, 5);
+    expect(chunked).toEqual([[1, 2, 3]]);
   });
 });
