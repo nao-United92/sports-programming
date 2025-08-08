@@ -1,8 +1,11 @@
-import { isEmpty } from './is-empty-utils.js';
+import { isEmpty } from './is-empty-utils';
 
 describe('isEmpty', () => {
-  test('should return true for null or undefined', () => {
+  test('should return true for null', () => {
     expect(isEmpty(null)).toBe(true);
+  });
+
+  test('should return true for undefined', () => {
     expect(isEmpty(undefined)).toBe(true);
   });
 
@@ -23,7 +26,7 @@ describe('isEmpty', () => {
   });
 
   test('should return false for a non-empty array', () => {
-    expect(isEmpty([1, 2, 3])).toBe(false);
+    expect(isEmpty([1, 2])).toBe(false);
   });
 
   test('should return false for a non-empty object', () => {
