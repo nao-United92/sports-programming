@@ -1,15 +1,14 @@
 /**
- * Composes single-argument functions from right to left. The rightmost
- * function can take multiple arguments; the remaining functions must be unary.
+ * Composes functions from right to left.
+ * The rightmost function can take multiple arguments as it will be the first to be invoked.
+ * The rest of the functions must be unary (accept a single argument).
  *
  * @param {...Function} funcs The functions to compose.
- * @returns {Function} A function obtained by composing the argument functions
- * from right to left. For example, compose(f, g, h) is identical to doing
- * (...args) => f(g(h(...args))).
+ * @returns {Function} Returns the new composite function.
  */
-export const compose = (...funcs) => {
+export function compose(...funcs) {
   if (funcs.length === 0) {
-    return (arg) => arg;
+    return (...args) => args.length > 1 ? [...args] : args[0];
   }
 
   if (funcs.length === 1) {
@@ -17,4 +16,4 @@ export const compose = (...funcs) => {
   }
 
   return funcs.reduce((a, b) => (...args) => a(b(...args)));
-};
+}
