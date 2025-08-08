@@ -1,17 +1,16 @@
 /**
- * Converts `string` to [snake case](https://en.wikipedia.org/wiki/Snake_case).
+ * Converts a string to snake_case.
  *
- * @param {string} [string=''] The string to convert.
- * @returns {string} Returns the snake cased string.
+ * @param {string} str The string to convert.
+ * @returns {string} The snake_cased string.
  */
-export function snakeCase(string) {
-  if (typeof string !== 'string') {
+export const toSnakeCase = (str) => {
+  if (str === null || str === undefined) {
     return '';
   }
-  return string
-    .replace(/([A-Z])/g, ' $1')
-    .trim()
-    .split(/[\s_-]+/)
-    .map(word => word.toLowerCase())
-    .join('_');
-}
+  return String(str)
+    .replace(/^[^A-Za-z0-9]*|[^A-Za-z0-9]*$/g, '')
+    .replace(/([a-z])([A-Z])/g, (m, a, b) => a + '_' + b.toLowerCase())
+    .replace(/[^A-Za-z0-9]+|_+/g, '_')
+    .toLowerCase();
+};
