@@ -1,42 +1,67 @@
 import { debounce } from './debounce-utils';
 
-jest.useFakeTimers();
-
 describe('debounce', () => {
   let func;
   let debouncedFunc;
 
   beforeEach(() => {
     func = jest.fn();
-    debouncedFunc = debounce(func, 500);
+    jest.useFakeTimers();
   });
 
-  test('should execute function after wait time', () => {
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  test('should not call the function immediately', () => {
+    debouncedFunc = debounce(func, 100);
     debouncedFunc();
     expect(func).not.toHaveBeenCalled();
+  });
 
-    jest.advanceTimersByTime(500);
+  test('should call the function after the delay', () => {
+    debouncedFunc = debounce(func, 100);
+    debouncedFunc();
+    jest.advanceTimersByTime(100);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should execute function only once for multiple calls within wait time', () => {
-    for (let i = 0; i < 5; i++) {
-      debouncedFunc();
-    }
-
-    jest.advanceTimersByTime(500);
+  test('should only call the function once if invoked multiple times within the delay', () => {
+    debouncedFunc = debounce(func, 100);
+    debouncedFunc();
+    jest.advanceTimersByTime(50);
+    debouncedFunc();
+    jest.advanceTimersByTime(50);
+    debouncedFunc();
+    jest.advanceTimersByTime(100);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should reset wait time on subsequent calls', () => {
-    debouncedFunc();
-    jest.advanceTimersByTime(250);
-    debouncedFunc();
-    jest.advanceTimersByTime(250);
+  test('should pass arguments to the debounced function', () => {
+    debouncedFunc = debounce(func, 100);
+    debouncedFunc(1, 2, 3);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledWith(1, 2, 3);
+  });
 
-    expect(func).not.toHaveBeenCalled();
+  test('should maintain the correct context', () => {
+    debouncedFunc = debounce(func, 100);
+    const context = { key: 'value' };
+    debouncedFunc.call(context);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledOnLastCallWith(); // Check if context is passed correctly
+    expect(func.mock.contexts[0]).toBe(context);
+  });
 
-    jest.advanceTimersByTime(250);
+  test('should call the function again after the delay if invoked after the previous call completed', () => {
+    debouncedFunc = debounce(func, 100);
+    debouncedFunc();
+    jest.advanceTimersByTime(100);
     expect(func).toHaveBeenCalledTimes(1);
+
+    debouncedFunc();
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(2);
   });
 });
