@@ -1,35 +1,57 @@
-import { once } from './once-utils.js';
+import { once } from './once-utils';
 
 describe('once', () => {
-  test('should call the function only once', () => {
-    const mockFunc = jest.fn(() => 'hello');
-    const onceFunc = once(mockFunc);
+  let func;
 
-    expect(onceFunc()).toBe('hello');
-    expect(onceFunc()).toBe('hello');
-    expect(onceFunc()).toBe('hello');
-
-    expect(mockFunc).toHaveBeenCalledTimes(1);
+  beforeEach(() => {
+    func = jest.fn((x) => x * 2);
   });
 
-  test('should return the same result on subsequent calls', () => {
-    let counter = 0;
-    const increment = once(() => {
-      counter++;
-      return counter;
+  test('should call the function only once', () => {
+    const onceFunc = once(func);
+    onceFunc(1);
+    onceFunc(2);
+    onceFunc(3);
+
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenCalledWith(1);
+  });
+
+  test('should return the result of the first invocation on subsequent calls', () => {
+    const onceFunc = once(func);
+    const result1 = onceFunc(5);
+    const result2 = onceFunc(10);
+    const result3 = onceFunc(15);
+
+    expect(result1).toBe(10);
+    expect(result2).toBe(10);
+    expect(result3).toBe(10);
+  });
+
+  test('should preserve the context (this binding)', () => {
+    const onceFunc = once(function(value) {
+      this.count = (this.count || 0) + value;
+      return this.count;
     });
 
-    expect(increment()).toBe(1);
-    expect(increment()).toBe(1);
-    expect(increment()).toBe(1);
-    expect(counter).toBe(1);
+    const context = {};
+    const result1 = onceFunc.call(context, 1);
+    const result2 = onceFunc.call(context, 2);
+
+    expect(result1).toBe(1);
+    expect(result2).toBe(1);
+    expect(context.count).toBe(1);
   });
 
-  test('should pass arguments to the original function on the first call', () => {
-    const mockFunc = jest.fn((a, b) => a + b);
-    const onceFunc = once(mockFunc);
+  test('should work correctly with no arguments', () => {
+    const noArgFunc = jest.fn(() => 'hello');
+    const onceNoArgFunc = once(noArgFunc);
 
-    expect(onceFunc(1, 2)).toBe(3);
-    expect(mockFunc).toHaveBeenCalledWith(1, 2);
+    const result1 = onceNoArgFunc();
+    const result2 = onceNoArgFunc();
+
+    expect(noArgFunc).toHaveBeenCalledTimes(1);
+    expect(result1).toBe('hello');
+    expect(result2).toBe('hello');
   });
 });
