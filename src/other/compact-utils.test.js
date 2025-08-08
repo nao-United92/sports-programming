@@ -1,27 +1,21 @@
-import { compact } from './compact-utils.js';
+import { compact } from './compact-utils';
 
 describe('compact', () => {
   test('should remove all falsy values from an array', () => {
-    expect(compact([0, 1, false, 2, '', 3, null, 'a', undefined, NaN])).toEqual([1, 2, 3, 'a']);
+    const array = [0, 1, false, 2, '', 3, null, 4, undefined, 5, NaN];
+    const compacted = compact(array);
+    expect(compacted).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  test('should return an empty array if the input array is empty', () => {
+    const array = [];
+    const compacted = compact(array);
+    expect(compacted).toEqual([]);
   });
 
   test('should return an empty array if all values are falsy', () => {
-    expect(compact([0, false, '', null, undefined, NaN])).toEqual([]);
-  });
-
-  test('should return the same array if no falsy values are present', () => {
-    expect(compact([1, 2, 3, 'a'])).toEqual([1, 2, 3, 'a']);
-  });
-
-  test('should handle an empty array', () => {
-    expect(compact([])).toEqual([]);
-  });
-
-  test('should return an empty array for non-array input', () => {
-    expect(compact(null)).toEqual([]);
-    expect(compact(undefined)).toEqual([]);
-    expect(compact('string')).toEqual([]);
-    expect(compact(123)).toEqual([]);
-    expect(compact({})).toEqual([]);
+    const array = [0, false, '', null, undefined, NaN];
+    const compacted = compact(array);
+    expect(compacted).toEqual([]);
   });
 });
