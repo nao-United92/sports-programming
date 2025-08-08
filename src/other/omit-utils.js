@@ -1,10 +1,7 @@
 export const omit = (obj, keys) => {
-  if (obj === null || typeof obj !== 'object') {
-    return {};
+  const result = { ...obj };
+  for (const key of keys) {
+    delete result[key];
   }
-  const newObj = { ...obj };
-  keys.forEach(key => {
-    delete newObj[key];
-  });
-  return newObj;
+  return result;
 };
