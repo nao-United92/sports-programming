@@ -1,44 +1,16 @@
 /**
- * Parses a URL query string into an object.
+ * Get a URL parameter by name.
  *
- * @param {string} url The URL to parse.
- * @returns {object} An object representing the query string.
+ * @param {string} name The name of the parameter to get.
+ * @param {string} [url=window.location.href] The URL to parse.
+ * @returns {string|null} The value of the parameter or null if not found.
  */
-export const parseQuery = (url) => {
-  const queryString = url.includes('?') ? url.split('?')[1] : '';
-  const params = new URLSearchParams(queryString);
-  const result = {};
-  for (const [key, value] of params.entries()) {
-    if (result[key]) {
-      if (Array.isArray(result[key])) {
-        result[key].push(value);
-      } else {
-        result[key] = [result[key], value];
-      }
-    } else {
-      result[key] = value;
-    }
-  }
-  return result;
+export const getURLParameter = (name, url = window.location.href) => {
+  const nameA = name.replace(/[[\]]/g, '\\$&');
+  const regex = new RegExp('[?&]' + nameA + '(=([^&#]*)|&|#|$)');
+  const results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
 };
 
-/**
- * Converts an object to a URL query string.
- *
- * @param {object} obj The object to convert.
- * @returns {string} The URL query string.
- */
-export const stringifyQuery = (obj) => {
-  const params = new URLSearchParams();
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const value = obj[key];
-      if (Array.isArray(value)) {
-        value.forEach(v => params.append(key, v));
-      } else {
-        params.append(key, value);
-      }
-    }
-  }
-  return params.toString();
-};

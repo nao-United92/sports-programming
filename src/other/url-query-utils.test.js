@@ -1,35 +1,29 @@
-import { parseQuery, stringifyQuery } from './url-query-utils.js';
+import { getURLParameter } from './url-query-utils.js';
 
-describe('URL Query Utilities', () => {
-  describe('parseQuery', () => {
-    test('should parse a simple query string', () => {
-      expect(parseQuery('http://example.com?foo=bar&baz=qux')).toEqual({ foo: 'bar', baz: 'qux' });
-    });
-
-    test('should handle multiple values for the same key', () => {
-      expect(parseQuery('http://example.com?a=1&a=2&a=3')).toEqual({ a: ['1', '2', '3'] });
-    });
-
-    test('should handle a URL with no query string', () => {
-      expect(parseQuery('http://example.com')).toEqual({});
-    });
-
-    test('should handle an empty query string', () => {
-      expect(parseQuery('http://example.com?')).toEqual({});
-    });
+describe('getURLParameter', () => {
+  test('should return the value of a URL parameter', () => {
+    const url = 'http://example.com?name=John&age=30';
+    expect(getURLParameter('name', url)).toBe('John');
+    expect(getURLParameter('age', url)).toBe('30');
   });
 
-  describe('stringifyQuery', () => {
-    test('should stringify a simple object', () => {
-      expect(stringifyQuery({ foo: 'bar', baz: 'qux' })).toBe('foo=bar&baz=qux');
-    });
+  test('should return null if the parameter is not found', () => {
+    const url = 'http://example.com?name=John&age=30';
+    expect(getURLParameter('city', url)).toBeNull();
+  });
 
-    test('should handle an object with an array value', () => {
-      expect(stringifyQuery({ a: ['1', '2', '3'] })).toBe('a=1&a=2&a=3');
-    });
+  test('should handle URLs with no query string', () => {
+    const url = 'http://example.com';
+    expect(getURLParameter('name', url)).toBeNull();
+  });
 
-    test('should handle an empty object', () => {
-      expect(stringifyQuery({})).toBe('');
-    });
+  test('should handle parameters with no value', () => {
+    const url = 'http://example.com?name=&age=30';
+    expect(getURLParameter('name', url)).toBe('');
+  });
+
+  test('should handle special characters in parameter values', () => {
+    const url = 'http://example.com?query=%20hello%20';
+    expect(getURLParameter('query', url)).toBe(' hello ');
   });
 });
