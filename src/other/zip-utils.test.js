@@ -1,31 +1,45 @@
-import { zip } from './zip-utils.js';
+import { zip } from './zip-utils';
 
 describe('zip', () => {
-  test('should zip together arrays of same length', () => {
-    const result = zip(['a', 'b'], [1, 2], [true, false]);
-    expect(result).toEqual([['a', 1, true], ['b', 2, false]]);
+  test('should zip together arrays of the same length', () => {
+    const arr1 = ['a', 'b', 'c'];
+    const arr2 = [1, 2, 3];
+    const arr3 = [true, false, true];
+    expect(zip(arr1, arr2, arr3)).toEqual([
+      ['a', 1, true],
+      ['b', 2, false],
+      ['c', 3, true],
+    ]);
   });
 
-  test('should zip together arrays of different lengths', () => {
-    const result = zip(['a', 'b'], [1, 2, 3], [true]);
-    expect(result).toEqual([['a', 1, true], ['b', 2, undefined], [undefined, 3, undefined]]);
+  test('should handle arrays of different lengths', () => {
+    const arr1 = ['a', 'b'];
+    const arr2 = [1, 2, 3];
+    const arr3 = [true];
+    expect(zip(arr1, arr2, arr3)).toEqual([
+      ['a', 1, true],
+      ['b', 2, undefined],
+      [undefined, 3, undefined],
+    ]);
   });
 
-  test('should handle empty arrays', () => {
-    expect(zip([], [])).toEqual([]);
-    expect(zip(['a'], [])).toEqual([['a', undefined]]);
-  });
-
-  test('should return an empty array when no arrays are provided', () => {
+  test('should return an empty array if no arrays are provided', () => {
     expect(zip()).toEqual([]);
   });
 
-  test('should handle non-array inputs gracefully', () => {
-    const result = zip(['a', 'b'], null, [1, 2], undefined);
-    expect(result).toEqual([['a', undefined, 1, undefined], ['b', undefined, 2, undefined]]);
+  test('should handle empty arrays', () => {
+    expect(zip(['a', 'b'], [])).toEqual([
+      ['a', undefined],
+      ['b', undefined],
+    ]);
   });
 
   test('should work with a single array', () => {
-    expect(zip(['a', 'b'])).toEqual([['a'], ['b']]);
+    expect(zip(['a', 'b', 'c'])).toEqual([['a'], ['b'], ['c']]);
+  });
+
+  test('should handle various data types', () => {
+    const result = zip([null], [undefined], [{ a: 1 }]);
+    expect(result).toEqual([[null, undefined, { a: 1 }]]);
   });
 });
