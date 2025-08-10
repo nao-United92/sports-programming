@@ -47,9 +47,13 @@ describe('throttle', () => {
     const context = { a: 1 };
     throttledFunc.call(context, 1, 2);
     expect(func).toHaveBeenCalledWith(1, 2);
+<<<<<<< HEAD
     // Check arguments of the last call manually
     expect(func.mock.calls[func.mock.calls.length - 1]).toEqual([1, 2]);
     expect(func.mock.contexts[func.mock.contexts.length - 1]).toBe(context);
+=======
+    expect(func).toHaveBeenCalledOnLastCallWith(1, 2);
+>>>>>>> d472ee3b82aa435552d146431f143b1fb00daba1
   });
 
   test('should ensure the last call within the throttle period is eventually executed', () => {
