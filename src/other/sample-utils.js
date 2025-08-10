@@ -1,37 +1,17 @@
-/**
- * Gets a random element from `array`.
- *
- * @param {Array} array The array to sample.
- * @returns {*} Returns the random element.
- */
-export function sample(array) {
-  if (!Array.isArray(array) || array.length === 0) {
+// Returns a random element from an array.
+export const sample = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
     return undefined;
   }
-  const length = array.length;
-  return array[Math.floor(Math.random() * length)];
-}
+  const index = Math.floor(Math.random() * arr.length);
+  return arr[index];
+};
 
-/**
- * Gets `n` random elements from `array`.
- *
- * @param {Array} array The array to sample.
- * @param {number} [n=1] The number of elements to sample.
- * @returns {Array} Returns the random elements.
- */
-export function sampleSize(array, n = 1) {
-  if (!Array.isArray(array) || array.length === 0) {
+// Returns n random elements from an array.
+export const sampleSize = (arr, n = 1) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
     return [];
   }
-  const length = array.length;
-  n = Math.max(Math.min(n, length), 0);
-  const last = length - 1;
-  const result = [...array];
-  for (let i = 0; i < n; i++) {
-    const rand = i + Math.floor(Math.random() * (last - i + 1));
-    const temp = result[rand];
-    result[rand] = result[i];
-    result[i] = temp;
-  }
-  return result.slice(0, n);
-}
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, Math.max(0, n));
+};
