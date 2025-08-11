@@ -1,9 +1,9 @@
-import { flatten } from './flatten-utils';
+import { flatten, flattenDepth } from './flatten-utils';
 
 describe('flatten', () => {
-  test('should flatten a nested array', () => {
+  test('should flatten a nested array by one level', () => {
     const arr = [1, [2, 3], [4, [5, 6]]];
-    expect(flatten(arr)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(flatten(arr)).toEqual([1, 2, 3, 4, [5, 6]]);
   });
 
   test('should handle an empty array', () => {
