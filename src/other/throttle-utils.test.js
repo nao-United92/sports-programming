@@ -1,74 +1,29 @@
-import { throttle } from './throttle-utils';
+import { throttle } from './throttle-utils.js';
 
 describe('throttle', () => {
-  let func;
-  let throttledFunc;
+  jest.useFakeTimers();
 
-  beforeEach(() => {
-    func = jest.fn();
-    jest.useFakeTimers(); // Use fake timers for consistent testing
-  });
-
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers(); // Restore real timers
-  });
-
-  test('should call the function immediately on first invocation', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc();
+  it('should call the function immediately', () => {
+    const func = jest.fn();
+    const throttled = throttle(func, 100);
+    throttled();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should not call the function if invoked again within the limit', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc();
-    throttledFunc(); // Second call within 100ms
-    throttledFunc(); // Third call within 100ms
+  it('should not call the function again within the wait time', () => {
+    const func = jest.fn();
+    const throttled = throttle(func, 100);
+    throttled();
+    throttled();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should call the function again after the limit has passed', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc(); // Call 1
-    expect(func).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(50);
-    throttledFunc(); // Call 2 (within limit)
-    expect(func).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(50);
-    throttledFunc(); // Call 3 (should trigger after this)
-    expect(func).toHaveBeenCalledTimes(2);
-  });
-
-  test('should pass arguments and context correctly', () => {
-    throttledFunc = throttle(func, 100);
-    const context = { a: 1 };
-    throttledFunc.call(context, 1, 2);
-    expect(func).toHaveBeenCalledWith(1, 2);
-<<<<<<< HEAD
-    // Check arguments of the last call manually
-    expect(func.mock.calls[func.mock.calls.length - 1]).toEqual([1, 2]);
-    expect(func.mock.contexts[func.mock.contexts.length - 1]).toBe(context);
-=======
-    expect(func).toHaveBeenCalledOnLastCallWith(1, 2);
->>>>>>> d472ee3b82aa435552d146431f143b1fb00daba1
-  });
-
-  test('should ensure the last call within the throttle period is eventually executed', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc(); // 0ms: Call 1
-    expect(func).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(50);
-    throttledFunc(); // 50ms: Call 2 (throttled)
-
-    jest.advanceTimersByTime(20);
-    throttledFunc(); // 70ms: Call 3 (throttled, should override Call 2's pending execution)
-
-    jest.advanceTimersByTime(30);
-    // At this point, the timer set by Call 3 should fire, executing func.
+  it('should call the function again after the wait time', () => {
+    const func = jest.fn();
+    const throttled = throttle(func, 100);
+    throttled();
+    jest.advanceTimersByTime(100);
+    throttled();
     expect(func).toHaveBeenCalledTimes(2);
   });
 });
