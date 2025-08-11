@@ -1,31 +1,30 @@
-import { capitalize } from './capitalize-utils.js';
+import { capitalizeFirstLetter } from './capitalize-utils.js';
 
-describe('capitalize', () => {
+describe('capitalizeFirstLetter', () => {
   test('should capitalize the first letter of a string', () => {
-    expect(capitalize('hello')).toBe('Hello');
+    expect(capitalizeFirstLetter('hello')).toBe('Hello');
+    expect(capitalizeFirstLetter('world')).toBe('World');
+    expect(capitalizeFirstLetter('fooBar')).toBe('FooBar');
   });
 
-  test('should return an empty string for an empty string', () => {
-    expect(capitalize('')).toBe('');
+  test('should return an empty string for an empty string input', () => {
+    expect(capitalizeFirstLetter('')).toBe('');
   });
 
-  test('should handle a single character string', () => {
-    expect(capitalize('a')).toBe('A');
-  });
-
-  test('should not change an already capitalized string', () => {
-    expect(capitalize('Hello')).toBe('Hello');
-  });
-
-  test('should handle strings with spaces', () => {
-    expect(capitalize('hello world')).toBe('Hello world');
+  test('should handle strings with leading spaces', () => {
+    expect(capitalizeFirstLetter('  test')).toBe('  test');
   });
 
   test('should return an empty string for non-string inputs', () => {
-    expect(capitalize(null)).toBe('');
-    expect(capitalize(undefined)).toBe('');
-    expect(capitalize(123)).toBe('');
-    expect(capitalize([])).toBe('');
-    expect(capitalize({})).toBe('');
+    expect(capitalizeFirstLetter(null)).toBe('');
+    expect(capitalizeFirstLetter(undefined)).toBe('');
+    expect(capitalizeFirstLetter(123)).toBe('');
+    expect(capitalizeFirstLetter({})).toBe('');
+    expect(capitalizeFirstLetter([])).toBe('');
+  });
+
+  test('should handle single character strings', () => {
+    expect(capitalizeFirstLetter('a')).toBe('A');
+    expect(capitalizeFirstLetter('Z')).toBe('Z');
   });
 });
