@@ -45,3 +45,33 @@ export function rgbToHex(r, g, b) {
   };
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
+
+/**
+ * Lightens a hex color by a given percentage.
+ * @param {string} hex The hex color code.
+ * @param {number} percent The percentage to lighten (0-100).
+ * @returns {string} The lightened hex color code.
+ */
+export function lighten(hex, percent) {
+  const { r, g, b } = hexToRgb(hex);
+  const amount = Math.round(2.55 * percent);
+  const newR = Math.min(255, r + amount);
+  const newG = Math.min(255, g + amount);
+  const newB = Math.min(255, b + amount);
+  return rgbToHex(newR, newG, newB);
+}
+
+/**
+ * Darkens a hex color by a given percentage.
+ * @param {string} hex The hex color code.
+ * @param {number} percent The percentage to darken (0-100).
+ * @returns {string} The darkened hex color code.
+ */
+export function darken(hex, percent) {
+  const { r, g, b } = hexToRgb(hex);
+  const amount = Math.round(2.55 * percent);
+  const newR = Math.max(0, r - amount);
+  const newG = Math.max(0, g - amount);
+  const newB = Math.max(0, b - amount);
+  return rgbToHex(newR, newG, newB);
+}
