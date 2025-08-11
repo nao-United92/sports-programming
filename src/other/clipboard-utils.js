@@ -98,3 +98,26 @@ export async function copyTextToClipboard(text) {
     return Promise.reject(new Error('Failed to copy text to clipboard using Clipboard API.'));
   }
 }
+
+/**
+ * Checks if the Clipboard API is supported.
+ * @returns {boolean} True if the Clipboard API is supported, false otherwise.
+ */
+export function isClipboardSupported() {
+  return !!navigator.clipboard;
+}
+
+/**
+ * Copies text to the clipboard and provides user feedback.
+ * @param {string} text The text to copy.
+ * @param {function} onSuccess Callback function on success.
+ * @param {function} onError Callback function on error.
+ */
+export async function copyToClipboardWithFeedback(text, onSuccess, onError) {
+  try {
+    await copyToClipboard(text);
+    if (onSuccess) onSuccess();
+  } catch (error) {
+    if (onError) onError(error);
+  }
+}

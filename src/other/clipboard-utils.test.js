@@ -223,4 +223,20 @@ describe('copyToClipboard', () => {
       });
     });
   });
+
+  describe('isClipboardSupported', () => {
+    it('should return true if clipboard is supported', () => {
+      expect(isClipboardSupported()).toBe(true);
+    });
+  });
+
+  describe('copyToClipboardWithFeedback', () => {
+    it('should call onSuccess when copy is successful', async () => {
+      const onSuccess = jest.fn();
+      const onError = jest.fn();
+      await copyToClipboardWithFeedback('text', onSuccess, onError);
+      expect(onSuccess).toHaveBeenCalled();
+      expect(onError).not.toHaveBeenCalled();
+    });
+  });
 });
