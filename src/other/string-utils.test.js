@@ -1,19 +1,47 @@
-import { truncate } from './string-utils.js';
+import { kebabCase, snakeCase } from './string-utils.js';
 
-describe('truncate', () => {
-  test('should not truncate if string is shorter than length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
+describe('String Utils', () => {
+  describe('kebabCase', () => {
+    it('should convert camelCase to kebab-case', () => {
+      expect(kebabCase('camelCase')).toBe('camel-case');
+    });
+
+    it('should convert PascalCase to kebab-case', () => {
+      expect(kebabCase('PascalCase')).toBe('pascal-case');
+    });
+
+    it('should handle strings with numbers', () => {
+      expect(kebabCase('myVariableName123')).toBe('my-variable-name123');
+    });
+
+    it('should handle already kebab-cased strings', () => {
+      expect(kebabCase('kebab-case')).toBe('kebab-case');
+    });
+
+    it('should handle empty strings', () => {
+      expect(kebabCase('')).toBe('');
+    });
   });
 
-  test('should truncate string to specified length', () => {
-    expect(truncate('hello world', 5)).toBe('hello...');
-  });
+  describe('snakeCase', () => {
+    it('should convert camelCase to snake_case', () => {
+      expect(snakeCase('camelCase')).toBe('camel_case');
+    });
 
-  test('should use custom suffix', () => {
-    expect(truncate('hello world', 5, '!!!')).toBe('hello!!!');
-  });
+    it('should convert PascalCase to snake_case', () => {
+      expect(snakeCase('PascalCase')).toBe('pascal_case');
+    });
 
-  test('should handle empty string', () => {
-    expect(truncate('', 5)).toBe('');
+    it('should handle strings with numbers', () => {
+      expect(snakeCase('myVariableName123')).toBe('my_variable_name123');
+    });
+
+    it('should handle already snake_cased strings', () => {
+      expect(snakeCase('snake_case')).toBe('snake_case');
+    });
+
+    it('should handle empty strings', () => {
+      expect(snakeCase('')).toBe('');
+    });
   });
 });

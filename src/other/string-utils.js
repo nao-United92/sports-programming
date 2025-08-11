@@ -1,14 +1,25 @@
 /**
- * Truncates a string to a specified length, appending a suffix if truncated.
+ * Converts string to kebab case.
  *
- * @param {string} str The string to truncate.
- * @param {number} length The maximum length of the string.
- * @param {string} [suffix='...'] The suffix to append if the string is truncated.
- * @returns {string} The truncated string.
+ * @param {string} str The string to convert.
+ * @returns {string} Returns the kebab cased string.
  */
-export const truncate = (str, length, suffix = '...') => {
-  if (str.length <= length) {
-    return str;
-  }
-  return str.slice(0, length) + suffix;
+export const kebabCase = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2')
+    .toLowerCase();
+};
+
+/**
+ * Converts string to snake case.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} Returns the snake cased string.
+ */
+export const snakeCase = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1_$2')
+    .toLowerCase();
 };
