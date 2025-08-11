@@ -151,3 +151,36 @@ export function clearForm(formElement) {
     }
   });
 }
+
+/**
+ * Checks if a form has been changed from its initial state.
+ * @param {HTMLFormElement} formElement The form element to check.
+ * @returns {boolean} True if the form is dirty, false otherwise.
+ */
+export function isFormDirty(formElement) {
+  if (!formElement) return false;
+
+  for (const element of formElement.elements) {
+    if (element.type === 'checkbox' || element.type === 'radio') {
+      if (element.checked !== element.defaultChecked) return true;
+    } else if (element.tagName.toLowerCase() === 'select') {
+      for (const option of element.options) {
+        if (option.selected !== option.defaultSelected) return true;
+      }
+    } else {
+      if (element.value !== element.defaultValue) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Toggles the disabled state of a form element.
+ * @param {HTMLElement} element The form element to toggle.
+ * @param {boolean} [force] If true, disables the element. If false, enables it.
+ */
+export function toggleFormElement(element, force) {
+  if (element) {
+    element.disabled = force === undefined ? !element.disabled : force;
+  }
+}

@@ -218,4 +218,43 @@ describe('form-utils', () => {
       expect(() => clearForm(null)).not.toThrow();
     });
   });
+
+  describe('isFormDirty', () => {
+    it('should return false for an unchanged form', () => {
+      expect(isFormDirty(form)).toBe(false);
+    });
+
+    it('should return true if a text input has changed', () => {
+      form.elements.username.value = 'new value';
+      expect(isFormDirty(form)).toBe(true);
+    });
+
+    it('should return true if a checkbox has changed', () => {
+      form.elements.newsletter.checked = false;
+      expect(isFormDirty(form)).toBe(true);
+    });
+  });
+
+  describe('toggleFormElement', () => {
+    it('should disable an element', () => {
+      const element = form.elements.username;
+      toggleFormElement(element, true);
+      expect(element.disabled).toBe(true);
+    });
+
+    it('should enable an element', () => {
+      const element = form.elements.username;
+      element.disabled = true;
+      toggleFormElement(element, false);
+      expect(element.disabled).toBe(false);
+    });
+
+    it('should toggle the disabled state', () => {
+      const element = form.elements.username;
+      toggleFormElement(element);
+      expect(element.disabled).toBe(true);
+      toggleFormElement(element);
+      expect(element.disabled).toBe(false);
+    });
+  });
 });
