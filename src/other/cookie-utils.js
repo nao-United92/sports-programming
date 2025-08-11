@@ -41,3 +41,28 @@ export const getCookie = (name) => {
 export const deleteCookie = (name) => {
   document.cookie = name + '=; Max-Age=-99999999;';
 };
+
+/**
+ * Checks if a cookie with the given name exists.
+ *
+ * @param {string} name The name of the cookie to check.
+ * @returns {boolean} True if the cookie exists, false otherwise.
+ */
+export const cookieExists = (name) => {
+  return getCookie(name) !== null;
+};
+
+/**
+ * Gets all cookies as an object.
+ *
+ * @returns {Object} An object containing all cookies.
+ */
+export const getCookies = () => {
+  return document.cookie.split(';').reduce((cookies, cookie) => {
+    const [name, value] = cookie.split('=').map(c => c.trim());
+    if (name) {
+      cookies[name] = decodeURIComponent(value);
+    }
+    return cookies;
+  }, {});
+};

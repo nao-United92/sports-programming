@@ -67,4 +67,28 @@ describe('cookieUtils', () => {
       expect(() => deleteCookie('nonExistentCookie')).not.toThrow();
     });
   });
+
+  describe('cookieExists', () => {
+    it('should return true if a cookie exists', () => {
+      setCookie(MOCK_COOKIE_NAME, MOCK_COOKIE_VALUE);
+      expect(cookieExists(MOCK_COOKIE_NAME)).toBe(true);
+    });
+
+    it('should return false if a cookie does not exist', () => {
+      expect(cookieExists('nonExistentCookie')).toBe(false);
+    });
+  });
+
+  describe('getCookies', () => {
+    it('should return an object of all cookies', () => {
+      setCookie('cookie1', 'value1');
+      setCookie('cookie2', 'value2');
+      const cookies = getCookies();
+      expect(cookies).toEqual({ cookie1: 'value1', cookie2: 'value2' });
+    });
+
+    it('should return an empty object if there are no cookies', () => {
+      expect(getCookies()).toEqual({});
+    });
+  });
 });
