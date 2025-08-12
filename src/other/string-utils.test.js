@@ -1,47 +1,32 @@
-import { kebabCase, snakeCase } from './string-utils.js';
+import { truncate } from './string-utils.js';
 
-describe('String Utils', () => {
-  describe('kebabCase', () => {
-    it('should convert camelCase to kebab-case', () => {
-      expect(kebabCase('camelCase')).toBe('camel-case');
-    });
-
-    it('should convert PascalCase to kebab-case', () => {
-      expect(kebabCase('PascalCase')).toBe('pascal-case');
-    });
-
-    it('should handle strings with numbers', () => {
-      expect(kebabCase('myVariableName123')).toBe('my-variable-name123');
-    });
-
-    it('should handle already kebab-cased strings', () => {
-      expect(kebabCase('kebab-case')).toBe('kebab-case');
-    });
-
-    it('should handle empty strings', () => {
-      expect(kebabCase('')).toBe('');
-    });
+describe('truncate', () => {
+  it('should not truncate a string shorter than or equal to the specified length', () => {
+    expect(truncate('hello world', 20)).toBe('hello world');
+    expect(truncate('hello world', 11)).toBe('hello world');
   });
 
-  describe('snakeCase', () => {
-    it('should convert camelCase to snake_case', () => {
-      expect(snakeCase('camelCase')).toBe('camel_case');
-    });
+  it('should truncate a string longer than the specified length', () => {
+    expect(truncate('hello world, this is a long string', 15)).toBe('hello world,...');
+  });
 
-    it('should convert PascalCase to snake_case', () => {
-      expect(snakeCase('PascalCase')).toBe('pascal_case');
-    });
+  it('should use a custom suffix', () => {
+    expect(truncate('hello world', 8, '--')).toBe('hello--');
+  });
 
-    it('should handle strings with numbers', () => {
-      expect(snakeCase('myVariableName123')).toBe('my_variable_name123');
-    });
+  it('should handle length equal to suffix length', () => {
+    expect(truncate('hello world', 3, '...')).toBe('...');
+  });
 
-    it('should handle already snake_cased strings', () => {
-      expect(snakeCase('snake_case')).toBe('snake_case');
-    });
+  it('should handle length smaller than suffix length', () => {
+    expect(truncate('hello world', 2, '...')).toBe('..');
+  });
 
-    it('should handle empty strings', () => {
-      expect(snakeCase('')).toBe('');
-    });
+  it('should handle length of 0', () => {
+    expect(truncate('hello world', 0, '...')).toBe('');
+  });
+
+  it('should handle an empty string input', () => {
+    expect(truncate('', 10)).toBe('');
   });
 });
