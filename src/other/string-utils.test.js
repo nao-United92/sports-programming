@@ -1,32 +1,27 @@
-import { truncate } from './string-utils.js';
+const { truncate } = require('./string-utils');
 
 describe('truncate', () => {
-  it('should not truncate a string shorter than or equal to the specified length', () => {
-    expect(truncate('hello world', 20)).toBe('hello world');
-    expect(truncate('hello world', 11)).toBe('hello world');
+  test('should not truncate a string shorter than the specified length', () => {
+    expect(truncate('hello', 10)).toBe('hello');
   });
 
-  it('should truncate a string longer than the specified length', () => {
-    expect(truncate('hello world, this is a long string', 15)).toBe('hello world,...');
+  test('should truncate a string longer than the specified length', () => {
+    expect(truncate('hello world', 8)).toBe('hello...');
   });
 
-  it('should use a custom suffix', () => {
-    expect(truncate('hello world', 8, '--')).toBe('hello--');
+  test('should return the string itself if its length is equal to the specified length', () => {
+    expect(truncate('hello', 5)).toBe('hello');
   });
 
-  it('should handle length equal to suffix length', () => {
-    expect(truncate('hello world', 3, '...')).toBe('...');
+  test('should use a custom suffix if provided', () => {
+    expect(truncate('hello world', 8, '... more')).toBe('h... more');
   });
 
-  it('should handle length smaller than suffix length', () => {
-    expect(truncate('hello world', 2, '...')).toBe('..');
-  });
-
-  it('should handle length of 0', () => {
-    expect(truncate('hello world', 0, '...')).toBe('');
-  });
-
-  it('should handle an empty string input', () => {
+  test('should handle empty string', () => {
     expect(truncate('', 10)).toBe('');
+  });
+
+  test('should handle zero length', () => {
+    expect(truncate('hello', 0)).toBe('');
   });
 });

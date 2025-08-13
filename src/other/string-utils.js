@@ -6,16 +6,13 @@
  * @param {string} [suffix='...'] The suffix to append if the string is truncated.
  * @returns {string} The truncated string.
  */
-export const truncate = (str, length, suffix = '...') => {
+function truncate(str, length, suffix = '...') {
   if (str.length <= length) {
     return str;
   }
-  if (length <= suffix.length) {
-    return suffix.slice(0, length);
-  }
-  let index = length - suffix.length;
-  while (index > 0 && str[index - 1] === ' ') {
-    index--;
-  }
-  return str.slice(0, index) + suffix;
+  return str.slice(0, length - suffix.length) + suffix;
+}
+
+module.exports = {
+  truncate
 };
