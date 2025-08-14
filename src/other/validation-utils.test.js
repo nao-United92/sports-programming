@@ -1,29 +1,32 @@
-import { isValidEmail } from './validation-utils.js';
+import { isValidEmail } from './validation-utils';
 
 describe('isValidEmail', () => {
-  it('should return true for a valid email address', () => {
+  test('should return true for valid email addresses', () => {
     expect(isValidEmail('test@example.com')).toBe(true);
-    expect(isValidEmail('john.doe123@sub.domain.co.uk')).toBe(true);
-    expect(isValidEmail('user+tag@domain.net')).toBe(true);
+    expect(isValidEmail('john.doe@sub.example.co.uk')).toBe(true);
+    expect(isValidEmail('user123@domain-name.net')).toBe(true);
+    expect(isValidEmail('first.last@domain.info')).toBe(true);
+    expect(isValidEmail('a@b.cd')).toBe(true);
   });
 
-  it('should return false for an invalid email address', () => {
+  test('should return false for invalid email addresses', () => {
     expect(isValidEmail('invalid-email')).toBe(false);
+    expect(isValidEmail('invalid@')).toBe(false);
+    expect(isValidEmail('@domain.com')).toBe(false);
     expect(isValidEmail('test@.com')).toBe(false);
-    expect(isValidEmail('@example.com')).toBe(false);
-    expect(isValidEmail('test@example')).toBe(false);
-    expect(isValidEmail('test@example.com.')).toBe(false);
-    expect(isValidEmail('test@example..com')).toBe(false);
+    expect(isValidEmail('test@domain')).toBe(false);
+    expect(isValidEmail('test@domain.c')).toBe(false);
+    expect(isValidEmail('test@domain..com')).toBe(false);
+    expect(isValidEmail('test@domain.com.')).toBe(false);
+    expect(isValidEmail('test@domain,com')).toBe(false);
+    expect(isValidEmail('test example.com')).toBe(false);
   });
 
-  it('should return false for non-string inputs', () => {
+  test('should return false for empty string or non-string input', () => {
+    expect(isValidEmail('')).toBe(false);
     expect(isValidEmail(null)).toBe(false);
     expect(isValidEmail(undefined)).toBe(false);
     expect(isValidEmail(123)).toBe(false);
     expect(isValidEmail({})).toBe(false);
-  });
-
-  it('should return false for an empty string', () => {
-    expect(isValidEmail('')).toBe(false);
   });
 });
