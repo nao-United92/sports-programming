@@ -1,48 +1,57 @@
 /**
  * Creates a throttled function that only invokes `func` at most once per every `wait` milliseconds.
+ * The throttled function comes with a `cancel` method to cancel delayed `func` invocations.
  *
  * @param {Function} func The function to throttle.
  * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
  * @returns {Function} Returns the new throttled function.
  */
-export const throttle = (func, wait = 0) => {
-  let timeout = null;
+export function throttle(func, wait = 0) {
+  let timeoutId = null;
   let lastArgs = null;
   let lastThis = null;
   let result;
-  let previous = 0;
+  let lastCallTime = 0;
 
-  const later = () => {
-    previous = Date.now();
-    timeout = null;
-    result = func.apply(lastThis, lastArgs);
-    if (!timeout) {
-      lastArgs = lastThis = null;
-    }
-  };
-
-  return function(...args) {
+  function throttled(...args) {
     const now = Date.now();
-    if (!previous) {
-      previous = now;
+    if (!lastCallTime) {
+      lastCallTime = now;
     }
-    const remaining = wait - (now - previous);
+
+    const remaining = wait - (now - lastCallTime);
     lastArgs = args;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     lastThis = this;
 
     if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
       }
-      previous = now;
+      lastCallTime = now;
       result = func.apply(lastThis, lastArgs);
-      if (!timeout) {
+      if (!timeoutId) {
         lastArgs = lastThis = null;
       }
-    } else if (!timeout) {
-      timeout = setTimeout(later, remaining);
+    } else if (!timeoutId) {
+      timeoutId = setTimeout(() => {
+        lastCallTime = Date.now();
+        timeoutId = null;
+        result = func.apply(lastThis, lastArgs);
+        if (!timeoutId) {
+          lastArgs = lastThis = null;
+        }
+      }, remaining);
     }
     return result;
+  }
+
+  throttled.cancel = () => {
+    clearTimeout(timeoutId);
+    lastCallTime = 0;
+    timeoutId = lastArgs = lastThis = null;
   };
-};
+
+  return throttled;
+}
