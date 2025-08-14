@@ -30,3 +30,17 @@ export const isElementInViewport = (el) => {
     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
 };
+
+/**
+ * 指定されたDOM要素までスムーズにスクロールします。
+ * @param {HTMLElement} element - スクロール先のDOM要素。
+ * @param {ScrollIntoViewOptions} [options] - scrollIntoViewメソッドに渡すオプション。
+ *   例: { behavior: 'smooth', block: 'start', inline: 'nearest' }
+ */
+export function scrollToElement(element, options = { behavior: 'smooth' }) {
+  if (!(element instanceof HTMLElement)) {
+    console.warn('Invalid element provided to scrollToElement.', element);
+    return;
+  }
+  element.scrollIntoView(options);
+}

@@ -1,4 +1,4 @@
-import { smoothScroll, isElementInViewport } from './dom-scroll-utils.js';
+import { smoothScroll, isElementInViewport, scrollToElement } from './dom-scroll-utils.js';
 
 // Mocking scrollIntoView
 if (typeof window.HTMLElement !== 'undefined') {
@@ -64,6 +64,51 @@ describe('DOM Scroll Utils', () => {
 
     it('should return false for a null element', () => {
       expect(isElementInViewport(null)).toBe(false);
+    });
+  });
+
+  describe('scrollToElement', () => {
+    let element;
+    let scrollIntoViewMock;
+
+    beforeEach(() => {
+      document.body.innerHTML = '<div id="targetElement"></div>';
+      element = document.getElementById('targetElement');
+      scrollIntoViewMock = jest.fn();
+      element.scrollIntoView = scrollIntoViewMock; // elementのscrollIntoViewをモック
+      jest.spyOn(console, 'warn').mockImplementation(() => {}); // console.warnをモック
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks(); // モックをリストア
+      document.body.innerHTML = '';
+    });
+
+    test('should call scrollIntoView on the element with default smooth behavior', () => {
+      scrollToElement(element);
+      expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
+      expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth' });
+    });
+
+    test('should call scrollIntoView with custom options', () => {
+      const customOptions = { behavior: 'auto', block: 'center' };
+      scrollToElement(element, customOptions);
+      expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
+      expect(scrollIntoViewMock).toHaveBeenCalledWith(customOptions);
+    });
+
+    test('should warn and return if a non-HTMLElement is provided', () => {
+      scrollToElement(null);
+      expect(scrollIntoViewMock).not.toHaveBeenCalled();
+      expect(console.warn).toHaveBeenCalledWith('Invalid element provided to scrollToElement.', null);
+
+      scrollToElement(undefined);
+      expect(scrollIntoViewMock).not.toHaveBeenCalled();
+      expect(console.warn).toHaveBeenCalledWith('Invalid element provided to scrollToElement.', undefined);
+
+      scrollToElement({});
+      expect(scrollIntoViewMock).not.toHaveBeenCalled();
+      expect(console.warn).toHaveBeenCalledWith('Invalid element provided to scrollToElement.', {});
     });
   });
 });
