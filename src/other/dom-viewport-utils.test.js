@@ -1,4 +1,4 @@
-import { isInViewport } from './dom-viewport-utils';
+import { isInViewport, isElementPartiallyInViewport, getScrollPosition } from './dom-viewport-utils';
 
 describe('isInViewport', () => {
   let element;
@@ -134,5 +134,42 @@ describe('isInViewport', () => {
       toJSON: jest.fn(),
     }));
     expect(isInViewport(element)).toBe(true);
+  });
+});
+
+describe('isElementPartiallyInViewport', () => {
+  let element;
+
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="testElement"></div>';
+    element = document.getElementById('testElement');
+    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 1000 });
+    Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 800 });
+  });
+
+  test('should return true if element is partially visible from the top', () => {
+    element.getBoundingClientRect = jest.fn(() => ({ top: -50, bottom: 50, left: 100, right: 200 }));
+    expect(isElementPartiallyInViewport(element)).toBe(true);
+  });
+
+  test('should return true if element is partially visible from the bottom', () => {
+    element.getBoundingClientRect = jest.fn(() => ({ top: 750, bottom: 850, left: 100, right: 200 }));
+    expect(isElementPartiallyInViewport(element)).toBe(true);
+  });
+
+  test('should return false if element is completely outside the viewport', () => {
+    element.getBoundingClientRect = jest.fn(() => ({ top: -100, bottom: -10, left: 100, right: 200 }));
+    expect(isElementPartiallyInViewport(element)).toBe(false);
+  });
+});
+
+describe('getScrollPosition', () => {
+  beforeEach(() => {
+    Object.defineProperty(window, 'pageXOffset', { writable: true, configurable: true, value: 100 });
+    Object.defineProperty(window, 'pageYOffset', { writable: true, configurable: true, value: 200 });
+  });
+
+  test('should return the correct scroll position', () => {
+    expect(getScrollPosition()).toEqual({ x: 100, y: 200 });
   });
 });
