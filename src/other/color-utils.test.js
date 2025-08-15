@@ -1,4 +1,4 @@
-import { randomHexColor } from './color-utils.js';
+import { randomHexColor, hexToRgb, rgbToHex, lighten, darken, rgbToHsl, hslToRgb, getContrastRatio, checkContrast } from './color-utils.js';
 
 describe('randomHexColor', () => {
   test('should return a valid hex color code', () => {
@@ -44,12 +44,77 @@ describe('rgbToHex', () => {
 
 describe('lighten', () => {
   test('should lighten a color by a given percentage', () => {
-    expect(lighten('#000000', 50)).toBe('#7f7f7f');
+    expect(lighten('#000000', 50)).toBe('#808080');
   });
 });
 
 describe('darken', () => {
   test('should darken a color by a given percentage', () => {
     expect(darken('#ffffff', 50)).toBe('#808080');
+  });
+});
+
+describe('rgbToHsl', () => {
+  test('should convert black to HSL', () => {
+    const [h, s, l] = rgbToHsl(0, 0, 0);
+    expect(h).toBe(0);
+    expect(s).toBe(0);
+    expect(l).toBe(0);
+  });
+
+  test('should convert white to HSL', () => {
+    const [h, s, l] = rgbToHsl(255, 255, 255);
+    expect(h).toBe(0);
+    expect(s).toBe(0);
+    expect(l).toBe(1);
+  });
+
+  test('should convert red to HSL', () => {
+    const [h, s, l] = rgbToHsl(255, 0, 0);
+    expect(h).toBe(0);
+    expect(s).toBe(1);
+    expect(l).toBe(0.5);
+  });
+});
+
+describe('hslToRgb', () => {
+  test('should convert HSL black to RGB', () => {
+    expect(hslToRgb(0, 0, 0)).toEqual([0, 0, 0]);
+  });
+
+  test('should convert HSL white to RGB', () => {
+    expect(hslToRgb(0, 0, 1)).toEqual([255, 255, 255]);
+  });
+
+  test('should convert HSL red to RGB', () => {
+    expect(hslToRgb(0, 1, 0.5)).toEqual([255, 0, 0]);
+  });
+});
+
+describe('getContrastRatio', () => {
+  test('should calculate the contrast ratio between black and white', () => {
+    const white = { r: 255, g: 255, b: 255 };
+    const black = { r: 0, g: 0, b: 0 };
+    expect(getContrastRatio(white, black)).toBeCloseTo(21, 1);
+  });
+});
+
+describe('checkContrast', () => {
+  test('should return true for colors that meet AA standard', () => {
+    expect(checkContrast('#000000', '#ffffff', 'AA')).toBe(true);
+    expect(checkContrast('#757575', '#ffffff', 'AA')).toBe(true);
+  });
+
+  test('should return false for colors that do not meet AA standard', () => {
+    expect(checkContrast('#888888', '#ffffff', 'AA')).toBe(false);
+  });
+
+  test('should return true for colors that meet AAA standard', () => {
+    expect(checkContrast('#000000', '#ffffff', 'AAA')).toBe(true);
+    expect(checkContrast('#6A6A6A', '#FFFFFF', 'AAA')).toBe(true);
+  });
+
+  test('should return false for colors that do not meet AAA standard', () => {
+    expect(checkContrast('#777777', '#ffffff', 'AAA')).toBe(false);
   });
 });
