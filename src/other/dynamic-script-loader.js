@@ -50,3 +50,27 @@ export function loadScript(url, options = {}) {
   loadedScripts.set(url, promise);
   return promise;
 }
+
+/**
+ * Loads multiple scripts in a specified order (serially).
+ * @param {string[]} urls An array of script URLs to load in order.
+ * @returns {Promise<HTMLScriptElement[]>} A promise that resolves with an array of script elements.
+ */
+export async function loadScriptsInOrder(urls) {
+  const scripts = [];
+  for (const url of urls) {
+    const script = await loadScript(url);
+    scripts.push(script);
+  }
+  return scripts;
+}
+
+/**
+ * Loads multiple scripts in parallel.
+ * @param {string[]} urls An array of script URLs to load.
+ * @returns {Promise<HTMLScriptElement[]>} A promise that resolves with an array of script elements when all have loaded.
+ */
+export function loadScriptsInParallel(urls) {
+  const promises = urls.map(url => loadScript(url));
+  return Promise.all(promises);
+}
