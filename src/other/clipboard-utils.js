@@ -121,3 +121,20 @@ export async function copyToClipboardWithFeedback(text, onSuccess, onError) {
     if (onError) onError(error);
   }
 }
+
+/**
+ * Copies an image to the clipboard.
+ * @param {Blob} imageBlob The image blob to copy.
+ * @returns {Promise<void>} A promise that resolves if the image is copied successfully.
+ */
+export async function copyImageToClipboard(imageBlob) {
+  if (!navigator.clipboard || !navigator.clipboard.write) {
+    return Promise.reject(new Error('Clipboard API write method not supported.'));
+  }
+  try {
+    const clipboardItem = new ClipboardItem({ [imageBlob.type]: imageBlob });
+    await navigator.clipboard.write([clipboardItem]);
+  } catch (error) {
+    return Promise.reject(new Error('Failed to copy image to clipboard: ' + error.message));
+  }
+}
