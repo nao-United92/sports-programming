@@ -1,4 +1,4 @@
-import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth, isWeekday, isDateInRange } from './date-utils.js';
+import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth, isWeekday, isDateInRange, daysBetween, endOfMonth } from './date-utils.js';
 
 describe('date-utils', () => {
   describe('formatDate', () => {
@@ -255,7 +255,7 @@ describe('date-utils', () => {
   });
 
   describe('isToday', () => {
-    test('should return true for today's date', () => {
+    test('should return true for today\'s date', () => {
       expect(isToday(new Date())).toBe(true);
     });
 
@@ -395,6 +395,44 @@ describe('date-utils', () => {
       expect(isFirstDayOfMonth(new Date('invalid'))).toBe(false);
       expect(isFirstDayOfMonth(null)).toBe(false);
       expect(isFirstDayOfMonth(undefined)).toBe(false);
+    });
+  });
+
+  describe('daysBetween', () => {
+    test('should return the correct number of days between two dates', () => {
+      const date1 = new Date('2023-01-01');
+      const date2 = new Date('2023-01-11');
+      expect(daysBetween(date1, date2)).toBe(10);
+    });
+
+    test('should return 0 for the same date', () => {
+      const date1 = new Date('2023-01-01T10:00:00');
+      const date2 = new Date('2023-01-01T22:00:00');
+      expect(daysBetween(date1, date2)).toBe(0);
+    });
+
+    test('should return NaN for invalid dates', () => {
+      expect(daysBetween(new Date('invalid'), new Date())).toBeNaN();
+    });
+  });
+
+  describe('endOfMonth', () => {
+    test('should return the last day of the month', () => {
+      const date = new Date('2023-02-10');
+      const lastDay = endOfMonth(date);
+      expect(lastDay.getFullYear()).toBe(2023);
+      expect(lastDay.getMonth()).toBe(1); // February
+      expect(lastDay.getDate()).toBe(28);
+    });
+
+    test('should return the last day of a leap year month', () => {
+      const date = new Date('2024-02-10');
+      const lastDay = endOfMonth(date);
+      expect(lastDay.getDate()).toBe(29);
+    });
+
+    test('should return null for an invalid date', () => {
+      expect(endOfMonth(new Date('invalid'))).toBeNull();
     });
   });
 });

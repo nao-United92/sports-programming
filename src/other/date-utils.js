@@ -255,3 +255,33 @@ export function isFirstDayOfMonth(date) {
   return date.getDate() === 1;
 }
 
+/**
+ * Calculates the number of days between two dates.
+ * @param {Date} dateLeft The first date.
+ * @param {Date} dateRight The second date.
+ * @returns {number} The number of full days between the two dates.
+ */
+export function daysBetween(dateLeft, dateRight) {
+  if (!isValidDate(dateLeft) || !isValidDate(dateRight)) {
+    return NaN;
+  }
+  const oneDay = 1000 * 60 * 60 * 24;
+  const dateLeftMs = dateLeft.getTime();
+  const dateRightMs = dateRight.getTime();
+  return Math.round(Math.abs(dateLeftMs - dateRightMs) / oneDay);
+}
+
+/**
+ * Gets the last day of the month for a given date.
+ * @param {Date} date The date to get the end of the month from.
+ * @returns {Date} A new Date object representing the end of the month.
+ */
+export function endOfMonth(date) {
+  if (!isValidDate(date)) {
+    return null;
+  }
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  return new Date(year, month + 1, 0);
+}
+
