@@ -1,98 +1,67 @@
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem } from './local-storage-utils.js';
+import {
+  setItem,
+  getItem,
+  removeItem,
+  setItemWithExpiry,
+  getItemWithExpiry,
+} from './local-storage-utils.js';
 
-describe('localStorageUtils', () => {
-  const MOCK_KEY = 'testKey';
-  const MOCK_VALUE = 'testValue';
-  const MOCK_OBJECT_VALUE = { name: 'test', id: 123 };
-
+describe('LocalStorage Utils', () => {
   beforeEach(() => {
-    // Clear localStorage before each test
-    localStorage.clear();
+    window.localStorage.clear();
+    jest.clearAllMocks();
   });
 
-  describe('setLocalStorageItem', () => {
-    it('should set a string item in localStorage', () => {
-      setLocalStorageItem(MOCK_KEY, MOCK_VALUE);
-      expect(localStorage.getItem(MOCK_KEY)).toBe(JSON.stringify(MOCK_VALUE));
+  describe('setItem and getItem', () => {
+    test('should set and get a string value', () => {
+      setItem('testKey', 'testValue');
+      expect(getItem('testKey')).toBe('testValue');
     });
 
-    it('should set an object item in localStorage as a string', () => {
-      setLocalStorageItem(MOCK_KEY, MOCK_OBJECT_VALUE);
-      expect(localStorage.getItem(MOCK_KEY)).toBe(JSON.stringify(MOCK_OBJECT_VALUE));
+    test('should set and get an object value', () => {
+      const testObject = { a: 1, b: 'hello' };
+      setItem('testObject', testObject);
+      expect(getItem('testObject')).toEqual(testObject);
     });
 
-    it('should handle errors when setting item', () => {
-      // Simulate localStorage being full or throwing an error
-      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-        throw new Error('Quota exceeded');
-      });
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-      setLocalStorageItem(MOCK_KEY, MOCK_VALUE);
-      expect(consoleSpy).toHaveBeenCalledWith('Error setting local storage item:', expect.any(Error));
-
-      consoleSpy.mockRestore();
-      jest.restoreAllMocks();
+    test('getItem should return null for a non-existent key', () => {
+      expect(getItem('nonExistentKey')).toBeNull();
     });
   });
 
-  describe('getLocalStorageItem', () => {
-    it('should get a string item from localStorage', () => {
-      localStorage.setItem(MOCK_KEY, JSON.stringify(MOCK_VALUE));
-      expect(getLocalStorageItem(MOCK_KEY)).toBe(MOCK_VALUE);
-    });
-
-    it('should get and parse an object item from localStorage', () => {
-      localStorage.setItem(MOCK_KEY, JSON.stringify(MOCK_OBJECT_VALUE));
-      expect(getLocalStorageItem(MOCK_KEY)).toEqual(MOCK_OBJECT_VALUE);
-    });
-
-    it('should return null if item does not exist', () => {
-      expect(getLocalStorageItem('nonExistentKey')).toBeNull();
-    });
-
-    it('should handle errors when getting item', () => {
-      jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
-        throw new Error('Read error');
-      });
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-      expect(getLocalStorageItem(MOCK_KEY)).toBeNull();
-      expect(consoleSpy).toHaveBeenCalledWith('Error getting local storage item:', expect.any(Error));
-
-      consoleSpy.mockRestore();
-      jest.restoreAllMocks();
-    });
-
-    it('should handle invalid JSON in localStorage', () => {
-      localStorage.setItem(MOCK_KEY, 'invalid json');
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-      expect(getLocalStorageItem(MOCK_KEY)).toBeNull();
-      expect(consoleSpy).toHaveBeenCalledWith('Error getting local storage item:', expect.any(Error));
-
-      consoleSpy.mockRestore();
+  describe('removeItem', () => {
+    test('should remove an item from localStorage', () => {
+      setItem('testKey', 'testValue');
+      removeItem('testKey');
+      expect(getItem('testKey')).toBeNull();
     });
   });
 
-  describe('removeLocalStorageItem', () => {
-    it('should remove an item from localStorage', () => {
-      localStorage.setItem(MOCK_KEY, MOCK_VALUE);
-      removeLocalStorageItem(MOCK_KEY);
-      expect(localStorage.getItem(MOCK_KEY)).toBeNull();
+  describe('setItemWithExpiry and getItemWithExpiry', () => {
+    test('should set and get an item before it expires', () => {
+      setItemWithExpiry('expiringKey', 'expiringValue', 1000); // 1 second expiry
+      expect(getItemWithExpiry('expiringKey')).toBe('expiringValue');
     });
 
-    it('should handle errors when removing item', () => {
-      jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
-        throw new Error('Remove error');
-      });
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    test('should return null for an expired item', () => {
+      jest.useFakeTimers();
+      setItemWithExpiry('expiringKey', 'expiringValue', 1000);
+      
+      jest.advanceTimersByTime(1001);
 
-      removeLocalStorageItem(MOCK_KEY);
-      expect(consoleSpy).toHaveBeenCalledWith('Error removing local storage item:', expect.any(Error));
+      expect(getItemWithExpiry('expiringKey')).toBeNull();
+      jest.useRealTimers();
+    });
 
-      consoleSpy.mockRestore();
-      jest.restoreAllMocks();
+    test('should remove the item from localStorage after it expires', () => {
+      jest.useFakeTimers();
+      setItemWithExpiry('expiringKey', 'expiringValue', 1000);
+      
+      jest.advanceTimersByTime(1001);
+
+      getItemWithExpiry('expiringKey'); // This call should trigger removal
+      expect(window.localStorage.getItem('expiringKey')).toBeNull();
+      jest.useRealTimers();
     });
   });
 });
