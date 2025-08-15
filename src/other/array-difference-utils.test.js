@@ -1,4 +1,4 @@
-import { difference, differenceBy } from './array-difference-utils.js';
+import { difference, differenceBy, symmetricDifference } from './array-difference-utils.js';
 
 describe('Array Difference Utilities', () => {
   describe('difference', () => {
@@ -67,6 +67,42 @@ describe('Array Difference Utilities', () => {
 
     test('should handle non-array input for the first argument', () => {
       expect(differenceBy(null, [{ 'x': 1 }], o => o.x)).toEqual([]);
+    });
+  });
+
+  describe('symmetricDifference', () => {
+    test('should return the symmetric difference of two arrays', () => {
+      const array1 = [1, 2, 3, 4];
+      const array2 = [3, 4, 5, 6];
+      expect(symmetricDifference(array1, array2)).toEqual([1, 2, 5, 6]);
+    });
+
+    test('should return an empty array if arrays are identical', () => {
+      const array1 = [1, 2, 3];
+      const array2 = [1, 2, 3];
+      expect(symmetricDifference(array1, array2)).toEqual([]);
+    });
+
+    test('should return all elements if arrays have no common elements', () => {
+      const array1 = [1, 2];
+      const array2 = [3, 4];
+      expect(symmetricDifference(array1, array2)).toEqual([1, 2, 3, 4]);
+    });
+
+    test('should handle an empty array as input', () => {
+      const array1 = [1, 2, 3];
+      const array2 = [];
+      expect(symmetricDifference(array1, array2)).toEqual([1, 2, 3]);
+      expect(symmetricDifference(array2, array1)).toEqual([1, 2, 3]);
+    });
+
+    test('should handle two empty arrays', () => {
+      expect(symmetricDifference([], [])).toEqual([]);
+    });
+
+    test('should handle non-array inputs', () => {
+      expect(symmetricDifference([1, 2], null)).toEqual([]);
+      expect(symmetricDifference(undefined, [1, 2])).toEqual([]);
     });
   });
 });

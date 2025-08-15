@@ -31,3 +31,29 @@ export function differenceBy(array, values, iteratee) {
   const exclude = new Set(values.map(iteratee));
   return array.filter(item => !exclude.has(iteratee(item)));
 }
+
+/**
+ * Creates an array of unique values that are included in only one of the two given arrays.
+ * @param {Array} array1 The first array.
+ * @param {Array} array2 The second array.
+ * @returns {Array} Returns the new array of symmetric-difference values.
+ */
+export function symmetricDifference(array1, array2) {
+  if (!Array.isArray(array1) || !Array.isArray(array2)) {
+    return [];
+  }
+  const set1 = new Set(array1);
+  const set2 = new Set(array2);
+  const diff = [];
+  for (const item of array1) {
+    if (!set2.has(item)) {
+      diff.push(item);
+    }
+  }
+  for (const item of array2) {
+    if (!set1.has(item)) {
+      diff.push(item);
+    }
+  }
+  return diff;
+}
