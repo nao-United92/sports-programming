@@ -184,3 +184,42 @@ export function toggleFormElement(element, force) {
     element.disabled = force === undefined ? !element.disabled : force;
   }
 }
+
+/**
+ * Checks if a form is valid using the HTML5 Constraint Validation API.
+ * @param {HTMLFormElement} formElement The form to validate.
+ * @returns {boolean} True if the form is valid, false otherwise.
+ */
+export function isFormValid(formElement) {
+  if (!formElement || typeof formElement.checkValidity !== 'function') {
+    return false;
+  }
+  return formElement.checkValidity();
+}
+
+/**
+ * Populates a form with data from a JavaScript object.
+ * @param {HTMLFormElement} formElement The form to populate.
+ * @param {object} data The data object to populate the form with.
+ */
+export function populateForm(formElement, data) {
+  if (!formElement || !data) return;
+
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      const element = formElement.elements[key];
+      if (element) {
+        // Handle radio buttons nodeList
+        if (element instanceof NodeList) {
+          element.forEach(radio => {
+            if (radio.value === data[key]) {
+              radio.checked = true;
+            }
+          });
+        } else {
+          setInputValue(element, data[key]);
+        }
+      }
+    }
+  }
+}
