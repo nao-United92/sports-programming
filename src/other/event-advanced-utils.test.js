@@ -1,5 +1,5 @@
 
-import { on, off, once, isKeyPressed } from './event-advanced-utils';
+import { on, off, once, isKeyPressed, triggerEvent, pauseEvent, resumeEvent } from './event-advanced-utils';
 
 describe('Event Advanced Utilities', () => {
   let element;
@@ -107,7 +107,7 @@ describe('Event Advanced Utilities', () => {
       expect(isKeyPressed(event, 'enter')).toBe(true); // Case-insensitive
     });
 
-    test('should return false for incorrect key', ()n => {
+    test('should return false for incorrect key', () => {
       const event = new KeyboardEvent('keydown', { key: 'Escape' });
       expect(isKeyPressed(event, 'Enter')).toBe(false);
     });
@@ -115,6 +115,64 @@ describe('Event Advanced Utilities', () => {
     test('should return false for non-keyboard event', () => {
       const event = new MouseEvent('click');
       expect(isKeyPressed(event, 'Enter')).toBe(false);
+    });
+  });
+
+  describe('triggerEvent', () => {
+    test('should dispatch a custom event', () => {
+      const customHandler = jest.fn();
+      element.addEventListener('myCustomEvent', customHandler);
+
+      triggerEvent(element, 'myCustomEvent', { data: 'test' });
+
+      expect(customHandler).toHaveBeenCalledTimes(1);
+      expect(customHandler).toHaveBeenCalledWith(expect.objectContaining({
+        type: 'myCustomEvent',
+        detail: { data: 'test' },
+        bubbles: true,
+        cancelable: true,
+      }));
+    });
+
+    test('should return false for invalid element', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      expect(triggerEvent(null, 'myCustomEvent')).toBe(false);
+      expect(consoleWarnSpy).toHaveBeenCalled();
+      consoleWarnSpy.mockRestore();
+    });
+  });
+
+  describe('pauseEvent and resumeEvent', () => {
+    test('should pause and resume a direct event listener', () => {
+      on(element, 'click', handler);
+      element.click();
+      expect(handler).toHaveBeenCalledTimes(1);
+
+      pauseEvent(element, 'click', handler);
+      element.click();
+      expect(handler).toHaveBeenCalledTimes(1); // Should not be called again
+
+      resumeEvent(element, 'click', handler);
+      element.click();
+      expect(handler).toHaveBeenCalledTimes(2); // Should be called again
+    });
+
+    test('should pause and resume a delegated event listener', () => {
+      const child = document.createElement('button');
+      child.className = 'my-button';
+      element.appendChild(child);
+
+      on(element, 'click', '.my-button', handler);
+      child.click();
+      expect(handler).toHaveBeenCalledTimes(1);
+
+      pauseEvent(element, 'click', handler);
+      child.click();
+      expect(handler).toHaveBeenCalledTimes(1);
+
+      resumeEvent(element, 'click', handler);
+      child.click();
+      expect(handler).toHaveBeenCalledTimes(2);
     });
   });
 });

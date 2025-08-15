@@ -82,3 +82,45 @@ export function isKeyPressed(event, key) {
   }
   return event.key.toLowerCase() === key.toLowerCase();
 }
+
+/**
+ * Dispatches a custom event on the specified element.
+ * @param {EventTarget} element The element to dispatch the event on.
+ * @param {string} eventName The name of the custom event.
+ * @param {object} [detail={}] Optional detail object to pass with the event.
+ * @param {boolean} [bubbles=true] Whether the event bubbles up through the DOM tree.
+ * @param {boolean} [cancelable=true] Whether the event can be cancelled.
+ * @returns {boolean} True if the event was not canceled, false otherwise.
+ */
+export function triggerEvent(element, eventName, detail = {}, bubbles = true, cancelable = true) {
+  if (!element || typeof element.dispatchEvent !== 'function') {
+    console.warn('triggerEvent: Invalid element provided.');
+    return false;
+  }
+  const event = new CustomEvent(eventName, {
+    detail: detail,
+    bubbles: bubbles,
+    cancelable: cancelable,
+  });
+  return element.dispatchEvent(event);
+}
+
+/**
+ * Pauses an event listener by temporarily removing it.
+ * @param {EventTarget} element The element whose listener is to be paused.
+ * @param {string} eventType The type of event.
+ * @param {Function} handler The event handler function to pause.
+ */
+export function pauseEvent(element, eventType, handler) {
+  off(element, eventType, handler);
+}
+
+/**
+ * Resumes a paused event listener by re-attaching it.
+ * @param {EventTarget} element The element whose listener is to be resumed.
+ * @param {string} eventType The type of event.
+ * @param {Function} handler The event handler function to resume.
+ */
+export function resumeEvent(element, eventType, handler) {
+  on(element, eventType, handler);
+}
