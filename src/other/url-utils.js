@@ -1,27 +1,37 @@
 /**
- * Returns an object containing the query string parameters of a URL.
- *
- * @param {string} url The URL to parse.
- * @returns {Object} An object containing the query string parameters.
+ * URLのクエリ文字列をパースしてオブジェクトに変換します。
+ * @param {string} queryString - ?を含む、または含まないクエリ文字列。
+ * @returns {object} パースされたキーと値のペアを持つオブジェクト。
  */
-export const getURLParameters = (url) => {
-  const params = {};
-  // Use a dummy base URL if the URL is relative
-  const fullUrl = new URL(url, 'https://dummybase.com');
-  for (const [key, value] of fullUrl.searchParams.entries()) {
-    params[key] = value;
+export const parseQuery = (queryString) => {
+  const query = queryString.startsWith('?') ? queryString.substring(1) : queryString;
+  if (!query) {
+    return {};
   }
-  return params;
+  return query.split('&').reduce((acc, part) => {
+    const [key, value] = part.split('=');
+    if (key) {
+      acc[decodeURIComponent(key)] = value ? decodeURIComponent(value) : true;
+    }
+    return acc;
+  }, {});
 };
 
 /**
- * Converts an object to a URL query string.
- *
- * @param {Object} obj The object to convert.
- * @returns {string} The URL query string.
+ * オブジェクトをURLクエリ文字列に変換します。
+ * @param {object} obj - クエリ文字列に変換するオブジェクト。
+ * @returns {string} 生成されたクエリ文字列。
  */
-export const objectToQueryString = (obj) => {
-  return Object.keys(obj)
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
+export const stringifyQuery = (obj) => {
+  if (!obj) {
+    return '';
+  }
+  return Object.entries(obj)
+    .map(([key, value]) => {
+      if (value === true) {
+        return encodeURIComponent(key);
+      }
+      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    })
     .join('&');
 };

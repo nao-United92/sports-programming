@@ -1,41 +1,53 @@
-import { getURLParameters, objectToQueryString } from './url-utils.js';
+import { parseQuery, stringifyQuery } from './url-utils.js';
 
-describe('URL Utils', () => {
-  describe('getURLParameters', () => {
-    it('should return an object with URL parameters', () => {
-      const url = 'https://example.com?name=John&age=30';
-      expect(getURLParameters(url)).toEqual({ name: 'John', age: '30' });
+describe('URL Query Utils', () => {
+  describe('parseQuery', () => {
+    test('should parse a simple query string', () => {
+      expect(parseQuery('?foo=bar')).toEqual({ foo: 'bar' });
     });
 
-    it('should return an empty object for a URL with no parameters', () => {
-      const url = 'https://example.com';
-      expect(getURLParameters(url)).toEqual({});
+    test('should parse a query string without a leading question mark', () => {
+      expect(parseQuery('foo=bar&baz=qux')).toEqual({ foo: 'bar', baz: 'qux' });
     });
 
-    it('should handle URLs with special characters', () => {
-      const url = 'https://example.com?query=%20hello%20world%20';
-      expect(getURLParameters(url)).toEqual({ query: ' hello world ' });
+    test('should handle URL-encoded characters', () => {
+      expect(parseQuery('a%20b=c%26d')).toEqual({ 'a b': 'c&d' });
     });
 
-    it('should handle relative URLs', () => {
-      const url = '/some/path?a=1&b=2';
-      expect(getURLParameters(url)).toEqual({ a: '1', b: '2' });
+    test('should handle keys without values', () => {
+      expect(parseQuery('foo&bar=baz')).toEqual({ foo: true, bar: 'baz' });
+    });
+
+    test('should return an empty object for an empty query string', () => {
+      expect(parseQuery('')).toEqual({});
+      expect(parseQuery('?')).toEqual({});
     });
   });
 
-  describe('objectToQueryString', () => {
-    it('should convert an object to a query string', () => {
-      const obj = { name: 'John', age: 30 };
-      expect(objectToQueryString(obj)).toBe('name=John&age=30');
+  describe('stringifyQuery', () => {
+    test('should stringify a simple object', () => {
+      expect(stringifyQuery({ foo: 'bar' })).toBe('foo=bar');
     });
 
-    it('should return an empty string for an empty object', () => {
-      expect(objectToQueryString({})).toBe('');
+    test('should stringify an object with multiple keys', () => {
+      expect(stringifyQuery({ foo: 'bar', baz: 'qux' })).toBe('foo=bar&baz=qux');
     });
 
-    it('should handle special characters in object values', () => {
-      const obj = { query: 'hello world' };
-      expect(objectToQueryString(obj)).toBe('query=hello%20world');
+    test('should handle URL-encoded characters', () => {
+      expect(stringifyQuery({ 'a b': 'c&d' })).toBe('a%20b=c%26d');
+    });
+
+    test('should handle boolean true values', () => {
+      expect(stringifyQuery({ foo: true, bar: 'baz' })).toBe('foo&bar=baz');
+    });
+
+    test('should return an empty string for an empty object', () => {
+      expect(stringifyQuery({})).toBe('');
+    });
+
+    test('should return an empty string for a null or undefined object', () => {
+      expect(stringifyQuery(null)).toBe('');
+      expect(stringifyQuery(undefined)).toBe('');
     });
   });
 });
