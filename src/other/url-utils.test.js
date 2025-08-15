@@ -1,4 +1,4 @@
-import { parseQuery, stringifyQuery } from './url-utils.js';
+import { parseQuery, stringifyQuery, getURLParameters, getURLPath, getURLProtocol } from './url-utils.js';
 
 describe('URL Query Utils', () => {
   describe('parseQuery', () => {
@@ -48,6 +48,62 @@ describe('URL Query Utils', () => {
     test('should return an empty string for a null or undefined object', () => {
       expect(stringifyQuery(null)).toBe('');
       expect(stringifyQuery(undefined)).toBe('');
+    });
+  });
+
+  describe('getURLParameters', () => {
+    test('should get parameters from a full URL', () => {
+      const url = 'https://example.com/path?name=John&age=30';
+      expect(getURLParameters(url)).toEqual({ name: 'John', age: '30' });
+    });
+
+    test('should return an empty object if no query string', () => {
+      const url = 'https://example.com/path';
+      expect(getURLParameters(url)).toEqual({});
+    });
+
+    test('should handle URLs with only a question mark', () => {
+      const url = 'https://example.com/path?';
+      expect(getURLParameters(url)).toEqual({});
+    });
+
+    test('should return an empty object for an invalid URL', () => {
+      const url = 'not a url';
+      expect(getURLParameters(url)).toEqual({});
+    });
+  });
+
+  describe('getURLPath', () => {
+    test('should get the path from a URL', () => {
+      const url = 'https://example.com/path/to/page?query=1';
+      expect(getURLPath(url)).toBe('/path/to/page');
+    });
+
+    test('should return "/" for a URL with no path', () => {
+      const url = 'https://example.com?query=1';
+      expect(getURLPath(url)).toBe('/');
+    });
+
+    test('should return an empty string for an invalid URL', () => {
+      const url = 'invalid-url';
+      expect(getURLPath(url)).toBe('');
+    });
+  });
+
+  describe('getURLProtocol', () => {
+    test('should get the protocol from a URL', () => {
+      const url = 'https://example.com';
+      expect(getURLProtocol(url)).toBe('https:');
+    });
+
+    test('should work for http protocol', () => {
+      const url = 'http://example.com';
+      expect(getURLProtocol(url)).toBe('http:');
+    });
+
+    test('should return an empty string for an invalid URL', () => {
+      const url = 'invalid-url';
+      expect(getURLProtocol(url)).toBe('');
     });
   });
 });

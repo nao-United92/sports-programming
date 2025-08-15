@@ -35,3 +35,43 @@ export const stringifyQuery = (obj) => {
     })
     .join('&');
 };
+
+/**
+ * URL文字列からクエリパラメータをオブジェクトとして取得します。
+ * @param {string} url - 解析するURL。
+ * @returns {object} クエリパラメータのオブジェクト。
+ */
+export const getURLParameters = (url) => {
+  try {
+    const search = new URL(url).search;
+    return parseQuery(search);
+  } catch (error) {
+    return {};
+  }
+};
+
+/**
+ * URL文字列からパス名を取得します。
+ * @param {string} url - 解析するURL。
+ * @returns {string} URLのパス名。
+ */
+export const getURLPath = (url) => {
+  try {
+    return new URL(url).pathname;
+  } catch (error) {
+    return '';
+  }
+};
+
+/**
+ * URL文字列からプロトコルを取得します。
+ * @param {string} url - 解析するURL。
+ * @returns {string} URLのプロトコル（例: 'https:'）。
+ */
+export const getURLProtocol = (url) => {
+  try {
+    return new URL(url).protocol;
+  } catch (error) {
+    return '';
+  }
+};
