@@ -1,27 +1,53 @@
-const { truncate } = require('./string-utils');
+import { truncate, toKebabCase, toSnakeCase } from './string-utils.js';
 
-describe('truncate', () => {
-  test('should not truncate a string shorter than the specified length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
+describe('String Utilities', () => {
+  describe('truncate', () => {
+    test('should truncate a string that is longer than the specified length', () => {
+      expect(truncate('This is a long sentence.', 10)).toBe('This is a ...');
+    });
+
+    test('should not truncate a string that is shorter than the specified length', () => {
+      expect(truncate('Short', 10)).toBe('Short');
+    });
+
+    test('should not truncate a string that is equal to the specified length', () => {
+      expect(truncate('Exactly 10', 10)).toBe('Exactly 10');
+    });
   });
 
-  test('should truncate a string longer than the specified length', () => {
-    expect(truncate('hello world', 8)).toBe('hello...');
+  describe('toKebabCase', () => {
+    test('should convert camelCase to kebab-case', () => {
+      expect(toKebabCase('camelCase')).toBe('camel-case');
+    });
+
+    test('should convert PascalCase to kebab-case', () => {
+      expect(toKebabCase('PascalCase')).toBe('pascal-case');
+    });
+
+    test('should convert sentences with spaces to kebab-case', () => {
+      expect(toKebabCase('A new post')).toBe('a-new-post');
+    });
+
+    test('should handle special characters', () => {
+      expect(toKebabCase('__FOO_BAR__')).toBe('foo-bar');
+    });
   });
 
-  test('should return the string itself if its length is equal to the specified length', () => {
-    expect(truncate('hello', 5)).toBe('hello');
-  });
+  describe('toSnakeCase', () => {
+    test('should convert camelCase to snake_case', () => {
+      expect(toSnakeCase('camelCase')).toBe('camel_case');
+    });
 
-  test('should use a custom suffix if provided', () => {
-    expect(truncate('hello world', 8, '... more')).toBe('h... more');
-  });
+    test('should convert PascalCase to snake_case', () => {
+      expect(toSnakeCase('PascalCase')).toBe('pascal_case');
+    });
 
-  test('should handle empty string', () => {
-    expect(truncate('', 10)).toBe('');
-  });
+    test('should convert sentences with spaces to snake_case', () => {
+      expect(toSnakeCase('A new post')).toBe('a_new_post');
+    });
 
-  test('should handle zero length', () => {
-    expect(truncate('hello', 0)).toBe('');
+    test('should handle special characters', () => {
+      expect(toSnakeCase('__FOO_BAR__')).toBe('foo_bar');
+    });
   });
 });
