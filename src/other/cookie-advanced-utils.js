@@ -35,3 +35,39 @@ export const setCookie = (name, value, options = {}) => {
 
   document.cookie = cookieString;
 };
+
+/**
+ * Stores a JSON object as a cookie.
+ *
+ * @param {string} name - The name of the cookie.
+ * @param {object} value - The JSON object to store.
+ * @param {object} [options={}] - Optional settings for the cookie (same as setCookie).
+ */
+export const setJsonCookie = (name, value, options = {}) => {
+  const jsonValue = JSON.stringify(value);
+  setCookie(name, jsonValue, options);
+};
+
+/**
+ * Retrieves and parses a JSON object from a cookie.
+ *
+ * @param {string} name - The name of the cookie.
+ * @returns {object | null} The parsed JSON object, or null if the cookie doesn't exist or is not valid JSON.
+ */
+export const getJsonCookie = (name) => {
+  const nameEQ = name + '=';
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) {
+      const value = c.substring(nameEQ.length, c.length);
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+  return null;
+};

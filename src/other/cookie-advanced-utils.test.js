@@ -1,4 +1,4 @@
-import { setCookie } from './cookie-advanced-utils';
+import { setCookie, setJsonCookie, getJsonCookie } from './cookie-advanced-utils';
 
 describe('setCookie (Advanced)', () => {
   // document.cookie をモックするためのヘルパー関数
@@ -81,5 +81,46 @@ describe('setCookie (Advanced)', () => {
   test('should handle empty value', () => {
     setCookie('testName', '');
     expect(document.cookie).toBe('testName=; path=/');
+  });
+});
+
+describe('JSON Cookie Utils', () => {
+  beforeEach(() => {
+    let cookieString = '';
+    Object.defineProperty(document, 'cookie', {
+      get: jest.fn(() => cookieString),
+      set: jest.fn((value) => {
+        const name = value.split('=')[0];
+        const existingCookie = cookieString.split(';').find(c => c.trim().startsWith(name + '='));
+        if (existingCookie) {
+          cookieString = cookieString.replace(existingCookie, value);
+        } else {
+          cookieString = cookieString ? `${cookieString}; ${value}` : value;
+        }
+      }),
+      configurable: true,
+    });
+  });
+
+  test('should set and get a JSON object', () => {
+    const data = { id: 1, name: 'test', active: true };
+    setJsonCookie('user_data', data);
+    const result = getJsonCookie('user_data');
+    expect(result).toEqual(data);
+  });
+
+  test('getJsonCookie should return null if cookie does not exist', () => {
+    expect(getJsonCookie('non_existent')).toBeNull();
+  });
+
+  test('getJsonCookie should return null for invalid JSON', () => {
+    setCookie('invalid_json', '{ a: 1 '); // Malformed JSON
+    expect(getJsonCookie('invalid_json')).toBeNull();
+  });
+
+  test('should handle complex JSON objects', () => {
+    const complexData = { user: { id: 1, roles: ['admin', 'editor'] }, settings: { theme: 'dark' } };
+    setJsonCookie('complex_data', complexData);
+    expect(getJsonCookie('complex_data')).toEqual(complexData);
   });
 });
