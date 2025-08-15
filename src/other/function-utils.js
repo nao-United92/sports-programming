@@ -219,3 +219,14 @@ export function negate(predicate) {
  */
 export function noop() {}
 
+/**
+ * Creates a function that invokes the given function with its arguments reversed.
+ * @param {Function} func The function to flip arguments for.
+ * @returns {Function} Returns the new flipped function.
+ */
+export function flip(func) {
+  return function(...args) {
+    return func.apply(this, args.reverse());
+  };
+}
+

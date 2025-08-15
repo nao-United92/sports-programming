@@ -1,4 +1,4 @@
-import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial, sleep, defer, partialRight, negate } from './function-utils.js';
+import { compose, pipe, curry, applyTransforms, debounce, throttle, memoize, once, rearg, partial, sleep, defer, partialRight, negate, flip } from './function-utils.js';
 
 describe('sleep', () => {
   test('should resolve after the specified time', async () => {
@@ -278,6 +278,26 @@ describe('defer', () => {
 
     test('should not throw errors when called with arguments', () => {
       expect(() => noop(1, 2, 3)).not.toThrow();
+    });
+  });
+
+  describe('flip', () => {
+    test('should reverse the order of arguments', () => {
+      const subtract = (a, b) => a - b;
+      const flippedSubtract = flip(subtract);
+      expect(flippedSubtract(2, 5)).toBe(3); // 5 - 2
+    });
+
+    test('should handle multiple arguments', () => {
+      const concat = (a, b, c) => `${a}${b}${c}`;
+      const flippedConcat = flip(concat);
+      expect(flippedConcat('a', 'b', 'c')).toBe('cba');
+    });
+
+    test('should maintain context', () => {
+      const obj = { prefix: 'Result: ', format: function(a, b) { return this.prefix + a + b; } };
+      const flippedFormat = flip(obj.format);
+      expect(flippedFormat.call(obj, 'first', 'second')).toBe('Result: secondfirst');
     });
   });
 });
