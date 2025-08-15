@@ -101,3 +101,36 @@ export function setTranslation(translations, lang, key, value) {
   }
   translations[lang][key] = value;
 }
+
+/**
+ * Formats a relative time string (e.g., "2 days ago").
+ * @param {number} value The numeric value of the time unit.
+ * @param {Intl.RelativeTimeFormatUnit} unit The unit of time.
+ * @param {string} [locale=navigator.language] The locale string.
+ * @param {object} [options] Intl.RelativeTimeFormat options.
+ * @returns {string} The formatted relative time string.
+ */
+export function formatRelativeTime(value, unit, locale = navigator.language, options = {}) {
+  try {
+    return new Intl.RelativeTimeFormat(locale, options).format(value, unit);
+  } catch (e) {
+    console.error('Error formatting relative time:', e);
+    return '';
+  }
+}
+
+/**
+ * Formats a list of strings into a human-readable string.
+ * @param {string[]} list The array of strings to format.
+ * @param {string} [locale=navigator.language] The locale string.
+ * @param {object} [options] Intl.ListFormat options (e.g., { type: 'conjunction', style: 'long' }).
+ * @returns {string} The formatted list string.
+ */
+export function formatList(list, locale = navigator.language, options = {}) {
+  try {
+    return new Intl.ListFormat(locale, options).format(list);
+  } catch (e) {
+    console.error('Error formatting list:', e);
+    return list.join(', ');
+  }
+}

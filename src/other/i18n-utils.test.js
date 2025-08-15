@@ -1,5 +1,5 @@
 
-import { formatNumber, formatDate, formatCurrency, getTranslation, getLocale, pluralize, getBrowserLanguage, setTranslation } from './i18n-utils';
+import { formatNumber, formatDate, formatCurrency, getTranslation, getLocale, pluralize, getBrowserLanguage, setTranslation, formatRelativeTime, formatList } from './i18n-utils';
 
 describe('i18n-utils', () => {
   // Mock navigator.language for consistent testing
@@ -129,6 +129,28 @@ describe('i18n-utils', () => {
       const translations = {};
       setTranslation(translations, 'fr', 'hello', 'Bonjour');
       expect(translations.fr.hello).toBe('Bonjour');
+    });
+  });
+
+  describe('formatRelativeTime', () => {
+    it('should format a relative time in the past', () => {
+      expect(formatRelativeTime(-1, 'day', 'en-US')).toBe('1 day ago');
+    });
+
+    it('should format a relative time in the future', () => {
+      expect(formatRelativeTime(5, 'hour', 'en-US')).toBe('in 5 hours');
+    });
+  });
+
+  describe('formatList', () => {
+    it('should format a list with a conjunction', () => {
+      const list = ['apples', 'bananas', 'oranges'];
+      expect(formatList(list, 'en-US', { type: 'conjunction' })).toBe('apples, bananas, and oranges');
+    });
+
+    it('should format a list with a disjunction', () => {
+      const list = ['apples', 'bananas', 'oranges'];
+      expect(formatList(list, 'en-US', { type: 'disjunction' })).toBe('apples, bananas, or oranges');
     });
   });
 });
