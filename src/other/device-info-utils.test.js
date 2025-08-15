@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getOS } from './device-info-utils';
+import { getOS, getBrowserInfo, isOnline } from './device-info-utils';
 
 describe('getOS', () => {
   test('Windowsを検出する', () => {
@@ -50,5 +50,43 @@ describe('getOS', () => {
       configurable: true,
     });
     expect(getOS()).toBe('Unknown');
+  });
+});
+
+describe('getBrowserInfo', () => {
+  test('should correctly identify Chrome', () => {
+    Object.defineProperty(navigator, 'userAgent', { 
+      value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      configurable: true
+    });
+    expect(getBrowserInfo()).toEqual({ name: 'Chrome', version: '91' });
+  });
+
+  test('should correctly identify Firefox', () => {
+    Object.defineProperty(navigator, 'userAgent', { 
+      value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+      configurable: true
+    });
+    expect(getBrowserInfo()).toEqual({ name: 'Firefox', version: '89' });
+  });
+
+  test('should correctly identify Safari', () => {
+    Object.defineProperty(navigator, 'userAgent', { 
+      value: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
+      configurable: true
+    });
+    expect(getBrowserInfo()).toEqual({ name: 'Safari', version: '14' });
+  });
+});
+
+describe('isOnline', () => {
+  test('should return true when navigator.onLine is true', () => {
+    Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });
+    expect(isOnline()).toBe(true);
+  });
+
+  test('should return false when navigator.onLine is false', () => {
+    Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
+    expect(isOnline()).toBe(false);
   });
 });
