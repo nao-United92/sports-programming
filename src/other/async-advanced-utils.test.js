@@ -1,5 +1,5 @@
 
-import { delay, retry, withTimeout } from './async-advanced-utils';
+import { delay, retry, withTimeout, asyncPool } from './async-advanced-utils';
 
 describe('delay', () => {
   jest.useFakeTimers();
@@ -119,5 +119,56 @@ describe('withTimeout', () => {
 
     jest.advanceTimersByTime(1000);
     await expect(resultPromise).rejects.toThrow('Custom timeout message');
+  });
+});
+
+describe('asyncPool', () => {
+  jest.useFakeTimers();
+
+  test('should run tasks in parallel with a limit', async () => {
+    const results = [];
+    const tasks = [
+      () => delay(100).then(() => results.push(1)),
+      () => delay(200).then(() => results.push(2)),
+      () => delay(50).then(() => results.push(3)),
+      () => delay(150).then(() => results.push(4)),
+      () => delay(100).then(() => results.push(5)),
+    ];
+
+    const poolPromise = asyncPool(2, tasks);
+
+    // Initially, first two tasks should start
+    jest.advanceTimersByTime(50);
+    await Promise.resolve(); // allow promises to settle
+    // Task 3 (50ms) should have finished
+    expect(results).toEqual([3]);
+
+    jest.advanceTimersByTime(50);
+    await Promise.resolve();
+    // Task 1 (100ms) should have finished
+    expect(results).toEqual([3, 1]);
+
+    jest.advanceTimersByTime(100);
+    await Promise.resolve();
+    // Task 4 (150ms) and 2 (200ms) should have finished
+    expect(results).toEqual([3, 1, 4, 2]);
+
+    jest.advanceTimersByTime(50);
+    await Promise.resolve();
+    // Task 5 (100ms) should have finished
+    expect(results).toEqual([3, 1, 4, 2, 5]);
+
+    await poolPromise;
+  });
+
+  test('should return results in the correct order', async () => {
+    const tasks = [
+      () => delay(100).then(() => 1),
+      () => delay(50).then(() => 2),
+    ];
+    const promise = asyncPool(2, tasks);
+    jest.runAllTimers();
+    const results = await promise;
+    expect(results).toEqual([1, 2]);
   });
 });

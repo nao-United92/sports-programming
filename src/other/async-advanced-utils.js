@@ -50,3 +50,24 @@ export function withTimeout(promise, ms, errorMessage = 'Operation timed out') {
   // Returns a race between our timeout and the passed in promise
   return Promise.race([promise, timeout]);
 }
+
+/**
+ * Executes async functions in parallel with a limited concurrency.
+ * @param {number} poolLimit The maximum number of promises to run at once.
+ * @param {Array<Function>} iterable An array of functions that return a promise.
+ * @returns {Promise<Array<*>>} A promise that resolves with an array of the results.
+ */
+export async function asyncPool(poolLimit, iterable) {
+  const results = [];
+  const executing = [];
+  for (const item of iterable) {
+    const p = Promise.resolve().then(() => item());
+    results.push(p);
+    const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+    executing.push(e);
+    if (executing.length >= poolLimit) {
+      await Promise.race(executing);
+    }
+  }
+  return Promise.all(results);
+}
