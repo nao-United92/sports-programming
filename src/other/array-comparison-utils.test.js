@@ -1,4 +1,4 @@
-import { isEqualArray, isEqualArrayDeep } from './array-comparison-utils.js';
+import { isEqualArray, isEqualArrayDeep, isEqual, isSubset } from './array-comparison-utils.js';
 
 describe('Array Comparison Utilities', () => {
   describe('isEqualArray', () => {
@@ -85,6 +85,35 @@ describe('Array Comparison Utilities', () => {
       expect(isEqualArrayDeep([1, null, 3], [1, null, 3])).toBe(true);
       expect(isEqualArrayDeep([1, undefined, 3], [1, undefined, 3])).toBe(true);
       expect(isEqualArrayDeep([1, null, 3], [1, undefined, 3])).toBe(false);
+    });
+  });
+
+  describe('isEqual', () => {
+    test('should be an alias for isEqualArray', () => {
+      expect(isEqual([1, 2, 3], [1, 2, 3])).toBe(true);
+      expect(isEqual([1, 2, 3], [1, 2, 4])).toBe(false);
+    });
+  });
+
+  describe('isSubset', () => {
+    test('should return true if the first array is a subset of the second', () => {
+      expect(isSubset([1, 2], [1, 2, 3, 4])).toBe(true);
+      expect(isSubset([], [1, 2, 3])).toBe(true);
+      expect(isSubset([1, 2, 3], [1, 2, 3])).toBe(true);
+    });
+
+    test('should return false if the first array is not a subset of the second', () => {
+      expect(isSubset([1, 5], [1, 2, 3, 4])).toBe(false);
+      expect(isSubset([1, 2, 3, 4], [1, 2])).toBe(false);
+    });
+
+    test('should handle arrays with duplicate values', () => {
+      expect(isSubset([1, 2, 2], [1, 2, 3, 2])).toBe(true);
+    });
+
+    test('should return false for non-array inputs', () => {
+      expect(isSubset(null, [1, 2])).toBe(false);
+      expect(isSubset([1, 2], undefined)).toBe(false);
     });
   });
 });

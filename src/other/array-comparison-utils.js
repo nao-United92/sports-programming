@@ -62,3 +62,18 @@ export function isEqualArrayDeep(arr1, arr2) {
   }
   return true;
 }
+
+export const isEqual = isEqualArray;
+
+/**
+ * Checks if one array is a subset of another.
+ * @param {Array} arr1 The potential subset array.
+ * @param {Array} arr2 The superset array.
+ * @returns {boolean} True if arr1 is a subset of arr2, false otherwise.
+ */
+export function isSubset(arr1, arr2) {
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    return false;
+  }
+  return arr1.every(val => arr2.includes(val));
+}
