@@ -1,13 +1,27 @@
+
 /**
- * メールアドレスが有効な形式であるかを判定します。
- * @param {string} email - 検証するメールアドレス文字列。
- * @returns {boolean} 有効なメールアドレス形式であればtrue、そうでなければfalse。
+ * Checks if a string is a valid email address.
+ *
+ * @param {string} str The string to check.
+ * @returns {boolean} True if the string is a valid email address, false otherwise.
  */
-export function isValidEmail(email) {
-  if (typeof email !== 'string' || email.length === 0) {
+export const isEmail = (str) => {
+  // A simple regex for email validation
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(str);
+};
+
+/**
+ * Checks if a string is a valid URL.
+ *
+ * @param {string} str The string to check.
+ * @returns {boolean} True if the string is a valid URL, false otherwise.
+ */
+export const isUrl = (str) => {
+  try {
+    new URL(str);
+    return true;
+  } catch (_) {
     return false;
   }
-  // シンプルなメールアドレスの正規表現
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
-}
+};
