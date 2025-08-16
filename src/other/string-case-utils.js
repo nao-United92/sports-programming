@@ -1,4 +1,4 @@
-const toSnakeCase = (str) => {
+export const toSnakeCase = (str) => {
   if (str === null || str === undefined) {
     return "";
   }
@@ -11,11 +11,23 @@ const toSnakeCase = (str) => {
   return result;
 };
 
-const toCamelCase = (str) => {
+export const toCamelCase = (str) => {
   if (str === null || str === undefined) {
     return "";
   }
   return String(str).replace(/_([a-z])/g, (g) => g[1].toUpperCase());
 };
 
-module.exports = { toSnakeCase, toCamelCase };
+/**
+ * Converts a string to kebab-case.
+ * @param {string} str The string to convert.
+ * @returns {string} The kebab-cased string.
+ */
+export const toKebabCase = (str) => {
+  if (str === null || str === undefined) {
+    return "";
+  }
+  return String(str)
+    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2')
+    .toLowerCase();
+};

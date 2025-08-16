@@ -1,4 +1,4 @@
-const { toSnakeCase, toCamelCase } = require("./string-case-utils");
+import { toSnakeCase, toCamelCase, toKebabCase } from './string-case-utils';
 
 describe("toSnakeCase", () => {
   test("should convert camelCase to snake_case", () => {
@@ -39,5 +39,32 @@ describe("toCamelCase", () => {
   test("should handle null and undefined", () => {
     expect(toCamelCase(null)).toBe("");
     expect(toCamelCase(undefined)).toBe("");
+  });
+});
+
+describe("toKebabCase", () => {
+  test("should convert camelCase to kebab-case", () => {
+    expect(toKebabCase("camelCase")).toBe("camel-case");
+  });
+
+  test("should convert PascalCase to kebab-case", () => {
+    expect(toKebabCase("PascalCase")).toBe("pascal-case");
+  });
+
+  test("should convert snake_case to kebab-case", () => {
+    expect(toKebabCase("snake_case")).toBe("snake-case");
+  });
+
+  test("should handle an already kebab-cased string", () => {
+    expect(toKebabCase("already-kebab-case")).toBe("already-kebab-case");
+  });
+
+  test("should handle empty string", () => {
+    expect(toKebabCase("")).toBe("");
+  });
+
+  test("should handle null and undefined", () => {
+    expect(toKebabCase(null)).toBe("");
+    expect(toKebabCase(undefined)).toBe("");
   });
 });
