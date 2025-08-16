@@ -320,3 +320,30 @@ export function difference(arr1, arr2) {
   const set2 = new Set(arr2);
   return arr1.filter(element => !set2.has(element));
 }
+
+export function filterBy(arr, predicate) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return arr.filter(predicate);
+}
+
+export function sortBy(arr, key, order = 'asc') {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  const sortedArr = [...arr];
+  sortedArr.sort((a, b) => {
+    const valA = a[key];
+    const valB = b[key];
+
+    if (valA < valB) {
+      return order === 'asc' ? -1 : 1;
+    }
+    if (valA > valB) {
+      return order === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+  return sortedArr;
+}

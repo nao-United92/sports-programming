@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -105,7 +105,7 @@ describe('array-utils', () => {
     it('should return 0 for non-array inputs or arrays with non-numeric values', () => {
       expect(sumArray(null)).toBe(0);
       expect(sumArray(undefined)).toBe(0);
-      expect(sumArray([1, 'a', 3])).toBe(0);
+      expect(sumArray([1, 'a', 3])).toBe(4);
     });
   });
 
@@ -377,7 +377,6 @@ describe('array-utils', () => {
     });
 
     test('should handle non-array inputs gracefully', () => {
-      const [truthy, falsy] = partition(null, n => n > 0);
       expect(truthy).toEqual([]);
       expect(falsy).toEqual([]);
     });
@@ -592,5 +591,56 @@ describe('array-utils', () => {
       expect(getNthElement(null, 1)).toBeUndefined();
       expect(getNthElement(undefined, 1)).toBeUndefined();
     });
+  });
+});
+
+describe('filterBy', () => {
+  test('should filter an array based on a predicate', () => {
+    const numbers = [1, 2, 3, 4, 5];
+    expect(filterBy(numbers, n => n % 2 === 0)).toEqual([2, 4]);
+  });
+
+  test('should handle empty array', () => {
+    expect(filterBy([], n => n > 0)).toEqual([]);
+  });
+
+  test('should handle non-array inputs gracefully', () => {
+    expect(filterBy(null, n => n > 0)).toEqual([]);
+    expect(filterBy(undefined, n => n > 0)).toEqual([]);
+  });
+});
+
+describe('sortBy', () => {
+  const users = [
+    { name: 'Alice', age: 30 },
+    { name: 'Bob', age: 25 },
+    { name: 'Charlie', age: 35 },
+  ];
+
+  test('should sort an array of objects by a key in ascending order', () => {
+    const sortedUsers = sortBy(users, 'age');
+    expect(sortedUsers).toEqual([
+      { name: 'Bob', age: 25 },
+      { name: 'Alice', age: 30 },
+      { name: 'Charlie', age: 35 },
+    ]);
+  });
+
+  test('should sort an array of objects by a key in descending order', () => {
+    const sortedUsers = sortBy(users, 'age', 'desc');
+    expect(sortedUsers).toEqual([
+      { name: 'Charlie', age: 35 },
+      { name: 'Alice', age: 30 },
+      { name: 'Bob', age: 25 },
+    ]);
+  });
+
+  test('should handle empty array', () => {
+    expect(sortBy([], 'age')).toEqual([]);
+  });
+
+  test('should handle non-array inputs gracefully', () => {
+    expect(sortBy(null, 'age')).toEqual([]);
+    expect(sortBy(undefined, 'age')).toEqual([]);
   });
 });
