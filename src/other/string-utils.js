@@ -1,36 +1,27 @@
 /**
- * 文字列が指定された長さを超える場合に、文字列を切り詰めて末尾に "..." を追加します。
- * @param {string} str - 切り詰める文字列。
- * @param {number} num - 文字列の最大長。
- * @returns {string} 切り詰められた文字列。
+ * Truncates a string to a specified length, appending a suffix if truncated.
+ *
+ * @param {string} str The string to truncate.
+ * @param {number} length The maximum length of the string.
+ * @param {string} [suffix='...'] The suffix to append if the string is truncated.
+ * @returns {string} The truncated string.
  */
-export const truncate = (str, num) => {
-  if (str.length <= num) {
+export const truncate = (str, length, suffix = '...') => {
+  if (str.length <= length) {
     return str;
   }
-  return str.slice(0, num) + '...';
+  return str.slice(0, length - suffix.length) + suffix;
 };
 
 /**
- * 文字列をケバブケース（例: 'hello-world'）に変換します。
- * @param {string} str - 変換する文字列。
- * @returns {string} ケバブケースに変換された文字列。
+ * Converts a string to a URL-friendly slug.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} The slugified string.
  */
-export const toKebabCase = (str) =>
-  str &&
-  str
-    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-    .map(x => x.toLowerCase())
-    .join('-');
-
-/**
- * 文字列をスネークケース（例: 'hello_world'）に変換します。
- * @param {string} str - 変換する文字列。
- * @returns {string} スネークケースに変換された文字列。
- */
-export const toSnakeCase = (str) =>
-  str &&
-  str
-    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-    .map(x => x.toLowerCase())
-    .join('_');
+export const slugify = (str) => {
+  return str
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '');
+};

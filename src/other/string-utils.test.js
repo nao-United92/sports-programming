@@ -1,53 +1,36 @@
-import { truncate, toKebabCase, toSnakeCase } from './string-utils.js';
+import { truncate, slugify } from './string-utils';
 
 describe('String Utilities', () => {
   describe('truncate', () => {
-    test('should truncate a string that is longer than the specified length', () => {
-      expect(truncate('This is a long sentence.', 10)).toBe('This is a ...');
+    it('should not truncate a string shorter than the specified length', () => {
+      expect(truncate('hello', 10)).toBe('hello');
     });
 
-    test('should not truncate a string that is shorter than the specified length', () => {
-      expect(truncate('Short', 10)).toBe('Short');
+    it('should truncate a string longer than the specified length', () => {
+      expect(truncate('hello world', 8)).toBe('hello...');
     });
 
-    test('should not truncate a string that is equal to the specified length', () => {
-      expect(truncate('Exactly 10', 10)).toBe('Exactly 10');
-    });
-  });
-
-  describe('toKebabCase', () => {
-    test('should convert camelCase to kebab-case', () => {
-      expect(toKebabCase('camelCase')).toBe('camel-case');
+    it('should use a custom suffix', () => {
+      expect(truncate('hello world', 8, '--')).toBe('hello --');
     });
 
-    test('should convert PascalCase to kebab-case', () => {
-      expect(toKebabCase('PascalCase')).toBe('pascal-case');
-    });
-
-    test('should convert sentences with spaces to kebab-case', () => {
-      expect(toKebabCase('A new post')).toBe('a-new-post');
-    });
-
-    test('should handle special characters', () => {
-      expect(toKebabCase('__FOO_BAR__')).toBe('foo-bar');
+    it('should handle edge cases', () => {
+      expect(truncate('hello', 5)).toBe('hello');
+      expect(truncate('hello', 4)).toBe('h...');
     });
   });
 
-  describe('toSnakeCase', () => {
-    test('should convert camelCase to snake_case', () => {
-      expect(toSnakeCase('camelCase')).toBe('camel_case');
+  describe('slugify', () => {
+    it('should convert a string to a slug', () => {
+      expect(slugify('Hello World')).toBe('hello-world');
     });
 
-    test('should convert PascalCase to snake_case', () => {
-      expect(toSnakeCase('PascalCase')).toBe('pascal_case');
+    it('should remove special characters', () => {
+      expect(slugify('Hello World! 123')).toBe('hello-world-123');
     });
 
-    test('should convert sentences with spaces to snake_case', () => {
-      expect(toSnakeCase('A new post')).toBe('a_new_post');
-    });
-
-    test('should handle special characters', () => {
-      expect(toSnakeCase('__FOO_BAR__')).toBe('foo_bar');
+    it('should handle multiple spaces', () => {
+      expect(slugify('Hello   World')).toBe('hello-world');
     });
   });
 });
