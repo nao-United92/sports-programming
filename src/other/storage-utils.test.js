@@ -1,23 +1,13 @@
-import {
-  setLocalStorage,
-  getLocalStorage,
-  removeLocalStorage,
-  clearLocalStorage,
-  setSessionStorage,
-  getSessionStorage,
-  removeSessionStorage,
-  clearSessionStorage
-} from './storage-utils.js';
+import { localStore, sessionStore } from './storage-utils';
 
-// Mock Web Storage API
 const createStorageMock = () => {
   let store = {};
   return {
-    getItem: jest.fn(key => store[key] || null),
+    getItem: jest.fn((key) => store[key] || null),
     setItem: jest.fn((key, value) => {
       store[key] = value.toString();
     }),
-    removeItem: jest.fn(key => {
+    removeItem: jest.fn((key) => {
       delete store[key];
     }),
     clear: jest.fn(() => {
@@ -26,83 +16,54 @@ const createStorageMock = () => {
   };
 };
 
-const localStorageMock = createStorageMock();
-const sessionStorageMock = createStorageMock();
-
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
-
+Object.defineProperty(window, 'localStorage', { value: createStorageMock() });
+Object.defineProperty(window, 'sessionStorage', { value: createStorageMock() });
 
 describe('Storage Utilities', () => {
-
-  beforeEach(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-    jest.clearAllMocks();
+  afterEach(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
   });
 
-  describe('localStorage', () => {
-    test('should set and get a string value', () => {
-      setLocalStorage('testString', 'hello');
-      expect(localStorage.setItem).toHaveBeenCalledWith('testString', '"hello"');
-      // To test get, we need to simulate the stored value in our mock
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify('hello'));
-      expect(getLocalStorage('testString')).toBe('hello');
+  describe('localStore', () => {
+    it('should set and get an item', () => {
+      localStore.set('test', { a: 1 });
+      expect(localStore.get('test')).toEqual({ a: 1 });
     });
 
-    test('should set and get an object value', () => {
-      const obj = { a: 1, b: 'test' };
-      setLocalStorage('testObject', obj);
-      expect(localStorage.setItem).toHaveBeenCalledWith('testObject', JSON.stringify(obj));
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify(obj));
-      expect(getLocalStorage('testObject')).toEqual(obj);
+    it('should remove an item', () => {
+      localStore.set('test', 1);
+      localStore.remove('test');
+      expect(localStore.get('test')).toBeNull();
     });
 
-    test('should return null for a non-existent key', () => {
-      localStorageMock.getItem.mockReturnValueOnce(null);
-      expect(getLocalStorage('nonExistent')).toBeNull();
-    });
-
-    test('should remove a value', () => {
-      removeLocalStorage('toBeRemoved');
-      expect(localStorage.removeItem).toHaveBeenCalledWith('toBeRemoved');
-    });
-
-    test('should clear all values', () => {
-      clearLocalStorage();
-      expect(localStorage.clear).toHaveBeenCalled();
+    it('should clear all items', () => {
+      localStore.set('test1', 1);
+      localStore.set('test2', 2);
+      localStore.clear();
+      expect(localStore.get('test1')).toBeNull();
+      expect(localStore.get('test2')).toBeNull();
     });
   });
 
-  describe('sessionStorage', () => {
-    test('should set and get a string value', () => {
-      setSessionStorage('testString', 'hello');
-      expect(sessionStorage.setItem).toHaveBeenCalledWith('testString', '"hello"');
-      sessionStorageMock.getItem.mockReturnValueOnce(JSON.stringify('hello'));
-      expect(getSessionStorage('testString')).toBe('hello');
+  describe('sessionStore', () => {
+    it('should set and get an item', () => {
+      sessionStore.set('test', { a: 1 });
+      expect(sessionStore.get('test')).toEqual({ a: 1 });
     });
 
-    test('should set and get an object value', () => {
-      const obj = { a: 1, b: 'test' };
-      setSessionStorage('testObject', obj);
-      expect(sessionStorage.setItem).toHaveBeenCalledWith('testObject', JSON.stringify(obj));
-      sessionStorageMock.getItem.mockReturnValueOnce(JSON.stringify(obj));
-      expect(getSessionStorage('testObject')).toEqual(obj);
+    it('should remove an item', () => {
+      sessionStore.set('test', 1);
+      sessionStore.remove('test');
+      expect(sessionStore.get('test')).toBeNull();
     });
 
-    test('should return null for a non-existent key', () => {
-      sessionStorageMock.getItem.mockReturnValueOnce(null);
-      expect(getSessionStorage('nonExistent')).toBeNull();
-    });
-
-    test('should remove a value', () => {
-      removeSessionStorage('toBeRemoved');
-      expect(sessionStorage.removeItem).toHaveBeenCalledWith('toBeRemoved');
-    });
-
-    test('should clear all values', () => {
-      clearSessionStorage();
-      expect(sessionStorage.clear).toHaveBeenCalled();
+    it('should clear all items', () => {
+      sessionStore.set('test1', 1);
+      sessionStore.set('test2', 2);
+      sessionStore.clear();
+      expect(sessionStore.get('test1')).toBeNull();
+      expect(sessionStore.get('test2')).toBeNull();
     });
   });
 });
