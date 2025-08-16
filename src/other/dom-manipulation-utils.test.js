@@ -1,4 +1,4 @@
-import { addClass, removeClass, toggleClass, hasClass, setStyle } from './dom-manipulation-utils.js';
+import { addClass, removeClass, toggleClass, hasClass, setStyle, insertAfter, insertBefore } from './dom-manipulation-utils.js';
 
 describe('DOM Manipulation Utilities', () => {
   let element;
@@ -68,6 +68,64 @@ describe('DOM Manipulation Utilities', () => {
     test('should set another style property', () => {
       setStyle(element, 'backgroundColor', 'blue');
       expect(element.style.backgroundColor).toBe('blue');
+    });
+  });
+
+  describe('insertAfter', () => {
+    let parent, refChild;
+
+    beforeEach(() => {
+      parent = document.createElement('div');
+      refChild = document.createElement('span');
+      parent.appendChild(refChild);
+      document.body.appendChild(parent);
+    });
+
+    afterEach(() => {
+      document.body.removeChild(parent);
+    });
+
+    test('should insert a new node after the reference node', () => {
+      const newNode = document.createElement('p');
+      insertAfter(newNode, refChild);
+      expect(parent.children[1]).toBe(newNode);
+      expect(parent.children[0]).toBe(refChild);
+    });
+
+    test('should handle inserting after the last child', () => {
+      const newNode = document.createElement('p');
+      insertAfter(newNode, refChild);
+      expect(parent.lastChild).toBe(newNode);
+    });
+  });
+
+  describe('insertBefore', () => {
+    let parent, refChild;
+
+    beforeEach(() => {
+      parent = document.createElement('div');
+      refChild = document.createElement('span');
+      parent.appendChild(refChild);
+      document.body.appendChild(parent);
+    });
+
+    afterEach(() => {
+      document.body.removeChild(parent);
+    });
+
+    test('should insert a new node before the reference node', () => {
+      const newNode = document.createElement('p');
+      insertBefore(newNode, refChild);
+      expect(parent.children[0]).toBe(newNode);
+      expect(parent.children[1]).toBe(refChild);
+    });
+
+    test('should handle inserting before the first child', () => {
+      const firstChild = document.createElement('a');
+      parent.insertBefore(firstChild, refChild);
+      const newNode = document.createElement('p');
+      insertBefore(newNode, firstChild);
+      expect(parent.firstChild).toBe(newNode);
     });
   });
 });

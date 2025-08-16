@@ -70,3 +70,25 @@ export function hasClass(el, className) {
 export function setStyle(el, property, value) {
   el.style[property] = value;
 }
+
+/**
+ * Inserts a new node after a reference node.
+ * @param {Node} newNode The node to insert.
+ * @param {Node} referenceNode The node after which to insert the new node.
+ */
+export function insertAfter(newNode, referenceNode) {
+  if (referenceNode.parentNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+  }
+}
+
+/**
+ * Inserts a new node before a reference node.
+ * @param {Node} newNode The node to insert.
+ * @param {Node} referenceNode The node before which to insert the new node.
+ */
+export function insertBefore(newNode, referenceNode) {
+  if (referenceNode.parentNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode);
+  }
+}
