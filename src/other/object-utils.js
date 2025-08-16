@@ -1,15 +1,13 @@
 /**
- * オブジェクトから指定されたキーのプロパティのみを抽出した新しいオブジェクトを作成します。
- * @param {object} obj - 元のオブジェクト。
- * @param {string[]} keys - 抽出するキーの配列。
- * @returns {object} 新しいオブジェクト。
+ * Creates an object composed of the picked object properties.
+ *
+ * @param {object} obj The source object.
+ * @param {string[]} keys The property keys to pick.
+ * @returns {object} Returns the new object.
  */
 export const pick = (obj, keys) => {
-  if (!obj || !keys) {
-    return {};
-  }
   return keys.reduce((acc, key) => {
-    if (obj.hasOwnProperty(key)) {
+    if (obj && Object.prototype.hasOwnProperty.call(obj, key)) {
       acc[key] = obj[key];
     }
     return acc;
@@ -17,20 +15,16 @@ export const pick = (obj, keys) => {
 };
 
 /**
- * オブジェクトから指定されたキーのプロパティを除外した新しいオブジェクトを作成します。
- * @param {object} obj - 元のオブジェクト。
- * @param {string[]} keys - 除外するキーの配列。
- * @returns {object} 新しいオブジェクト。
+ * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
+ *
+ * @param {object} obj The source object.
+ * @param {string[]} keys The property keys to omit.
+ * @returns {object} Returns the new object.
  */
 export const omit = (obj, keys) => {
-  if (!obj) {
-    return {};
-  }
   const newObj = { ...obj };
-  if (keys) {
-    keys.forEach(key => {
-      delete newObj[key];
-    });
-  }
+  keys.forEach(key => {
+    delete newObj[key];
+  });
   return newObj;
 };
