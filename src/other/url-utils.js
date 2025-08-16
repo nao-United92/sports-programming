@@ -1,77 +1,31 @@
+
 /**
- * URLのクエリ文字列をパースしてオブジェクトに変換します。
- * @param {string} queryString - ?を含む、または含まないクエリ文字列。
- * @returns {object} パースされたキーと値のペアを持つオブジェクト。
+ * Parses a URL string into an object.
+ *
+ * @param {string} url The URL string to parse.
+ * @returns {object} A URL object.
  */
-export const parseQuery = (queryString) => {
-  const query = queryString.startsWith('?') ? queryString.substring(1) : queryString;
-  if (!query) {
-    return {};
-  }
-  return query.split('&').reduce((acc, part) => {
-    const [key, value] = part.split('=');
-    if (key) {
-      acc[decodeURIComponent(key)] = value ? decodeURIComponent(value) : true;
-    }
-    return acc;
-  }, {});
+export const parseUrl = (url) => {
+  const a = document.createElement('a');
+  a.href = url;
+  return {
+    hash: a.hash,
+    host: a.host,
+    hostname: a.hostname,
+    pathname: a.pathname,
+    port: a.port,
+    protocol: a.protocol,
+    search: a.search,
+  };
 };
 
 /**
- * オブジェクトをURLクエリ文字列に変換します。
- * @param {object} obj - クエリ文字列に変換するオブジェクト。
- * @returns {string} 生成されたクエリ文字列。
+ * Stringifies a URL object into a string.
+ *
+ * @param {object} urlObj The URL object to stringify.
+ * @returns {string} The URL string.
  */
-export const stringifyQuery = (obj) => {
-  if (!obj) {
-    return '';
-  }
-  return Object.entries(obj)
-    .map(([key, value]) => {
-      if (value === true) {
-        return encodeURIComponent(key);
-      }
-      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-    })
-    .join('&');
-};
-
-/**
- * URL文字列からクエリパラメータをオブジェクトとして取得します。
- * @param {string} url - 解析するURL。
- * @returns {object} クエリパラメータのオブジェクト。
- */
-export const getURLParameters = (url) => {
-  try {
-    const search = new URL(url).search;
-    return parseQuery(search);
-  } catch (error) {
-    return {};
-  }
-};
-
-/**
- * URL文字列からパス名を取得します。
- * @param {string} url - 解析するURL。
- * @returns {string} URLのパス名。
- */
-export const getURLPath = (url) => {
-  try {
-    return new URL(url).pathname;
-  } catch (error) {
-    return '';
-  }
-};
-
-/**
- * URL文字列からプロトコルを取得します。
- * @param {string} url - 解析するURL。
- * @returns {string} URLのプロトコル（例: 'https:'）。
- */
-export const getURLProtocol = (url) => {
-  try {
-    return new URL(url).protocol;
-  } catch (error) {
-    return '';
-  }
+export const stringifyUrl = (urlObj) => {
+  const { protocol, host, pathname, search, hash } = urlObj;
+  return `${protocol}//${host}${pathname}${search}${hash}`;
 };
