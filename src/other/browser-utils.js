@@ -109,3 +109,32 @@ export function isOnline() {
   return navigator.onLine;
 }
 
+/**
+ * Copies a string to the clipboard.
+ * @param {string} text The string to copy.
+ * @returns {Promise<void>} A promise that resolves when the text has been copied.
+ */
+export async function copyToClipboard(text) {
+  if (!navigator.clipboard) {
+    // Clipboard API not available
+    return Promise.reject('Clipboard API not available');
+  }
+  return navigator.clipboard.writeText(text);
+}
+
+/**
+ * Gets a cookie by its name.
+ * @param {string} name The name of the cookie to get.
+ * @returns {string|undefined} The value of the cookie, or undefined if not found.
+ */
+export function getCookie(name) {
+  const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+  for (const cookie of cookies) {
+    const [cookieName, cookieValue] = cookie.split('=');
+    if (cookieName === name) {
+      return decodeURIComponent(cookieValue);
+    }
+  }
+  return undefined;
+}
+

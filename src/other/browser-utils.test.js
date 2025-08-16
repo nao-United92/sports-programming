@@ -1,4 +1,4 @@
-import { isBrowser, scrollToTop, getScrollPosition, isInViewport, getUserAgent, isMobile, isTablet, getURLParameters } from './browser-utils.js';
+import { isBrowser, scrollToTop, getScrollPosition, isInViewport, getUserAgent, isMobile, isTablet, getURLParameters, isOnline, copyToClipboard, getCookie } from './browser-utils.js';
 
 describe('browser-utils', () => {
   it('should check if in a browser environment', () => {
@@ -103,6 +103,40 @@ describe('browser-utils', () => {
     test('should return false when navigator.onLine is false', () => {
       Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
       expect(isOnline()).toBe(false);
+    });
+  });
+
+  describe('copyToClipboard', () => {
+    const writeText = jest.fn();
+
+    beforeAll(() => {
+      Object.defineProperty(navigator, 'clipboard', {
+        value: { writeText },
+        configurable: true,
+      });
+    });
+
+    test('should call clipboard.writeText with the given text', async () => {
+      await copyToClipboard('test');
+      expect(writeText).toHaveBeenCalledWith('test');
+    });
+  });
+
+  describe('getCookie', () => {
+    test('should return the value of a cookie', () => {
+      Object.defineProperty(document, 'cookie', {
+        get: jest.fn().mockReturnValue('test=123; other=abc'),
+        configurable: true,
+      });
+      expect(getCookie('test')).toBe('123');
+    });
+
+    test('should return undefined if the cookie is not found', () => {
+      Object.defineProperty(document, 'cookie', {
+        get: jest.fn().mockReturnValue('other=abc'),
+        configurable: true,
+      });
+      expect(getCookie('test')).toBe(undefined);
     });
   });
 });
