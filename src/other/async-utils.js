@@ -64,3 +64,23 @@ export function timeout(promise, ms) {
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * Runs an array of async functions in parallel.
+ * @param {Array<Function>} tasks An array of async functions to run.
+ * @returns {Promise<Array>} A promise that resolves with an array of results from the async functions.
+ */
+export function parallel(tasks) {
+  return Promise.all(tasks.map(task => task()));
+}
+
+/**
+ * Runs an array of async functions in series, each passing its result to the next.
+ * @param {Array<Function>} tasks An array of async functions to run.
+ * @returns {Promise<any>} A promise that resolves with the result of the final async function.
+ */
+export function waterfall(tasks) {
+  return tasks.reduce((promise, task) => {
+    return promise.then(result => task(result));
+  }, Promise.resolve());
+}

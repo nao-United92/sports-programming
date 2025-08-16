@@ -1,4 +1,4 @@
-import { delay, retry, timeout } from './async-utils.js';
+import { delay, retry, timeout, sleep, parallel, waterfall } from './async-utils.js';
 
 describe('async-utils', () => {
   it('should delay execution', async () => {
@@ -48,5 +48,27 @@ describe('sleep', () => {
 
     const endTime = Date.now();
     expect(endTime - startTime).toBeGreaterThanOrEqual(sleepTime);
+  });
+});
+
+describe('parallel', () => {
+  test('should run tasks in parallel', async () => {
+    const task1 = jest.fn(() => Promise.resolve(1));
+    const task2 = jest.fn(() => Promise.resolve(2));
+    const results = await parallel([task1, task2]);
+    expect(results).toEqual([1, 2]);
+    expect(task1).toHaveBeenCalled();
+    expect(task2).toHaveBeenCalled();
+  });
+});
+
+describe('waterfall', () => {
+  test('should run tasks in series', async () => {
+    const task1 = jest.fn(async () => 1);
+    const task2 = jest.fn(async (val) => val + 1);
+    const result = await waterfall([task1, task2]);
+    expect(result).toBe(2);
+    expect(task1).toHaveBeenCalled();
+    expect(task2).toHaveBeenCalledWith(1);
   });
 });
