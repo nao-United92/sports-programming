@@ -1,4 +1,4 @@
-import { unique } from './array-unique-utils';
+import { unique, uniqueBy } from './array-unique-utils';
 
 describe('unique', () => {
   test('should return a new array with unique values', () => {
@@ -37,5 +37,32 @@ describe('unique', () => {
     expect(unique(123)).toEqual([]);
     expect(unique('string')).toEqual([]);
     expect(unique({})).toEqual([]);
+  });
+});
+
+describe('uniqueBy', () => {
+  test('should return a new array with unique values based on iteratee', () => {
+    const arr = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }, { id: 1, name: 'c' }];
+    const iteratee = (item) => item.id;
+    expect(uniqueBy(arr, iteratee)).toEqual([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]);
+  });
+
+  test('should handle empty array', () => {
+    const arr = [];
+    const iteratee = (item) => item.id;
+    expect(uniqueBy(arr, iteratee)).toEqual([]);
+  });
+
+  test('should handle non-array input', () => {
+    const iteratee = (item) => item.id;
+    expect(uniqueBy(null, iteratee)).toEqual([]);
+    expect(uniqueBy(undefined, iteratee)).toEqual([]);
+    expect(uniqueBy(123, iteratee)).toEqual([]);
+  });
+
+  test('should handle iteratee returning non-primitive values', () => {
+    const arr = [{ id: { a: 1 }, name: 'x' }, { id: { a: 1 }, name: 'y' }];
+    const iteratee = (item) => JSON.stringify(item.id);
+    expect(uniqueBy(arr, iteratee)).toEqual([{ id: { a: 1 }, name: 'x' }]);
   });
 });

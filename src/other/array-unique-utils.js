@@ -9,3 +9,24 @@ export function unique(arr) {
   }
   return [...new Set(arr)];
 }
+
+/**
+ * Creates a duplicate-free array, using a provided function to determine uniqueness.
+ * @param {Array} array The array to inspect.
+ * @param {Function} iteratee The function invoked per iteration to compute the criterion by which to group.
+ * @returns {Array} Returns the new duplicate free array.
+ */
+export function uniqueBy(array, iteratee) {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  const seen = new Set();
+  return array.filter(item => {
+    const key = iteratee(item);
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
