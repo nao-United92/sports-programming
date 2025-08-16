@@ -6,7 +6,7 @@
  * @param {Function} listener The function to call when the event occurs.
  * @param {boolean|AddEventListenerOptions} [options] An options object that specifies characteristics about the event listener.
  */
-export function addEventListener(element, eventType, listener, options) {
+export function on(element, eventType, listener, options) {
   if (element && eventType && listener) {
     element.addEventListener(eventType, listener, options);
   }
@@ -19,7 +19,7 @@ export function addEventListener(element, eventType, listener, options) {
  * @param {Function} listener The listener function to remove.
  * @param {boolean|EventListenerOptions} [options] An options object that specifies characteristics about the event listener.
  */
-export function removeEventListener(element, eventType, listener, options) {
+export function off(element, eventType, listener, options) {
   if (element && eventType && listener) {
     element.removeEventListener(eventType, listener, options);
   }
@@ -32,7 +32,7 @@ export function removeEventListener(element, eventType, listener, options) {
  * @param {Function} listener The function to call when the event occurs.
  * @param {boolean|AddEventListenerOptions} [options] An options object that specifies characteristics about the event listener.
  */
-export function addEventListenerOnce(element, eventType, listener, options) {
+export function once(element, eventType, listener, options) {
   if (element && eventType && listener) {
     const onceOptions = { ...options, once: true };
     element.addEventListener(eventType, listener, onceOptions);

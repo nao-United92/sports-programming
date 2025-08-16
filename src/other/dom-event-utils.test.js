@@ -1,5 +1,5 @@
 
-import { addEventListener, removeEventListener, addEventListenerOnce, dispatchCustomEvent } from './dom-event-utils';
+import { on, off, once, dispatchCustomEvent } from './dom-event-utils';
 
 describe('dom-event-utils', () => {
   let element;
@@ -15,36 +15,36 @@ describe('dom-event-utils', () => {
     document.body.removeChild(element);
   });
 
-  describe('addEventListener', () => {
+  describe('on', () => {
     test('should add an event listener', () => {
-      addEventListener(element, 'click', listener);
+      on(element, 'click', listener);
       element.click();
       expect(listener).toHaveBeenCalledTimes(1);
     });
 
     test('should not add listener if element is null', () => {
-      addEventListener(null, 'click', listener);
+      on(null, 'click', listener);
       // No error should be thrown
     });
   });
 
-  describe('removeEventListener', () => {
+  describe('off', () => {
     test('should remove an event listener', () => {
-      addEventListener(element, 'click', listener);
-      removeEventListener(element, 'click', listener);
+      on(element, 'click', listener);
+      off(element, 'click', listener);
       element.click();
       expect(listener).not.toHaveBeenCalled();
     });
 
     test('should not remove listener if element is null', () => {
-      removeEventListener(null, 'click', listener);
+      off(null, 'click', listener);
       // No error should be thrown
     });
   });
 
-  describe('addEventListenerOnce', () => {
+  describe('once', () => {
     test('should add an event listener that fires only once', () => {
-      addEventListenerOnce(element, 'click', listener);
+      once(element, 'click', listener);
       element.click();
       element.click(); // Second click should not trigger the listener again
       expect(listener).toHaveBeenCalledTimes(1);
@@ -52,13 +52,13 @@ describe('dom-event-utils', () => {
 
     test('should pass options to addEventListener', () => {
       const spy = jest.spyOn(element, 'addEventListener');
-      addEventListenerOnce(element, 'click', listener, { capture: true });
+      once(element, 'click', listener, { capture: true });
       expect(spy).toHaveBeenCalledWith('click', listener, { capture: true, once: true });
       spy.mockRestore();
     });
 
     test('should not add listener if element is null', () => {
-      addEventListenerOnce(null, 'click', listener);
+      once(null, 'click', listener);
       // No error should be thrown
     });
   });
