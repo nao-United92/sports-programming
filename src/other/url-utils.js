@@ -1,31 +1,51 @@
-
 /**
  * Parses a URL string into an object.
  *
  * @param {string} url The URL string to parse.
- * @returns {object} A URL object.
+ * @returns {object} The parsed URL object.
  */
-export const parseUrl = (url) => {
-  const a = document.createElement('a');
-  a.href = url;
-  return {
-    hash: a.hash,
-    host: a.host,
-    hostname: a.hostname,
-    pathname: a.pathname,
-    port: a.port,
-    protocol: a.protocol,
-    search: a.search,
-  };
-};
+export function parseUrl(url) {
+  try {
+    const urlObject = new URL(url);
+    const params = {};
+    for (const [key, value] of urlObject.searchParams.entries()) {
+      params[key] = value;
+    }
+    return {
+      protocol: urlObject.protocol,
+      hostname: urlObject.hostname,
+      port: urlObject.port,
+      pathname: urlObject.pathname,
+      search: urlObject.search,
+      hash: urlObject.hash,
+      params: params,
+    };
+  } catch (error) {
+    return null;
+  }
+}
 
 /**
- * Stringifies a URL object into a string.
+ * Stringifies a URL object into a URL string.
  *
- * @param {object} urlObj The URL object to stringify.
+ * @param {object} urlObject The URL object to stringify.
  * @returns {string} The URL string.
  */
-export const stringifyUrl = (urlObj) => {
-  const { protocol, host, pathname, search, hash } = urlObj;
-  return `${protocol}//${host}${pathname}${search}${hash}`;
-};
+export function stringifyUrl(urlObject) {
+  const { protocol, hostname, port, pathname, params, hash } = urlObject;
+  let url = `${protocol}//${hostname}`;
+  if (port) {
+    url += `:${port}`;
+  }
+  if (pathname) {
+    url += pathname;
+  }
+  if (params) {
+    const searchParams = new URLSearchParams(params);
+    url += `?${searchParams.toString()}`;
+  }
+  if (hash) {
+    url += hash;
+  }
+  return url;
+}

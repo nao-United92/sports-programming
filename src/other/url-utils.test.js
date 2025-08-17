@@ -1,35 +1,42 @@
-import { parseUrl, stringifyUrl } from './url-utils';
+import { parseUrl, stringifyUrl } from './url-utils.js';
 
-describe('URL Utilities', () => {
-  describe('parseUrl', () => {
-    it('should parse a URL string into an object', () => {
-      const url = 'https://example.com:8080/path?query=1#hash';
-      const parsed = parseUrl(url);
-      expect(parsed).toEqual({
-        hash: '#hash',
-        host: 'example.com:8080',
-        hostname: 'example.com',
-        pathname: '/path',
-        port: '8080',
-        protocol: 'https:',
-        search: '?query=1',
-      });
-    });
+describe('parseUrl', () => {
+  test('should parse a URL string into an object', () => {
+    const url = 'https://www.example.com:8080/path/to/page?foo=bar&baz=qux#hash';
+    const expected = {
+      protocol: 'https:',
+      hostname: 'www.example.com',
+      port: '8080',
+      pathname: '/path/to/page',
+      search: '?foo=bar&baz=qux',
+      hash: '#hash',
+      params: {
+        foo: 'bar',
+        baz: 'qux',
+      },
+    };
+    expect(parseUrl(url)).toEqual(expected);
   });
 
-  describe('stringifyUrl', () => {
-    it('should stringify a URL object into a string', () => {
-      const urlObj = {
-        hash: '#hash',
-        host: 'example.com:8080',
-        hostname: 'example.com',
-        pathname: '/path',
-        port: '8080',
-        protocol: 'https:',
-        search: '?query=1',
-      };
-      const url = stringifyUrl(urlObj);
-      expect(url).toBe('https://example.com:8080/path?query=1#hash');
-    });
+  test('should return null for an invalid URL', () => {
+    expect(parseUrl('invalid-url')).toBeNull();
+  });
+});
+
+describe('stringifyUrl', () => {
+  test('should stringify a URL object into a URL string', () => {
+    const urlObject = {
+      protocol: 'https:',
+      hostname: 'www.example.com',
+      port: '8080',
+      pathname: '/path/to/page',
+      params: {
+        foo: 'bar',
+        baz: 'qux',
+      },
+      hash: '#hash',
+    };
+    const expected = 'https://www.example.com:8080/path/to/page?foo=bar&baz=qux#hash';
+    expect(stringifyUrl(urlObject)).toBe(expected);
   });
 });
