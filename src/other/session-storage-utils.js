@@ -1,42 +1,29 @@
 /**
- * Sets an item in session storage.
+ * Sets a value in session storage.
  *
- * @param {string} key The key of the item to set.
- * @param {any} value The value to set. Will be stringified if not a string.
+ * @param {string} key The key to set.
+ * @param {any} value The value to set.
  */
-export const setSessionStorageItem = (key, value) => {
+export function setSessionStorage(key, value) {
   try {
     sessionStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.error('Error setting session storage item:', error);
+    console.error('Error setting session storage:', error);
   }
-};
+}
 
 /**
- * Gets an item from session storage.
+ * Gets a value from session storage.
  *
- * @param {string} key The key of the item to get.
- * @returns {any | null} The parsed value, or null if not found or an error occurs.
+ * @param {string} key The key to get.
+ * @returns {any} The value from session storage, or null if not found.
  */
-export const getSessionStorageItem = (key) => {
+export function getSessionStorage(key) {
   try {
-    const item = sessionStorage.getItem(key);
-    return item ? JSON.parse(item) : null;
+    const value = sessionStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
   } catch (error) {
-    console.error('Error getting session storage item:', error);
+    console.error('Error getting session storage:', error);
     return null;
   }
-};
-
-/**
- * Removes an item from session storage.
- *
- * @param {string} key The key of the item to remove.
- */
-export const removeSessionStorageItem = (key) => {
-  try {
-    sessionStorage.removeItem(key);
-  } catch (error) {
-    console.error('Error removing session storage item:', error);
-  }
-};
+}
