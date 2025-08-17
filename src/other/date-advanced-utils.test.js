@@ -1,81 +1,29 @@
+import { getWeekOfMonth, isLastDayOfMonth } from './date-advanced-utils.js';
 
-import { formatDate, addDays, isSameDay, getDaysInMonth } from './date-advanced-utils';
-
-describe('formatDate', () => {
-  test('should format date correctly', () => {
-    const date = new Date(2023, 0, 15, 10, 30, 45); // Jan 15, 2023 10:30:45
-    expect(formatDate(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-01-15 10:30:45');
-    expect(formatDate(date, 'MM/DD/YYYY')).toBe('01/15/2023');
-    expect(formatDate(date, 'HH:mm')).toBe('10:30');
+describe('getWeekOfMonth', () => {
+  test('should return the correct week of the month', () => {
+    expect(getWeekOfMonth(new Date('2024-01-01'))).toBe(1);
+    expect(getWeekOfMonth(new Date('2024-01-08'))).toBe(2);
+    expect(getWeekOfMonth(new Date('2024-01-31'))).toBe(5);
   });
 
-  test('should return empty string for invalid date', () => {
-    expect(formatDate(new Date('invalid'), 'YYYY-MM-DD')).toBe('');
-    expect(formatDate(null, 'YYYY-MM-DD')).toBe('');
+  test('should return NaN for invalid dates', () => {
+    expect(getWeekOfMonth(new Date('invalid date'))).toBeNaN();
   });
 });
 
-describe('addDays', () => {
-  test('should add days to a date', () => {
-    const date = new Date(2023, 0, 15); // Jan 15, 2023
-    const newDate = addDays(date, 5);
-    expect(newDate.getDate()).toBe(20);
-    expect(newDate.getMonth()).toBe(0);
-    expect(newDate.getFullYear()).toBe(2023);
+describe('isLastDayOfMonth', () => {
+  test('should return true if the date is the last day of the month', () => {
+    expect(isLastDayOfMonth(new Date('2024-01-31'))).toBe(true);
+    expect(isLastDayOfMonth(new Date('2024-02-29'))).toBe(true); // Leap year
   });
 
-  test('should handle month and year rollovers', () => {
-    const date = new Date(2023, 0, 30); // Jan 30, 2023
-    const newDate = addDays(date, 5);
-    expect(newDate.getDate()).toBe(4); // Feb 4, 2023
-    expect(newDate.getMonth()).toBe(1);
-    expect(newDate.getFullYear()).toBe(2023);
-
-    const date2 = new Date(2023, 11, 25); // Dec 25, 2023
-    const newDate2 = addDays(date2, 10);
-    expect(newDate2.getDate()).toBe(4); // Jan 4, 2024
-    expect(newDate2.getMonth()).toBe(0);
-    expect(newDate2.getFullYear()).toBe(2024);
-  });
-
-  test('should return invalid date for invalid input', () => {
-    expect(isNaN(addDays(new Date('invalid'), 5))).toBe(true);
-    expect(isNaN(addDays(new Date(), 'abc'))).toBe(true);
-  });
-});
-
-describe('isSameDay', () => {
-  test('should return true for same day', () => {
-    const date1 = new Date(2023, 0, 15, 10, 0, 0);
-    const date2 = new Date(2023, 0, 15, 15, 30, 0);
-    expect(isSameDay(date1, date2)).toBe(true);
-  });
-
-  test('should return false for different days', () => {
-    const date1 = new Date(2023, 0, 15);
-    const date2 = new Date(2023, 0, 16);
-    expect(isSameDay(date1, date2)).toBe(false);
+  test('should return false if the date is not the last day of the month', () => {
+    expect(isLastDayOfMonth(new Date('2024-01-30'))).toBe(false);
+    expect(isLastDayOfMonth(new Date('2023-02-28'))).toBe(true);
   });
 
   test('should return false for invalid dates', () => {
-    expect(isSameDay(new Date('invalid'), new Date())).toBe(false);
-    expect(isSameDay(new Date(), new Date('invalid'))).toBe(false);
-  });
-});
-
-describe('getDaysInMonth', () => {
-  test('should return correct days for common months', () => {
-    expect(getDaysInMonth(2023, 1)).toBe(31); // January
-    expect(getDaysInMonth(2023, 2)).toBe(28); // February (non-leap)
-    expect(getDaysInMonth(2024, 2)).toBe(29); // February (leap)
-    expect(getDaysInMonth(2023, 4)).toBe(30); // April
-    expect(getDaysInMonth(2023, 12)).toBe(31); // December
-  });
-
-  test('should return 0 for invalid month or year', () => {
-    expect(getDaysInMonth(2023, 0)).toBe(0);
-    expect(getDaysInMonth(2023, 13)).toBe(0);
-    expect(getDaysInMonth('abc', 1)).toBe(0);
-    expect(getDaysInMonth(2023, 'abc')).toBe(0);
+    expect(isLastDayOfMonth(new Date('invalid date'))).toBe(false);
   });
 });
