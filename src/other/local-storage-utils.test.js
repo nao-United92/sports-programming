@@ -1,67 +1,37 @@
-import {
-  setItem,
-  getItem,
-  removeItem,
-  setItemWithExpiry,
-  getItemWithExpiry,
-} from './local-storage-utils.js';
+import { setLocalStorage, getLocalStorage } from './local-storage-utils.js';
 
-describe('LocalStorage Utils', () => {
+describe('localStorageUtils', () => {
   beforeEach(() => {
-    window.localStorage.clear();
-    jest.clearAllMocks();
+    localStorage.clear();
   });
 
-  describe('setItem and getItem', () => {
-    test('should set and get a string value', () => {
-      setItem('testKey', 'testValue');
-      expect(getItem('testKey')).toBe('testValue');
+  describe('setLocalStorage', () => {
+    it('should set a value in local storage', () => {
+      setLocalStorage('testKey', 'testValue');
+      expect(localStorage.getItem('testKey')).toBe(JSON.stringify('testValue'));
     });
 
-    test('should set and get an object value', () => {
-      const testObject = { a: 1, b: 'hello' };
-      setItem('testObject', testObject);
-      expect(getItem('testObject')).toEqual(testObject);
-    });
-
-    test('getItem should return null for a non-existent key', () => {
-      expect(getItem('nonExistentKey')).toBeNull();
+    it('should set an object in local storage', () => {
+      const testObject = { a: 1, b: '2' };
+      setLocalStorage('testObject', testObject);
+      expect(localStorage.getItem('testObject')).toBe(JSON.stringify(testObject));
     });
   });
 
-  describe('removeItem', () => {
-    test('should remove an item from localStorage', () => {
-      setItem('testKey', 'testValue');
-      removeItem('testKey');
-      expect(getItem('testKey')).toBeNull();
-    });
-  });
-
-  describe('setItemWithExpiry and getItemWithExpiry', () => {
-    test('should set and get an item before it expires', () => {
-      setItemWithExpiry('expiringKey', 'expiringValue', 1000); // 1 second expiry
-      expect(getItemWithExpiry('expiringKey')).toBe('expiringValue');
+  describe('getLocalStorage', () => {
+    it('should get a value from local storage', () => {
+      localStorage.setItem('testKey', JSON.stringify('testValue'));
+      expect(getLocalStorage('testKey')).toBe('testValue');
     });
 
-    test('should return null for an expired item', () => {
-      jest.useFakeTimers();
-      setItemWithExpiry('expiringKey', 'expiringValue', 1000);
-      
-      jest.advanceTimersByTime(1001);
-
-      expect(getItemWithExpiry('expiringKey')).toBeNull();
-      jest.useRealTimers();
+    it('should get an object from local storage', () => {
+      const testObject = { a: 1, b: '2' };
+      localStorage.setItem('testObject', JSON.stringify(testObject));
+      expect(getLocalStorage('testObject')).toEqual(testObject);
     });
 
-    test('should remove the item from localStorage after it expires', () => {
-      jest.useFakeTimers();
-      setItemWithExpiry('expiringKey', 'expiringValue', 1000);
-      
-      jest.advanceTimersByTime(1001);
-
-      getItemWithExpiry('expiringKey'); // This call should trigger removal
-      expect(window.localStorage.getItem('expiringKey')).toBeNull();
-      jest.useRealTimers();
+    it('should return null if the key does not exist', () => {
+      expect(getLocalStorage('nonExistentKey')).toBeNull();
     });
   });
 });
