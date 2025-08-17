@@ -101,3 +101,34 @@ export function zip(...arrays) {
   }
   return result;
 }
+
+/**
+ * Creates an array of unique values, in order, from all given arrays.
+ * @param {...Array} arrays The arrays to inspect.
+ * @returns {Array} Returns the new array of unique combined values.
+ */
+export function union(...arrays) {
+  const combined = [].concat(...arrays.filter(Array.isArray));
+  return [...new Set(combined)];
+}
+
+/**
+ * Creates an array of unique values that are included in all given arrays.
+ * @param {...Array} arrays The arrays to inspect.
+ * @returns {Array} Returns the new array of unique common values.
+ */
+export function intersection(...arrays) {
+  if (arrays.length === 0) {
+    return [];
+  }
+  if (arrays.length === 1) {
+    return [...new Set(arrays[0])];
+  }
+
+  let result = [...new Set(arrays[0])];
+  for (let i = 1; i < arrays.length; i++) {
+    const currentSet = new Set(arrays[i]);
+    result = result.filter(item => currentSet.has(item));
+  }
+  return result;
+}

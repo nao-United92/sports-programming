@@ -1,4 +1,4 @@
-import { mergeAndSort, removeDuplicates, findCommonElements, flattenArray, chunk, difference, uniqueBy, zip } from './array-advanced-utils.js';
+import { mergeAndSort, removeDuplicates, findCommonElements, flattenArray, chunk, difference, uniqueBy, zip, union, intersection } from './array-advanced-utils.js';
 
 describe('mergeAndSort', () => {
   test('2つのソートされた配列を正しくマージし、ソートする', () => {
@@ -86,5 +86,40 @@ describe('zip', () => {
 
   test('should handle empty arrays', () => {
     expect(zip([], [1, 2])).toEqual([[undefined, 1], [undefined, 2]]);
+  });
+});
+
+describe('union', () => {
+  test('should return a unique array from multiple arrays', () => {
+    expect(union([1, 2], [2, 3], [3, 4])).toEqual([1, 2, 3, 4]);
+  });
+
+  test('should handle empty arrays', () => {
+    expect(union([], [1, 2])).toEqual([1, 2]);
+    expect(union([])).toEqual([]);
+  });
+
+  test('should handle arrays with duplicate values', () => {
+    expect(union([1, 1, 2], [2, 3, 3])).toEqual([1, 2, 3]);
+  });
+});
+
+describe('intersection', () => {
+  test('should return unique common values from multiple arrays', () => {
+    expect(intersection([1, 2, 3], [2, 3, 4], [3, 5, 2])).toEqual([2, 3]);
+  });
+
+  test('should handle no common elements', () => {
+    expect(intersection([1, 2], [3, 4])).toEqual([]);
+  });
+
+  test('should handle empty arrays', () => {
+    expect(intersection([], [1, 2])).toEqual([]);
+    expect(intersection([1, 2], [])).toEqual([]);
+    expect(intersection()).toEqual([]);
+  });
+
+  test('should handle single array input', () => {
+    expect(intersection([1, 2, 2, 3])).toEqual([1, 2, 3]);
   });
 });
