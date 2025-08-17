@@ -1,36 +1,23 @@
-import { truncate, slugify } from './string-utils';
+import { toSnakeCase } from './string-utils.js';
 
-describe('String Utilities', () => {
-  describe('truncate', () => {
-    it('should not truncate a string shorter than the specified length', () => {
-      expect(truncate('hello', 10)).toBe('hello');
-    });
-
-    it('should truncate a string longer than the specified length', () => {
-      expect(truncate('hello world', 8)).toBe('hello...');
-    });
-
-    it('should use a custom suffix', () => {
-      expect(truncate('hello world', 8, '--')).toBe('hello --');
-    });
-
-    it('should handle edge cases', () => {
-      expect(truncate('hello', 5)).toBe('hello');
-      expect(truncate('hello', 4)).toBe('h...');
-    });
+describe('toSnakeCase', () => {
+  test('should convert camelCase to snake_case', () => {
+    expect(toSnakeCase('camelCase')).toBe('camel_case');
   });
 
-  describe('slugify', () => {
-    it('should convert a string to a slug', () => {
-      expect(slugify('Hello World')).toBe('hello-world');
-    });
+  test('should convert PascalCase to snake_case', () => {
+    expect(toSnakeCase('PascalCase')).toBe('pascal_case');
+  });
 
-    it('should remove special characters', () => {
-      expect(slugify('Hello World! 123')).toBe('hello-world-123');
-    });
+  test('should not change snake_case', () => {
+    expect(toSnakeCase('snake_case')).toBe('snake_case');
+  });
 
-    it('should handle multiple spaces', () => {
-      expect(slugify('Hello   World')).toBe('hello-world');
-    });
+  test('should handle an empty string', () => {
+    expect(toSnakeCase('')).toBe('');
+  });
+
+  test('should handle a single word', () => {
+    expect(toSnakeCase('word')).toBe('word');
   });
 });

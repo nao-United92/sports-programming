@@ -1,27 +1,12 @@
 /**
- * Truncates a string to a specified length, appending a suffix if truncated.
- *
- * @param {string} str The string to truncate.
- * @param {number} length The maximum length of the string.
- * @param {string} [suffix='...'] The suffix to append if the string is truncated.
- * @returns {string} The truncated string.
- */
-export const truncate = (str, length, suffix = '...') => {
-  if (str.length <= length) {
-    return str;
-  }
-  return str.slice(0, length - suffix.length) + suffix;
-};
-
-/**
- * Converts a string to a URL-friendly slug.
- *
+ * Converts a string to snake_case.
  * @param {string} str The string to convert.
- * @returns {string} The slugified string.
+ * @returns {string} The snake_cased string.
  */
-export const slugify = (str) => {
-  return str
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '');
-};
+export function toSnakeCase(str) {
+  if (typeof str !== 'string' || !str) {
+    return '';
+  }
+  const result = str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  return result.startsWith('_') ? result.substring(1) : result;
+}

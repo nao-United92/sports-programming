@@ -1,4 +1,4 @@
-import { mergeAndSort, removeDuplicates, findCommonElements, flattenArray, chunk } from './array-advanced-utils.js';
+import { mergeAndSort, removeDuplicates, findCommonElements, flattenArray, chunk, difference, uniqueBy, zip } from './array-advanced-utils.js';
 
 describe('mergeAndSort', () => {
   test('2つのソートされた配列を正しくマージし、ソートする', () => {
@@ -68,5 +68,23 @@ describe('uniqueBy', () => {
   test('should handle non-array inputs gracefully', () => {
     expect(uniqueBy(null, item => item)).toEqual([]);
     expect(uniqueBy(undefined, item => item)).toEqual([]);
+  });
+});
+
+describe('zip', () => {
+  test('should zip arrays of the same length', () => {
+    expect(zip(['a', 'b'], [1, 2], [true, false])).toEqual([['a', 1, true], ['b', 2, false]]);
+  });
+
+  test('should zip arrays of different lengths', () => {
+    expect(zip(['a', 'b'], [1, 2, 3], [true])).toEqual([['a', 1, true], ['b', 2, undefined], [undefined, 3, undefined]]);
+  });
+
+  test('should return an empty array when no arrays are provided', () => {
+    expect(zip()).toEqual([]);
+  });
+
+  test('should handle empty arrays', () => {
+    expect(zip([], [1, 2])).toEqual([[undefined, 1], [undefined, 2]]);
   });
 });
