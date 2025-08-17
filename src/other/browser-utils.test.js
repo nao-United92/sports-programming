@@ -1,4 +1,4 @@
-import { isBrowser, scrollToTop, getScrollPosition, isInViewport, getUserAgent, isMobile, isTablet, getURLParameters, isOnline, copyToClipboard, getCookie } from './browser-utils.js';
+import { isBrowser, scrollToTop, getScrollPosition, isInViewport, getUserAgent, isMobile, isTablet, getURLParameters, isOnline, copyToClipboard, getCookie, reloadPage, openWindow } from './browser-utils.js';
 
 describe('browser-utils', () => {
   it('should check if in a browser environment', () => {
@@ -138,5 +138,56 @@ describe('browser-utils', () => {
       });
       expect(getCookie('test')).toBe(undefined);
     });
+  });
+});
+
+describe('reloadPage', () => {
+  const originalLocation = window.location;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { reload: jest.fn() },
+    });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: originalLocation,
+    });
+  });
+
+  test('should call window.location.reload', () => {
+    reloadPage();
+    expect(window.location.reload).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('openWindow', () => {
+  const originalOpen = window.open;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: jest.fn(),
+    });
+  });
+  
+  afterAll(() => {
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: originalOpen,
+    });
+  });
+
+  test('should call window.open with the given URL', () => {
+    openWindow('http://example.com');
+    expect(window.open).toHaveBeenCalledWith('http://example.com', '_blank', '');
+  });
+
+  test('should call window.open with name and features', () => {
+    openWindow('http://example.com', 'myWindow', 'width=200,height=100');
+    expect(window.open).toHaveBeenCalledWith('http://example.com', 'myWindow', 'width=200,height=100');
   });
 });

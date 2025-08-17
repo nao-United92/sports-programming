@@ -138,3 +138,23 @@ export function getCookie(name) {
   return undefined;
 }
 
+/**
+ * Reloads the current page.
+ */
+export function reloadPage() {
+  window.location.reload();
+}
+
+/**
+ * Opens a new browser window or tab.
+ *
+ * @param {string} url The URL to open.
+ * @param {string} [name='_blank'] The name of the browsing context (window name).
+ * @param {string} [features=''] A comma-separated string of window features.
+ * @returns {Window | null} A reference to the new window, or null if the call failed.
+ */
+export function openWindow(url, name = '_blank', features = '') {
+  return window.open(url, name, features);
+}
+
+
