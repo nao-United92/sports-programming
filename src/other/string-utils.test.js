@@ -1,4 +1,4 @@
-import { toSnakeCase, capitalize, kebabCase } from './string-utils.js';
+import { toSnakeCase, capitalize, kebabCase, truncate, slugify } from './string-utils.js';
 
 describe('toSnakeCase', () => {
   test('should convert camelCase to snake_case', () => {
@@ -51,5 +51,38 @@ describe('kebabCase', () => {
 
   test('should handle an empty string', () => {
     expect(kebabCase('')).toBe('');
+  });
+});
+
+describe('truncate', () => {
+  test('should not truncate a string shorter than the specified length', () => {
+    expect(truncate('hello', 10)).toBe('hello');
+  });
+
+  test('should truncate a string longer than the specified length', () => {
+    expect(truncate('hello world', 8)).toBe('hello...');
+  });
+
+  test('should use a custom suffix', () => {
+    expect(truncate('hello world', 8, '--')).toBe('hello --');
+  });
+
+  test('should handle edge cases', () => {
+    expect(truncate('hello', 5)).toBe('hello');
+    expect(truncate('hello', 4)).toBe('h...');
+  });
+});
+
+describe('slugify', () => {
+  test('should convert a string to a slug', () => {
+    expect(slugify('Hello World')).toBe('hello-world');
+  });
+
+  test('should remove special characters', () => {
+    expect(slugify('Hello World! 123')).toBe('hello-world-123');
+  });
+
+  test('should handle multiple spaces', () => {
+    expect(slugify('Hello   World')).toBe('hello-world');
   });
 });
