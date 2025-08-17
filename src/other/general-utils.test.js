@@ -1,4 +1,4 @@
-import { uuid, delay, isNil, noop, isEmpty, throttle, debounce } from './general-utils.js';
+import { uuid, delay, isNil, noop, isEmpty, throttle, debounce, randomString, isPlainObject, isPromise, pipe, compose } from './general-utils.js';
 
 describe('general-utils', () => {
   describe('uuid', () => {
@@ -223,3 +223,48 @@ describe('general-utils', () => {
     });
   });
 });
+
+describe('pipe', () => {
+  test('should pipe functions from left to right', () => {
+    const add1 = (x) => x + 1;
+    const multiply2 = (x) => x * 2;
+    const subtract3 = (x) => x - 3;
+
+    const piped = pipe(add1, multiply2, subtract3);
+    expect(piped(5)).toBe((5 + 1) * 2 - 3); // (6 * 2) - 3 = 12 - 3 = 9
+  });
+
+  test('should handle a single function', () => {
+    const add1 = (x) => x + 1;
+    const piped = pipe(add1);
+    expect(piped(5)).toBe(6);
+  });
+
+  test('should handle no functions', () => {
+    const piped = pipe();
+    expect(piped(5)).toBe(5); // Should return the initial argument
+  });
+});
+
+describe('compose', () => {
+  test('should compose functions from right to left', () => {
+    const add1 = (x) => x + 1;
+    const multiply2 = (x) => x * 2;
+    const subtract3 = (x) => x - 3;
+
+    const composed = compose(subtract3, multiply2, add1);
+    expect(composed(5)).toBe((5 + 1) * 2 - 3); // (6 * 2) - 3 = 12 - 3 = 9
+  });
+
+  test('should handle a single function', () => {
+    const add1 = (x) => x + 1;
+    const composed = compose(add1);
+    expect(composed(5)).toBe(6);
+  });
+
+  test('should handle no functions', () => {
+    const composed = compose();
+    expect(composed(5)).toBe(5); // Should return the initial argument
+  });
+});
+

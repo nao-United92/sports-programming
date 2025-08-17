@@ -139,3 +139,31 @@ export function isPlainObject(value) {
 export function isPromise(value) {
   return value && typeof value.then === 'function' && typeof value.catch === 'function';
 }
+
+/**
+ * Creates a new function that is the pipe of a list of functions.
+ * The functions are applied from left to right.
+ *
+ * @param {...Function} fns The functions to pipe.
+ * @returns {Function} A new function that is the pipe of the input functions.
+ */
+export function pipe(...fns) {
+  return function(...args) {
+    const [firstFn, ...restFns] = fns;
+    return restFns.reduce((acc, fn) => fn(acc), firstFn(...args));
+  };
+}
+
+/**
+ * Creates a new function that is the composition of a list of functions.
+ * The functions are applied from right to left.
+ *
+ * @param {...Function} fns The functions to compose.
+ * @returns {Function} A new function that is the composition of the input functions.
+ */
+export function compose(...fns) {
+  return function(...args) {
+    const [firstFn, ...restFns] = fns.reverse();
+    return restFns.reduce((acc, fn) => fn(acc), firstFn(...args));
+  };
+}
