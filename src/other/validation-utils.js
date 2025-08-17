@@ -1,27 +1,32 @@
-
 /**
  * Checks if a string is a valid email address.
  *
- * @param {string} str The string to check.
+ * @param {string} email The string to check.
  * @returns {boolean} True if the string is a valid email address, false otherwise.
  */
-export const isEmail = (str) => {
-  // A simple regex for email validation
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(str);
-};
+export function isEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
 
 /**
- * Checks if a string is a valid URL.
+ * Checks if a string is a strong password (e.g., at least 8 characters, contains uppercase, lowercase, number, and special character).
  *
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is a valid URL, false otherwise.
+ * @param {string} password The string to check.
+ * @returns {boolean} True if the string is a strong password, false otherwise.
  */
-export const isUrl = (str) => {
-  try {
-    new URL(str);
-    return true;
-  } catch (_) {
-    return false;
-  }
-};
+export function isStrongPassword(password) {
+  const minLength = 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+  return (
+    password.length >= minLength &&
+    hasUppercase &&
+    hasLowercase &&
+    hasNumber &&
+    hasSpecialChar
+  );
+}
