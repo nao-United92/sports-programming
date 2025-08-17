@@ -1,4 +1,4 @@
-import { randomHexColor, hexToRgb, rgbToHex, lighten, darken, rgbToHsl, hslToRgb, getContrastRatio, checkContrast } from './color-utils.js';
+import { randomHexColor, hexToRgb, rgbToHex, lighten, darken, rgbToHsl, hslToRgb, getContrastRatio, checkContrast, invertColor, rgbToCmyk } from './color-utils.js';
 
 describe('randomHexColor', () => {
   test('should return a valid hex color code', () => {
@@ -116,5 +116,68 @@ describe('checkContrast', () => {
 
   test('should return false for colors that do not meet AAA standard', () => {
     expect(checkContrast('#777777', '#ffffff', 'AAA')).toBe(false);
+  });
+});
+
+describe('invertColor', () => {
+  test('should invert a 6-digit hex color', () => {
+    expect(invertColor('#000000')).toBe('#ffffff');
+    expect(invertColor('#ffffff')).toBe('#000000');
+    expect(invertColor('#ff0000')).toBe('#00ffff');
+    expect(invertColor('#00ff00')).toBe('#ff00ff');
+    expect(invertColor('#0000ff')).toBe('#ffff00');
+  });
+
+  test('should invert a 3-digit hex color', () => {
+    expect(invertColor('#000')).toBe('#ffffff');
+    expect(invertColor('#f00')).toBe('#ff00ff');
+  });
+
+  test('should return null for invalid hex codes', () => {
+    expect(invertColor('000000')).toBeNull();
+    expect(invertColor('#12345')).toBeNull();
+    expect(invertColor('not a color')).toBeNull();
+  });
+});
+
+describe('rgbToCmyk', () => {
+  test('should convert RGB black to CMYK', () => {
+    const { c, m, y, k } = rgbToCmyk(0, 0, 0);
+    expect(c).toBeCloseTo(0);
+    expect(m).toBeCloseTo(0);
+    expect(y).toBeCloseTo(0);
+    expect(k).toBeCloseTo(1);
+  });
+
+  test('should convert RGB white to CMYK', () => {
+    const { c, m, y, k } = rgbToCmyk(255, 255, 255);
+    expect(c).toBeCloseTo(0);
+    expect(m).toBeCloseTo(0);
+    expect(y).toBeCloseTo(0);
+    expect(k).toBeCloseTo(0);
+  });
+
+  test('should convert RGB red to CMYK', () => {
+    const { c, m, y, k } = rgbToCmyk(255, 0, 0);
+    expect(c).toBeCloseTo(0);
+    expect(m).toBeCloseTo(1);
+    expect(y).toBeCloseTo(1);
+    expect(k).toBeCloseTo(0);
+  });
+
+  test('should convert RGB green to CMYK', () => {
+    const { c, m, y, k } = rgbToCmyk(0, 255, 0);
+    expect(c).toBeCloseTo(1);
+    expect(m).toBeCloseTo(0);
+    expect(y).toBeCloseTo(1);
+    expect(k).toBeCloseTo(0);
+  });
+
+  test('should convert RGB blue to CMYK', () => {
+    const { c, m, y, k } = rgbToCmyk(0, 0, 255);
+    expect(c).toBeCloseTo(1);
+    expect(m).toBeCloseTo(1);
+    expect(y).toBeCloseTo(0);
+    expect(k).toBeCloseTo(0);
   });
 });

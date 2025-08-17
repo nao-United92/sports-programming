@@ -185,3 +185,46 @@ export function checkContrast(color1, color2, level = 'AA') {
 
   return ratio >= requiredRatio;
 }
+
+/**
+ * Inverts a hexadecimal color.
+ * @param {string} hex The hex color code (e.g., "#RRGGBB").
+ * @returns {string} The inverted hex color code.
+ */
+export function invertColor(hex) {
+  if (typeof hex !== 'string' || !hex.startsWith('#')) {
+    return null; // Or throw an error, or return original
+  }
+  let color = hex;
+  if (color.length === 4) { // Handle shorthand hex
+    color = '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
+  }
+  const rgb = hexToRgb(color);
+  if (!rgb) {
+    return null;
+  }
+  const invertedR = (255 - rgb.r).toString(16).padStart(2, '0');
+  const invertedG = (255 - rgb.g).toString(16).padStart(2, '0');
+  const invertedB = (255 - rgb.b).toString(16).padStart(2, '0');
+  return `#${invertedR}${invertedG}${invertedB}`;
+}
+
+/**
+ * Converts an RGB color to CMYK.
+ * @param {number} r The red component (0-255).
+ * @param {number} g The green component (0-255).
+ * @param {number} b The blue component (0-255).
+ * @returns {{c: number, m: number, y: number, k: number}} An object with c, m, y, k values (0-1).
+ */
+export function rgbToCmyk(r, g, b) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+  const k = 1 - Math.max(r, g, b);
+  const c = (1 - r - k) / (1 - k) || 0;
+  const m = (1 - g - k) / (1 - k) || 0;
+  const y = (1 - b - k) / (1 - k) || 0;
+
+  return { c, m, y, k };
+}
