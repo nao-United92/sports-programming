@@ -1,33 +1,35 @@
-import { pick, omit } from './object-utils';
+import { pick, omit } from './object-utils.js';
 
-describe('Object Utilities', () => {
-  const data = { a: 1, b: 2, c: 3 };
-
-  describe('pick', () => {
-    it('should pick specified keys from an object', () => {
-      expect(pick(data, ['a', 'c'])).toEqual({ a: 1, c: 3 });
-    });
-
-    it('should return an empty object if no keys are picked', () => {
-      expect(pick(data, [])).toEqual({});
-    });
-
-    it('should handle non-existent keys gracefully', () => {
-      expect(pick(data, ['a', 'd'])).toEqual({ a: 1 });
-    });
+describe('pick', () => {
+  test('should return an object with picked properties', () => {
+    const obj = { a: 1, b: '2', c: true };
+    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: true });
   });
 
-  describe('omit', () => {
-    it('should omit specified keys from an object', () => {
-      expect(omit(data, ['a', 'c'])).toEqual({ b: 2 });
-    });
+  test('should return an empty object if keys do not exist', () => {
+    const obj = { a: 1, b: '2', c: true };
+    expect(pick(obj, ['d', 'e'])).toEqual({});
+  });
 
-    it('should return the original object if no keys are omitted', () => {
-      expect(omit(data, [])).toEqual(data);
-    });
+  test('should return an empty object for null or undefined input', () => {
+    expect(pick(null, ['a'])).toEqual({});
+    expect(pick(undefined, ['a'])).toEqual({});
+  });
+});
 
-    it('should handle non-existent keys gracefully', () => {
-      expect(omit(data, ['d', 'e'])).toEqual(data);
-    });
+describe('omit', () => {
+  test('should return an object with omitted properties', () => {
+    const obj = { a: 1, b: '2', c: true };
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: '2' });
+  });
+
+  test('should return the original object if keys do not exist', () => {
+    const obj = { a: 1, b: '2', c: true };
+    expect(omit(obj, ['d', 'e'])).toEqual({ a: 1, b: '2', c: true });
+  });
+
+  test('should return an empty object for null or undefined input', () => {
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
   });
 });
