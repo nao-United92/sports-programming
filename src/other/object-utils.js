@@ -32,3 +32,81 @@ export function omit(obj, keys) {
   });
   return newObj;
 }
+
+/**
+ * Creates a deep clone of an object or array.
+ *
+ * @param {any} obj The object or array to deep clone.
+ * @returns {any} The deep cloned object or array.
+ */
+export function deepClone(obj) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime());
+  }
+
+  if (obj instanceof RegExp) {
+    return new RegExp(obj);
+  }
+
+  const clone = Array.isArray(obj) ? [] : {};
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      clone[key] = deepClone(obj[key]);
+    }
+  }
+  return clone;
+}
+
+/**
+ * Performs a deep comparison between two values to determine if they are equivalent.
+ *
+ * @param {any} value The value to compare.
+ * @param {any} other The other value to compare.
+ * @returns {boolean} True if the values are equivalent, false otherwise.
+ */
+export function isEqual(value, other) {
+  if (value === other) {
+    return true;
+  }
+
+  if (value === null || typeof value !== 'object' ||
+      other === null || typeof other !== 'object') {
+    return false;
+  }
+
+  if (Array.isArray(value) !== Array.isArray(other)) {
+    return false;
+  }
+
+  if (Array.isArray(value)) {
+    if (value.length !== other.length) {
+      return false;
+    }
+    for (let i = 0; i < value.length; i++) {
+      if (!isEqual(value[i], other[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  const keysValue = Object.keys(value);
+  const keysOther = Object.keys(other);
+
+  if (keysValue.length !== keysOther.length) {
+    return false;
+  }
+
+  for (const key of keysValue) {
+    if (!keysOther.includes(key) || !isEqual(value[key], other[key])) {
+      return false;
+    }
+  }
+
+  return true;
+}
