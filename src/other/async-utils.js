@@ -84,3 +84,38 @@ export function waterfall(tasks) {
     return promise.then(result => task(result));
   }, Promise.resolve());
 }
+
+/**
+ * Converts a callback-style function to a function that returns a promise.
+ *
+ * @param {Function} fn The callback-style function to convert.
+ * @returns {Function} A function that returns a promise.
+ */
+export function promisify(fn) {
+  return function(...args) {
+    return new Promise((resolve, reject) => {
+      fn(...args, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(result);
+      });
+    });
+  };
+}
+
+/**
+ * A polyfill for Promise.allSettled.
+ *
+ * @param {Array<Promise>} promises An array of promises.
+ * @returns {Promise<Array<{status: string, value?: any, reason?: any}>>} A promise that resolves with an array of objects that each describes the outcome of each promise.
+ */
+export function allSettled(promises) {
+  const wrappedPromises = promises.map(p =>
+    Promise.resolve(p).then(
+      val => ({ status: 'fulfilled', value: val }),
+      err => ({ status: 'rejected', reason: err })
+    )
+  );
+  return Promise.all(wrappedPromises);
+}

@@ -1,4 +1,4 @@
-import { delay, retry, timeout, sleep, parallel, waterfall } from './async-utils.js';
+import { delay, retry, timeout, sleep, parallel, waterfall, promisify, allSettled } from './async-utils.js';
 
 describe('async-utils', () => {
   it('should delay execution', async () => {
@@ -70,5 +70,39 @@ describe('waterfall', () => {
     expect(result).toBe(2);
     expect(task1).toHaveBeenCalled();
     expect(task2).toHaveBeenCalledWith(1);
+  });
+});
+
+describe('promisify', () => {
+  test('should resolve with the result of the callback', async () => {
+    const callbackStyleFn = (cb) => {
+      cb(null, 'Success');
+    };
+    const promisedFn = promisify(callbackStyleFn);
+    await expect(promisedFn()).resolves.toBe('Success');
+  });
+
+  test('should reject with the error of the callback', async () => {
+    const callbackStyleFn = (cb) => {
+      cb(new Error('Failure'));
+    };
+    const promisedFn = promisify(callbackStyleFn);
+    await expect(promisedFn()).rejects.toThrow('Failure');
+  });
+});
+
+describe('allSettled', () => {
+  test('should resolve with an array of settled promises', async () => {
+    const promises = [
+      Promise.resolve(1),
+      Promise.reject('Error'),
+      Promise.resolve(3)
+    ];
+    const results = await allSettled(promises);
+    expect(results).toEqual([
+      { status: 'fulfilled', value: 1 },
+      { status: 'rejected', reason: 'Error' },
+      { status: 'fulfilled', value: 3 }
+    ]);
   });
 });
