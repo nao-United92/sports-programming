@@ -66,3 +66,25 @@ export const getCookies = () => {
     return cookies;
   }, {});
 };
+
+/**
+ * Updates the value of an existing cookie.
+ *
+ * @param {string} name The name of the cookie to update.
+ * @param {string} newValue The new value for the cookie.
+ * @param {number} days The number of days until the cookie expires.
+ */
+export function updateCookie(name, newValue, days) {
+  setCookie(name, newValue, days);
+}
+
+/**
+ * Deletes all cookies for the current domain.
+ */
+export function clearAllCookies() {
+  document.cookie.split(';').forEach(cookie => {
+    const eqPos = cookie.indexOf('=');
+    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+  });
+}

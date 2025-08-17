@@ -1,4 +1,4 @@
-import { setCookie, getCookie, deleteCookie } from './cookie-utils.js';
+import { setCookie, getCookie, deleteCookie, cookieExists, getCookies, updateCookie, clearAllCookies } from './cookie-utils.js';
 
 describe('cookieUtils', () => {
   const MOCK_COOKIE_NAME = 'testCookie';
@@ -89,6 +89,23 @@ describe('cookieUtils', () => {
 
     it('should return an empty object if there are no cookies', () => {
       expect(getCookies()).toEqual({});
+    });
+  });
+
+  describe('updateCookie', () => {
+    it('should update the value of an existing cookie', () => {
+      setCookie('testCookie', 'oldValue');
+      updateCookie('testCookie', 'newValue');
+      expect(getCookie('testCookie')).toBe('newValue');
+    });
+  });
+
+  describe('clearAllCookies', () => {
+    it('should clear all cookies', () => {
+      setCookie('cookie1', 'value1');
+      setCookie('cookie2', 'value2');
+      clearAllCookies();
+      expect(document.cookie).toBe('');
     });
   });
 });
