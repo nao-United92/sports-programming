@@ -1,4 +1,4 @@
-import { isEven, isOdd, random } from './number-utils';
+import { isEven, isOdd, random, clamp, inRange } from './number-utils';
 
 describe('Number Utilities', () => {
   describe('isEven', () => {
@@ -35,5 +35,25 @@ describe('Number Utilities', () => {
       expect(result).toBeGreaterThanOrEqual(min);
       expect(result).toBeLessThanOrEqual(max);
     });
+  });
+});
+
+describe('clamp', () => {
+  test('should clamp a number within the bounds', () => {
+    expect(clamp(10, 0, 5)).toBe(5);
+    expect(clamp(-10, 0, 5)).toBe(0);
+    expect(clamp(3, 0, 5)).toBe(3);
+  });
+});
+
+describe('inRange', () => {
+  test('should return true if number is in range', () => {
+    expect(inRange(3, 0, 5)).toBe(true);
+    expect(inRange(0, 0, 5)).toBe(true);
+  });
+
+  test('should return false if number is out of range', () => {
+    expect(inRange(5, 0, 5)).toBe(false);
+    expect(inRange(-1, 0, 5)).toBe(false);
   });
 });
