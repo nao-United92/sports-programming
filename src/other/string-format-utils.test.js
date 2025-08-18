@@ -1,33 +1,40 @@
-import { capitalizeWords, reverseString } from './string-format-utils';
+import { truncate, slugify } from './string-format-utils';
 
 describe('String Format Utilities', () => {
-  describe('capitalizeWords', () => {
-    it('should capitalize the first letter of each word', () => {
-      expect(capitalizeWords('hello world')).toBe('Hello World');
-      expect(capitalizeWords('foo bar baz')).toBe('Foo Bar Baz');
+  describe('truncate', () => {
+    it('should not truncate a string shorter than the specified length', () => {
+      expect(truncate('hello', 10)).toBe('hello');
     });
 
-    it('should handle single word strings', () => {
-      expect(capitalizeWords('hello')).toBe('Hello');
+    it('should truncate a string longer than the specified length', () => {
+      expect(truncate('hello world', 8)).toBe('hello...');
     });
 
-    it('should handle empty strings', () => {
-      expect(capitalizeWords('')).toBe('');
+    it('should use a custom omission string', () => {
+      expect(truncate('hello world', 8, '...')).toBe('hello...');
+    });
+
+    it('should handle edge cases where length is less than or equal to omission length', () => {
+      expect(truncate('hello world', 3)).toBe('...');
+      expect(truncate('hello world', 2)).toBe('...');
     });
   });
 
-  describe('reverseString', () => {
-    it('should reverse a string', () => {
-      expect(reverseString('hello')).toBe('olleh');
-      expect(reverseString('world')).toBe('dlrow');
+  describe('slugify', () => {
+    it('should convert a simple string to a slug', () => {
+      expect(slugify('Hello World')).toBe('hello-world');
     });
 
-    it('should handle empty strings', () => {
-      expect(reverseString('')).toBe('');
+    it('should handle multiple spaces', () => {
+      expect(slugify('  Hello   World  ')).toBe('hello-world');
     });
 
-    it('should handle strings with special characters', () => {
-      expect(reverseString('!@#$%')).toBe('%$#@!');
+    it('should remove special characters', () => {
+      expect(slugify('Hello World!@#$%^&*()')).toBe('hello-world');
+    });
+
+    it('should handle multiple hyphens', () => {
+      expect(slugify('Hello--World')).toBe('hello-world');
     });
   });
 });

@@ -1,20 +1,34 @@
-
 /**
- * Capitalizes the first letter of each word in a string.
+ * Truncates a string if it's longer than the given maximum string length.
+ * The last characters of the truncated string are replaced with the omission string which defaults to "...".
  *
- * @param {string} str The string to capitalize.
- * @returns {string} The string with each word capitalized.
+ * @param {string} string The string to truncate.
+ * @param {number} length The maximum string length.
+ * @param {string} [omission='...'] The string to indicate text is omitted.
+ * @returns {string} Returns the truncated string.
  */
-export const capitalizeWords = (str) => {
-  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+export const truncate = (string, length, omission = '...') => {
+  if (string.length <= length) {
+    return string;
+  }
+  if (length <= omission.length) {
+    return omission;
+  }
+  return string.slice(0, length - omission.length) + omission;
 };
 
 /**
- * Reverses a string.
+ * Converts a string into a URL-friendly slug.
  *
- * @param {string} str The string to reverse.
- * @returns {string} The reversed string.
+ * @param {string} string The string to convert.
+ * @returns {string} Returns the slug.
  */
-export const reverseString = (str) => {
-  return str.split('').reverse().join('');
+export const slugify = (string) => {
+  return string
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+    .replace(/\-\-+/g, '-'); // Replace multiple - with single -
 };
