@@ -1,4 +1,4 @@
-import { pick, omit } from './object-utils';
+import { pick, omit, isEmptyObject } from './object-utils';
 
 describe('pick', () => {
   const obj = { a: 1, b: 2, c: 3, d: 4 };
@@ -51,5 +51,42 @@ describe('omit', () => {
 
   test('should return an empty object for an empty input object', () => {
     expect(omit({}, ['a'])).toEqual({});
+  });
+});
+
+describe('isEmptyObject', () => {
+  test('should return true for an empty object', () => {
+    expect(isEmptyObject({})).toBe(true);
+  });
+
+  test('should return false for a non-empty object', () => {
+    expect(isEmptyObject({ a: 1 })).toBe(false);
+  });
+
+  test('should return false for an object with inherited properties', () => {
+    function Foo() { this.a = 1; }
+    function Bar() {}
+    Bar.prototype = new Foo();
+    expect(isEmptyObject(new Bar())).toBe(false);
+  });
+
+  test('should return false for an array', () => {
+    expect(isEmptyObject([])).toBe(false);
+  });
+
+  test('should return false for null', () => {
+    expect(isEmptyObject(null)).toBe(false);
+  });
+
+  test('should return false for undefined', () => {
+    expect(isEmptyObject(undefined)).toBe(false);
+  });
+
+  test('should return false for a string', () => {
+    expect(isEmptyObject('string')).toBe(false);
+  });
+
+  test('should return false for a number', () => {
+    expect(isEmptyObject(123)).toBe(false);
   });
 });

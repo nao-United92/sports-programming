@@ -32,3 +32,12 @@ export function omit(obj, keys) {
   });
   return newObj;
 }
+
+/**
+ * Checks if an object is empty (has no enumerable own properties).
+ * @param {object} obj The object to check.
+ * @returns {boolean} True if the object is empty, false otherwise.
+ */
+export function isEmptyObject(obj) {
+  return Object.keys(obj).length === 0 && obj.constructor === Object;
+}
