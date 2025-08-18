@@ -1,4 +1,4 @@
-import { isEven, isOdd, random, clamp, inRange } from './number-utils';
+import { isEven, isOdd, random, clamp, inRange, sum } from './number-utils';
 
 describe('Number Utilities', () => {
   describe('isEven', () => {
@@ -55,5 +55,25 @@ describe('inRange', () => {
   test('should return false if number is out of range', () => {
     expect(inRange(5, 0, 5)).toBe(false);
     expect(inRange(-1, 0, 5)).toBe(false);
+  });
+});
+
+describe('sum', () => {
+  test('should return the sum of numbers in an array', () => {
+    expect(sum([1, 2, 3])).toBe(6);
+    expect(sum([10, -5, 2])).toBe(7);
+    expect(sum([0, 0, 0])).toBe(0);
+  });
+
+  test('should return 0 for an empty array', () => {
+    expect(sum([])).toBe(0);
+  });
+
+  test('should handle non-array input gracefully', () => {
+    expect(sum(null)).toBe(0);
+    expect(sum(undefined)).toBe(0);
+    expect(sum('string')).toBe(0);
+    expect(sum(123)).toBe(0);
+    expect(sum({})).toBe(0);
   });
 });

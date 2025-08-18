@@ -46,3 +46,16 @@ export function clamp(number, lower, upper) {
 export function inRange(number, start, end) {
   return number >= start && number < end;
 }
+
+/**
+ * Calculates the sum of all numbers in an array.
+ *
+ * @param {Array<number>} numbers The array of numbers to sum.
+ * @returns {number} The sum of the numbers.
+ */
+export function sum(numbers) {
+  if (!Array.isArray(numbers)) {
+    return 0;
+  }
+  return numbers.reduce((acc, num) => acc + num, 0);
+}
