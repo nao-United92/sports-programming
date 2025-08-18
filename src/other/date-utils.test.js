@@ -1,4 +1,4 @@
-import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth, isWeekday, isDateInRange, daysBetween, endOfMonth } from './date-utils.js';
+import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth, isWeekday, isDateInRange, daysBetween, endOfMonth, getWeekNumber } from './date-utils.js';
 
 describe('date-utils', () => {
   describe('formatDate', () => {
@@ -433,6 +433,22 @@ describe('date-utils', () => {
 
     test('should return null for an invalid date', () => {
       expect(endOfMonth(new Date('invalid'))).toBeNull();
+    });
+  });
+
+  describe('getWeekNumber', () => {
+    test('should return the correct week number for a given date', () => {
+      expect(getWeekNumber(new Date('2023-01-01'))).toBe(52); // Sunday, Jan 1, 2023 is in week 52 of 2022
+      expect(getWeekNumber(new Date('2023-01-02'))).toBe(1); // Monday, Jan 2, 2023 is in week 1 of 2023
+      expect(getWeekNumber(new Date('2023-12-31'))).toBe(52); // Sunday, Dec 31, 2023 is in week 52 of 2023
+      expect(getWeekNumber(new Date('2024-01-01'))).toBe(1); // Monday, Jan 1, 2024 is in week 1 of 2024
+      expect(getWeekNumber(new Date('2024-12-31'))).toBe(1); // Tuesday, Dec 31, 2024 is in week 1 of 2025
+    });
+
+    test('should return NaN for invalid dates', () => {
+      expect(getWeekNumber(new Date('invalid'))).toBeNaN();
+      expect(getWeekNumber(null)).toBeNaN();
+      expect(getWeekNumber(undefined)).toBeNaN();
     });
   });
 });

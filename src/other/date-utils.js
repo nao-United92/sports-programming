@@ -285,3 +285,19 @@ export function endOfMonth(date) {
   return new Date(year, month + 1, 0);
 }
 
+/**
+ * Returns the week number for a given date.
+ * @param {Date} date The date to get the week number from.
+ * @returns {number} The week number (1-53).
+ */
+export function getWeekNumber(date) {
+  if (!(date instanceof Date) || isNaN(date)) {
+    return NaN;
+  }
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
