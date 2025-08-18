@@ -136,3 +136,15 @@ export function createElementWithHTML(tagName, attributes = {}, innerHTML = '') 
   element.innerHTML = innerHTML;
   return element;
 }
+
+/**
+ * Removes all child nodes from a given DOM element.
+ * @param {HTMLElement} element The HTMLElement from which to remove children.
+ */
+export function clearChildren(element) {
+  if (element) {
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+  }
+}

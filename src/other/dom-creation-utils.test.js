@@ -1,4 +1,4 @@
-import { createElement, appendChild, appendChildren, removeElement, replaceElement, wrapElement, insertAfter, insertBefore } from './dom-creation-utils.js';
+import { createElement, appendChild, appendChildren, removeElement, replaceElement, wrapElement, insertAfter, insertBefore, createElementWithHTML, clearChildren } from './dom-creation-utils.js';
 
 describe('dom-creation-utils', () => {
   let container;
@@ -250,6 +250,31 @@ describe('dom-creation-utils', () => {
       const el = createElementWithHTML('a', {}, 'Link');
       expect(el.tagName).toBe('A');
       expect(el.innerHTML).toBe('Link');
+    });
+  });
+
+  describe('clearChildren', () => {
+    test('should remove all children from an element', () => {
+      const parent = createElement('div');
+      parent.appendChild(createElement('span'));
+      parent.appendChild(createElement('p'));
+      expect(parent.children.length).toBe(2);
+
+      clearChildren(parent);
+      expect(parent.children.length).toBe(0);
+    });
+
+    test('should do nothing if the element has no children', () => {
+      const parent = createElement('div');
+      expect(parent.children.length).toBe(0);
+
+      clearChildren(parent);
+      expect(parent.children.length).toBe(0);
+    });
+
+    test('should do nothing if the element is null or undefined', () => {
+      expect(() => clearChildren(null)).not.toThrow();
+      expect(() => clearChildren(undefined)).not.toThrow();
     });
   });
 });
