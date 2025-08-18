@@ -1,37 +1,89 @@
-import { setLocalStorage, getLocalStorage } from './local-storage-utils.js';
+import { setLocalStorageItem, getLocalStorageItem } from './local-storage-utils';
 
-describe('localStorageUtils', () => {
+describe('Local Storage Utilities', () => {
+  // Mock localStorage
+  const localStorageMock = (() => {
+    let store = {};
+    return {
+      __store: store, // Expose for direct access in tests
+      getItem: jest.fn((key) => store[key] || null),
+      setItem: jest.fn((key, value) => {
+        store[key] = value.toString();
+      }),
+      removeItem: jest.fn((key) => {
+        delete store[key];
+      }),
+      clear: jest.fn(() => {
+        store = {};
+      }),
+    };
+  })();
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+    });
+  });
+
   beforeEach(() => {
-    localStorage.clear();
-  });
-
-  describe('setLocalStorage', () => {
-    it('should set a value in local storage', () => {
-      setLocalStorage('testKey', 'testValue');
-      expect(localStorage.getItem('testKey')).toBe(JSON.stringify('testValue'));
-    });
-
-    it('should set an object in local storage', () => {
-      const testObject = { a: 1, b: '2' };
-      setLocalStorage('testObject', testObject);
-      expect(localStorage.getItem('testObject')).toBe(JSON.stringify(testObject));
+    localStorageMock.clear();
+    localStorageMock.getItem.mockClear();
+    localStorageMock.setItem.mockClear();
+    // setItemのモックをデフォルトの実装に戻す
+    localStorageMock.setItem.mockImplementation((key, value) => {
+      localStorageMock.__store[key] = JSON.stringify(value); // JSON.stringify を追加
     });
   });
 
-  describe('getLocalStorage', () => {
-    it('should get a value from local storage', () => {
-      localStorage.setItem('testKey', JSON.stringify('testValue'));
-      expect(getLocalStorage('testKey')).toBe('testValue');
+  describe('setLocalStorageItem', () => {
+    it('should set a string item', () => {
+      setLocalStorageItem('testKey', 'testValue');
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('testKey', JSON.stringify('testValue'));
     });
 
-    it('should get an object from local storage', () => {
-      const testObject = { a: 1, b: '2' };
-      localStorage.setItem('testObject', JSON.stringify(testObject));
-      expect(getLocalStorage('testObject')).toEqual(testObject);
+    it('should set an object item', () => {
+      const obj = { a: 1, b: 'hello' };
+      setLocalStorageItem('testObject', obj);
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('testObject', JSON.stringify(obj));
     });
 
-    it('should return null if the key does not exist', () => {
-      expect(getLocalStorage('nonExistentKey')).toBeNull();
+    it('should return true on success', () => {
+      expect(setLocalStorageItem('key', 'value')).toBe(true);
+    });
+
+    it('should return false and log error on failure', () => {
+      localStorageMock.setItem.mockImplementation(() => {
+        throw new Error('Quota exceeded');
+      });
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      expect(setLocalStorageItem('key', 'value')).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe('getLocalStorageItem', () => {
+    it('should get a string item', () => {
+      localStorageMock.setItem('testKey', JSON.stringify('testValue'));
+      expect(getLocalStorageItem('testKey')).toBe('testValue');
+    });
+
+    it('should get an object item', () => {
+      const obj = { a: 1, b: 'hello' };
+      localStorageMock.setItem('testObject', JSON.stringify(obj));
+      expect(getLocalStorageItem('testObject')).toEqual(obj);
+    });
+
+    it('should return null if item does not exist', () => {
+      expect(getLocalStorageItem('nonExistentKey')).toBeNull();
+    });
+
+    it('should return null and log error if item is invalid JSON', () => {
+      localStorageMock.setItem('invalidJson', 'not a json');
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      expect(getLocalStorageItem('invalidJson')).toBeNull();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
   });
 });
