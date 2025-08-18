@@ -1,4 +1,4 @@
-import { shuffle } from './array-shuffle-utils.js';
+import { shuffle, chunkArray } from './array-shuffle-utils.js';
 
 describe('Array Shuffle Utilities', () => {
   describe('shuffle', () => {
@@ -38,6 +38,41 @@ describe('Array Shuffle Utilities', () => {
       expect(shuffle('string')).toEqual([]);
       expect(shuffle(123)).toEqual([]);
       expect(shuffle({})).toEqual([]);
+    });
+  });
+
+  describe('chunkArray', () => {
+    test('should chunk an array into smaller arrays of specified size', () => {
+      const array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      expect(chunkArray(array, 3)).toEqual([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+    });
+
+    test('should handle a size that does not evenly divide the array', () => {
+      const array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      expect(chunkArray(array, 4)).toEqual([[1, 2, 3, 4], [5, 6, 7, 8], [9]]);
+    });
+
+    test('should return an empty array if input array is empty', () => {
+      expect(chunkArray([], 3)).toEqual([]);
+    });
+
+    test('should return an empty array if size is zero or negative', () => {
+      const array = [1, 2, 3];
+      expect(chunkArray(array, 0)).toEqual([]);
+      expect(chunkArray(array, -1)).toEqual([]);
+    });
+
+    test('should return an empty array if input is not an array', () => {
+      expect(chunkArray(null, 3)).toEqual([]);
+      expect(chunkArray(undefined, 3)).toEqual([]);
+      expect(chunkArray('string', 3)).toEqual([]);
+      expect(chunkArray(123, 3)).toEqual([]);
+      expect(chunkArray({}, 3)).toEqual([]);
+    });
+
+    test('should return the original array as a single chunk if size is larger than array length', () => {
+      const array = [1, 2, 3];
+      expect(chunkArray(array, 5)).toEqual([[1, 2, 3]]);
     });
   });
 });
