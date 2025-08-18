@@ -1,4 +1,4 @@
-import { toSnakeCase, capitalize, kebabCase, truncate, slugify } from './string-utils.js';
+import { toSnakeCase, capitalize, kebabCase, truncate, slugify, reverseString } from './string-utils.js';
 
 describe('toSnakeCase', () => {
   test('should convert camelCase to snake_case', () => {
@@ -84,5 +84,33 @@ describe('slugify', () => {
 
   test('should handle multiple spaces', () => {
     expect(slugify('Hello   World')).toBe('hello-world');
+  });
+});
+
+describe('reverseString', () => {
+  test('should reverse a simple string', () => {
+    expect(reverseString('hello')).toBe('olleh');
+  });
+
+  test('should reverse a string with spaces', () => {
+    expect(reverseString('hello world')).toBe('dlrow olleh');
+  });
+
+  test('should handle an empty string', () => {
+    expect(reverseString('')).toBe('');
+  });
+
+  test('should handle a string with special characters', () => {
+    expect(reverseString('!@#$%^&*()')).toBe(')(*&^%$#@!');
+  });
+
+  test('should handle numbers in a string', () => {
+    expect(reverseString('12345')).toBe('54321');
+  });
+
+  test('should return an empty string if input is not a string', () => {
+    expect(reverseString(123)).toBe('');
+    expect(reverseString(null)).toBe('');
+    expect(reverseString(undefined)).toBe('');
   });
 });

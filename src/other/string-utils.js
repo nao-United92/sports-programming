@@ -66,3 +66,16 @@ export const slugify = (str) => {
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '');
 };
+
+/**
+ * Reverses a given string.
+ *
+ * @param {string} str The string to reverse.
+ * @returns {string} The reversed string.
+ */
+export const reverseString = (str) => {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.split('').reverse().join('');
+};
