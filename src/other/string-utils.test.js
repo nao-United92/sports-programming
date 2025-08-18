@@ -1,4 +1,4 @@
-import { toSnakeCase, capitalize, kebabCase, truncate, slugify, reverseString } from './string-utils.js';
+import { toSnakeCase, capitalize, kebabCase, truncate, slugify, reverseString, isPalindrome } from './string-utils.js';
 
 describe('toSnakeCase', () => {
   test('should convert camelCase to snake_case', () => {
@@ -112,5 +112,37 @@ describe('reverseString', () => {
     expect(reverseString(123)).toBe('');
     expect(reverseString(null)).toBe('');
     expect(reverseString(undefined)).toBe('');
+  });
+});
+
+describe('isPalindrome', () => {
+  test('should return true for a palindrome string', () => {
+    expect(isPalindrome('madam')).toBe(true);
+    expect(isPalindrome('A man, a plan, a canal: Panama')).toBe(true);
+    expect(isPalindrome('racecar')).toBe(true);
+  });
+
+  test('should return false for a non-palindrome string', () => {
+    expect(isPalindrome('hello')).toBe(false);
+    expect(isPalindrome('world')).toBe(false);
+  });
+
+  test('should handle empty string', () => {
+    expect(isPalindrome('')).toBe(true);
+  });
+
+  test('should handle single character string', () => {
+    expect(isPalindrome('a')).toBe(true);
+  });
+
+  test('should ignore case and non-alphanumeric characters', () => {
+    expect(isPalindrome('No lemon, no melon')).toBe(true);
+    expect(isPalindrome('Madam, I'm Adam')).toBe(true);
+  });
+
+  test('should return false for non-string inputs', () => {
+    expect(isPalindrome(123)).toBe(false);
+    expect(isPalindrome(null)).toBe(false);
+    expect(isPalindrome(undefined)).toBe(false);
   });
 });
