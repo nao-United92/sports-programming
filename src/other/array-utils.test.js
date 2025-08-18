@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy, isEqualArray } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -642,5 +642,33 @@ describe('sortBy', () => {
   test('should handle non-array inputs gracefully', () => {
     expect(sortBy(null, 'age')).toEqual([]);
     expect(sortBy(undefined, 'age')).toEqual([]);
+  });
+});
+
+describe('isEqualArray', () => {
+  test('should return true for two equal arrays', () => {
+    expect(isEqualArray([1, 2, 3], [1, 2, 3])).toBe(true);
+  });
+
+  test('should return false for arrays with different elements', () => {
+    expect(isEqualArray([1, 2, 3], [1, 2, 4])).toBe(false);
+  });
+
+  test('should return false for arrays with different lengths', () => {
+    expect(isEqualArray([1, 2, 3], [1, 2])).toBe(false);
+  });
+
+  test('should return false for arrays with same elements but different order', () => {
+    expect(isEqualArray([1, 2, 3], [3, 2, 1])).toBe(false);
+  });
+
+  test('should return true for two empty arrays', () => {
+    expect(isEqualArray([], [])).toBe(true);
+  });
+
+  test('should return false for non-array inputs', () => {
+    expect(isEqualArray(null, [1, 2])).toBe(false);
+    expect(isEqualArray([1, 2], undefined)).toBe(false);
+    expect(isEqualArray(123, 456)).toBe(false);
   });
 });
