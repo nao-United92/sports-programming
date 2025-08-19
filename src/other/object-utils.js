@@ -1,13 +1,17 @@
 /**
- * Checks if an object is empty (has no enumerable own properties).
- * @param {object} obj The object to check.
- * @returns {boolean} True if the object is empty, false otherwise.
+ * Checks if a value is a plain object (i.e., an object created by the Object constructor or one with a null prototype).
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a plain object, false otherwise.
  */
-function isEmptyObject(obj) {
-  if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {
-    return false; // null, non-objects, and arrays are not considered empty objects in this context
+function isPlainObject(value) {
+  if (typeof value !== 'object' || value === null) {
+    return false;
   }
-  return Object.keys(obj).length === 0;
+
+  const proto = Object.getPrototypeOf(value);
+  return proto === null || proto === Object.prototype;
 }
 
-module.exports = { isEmptyObject };
+module.exports = {
+  isPlainObject,
+};
