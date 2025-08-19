@@ -1,55 +1,74 @@
 /**
- * 指定されたDOM要素の属性の値を安全に取得します。
- * @param {HTMLElement} element - 属性を取得するDOM要素。
- * @param {string} attributeName - 取得する属性の名前。
- * @returns {string | null} 属性の値。要素が存在しない、または属性が存在しない場合はnull。
+ * Gets the value of a specified attribute from an HTML element.
+ * @param {HTMLElement} element The HTML element.
+ * @param {string} attributeName The name of the attribute.
+ * @returns {string|null} The attribute value, or null if not found.
  */
-export function getAttribute(element, attributeName) {
-  if (!(element instanceof HTMLElement)) {
-    console.warn('Invalid element provided to getAttribute.', element);
+function getAttribute(element, attributeName) {
+  if (!element || typeof element.getAttribute !== 'function') {
     return null;
   }
   return element.getAttribute(attributeName);
 }
 
 /**
- * Retrieves a data attribute value from an element.
- * @param {HTMLElement} element The element to retrieve the data attribute from.
- * @param {string} key The key of the data attribute (e.g., 'id' for data-id).
- * @returns {string | null} The value of the data attribute, or null if not found.
+ * Checks if an HTML element has a specified attribute.
+ * @param {HTMLElement} element The HTML element.
+ * @param {string} attributeName The name of the attribute.
+ * @returns {boolean} True if the element has the attribute, false otherwise.
  */
-export function getData(element, key) {
-  if (!(element instanceof HTMLElement)) {
-    console.warn('Invalid element provided to getData.', element);
-    return null;
-  }
-  return element.dataset[key];
-}
-
-/**
- * Sets a data attribute value on an element.
- * @param {HTMLElement} element The element to set the data attribute on.
- * @param {string} key The key of the data attribute.
- * @param {string} value The value to set.
- */
-export function setData(element, key, value) {
-  if (!(element instanceof HTMLElement)) {
-    console.warn('Invalid element provided to setData.', element);
-    return;
-  }
-  element.dataset[key] = value;
-}
-
-/**
- * Checks if an element has a data attribute.
- * @param {HTMLElement} element The element to check.
- * @param {string} key The key of the data attribute.
- * @returns {boolean} True if the element has the data attribute, false otherwise.
- */
-export function hasData(element, key) {
-  if (!(element instanceof HTMLElement)) {
-    console.warn('Invalid element provided to hasData.', element);
+function hasAttribute(element, attributeName) {
+  if (!element || typeof element.hasAttribute !== 'function') {
     return false;
   }
-  return Object.prototype.hasOwnProperty.call(element.dataset, key);
+  return element.hasAttribute(attributeName);
 }
+
+/**
+ * Sets the value of a specified attribute for an HTML element.
+ * @param {HTMLElement} element The HTML element.
+ * @param {string} attributeName The name of the attribute.
+ * @param {string} value The value to set.
+ */
+function setAttribute(element, attributeName, value) {
+  if (!element || typeof element.setAttribute !== 'function') {
+    return;
+  }
+  element.setAttribute(attributeName, value);
+}
+
+/**
+ * Removes a specified attribute from an HTML element.
+ * @param {HTMLElement} element The HTML element.
+ * @param {string} attributeName The name of the attribute.
+ */
+function removeAttribute(element, attributeName) {
+  if (!element || typeof element.removeAttribute !== 'function') {
+    return;
+  }
+  element.removeAttribute(attributeName);
+}
+
+/**
+ * Sets multiple attributes for an HTML element from an object.
+ * @param {HTMLElement} element The HTML element.
+ * @param {Object<string, string>} attributes An object where keys are attribute names and values are attribute values.
+ */
+function setAttributes(element, attributes) {
+  if (!element || typeof element.setAttribute !== 'function' || typeof attributes !== 'object' || attributes === null) {
+    return;
+  }
+  for (const key in attributes) {
+    if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+      element.setAttribute(key, attributes[key]);
+    }
+  }
+}
+
+module.exports = {
+  getAttribute,
+  hasAttribute,
+  setAttribute,
+  removeAttribute,
+  setAttributes
+};
