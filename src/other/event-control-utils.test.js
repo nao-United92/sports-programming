@@ -1,30 +1,49 @@
-import { once, stop } from './event-control-utils';
+const { preventEventDefault, stopEventPropagation, stopEvent } = require('./event-control-utils.js');
 
 describe('Event Control Utilities', () => {
-  describe('once', () => {
-    it('should call the listener only once', () => {
-      const target = new EventTarget();
-      const listener = jest.fn();
-      
-      once(target, 'click', listener);
-      
-      target.dispatchEvent(new Event('click'));
-      target.dispatchEvent(new Event('click'));
-      
-      expect(listener).toHaveBeenCalledTimes(1);
+  let mockEvent;
+
+  beforeEach(() => {
+    mockEvent = {
+      preventDefault: jest.fn(),
+      stopPropagation: jest.fn()
+    };
+  });
+
+  describe('preventEventDefault', () => {
+    test('should call preventDefault on the event object', () => {
+      preventEventDefault(mockEvent);
+      expect(mockEvent.preventDefault).toHaveBeenCalledTimes(1);
+    });
+
+    test('should not throw error if event or preventDefault is invalid', () => {
+      expect(() => preventEventDefault(null)).not.toThrow();
+      expect(() => preventEventDefault({})).not.toThrow();
     });
   });
 
-  describe('stop', () => {
-    it('should call preventDefault and stopPropagation', () => {
-      const event = new Event('click', { bubbles: true, cancelable: true });
-      event.preventDefault = jest.fn();
-      event.stopPropagation = jest.fn();
-      
-      stop(event);
-      
-      expect(event.preventDefault).toHaveBeenCalledTimes(1);
-      expect(event.stopPropagation).toHaveBeenCalledTimes(1);
+  describe('stopEventPropagation', () => {
+    test('should call stopPropagation on the event object', () => {
+      stopEventPropagation(mockEvent);
+      expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(1);
+    });
+
+    test('should not throw error if event or stopPropagation is invalid', () => {
+      expect(() => stopEventPropagation(null)).not.toThrow();
+      expect(() => stopEventPropagation({})).not.toThrow();
+    });
+  });
+
+  describe('stopEvent', () => {
+    test('should call preventDefault and stopPropagation on the event object', () => {
+      stopEvent(mockEvent);
+      expect(mockEvent.preventDefault).toHaveBeenCalledTimes(1);
+      expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(1);
+    });
+
+    test('should not throw error if event is invalid', () => {
+      expect(() => stopEvent(null)).not.toThrow();
+      expect(() => stopEvent({})).not.toThrow();
     });
   });
 });
