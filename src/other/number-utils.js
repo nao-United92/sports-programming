@@ -1,61 +1,18 @@
 /**
- * Checks if a number is even.
- *
- * @param {number} num The number to check.
- * @returns {boolean} True if the number is even, false otherwise.
+ * Rounds a number to a specified number of decimal places.
+ * @param {number} num The number to round.
+ * @param {number} decimalPlaces The number of decimal places to round to.
+ * @returns {number} The rounded number.
  */
-export const isEven = (num) => num % 2 === 0;
-
-/**
- * Checks if a number is odd.
- *
- * @param {number} num The number to check.
- * @returns {boolean} True if the number is odd, false otherwise.
- */
-export const isOdd = (num) => num % 2 !== 0;
-
-/**
- * Generates a random number within a given range.
- *
- * @param {number} min The minimum value of the range.
- * @param {number} max The maximum value of the range.
- * @returns {number} A random number between min and max (inclusive).
- */
-export const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-/**
- * Clamps `number` within the inclusive `lower` and `upper` bounds.
- *
- * @param {number} number The number to clamp.
- * @param {number} lower The lower bound.
- * @param {number} upper The upper bound.
- * @returns {number} Returns the clamped number.
- */
-export function clamp(number, lower, upper) {
-  return Math.max(lower, Math.min(number, upper));
-}
-
-/**
- * Checks if `number` is between `start` and `end` (exclusive of `end`).
- *
- * @param {number} number The number to check.
- * @param {number} start The start of the range.
- * @param {number} end The end of the range.
- * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
- */
-export function inRange(number, start, end) {
-  return number >= start && number < end;
-}
-
-/**
- * Calculates the sum of all numbers in an array.
- *
- * @param {Array<number>} numbers The array of numbers to sum.
- * @returns {number} The sum of the numbers.
- */
-export function sum(numbers) {
-  if (!Array.isArray(numbers)) {
-    return 0;
+function roundToDecimal(num, decimalPlaces) {
+  if (typeof num !== 'number' || isNaN(num)) {
+    return NaN; // Handle non-numeric input
   }
-  return numbers.reduce((acc, num) => acc + num, 0);
+  if (decimalPlaces < 0) {
+    return num; // Negative decimal places don't make sense for rounding
+  }
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.round(num * factor) / factor;
 }
+
+module.exports = { roundToDecimal };
