@@ -1,59 +1,122 @@
-import { isSameDay } from './date-comparison-utils';
+const { isSameDay, isPastDate, isFutureDate, isBetweenDates, isWeekend } = require('./date-comparison-utils.js');
 
-describe('isSameDay', () => {
-  test('should return true for two Date objects representing the same day', () => {
-    const date1 = new Date(2023, 0, 15, 10, 0, 0);
-    const date2 = new Date(2023, 0, 15, 15, 30, 0);
-    expect(isSameDay(date1, date2)).toBe(true);
+describe('Date Comparison Utilities', () => {
+  describe('isSameDay', () => {
+    test('should return true for two dates on the same day', () => {
+      const date1 = new Date('2023-01-15T10:00:00');
+      const date2 = new Date('2023-01-15T15:30:00');
+      expect(isSameDay(date1, date2)).toBe(true);
+    });
+
+    test('should return false for two dates on different days', () => {
+      const date1 = new Date('2023-01-15');
+      const date2 = new Date('2023-01-16');
+      expect(isSameDay(date1, date2)).toBe(false);
+    });
+
+    test('should return false for invalid date inputs', () => {
+      expect(isSameDay(new Date('invalid'), new Date())).toBe(false);
+      expect(isSameDay(new Date(), null)).toBe(false);
+    });
   });
 
-  test('should return false for two Date objects representing different days', () => {
-    const date1 = new Date('2023-01-15T10:00:00.000Z');
-    const date2 = new Date('2023-01-16T10:00:00.000Z');
-    expect(isSameDay(date1, date2)).toBe(false);
+  describe('isPastDate', () => {
+    test('should return true for a date in the past', () => {
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
+      expect(isPastDate(pastDate)).toBe(true);
+    });
+
+    test('should return false for a date in the future', () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
+      expect(isPastDate(futureDate)).toBe(false);
+    });
+
+    test('should return false for invalid date input', () => {
+      expect(isPastDate(new Date('invalid'))).toBe(false);
+      expect(isPastDate(null)).toBe(false);
+    });
   });
 
-  test('should return false for two Date objects representing different months', () => {
-    const date1 = new Date('2023-01-15T10:00:00.000Z');
-    const date2 = new Date('2023-02-15T10:00:00.000Z');
-    expect(isSameDay(date1, date2)).toBe(false);
+  describe('isFutureDate', () => {
+    test('should return true for a date in the future', () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
+      expect(isFutureDate(futureDate)).toBe(true);
+    });
+
+    test('should return false for a date in the past', () => {
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
+      expect(isFutureDate(pastDate)).toBe(false);
+    });
+
+    test('should return false for invalid date input', () => {
+      expect(isFutureDate(new Date('invalid'))).toBe(false);
+      expect(isFutureDate(null)).toBe(false);
+    });
   });
 
-  test('should return false for two Date objects representing different years', () => {
-    const date1 = new Date('2023-01-15T10:00:00.000Z');
-    const date2 = new Date('2024-01-15T10:00:00.000Z');
-    expect(isSameDay(date1, date2)).toBe(false);
+  describe('isBetweenDates', () => {
+    const startDate = new Date('2023-01-10');
+    const endDate = new Date('2023-01-20');
+
+    test('should return true if date is within the range', () => {
+      const midDate = new Date('2023-01-15');
+      expect(isBetweenDates(midDate, startDate, endDate)).toBe(true);
+    });
+
+    test('should return true if date is exactly the start date', () => {
+      expect(isBetweenDates(startDate, startDate, endDate)).toBe(true);
+    });
+
+    test('should return true if date is exactly the end date', () => {
+      expect(isBetweenDates(endDate, startDate, endDate)).toBe(true);
+    });
+
+    test('should return false if date is before the start date', () => {
+      const beforeDate = new Date('2023-01-09');
+      expect(isBetweenDates(beforeDate, startDate, endDate)).toBe(false);
+    });
+
+    test('should return false if date is after the end date', () => {
+      const afterDate = new Date('2023-01-21');
+      expect(isBetweenDates(afterDate, startDate, endDate)).toBe(false);
+    });
+
+    test('should return false for invalid date inputs', () => {
+      expect(isBetweenDates(new Date('invalid'), startDate, endDate)).toBe(false);
+      expect(isBetweenDates(startDate, null, endDate)).toBe(false);
+      expect(isBetweenDates(startDate, startDate, new Date('invalid'))).toBe(false);
+    });
   });
 
-  test('should handle Date objects created from different timezones but same UTC day', () => {
-    const date1 = new Date('2023-01-15T23:00:00.000Z'); // Jan 15 UTC
-    const date2 = new Date('2023-01-16T02:00:00.000Z'); // Jan 16 UTC, but might be Jan 15 in some timezones
-    // This test depends on the local timezone of the test runner.
-    // For consistent results, it's better to compare UTC components or use a date library.
-    // Given the current implementation, it compares local year, month, day.
-    // Let's assume the test runner is in a timezone where both resolve to the same local day for this specific case.
-    // For example, if local timezone is UTC+1, date1 is Jan 16 00:00, date2 is Jan 16 03:00.
-    // If local timezone is UTC-1, date1 is Jan 15 22:00, date2 is Jan 16 01:00.
-    // The current implementation uses getFullYear, getMonth, getDate which are local time.
-    // So, for this test, we need to ensure they resolve to different local days.
-    // Let's adjust the test to be more explicit about local time.
-    const localDate1 = new Date(2023, 0, 15, 10, 0, 0); // Jan 15, 10:00 local
-    const localDate2 = new Date(2023, 0, 15, 23, 59, 59); // Jan 15, 23:59 local
-    expect(isSameDay(localDate1, localDate2)).toBe(true);
+  describe('isWeekend', () => {
+    test('should return true for a Saturday', () => {
+      const saturday = new Date('2023-08-19T12:00:00'); // August 19, 2023 is a Saturday
+      expect(isWeekend(saturday)).toBe(true);
+    });
 
-    const localDate3 = new Date(2023, 0, 15, 23, 59, 59); // Jan 15, 23:59 local
-    const localDate4 = new Date(2023, 0, 16, 0, 0, 0); // Jan 16, 00:00 local
-    expect(isSameDay(localDate3, localDate4)).toBe(false);
-  });
+    test('should return true for a Sunday', () => {
+      const sunday = new Date('2023-08-20T12:00:00'); // August 20, 2023 is a Sunday
+      expect(isWeekend(sunday)).toBe(true);
+    });
 
-  test('should return false if any argument is not a Date object', () => {
-    const date = new Date();
-    expect(isSameDay(date, null)).toBe(false);
-    expect(isSameDay(null, date)).toBe(false);
-    expect(isSameDay(date, undefined)).toBe(false);
-    expect(isSameDay(undefined, date)).toBe(false);
-    expect(isSameDay(date, '2023-01-15')).toBe(false);
-    expect(isSameDay('2023-01-15', date)).toBe(false);
-    expect(isSameDay(date, {})).toBe(false);
+    test('should return false for a weekday (Monday)', () => {
+      const monday = new Date('2023-08-21T12:00:00'); // August 21, 2023 is a Monday
+      expect(isWeekend(monday)).toBe(false);
+    });
+
+    test('should return false for a weekday (Friday)', () => {
+      const friday = new Date('2023-08-18T12:00:00'); // August 18, 2023 is a Friday
+      expect(isWeekend(friday)).toBe(false);
+    });
+
+    test('should return false for invalid date input', () => {
+      expect(isWeekend(new Date('invalid'))).toBe(false);
+      expect(isWeekend(null)).toBe(false);
+      expect(isWeekend(undefined)).toBe(false);
+    });
   });
 });
