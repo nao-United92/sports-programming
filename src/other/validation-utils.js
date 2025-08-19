@@ -1,32 +1,36 @@
 /**
- * Checks if a string is a valid email address.
- *
- * @param {string} email The string to check.
- * @returns {boolean} True if the string is a valid email address, false otherwise.
+ * Checks if a string is a valid email address format.
+ * @param {string} email The string to validate.
+ * @returns {boolean} True if the string is a valid email, false otherwise.
  */
-export function isEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function isEmail(email) {
+  if (typeof email !== 'string') {
+    return false;
+  }
+  // A common regex for email validation. Not 100% perfect for all edge cases,
+  // but covers most common scenarios.
+  const emailRegex = /^[^\s@]+@^[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
 /**
- * Checks if a string is a strong password (e.g., at least 8 characters, contains uppercase, lowercase, number, and special character).
- *
- * @param {string} password The string to check.
- * @returns {boolean} True if the string is a strong password, false otherwise.
+ * Checks if a string is a valid URL format.
+ * @param {string} url The string to validate.
+ * @returns {boolean} True if the string is a valid URL, false otherwise.
  */
-export function isStrongPassword(password) {
-  const minLength = 8;
-  const hasUppercase = /[A-Z]/.test(password);
-  const hasLowercase = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-  return (
-    password.length >= minLength &&
-    hasUppercase &&
-    hasLowercase &&
-    hasNumber &&
-    hasSpecialChar
-  );
+function isURL(url) {
+  if (typeof url !== 'string') {
+    return false;
+  }
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
+
+module.exports = {
+  isEmail,
+  isURL
+};
