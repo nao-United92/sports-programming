@@ -4,7 +4,7 @@
  * @param {Array} arr2 The second array.
  * @returns {boolean} True if the arrays are shallowly equal, false otherwise.
  */
-export function isEqualArray(arr1, arr2) {
+function isEqualArray(arr1, arr2) {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
     return false;
   }
@@ -26,7 +26,7 @@ export function isEqualArray(arr1, arr2) {
  * @param {Array} arr2 The second array.
  * @returns {boolean} True if the arrays are deeply equal, false otherwise.
  */
-export function isEqualArrayDeep(arr1, arr2) {
+function isEqualArrayDeep(arr1, arr2) {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
     return false;
   }
@@ -63,7 +63,7 @@ export function isEqualArrayDeep(arr1, arr2) {
   return true;
 }
 
-export const isEqual = isEqualArray;
+const isEqual = isEqualArray;
 
 /**
  * Checks if one array is a subset of another.
@@ -71,9 +71,44 @@ export const isEqual = isEqualArray;
  * @param {Array} arr2 The superset array.
  * @returns {boolean} True if arr1 is a subset of arr2, false otherwise.
  */
-export function isSubset(arr1, arr2) {
+function isSubset(arr1, arr2) {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
     return false;
   }
   return arr1.every(val => arr2.includes(val));
 }
+
+/**
+ * Creates an array of values in `array` that are not in `other` by comparing
+ * them using the results of running each element through `iteratee`.
+ * The iteratee is invoked with one argument: (value).
+ *
+ * @param {Array} array The array to inspect.
+ * @param {Array} other The array to exclude values from.
+ * @param {Function|string} iteratee The iteratee invoked per element.
+ * @returns {Array} Returns the new difference array.
+ */
+function differenceBy(array, other, iteratee) {
+  if (!Array.isArray(array)) {
+    return []; // array が配列でない場合は空の配列を返す
+  }
+
+  // other が配列でない場合は空の配列として扱う
+  const validOther = Array.isArray(other) ? other : [];
+
+  const getIterateeValue = typeof iteratee === 'function'
+    ? iteratee
+    : (item) => (item && typeof item === 'object' ? item[iteratee] : item);
+
+  const otherMapped = new Set(validOther.map(getIterateeValue));
+
+  return array.filter(item => !otherMapped.has(getIterateeValue(item)));
+}
+
+module.exports = {
+  isEqualArray,
+  isEqualArrayDeep,
+  isEqual,
+  isSubset,
+  differenceBy
+};

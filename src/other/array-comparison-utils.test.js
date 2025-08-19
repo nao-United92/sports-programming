@@ -1,4 +1,4 @@
-import { isEqualArray, isEqualArrayDeep, isEqual, isSubset } from './array-comparison-utils.js';
+const { isEqualArray, isEqualArrayDeep, isEqual, isSubset, differenceBy } = require('./array-comparison-utils.js');
 
 describe('Array Comparison Utilities', () => {
   describe('isEqualArray', () => {
@@ -114,6 +114,36 @@ describe('Array Comparison Utilities', () => {
     test('should return false for non-array inputs', () => {
       expect(isSubset(null, [1, 2])).toBe(false);
       expect(isSubset([1, 2], undefined)).toBe(false);
+    });
+  });
+
+  describe('differenceBy', () => {
+    test('should return the difference of arrays based on iteratee function', () => {
+      const arr1 = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }];
+      const arr2 = [{ 'x': 2 }, { 'x': 4 }];
+      expect(differenceBy(arr1, arr2, 'x')).toEqual([{ 'x': 1 }, { 'x': 3 }]);
+    });
+
+    test('should return the difference of arrays based on iteratee function (function)', () => {
+      const arr1 = [1.2, 2.3, 3.4];
+      const arr2 = [2.1, 4.5];
+      expect(differenceBy(arr1, arr2, Math.floor)).toEqual([1.2, 3.4]);
+    });
+
+    test('should handle empty arrays', () => {
+      expect(differenceBy([], [{ 'x': 1 }], 'x')).toEqual([]);
+      expect(differenceBy([{ 'x': 1 }], [], 'x')).toEqual([{ 'x': 1 }]);
+    });
+
+    test('should handle non-array inputs gracefully', () => {
+      expect(differenceBy(null, [{ 'x': 1 }], 'x')).toEqual([]);
+      expect(differenceBy([{ 'x': 1 }], undefined, 'x')).toEqual([{ 'x': 1 }]);
+    });
+
+    test('should handle iteratee that returns undefined', () => {
+      const arr1 = [{ 'x': 1 }, { 'y': 2 }];
+      const arr2 = [{ 'x': 1 }];
+      expect(differenceBy(arr1, arr2, 'x')).toEqual([{ 'y': 2 }]);
     });
   });
 });
