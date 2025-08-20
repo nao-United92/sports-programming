@@ -1,33 +1,31 @@
-export const toSnakeCase = (str) => {
-  if (str === null || str === undefined) {
-    return "";
+/**
+ * Converts a string to snake_case.
+ * @param {string} str The string to convert.
+ * @returns {string} The snake_cased string.
+ */
+export function toSnakeCase(str) {
+  if (typeof str !== 'string' || !str) {
+    return '';
   }
-  const result = String(str)
-    .replace(/([A-Z])/g, "_$1")
-    .toLowerCase();
-  if (result.startsWith("_")) {
-    return result.substring(1);
+  const match = str.match(/[A-Z]/);
+  if (!match) {
+    return str;
   }
-  return result;
-};
-
-export const toCamelCase = (str) => {
-  if (str === null || str === undefined) {
-    return "";
-  }
-  return String(str).replace(/_([a-z])/g, (g) => g[1].toUpperCase());
-};
+  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
+}
 
 /**
  * Converts a string to kebab-case.
  * @param {string} str The string to convert.
  * @returns {string} The kebab-cased string.
  */
-export const toKebabCase = (str) => {
-  if (str === null || str === undefined) {
-    return "";
+export function toKebabCase(str) {
+  if (typeof str !== 'string' || !str) {
+    return '';
   }
-  return String(str)
-    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2')
-    .toLowerCase();
-};
+  const match = str.match(/[A-Z]/);
+  if (!match) {
+    return str;
+  }
+  return str.replace(/([A-Z])/g, '-$1').toLowerCase();
+}
