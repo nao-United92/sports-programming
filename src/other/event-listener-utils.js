@@ -50,7 +50,7 @@ export function dispatchCustomEvent(element, eventName, detail, bubbles = true, 
  * @param {Function} listener The function to call when the event occurs.
  * @param {boolean|AddEventListenerOptions} [options] An options object that specifies characteristics about the event listener.
  */
-export function addOneTimeEventListener(element, eventType, listener, options) {
+export function once(element, eventType, listener, options) {
   if (element && eventType && listener) {
     const opts = { ...options, once: true };
     element.addEventListener(eventType, listener, opts);
