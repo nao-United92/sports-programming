@@ -1,17 +1,34 @@
 /**
- * Checks if a value is a plain object (i.e., an object created by the Object constructor or one with a null prototype).
- * @param {*} value The value to check.
- * @returns {boolean} True if the value is a plain object, false otherwise.
+ * Creates an object composed of the picked object properties.
+ * @param {Object} obj The source object.
+ * @param {string[]} keys The property keys to pick.
+ * @returns {Object} Returns the new object.
  */
-function isPlainObject(value) {
-  if (typeof value !== 'object' || value === null) {
-    return false;
+export function pick(obj, keys) {
+  if (obj === null || typeof obj !== 'object') {
+    return {};
   }
-
-  const proto = Object.getPrototypeOf(value);
-  return proto === null || proto === Object.prototype;
+  return keys.reduce((acc, key) => {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      acc[key] = obj[key];
+    }
+    return acc;
+  }, {});
 }
 
-module.exports = {
-  isPlainObject,
-};
+/**
+ * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
+ * @param {Object} obj The source object.
+ * @param {string[]} keys The property keys to omit.
+ * @returns {Object} Returns the new object.
+ */
+export function omit(obj, keys) {
+  if (obj === null || typeof obj !== 'object') {
+    return {};
+  }
+  const newObj = { ...obj };
+  keys.forEach(key => {
+    delete newObj[key];
+  });
+  return newObj;
+}
