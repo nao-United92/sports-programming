@@ -1,13 +1,21 @@
-export const memoize = (func) => {
-  const cache = {};
-  return (...args) => {
-    const key = JSON.stringify(args); // Simple key generation for demonstration
-    if (cache[key]) {
-      return cache[key];
-    } else {
-      const result = func(...args);
-      cache[key] = result;
-      return result;
+/**
+ * Creates a memoized version of a function.
+ * The result of the function will be cached based on its arguments.
+ *
+ * @param {Function} func The function to memoize.
+ * @returns {Function} Returns the new memoized function.
+ */
+export function memoize(func) {
+  const cache = new Map();
+
+  return function(...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) {
+      return cache.get(key);
     }
+
+    const result = func.apply(this, args);
+    cache.set(key, result);
+    return result;
   };
-};
+}
