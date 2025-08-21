@@ -1,39 +1,46 @@
-import { shuffle } from './random-utils.js';
+import { random } from './random-utils.js';
 
-describe('shuffle', () => {
-  it('should return a new array with the same elements', () => {
-    const originalArray = [1, 2, 3, 4, 5];
-    const shuffledArray = shuffle(originalArray);
-    expect(shuffledArray).not.toBe(originalArray); // Should be a new array
-    expect(shuffledArray.sort()).toEqual(originalArray.sort()); // Should contain the same elements
+describe('random', () => {
+  const isBetween = (value, lower, upper) => value >= lower && value <= upper;
+
+  test('should return an integer between the bounds', () => {
+    const result = random(0, 5);
+    expect(Number.isInteger(result)).toBe(true);
+    expect(isBetween(result, 0, 5)).toBe(true);
   });
 
-  it('should shuffle the array randomly', () => {
-    const originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    let isShuffled = false;
-    // Run multiple times to increase confidence that it's truly random
-    for (let i = 0; i < 10; i++) {
-      const shuffledArray = shuffle(originalArray);
-      if (!shuffledArray.every((val, index) => val === originalArray[index])) {
-        isShuffled = true;
-        break;
-      }
-    }
-    expect(isShuffled).toBe(true);
+  test('should handle a single argument, returning between 0 and the value', () => {
+    const result = random(5);
+    expect(Number.isInteger(result)).toBe(true);
+    expect(isBetween(result, 0, 5)).toBe(true);
   });
 
-  it('should handle an empty array', () => {
-    expect(shuffle([])).toEqual([]);
+  test('should return a floating-point number if floating is true', () => {
+    const result = random(0, 5, true);
+    expect(Number.isInteger(result)).toBe(false);
+    expect(isBetween(result, 0, 5)).toBe(true);
   });
 
-  it('should handle an array with a single element', () => {
-    expect(shuffle([1])).toEqual([1]);
+  test('should return a floating-point number if one of the bounds is a float', () => {
+    const result = random(0, 2.5);
+    expect(Number.isInteger(result)).toBe(false);
+    expect(isBetween(result, 0, 2.5)).toBe(true);
   });
 
-  it('should return an empty array for non-array inputs', () => {
-    expect(shuffle(null)).toEqual([]);
-    expect(shuffle(undefined)).toEqual([]);
-    expect(shuffle(123)).toEqual([]);
-    expect(shuffle('string')).toEqual([]);
+  test('should handle negative ranges', () => {
+    const result = random(-10, -5);
+    expect(Number.isInteger(result)).toBe(true);
+    expect(isBetween(result, -10, -5)).toBe(true);
+  });
+
+  test('should handle a single negative argument', () => {
+    const result = random(-5);
+    expect(Number.isInteger(result)).toBe(true);
+    expect(isBetween(result, -5, 0)).toBe(true);
+  });
+
+  test('should default to a number between 0 and 1', () => {
+    const result = random();
+    expect(isBetween(result, 0, 1)).toBe(true);
   });
 });
