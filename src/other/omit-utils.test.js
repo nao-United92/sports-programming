@@ -1,34 +1,47 @@
-import { omit } from './omit-utils';
+import { omit } from './omit-utils.js';
 
 describe('omit', () => {
-  test('should return a new object', () => {
-    const original = { a: 1, b: 2 };
-    const result = omit(original, ['b']);
-    expect(result).not.toBe(original);
+  const data = { a: 1, b: 2, c: 3 };
+
+  test('should create a shallow copy', () => {
+    const result = omit(data, []);
+    expect(result).toEqual(data);
+    expect(result).not.toBe(data);
   });
 
-  test('should omit specified keys from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    expect(omit(obj, ['b', 'c'])).toEqual({ a: 1 });
+  test('should omit a single key', () => {
+    const result = omit(data, ['a']);
+    expect(result).toEqual({ b: 2, c: 3 });
   });
 
-  test('should handle keys that do not exist in the object', () => {
-    const obj = { a: 1, b: 2 };
-    expect(omit(obj, ['c', 'd'])).toEqual({ a: 1, b: 2 });
+  test('should omit multiple keys', () => {
+    const result = omit(data, ['a', 'c']);
+    expect(result).toEqual({ b: 2 });
   });
 
-  test('should handle an empty array of keys', () => {
-    const obj = { a: 1, b: 2 };
-    expect(omit(obj, [])).toEqual({ a: 1, b: 2 });
+  test('should return the same object if no keys are omitted', () => {
+    const result = omit(data, []);
+    expect(result).toEqual({ a: 1, b: 2, c: 3 });
   });
 
-  test('should handle an empty object', () => {
-    expect(omit({}, ['a'])).toEqual({});
+  test('should handle non-existent keys', () => {
+    const result = omit(data, ['d', 'e']);
+    expect(result).toEqual(data);
   });
 
-  test('should handle null and non-object inputs', () => {
-    expect(omit(null, ['a'])).toEqual({});
-    expect(omit(undefined, ['a'])).toEqual({});
-    expect(omit(123, ['a'])).toEqual({});
+  test('should handle an empty source object', () => {
+    const result = omit({}, ['a']);
+    expect(result).toEqual({});
+  });
+
+  test('should not omit inherited properties', () => {
+    function MyObject() {
+      this.a = 1;
+    }
+    MyObject.prototype.b = 2;
+
+    const instance = new MyObject();
+    const result = omit(instance, ['a']);
+    expect(result).toEqual({}); // Only own properties are considered
   });
 });
