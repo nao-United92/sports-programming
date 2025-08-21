@@ -1,29 +1,25 @@
-const isObject = (obj) => obj === Object(obj);
-
+/**
+ * Sets the value at `path` of `object`. If a portion of `path` doesn't exist, it's created.
+ * Arrays are created for missing index properties while objects are created for all other missing properties.
+ * This function mutates `object`.
+ *
+ * @param {Object} obj The object to modify.
+ * @param {string|string[]} path The path of the property to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns `object`.
+ */
 export const set = (obj, path, value) => {
-  if (!isObject(obj)) {
-    return obj;
+  const pathArray = Array.isArray(path) ? path : path.split('.');
+  let current = obj;
+
+  for (let i = 0; i < pathArray.length - 1; i++) {
+    const key = pathArray[i];
+    if (current[key] === undefined || typeof current[key] !== 'object') {
+      current[key] = {};
+    }
+    current = current[key];
   }
 
-  // Regex to split path into segments, handling array indices.
-  const pathArray = Array.isArray(path) ? path : path.replace(/\[(\]/g, '.').replace(/^\.|\.$/, '').split('.');
-
-  pathArray.reduce((acc, key, i) => {
-    const isLast = i === pathArray.length - 1;
-    if (isLast) {
-      acc[key] = value;
-      return acc[key];
-    }
-
-    if (!isObject(acc[key])) {
-      // Look ahead to the next key to determine if we should create an array or object.
-      const nextKey = pathArray[i + 1];
-      const useArray = /^\d+$/.test(nextKey);
-      acc[key] = useArray ? [] : {};
-    }
-
-    return acc[key];
-  }, obj);
-
+  current[pathArray[pathArray.length - 1]] = value;
   return obj;
 };

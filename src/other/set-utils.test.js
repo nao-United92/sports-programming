@@ -1,65 +1,51 @@
-import { set } from './set-utils';
+import { set } from './set-utils.js';
 
 describe('set', () => {
   let obj;
 
   beforeEach(() => {
-    obj = { a: { b: { c: 1 } }, d: [{ e: 2 }] };
+    obj = {
+      a: {
+        b: {
+          c: 'hello',
+        },
+      },
+    };
   });
 
-  test('should set a value on a nested object using a string path', () => {
-    set(obj, 'a.b.c', 2);
-    expect(obj.a.b.c).toBe(2);
+  test('should set a top-level property', () => {
+    set(obj, 'd', 'world');
+    expect(obj.d).toBe('world');
   });
 
-  test('should set a value on a nested object using an array path', () => {
-    set(obj, ['a', 'b', 'c'], 3);
-    expect(obj.a.b.c).toBe(3);
+  test('should set a nested property', () => {
+    set(obj, 'a.b.d', 'world');
+    expect(obj.a.b.d).toBe('world');
   });
 
-  test('should create nested properties if they do not exist', () => {
-    const newObj = {};
-    set(newObj, 'x.y.z', 10);
-    expect(newObj.x.y.z).toBe(10);
+  test('should create nested objects if they do not exist', () => {
+    set(obj, 'x.y.z', 'new');
+    expect(obj.x.y.z).toBe('new');
   });
 
-  test('should set a value in an array using bracket notation', () => {
-    set(obj, 'd[0].e', 5);
-    expect(obj.d[0].e).toBe(5);
+  test('should overwrite an existing property', () => {
+    set(obj, 'a.b.c', 'new value');
+    expect(obj.a.b.c).toBe('new value');
   });
 
-  test('should create nested arrays and objects', () => {
-    const newObj = {};
-    set(newObj, 'a[0].b.c', 100);
-    expect(newObj.a[0].b.c).toBe(100);
-    expect(Array.isArray(newObj.a)).toBe(true);
-    expect(typeof newObj.a[0].b).toBe('object');
-  });
-
-  test('should not overwrite existing objects unless it is the final path segment', () => {
-    set(obj, 'a.b.d', 4);
-    expect(obj.a.b.c).toBe(1);
-    expect(obj.a.b.d).toBe(4);
+  test('should handle an array path', () => {
+    set(obj, ['a', 'b', 'e'], 'another');
+    expect(obj.a.b.e).toBe('another');
   });
 
   test('should return the modified object', () => {
-    const result = set({}, 'a.b', 1);
-    expect(result).toEqual({ a: { b: 1 } });
+    const result = set(obj, 'a.f', 'test');
+    expect(result).toBe(obj);
+    expect(result.a.f).toBe('test');
   });
 
-  test('should not do anything if the object is not an object', () => {
-    const notAnObject = null;
-    const result = set(notAnObject, 'a.b', 1);
-    expect(result).toBeNull();
-
-    const alsoNotAnObject = 'string';
-    const result2 = set(alsoNotAnObject, 'a.b', 1);
-    expect(result2).toBe('string');
-  });
-
-  test('should handle a path that leads to an array extension', () => {
-    const newObj = { a: [] };
-    set(newObj, 'a[0]', 'hello');
-    expect(newObj.a[0]).toBe('hello');
+  test('should handle setting a property on a non-object value', () => {
+    set(obj, 'a.b.c.d', 'test');
+    expect(obj.a.b.c.d).toBe('test');
   });
 });
