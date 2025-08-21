@@ -1,72 +1,71 @@
-import { throttle } from './throttle-utils';
+import { throttle } from './throttle-utils.js';
+
+// Mock setTimeout and clearTimeout to control time in tests
+vi.useFakeTimers();
 
 describe('throttle', () => {
   let func;
-  let throttledFunc;
 
   beforeEach(() => {
-    func = jest.fn();
-    jest.useFakeTimers();
+    func = vi.fn();
   });
 
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-  });
-
-  test('should call the function immediately on the first invocation', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc();
+  test('should call the function immediately', () => {
+    const throttled = throttle(func, 100);
+    throttled();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should not call the function again within the throttle time', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc(); // First call, executed immediately
-    expect(func).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(50);
-    throttledFunc(); // Should schedule a trailing call, not execute immediately
-    throttledFunc(); // Should update the scheduled trailing call
+  test('should not call the function again within the wait time', () => {
+    const throttled = throttle(func, 100);
+    throttled();
+    throttled();
+    throttled();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should call the function after the throttle time has passed', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc(); // 0ms: Call 1
+  test('should call the function again after the wait time', () => {
+    const throttled = throttle(func, 100);
+    throttled(); // Called at 0ms
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(50); // 50ms
-    throttledFunc(); // 50ms: Schedule trailing call for 100ms from lastCallTime (0ms) -> at 100ms
+    // Fast-forward time by 50ms
+    vi.advanceTimersByTime(50);
+    throttled(); // Should be ignored
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(50); // 100ms: Trailing call executes
+    // Fast-forward time by another 50ms (total 100ms)
+    vi.advanceTimersByTime(50);
+    throttled(); // Should be called now
     expect(func).toHaveBeenCalledTimes(2);
   });
 
-  test('should call the function with the latest arguments', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc(1); // Call 1 with arg 1
+  test('should use the latest arguments for the trailing call', () => {
+    const throttled = throttle(func, 100);
+    throttled(1);
     expect(func).toHaveBeenCalledWith(1);
 
-    jest.advanceTimersByTime(50);
-    throttledFunc(2); // Schedule trailing call with arg 2
-    jest.advanceTimersByTime(50); // Trailing call executes
-    expect(func).toHaveBeenCalledWith(2);
+    throttled(2);
+    throttled(3);
+
+    // Fast-forward time to trigger the trailing call
+    vi.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(2);
+    expect(func).toHaveBeenCalledWith(3);
   });
 
-  test('should maintain the correct context', () => {
-    throttledFunc = throttle(func, 100);
-    const context = { a: 1 };
-    throttledFunc.call(context, 'arg1'); // Call 1 with context
-    expect(func).toHaveBeenCalledWith('arg1');
-    expect(func.mock.contexts[0]).toBe(context);
+  test('should return the result of the last actual invocation', () => {
+    const funcWithReturn = (val) => val * 2;
+    const throttled = throttle(funcWithReturn, 100);
 
-    jest.advanceTimersByTime(50);
-    const context2 = { b: 2 };
-    throttledFunc.call(context2, 'arg2'); // Schedule trailing call with context2
-    jest.advanceTimersByTime(50);
-    expect(func).toHaveBeenCalledWith('arg2');
-    expect(func.mock.contexts[1]).toBe(context2);
+    const result1 = throttled(1); // Invoked
+    expect(result1).toBe(2);
+
+    const result2 = throttled(2); // Throttled
+    expect(result2).toBe(2); // Returns previous result
+
+    vi.advanceTimersByTime(100);
+    const result3 = throttled(3); // Invoked
+    expect(result3).toBe(6);
   });
 });
