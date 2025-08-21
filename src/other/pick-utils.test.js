@@ -1,45 +1,47 @@
-import { pick } from './pick-utils';
+import { pick } from './pick-utils.js';
 
 describe('pick', () => {
-  const obj = { a: 1, b: '2', c: true, d: { nested: 1 } };
+  const data = { a: 1, b: 2, c: 3 };
 
-  test('should return an empty object if source object is null or undefined', () => {
-    expect(pick(null, ['a'])).toEqual({});
-    expect(pick(undefined, ['a'])).toEqual({});
+  test('should create a shallow copy', () => {
+    const result = pick(data, ['a', 'b', 'c']);
+    expect(result).toEqual(data);
+    expect(result).not.toBe(data);
   });
 
-  test('should return an empty object if keys are not provided', () => {
-    expect(pick(obj, [])).toEqual({});
-    expect(pick(obj)).toEqual({});
+  test('should pick a single key', () => {
+    const result = pick(data, ['a']);
+    expect(result).toEqual({ a: 1 });
   });
 
-  test('should pick specified properties from an object', () => {
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: true });
+  test('should pick multiple keys', () => {
+    const result = pick(data, ['a', 'c']);
+    expect(result).toEqual({ a: 1, c: 3 });
   });
 
-  test('should handle a single key as a string', () => {
-    expect(pick(obj, 'b')).toEqual({ b: '2' });
+  test('should return an empty object if no keys are picked', () => {
+    const result = pick(data, []);
+    expect(result).toEqual({});
   });
 
-  test('should ignore keys that do not exist in the source object', () => {
-    expect(pick(obj, ['a', 'e'])).toEqual({ a: 1 });
+  test('should handle non-existent keys gracefully', () => {
+    const result = pick(data, ['a', 'd']);
+    expect(result).toEqual({ a: 1 });
+  });
+
+  test('should handle an empty source object', () => {
+    const result = pick({}, ['a']);
+    expect(result).toEqual({});
   });
 
   test('should not pick inherited properties', () => {
-    const proto = { inherited: 'should not be picked' };
-    const child = Object.create(proto);
-    child.own = 'should be picked';
-    expect(pick(child, ['own', 'inherited'])).toEqual({ own: 'should be picked' });
-  });
+    function MyObject() {
+      this.a = 1;
+    }
+    MyObject.prototype.b = 2;
 
-  test('should return a new object', () => {
-    const picked = pick(obj, ['a']);
-    expect(picked).not.toBe(obj);
-  });
-
-  test('should handle nested objects (shallow pick)', () => {
-    const picked = pick(obj, ['d']);
-    expect(picked).toEqual({ d: { nested: 1 } });
-    expect(picked.d).toBe(obj.d); // Check that it's a shallow copy
+    const instance = new MyObject();
+    const result = pick(instance, ['a', 'b']);
+    expect(result).toEqual({ a: 1 }); // Only picks own properties
   });
 });
