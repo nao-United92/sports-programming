@@ -1,17 +1,18 @@
-export const get = (obj, path, defaultValue = undefined) => {
-  if (path === '' || path === null || path === undefined) {
-    return defaultValue;
-  }
+/**
+ * Gets the value at `path` of `object`. If the resolved value is
+ * `undefined`, the `defaultValue` is returned in its place.
+ *
+ * @param {Object} obj The object to query.
+ * @param {string|string[]} path The path of the property to retrieve.
+ * @param {*} [defaultValue] The value returned for `undefined` resolved values.
+ * @returns {*} Returns the resolved value.
+ */
+export const get = (obj, path, defaultValue) => {
+  const pathArray = Array.isArray(path) ? path : path.split('.').filter(Boolean);
 
-  const pathParts = Array.isArray(path) ? path : path.replace(/\\[(\\d+)\\]/g, '.$1').split('.').filter(Boolean);
+  const result = pathArray.reduce((acc, key) => {
+    return acc && acc[key] !== 'undefined' ? acc[key] : undefined;
+  }, obj);
 
-  let current = obj;
-  for (let i = 0; i < pathParts.length; i++) {
-    const part = pathParts[i];
-    if (current === null || current === undefined) {
-      return defaultValue;
-    }
-    current = current[part];
-  }
-  return current === undefined ? defaultValue : current;
+  return result === undefined ? defaultValue : result;
 };
