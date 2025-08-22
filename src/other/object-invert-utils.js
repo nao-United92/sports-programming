@@ -1,17 +1,9 @@
-/**
- * Creates an object with inverted keys and values. If `object` contains
- * duplicate values, subsequent values overwrite property assignments of
- * prior values.
- *
- * @param {Object} obj The object to invert.
- * @returns {Object} Returns the new inverted object.
- */
-export const invert = (obj) => {
+export const invert = (object) => {
   const result = {};
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      result[obj[key]] = key;
-    }
+  const keys = Object.keys(object);
+  for (let i = 0, length = keys.length; i < length; i++) {
+    const key = keys[i];
+    result[object[key]] = key;
   }
   return result;
 };

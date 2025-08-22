@@ -54,3 +54,27 @@ describe('defaults', () => {
     expect(obj).toEqual({ a: 1, b: 2, c: 3 });
   });
 });
+
+describe('defaultsDeep', () => {
+  test('should recursively apply default values', () => {
+    const obj = { a: { b: 1 } };
+    const source = { a: { b: 2, c: 3 }, d: 4 };
+    defaultsDeep(obj, source);
+    expect(obj).toEqual({ a: { b: 1, c: 3 }, d: 4 });
+  });
+
+  test('should not overwrite existing nested properties', () => {
+    const obj = { a: { b: 1 } };
+    const source = { a: { b: 99 } };
+    defaultsDeep(obj, source);
+    expect(obj).toEqual({ a: { b: 1 } });
+  });
+
+  test('should handle multiple nested source objects', () => {
+    const obj = { a: { b: 1 } };
+    const source1 = { a: { c: 2 } };
+    const source2 = { a: { b: 99, d: 3 }, e: 4 };
+    defaultsDeep(obj, source1, source2);
+    expect(obj).toEqual({ a: { b: 1, c: 2, d: 3 }, e: 4 });
+  });
+});

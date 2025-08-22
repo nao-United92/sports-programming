@@ -18,3 +18,20 @@ export const defaults = (obj, ...sources) => {
   });
   return obj;
 };
+
+const isObject = (item) => item && typeof item === 'object' && !Array.isArray(item);
+
+export const defaultsDeep = (obj, ...sources) => {
+  sources.forEach(source => {
+    if (source) {
+      for (const key in source) {
+        if (obj[key] === undefined) {
+          obj[key] = source[key];
+        } else if (isObject(obj[key]) && isObject(source[key])) {
+          defaultsDeep(obj[key], source[key]);
+        }
+      }
+    }
+  });
+  return obj;
+};
