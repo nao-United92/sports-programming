@@ -66,3 +66,22 @@ export const defer = (fn, ...args) => {
 };
 
 export const noop = () => {};
+
+export const identity = (value) => value;
+
+export const property = (path) => {
+  return (obj) => {
+    if (obj == null) {
+      return undefined;
+    }
+    const keys = Array.isArray(path) ? path : path.split('.');
+    let result = obj;
+    for (const key of keys) {
+      result = result?.[key];
+      if (result === undefined) {
+        return undefined;
+      }
+    }
+    return result;
+  };
+};

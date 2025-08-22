@@ -153,3 +153,44 @@ describe('noop', () => {
     expect(noop()).toBeUndefined();
   });
 });
+
+describe('identity', () => {
+  it('should return the value passed to it', () => {
+    expect(identity(1)).toBe(1);
+    expect(identity('hello')).toBe('hello');
+    const obj = {};
+    expect(identity(obj)).toBe(obj);
+  });
+});
+
+describe('property', () => {
+  const obj = {
+    a: {
+      b: {
+        c: 3
+      }
+    },
+    d: [1, 2]
+  };
+
+  it('should create a function that returns a property at a given path', () => {
+    const getC = property('a.b.c');
+    expect(getC(obj)).toBe(3);
+  });
+
+  it('should work with array paths', () => {
+    const getSecondD = property(['d', '1']);
+    expect(getSecondD(obj)).toBe(2);
+  });
+
+  it('should return undefined for non-existent paths', () => {
+    const getX = property('a.b.x');
+    expect(getX(obj)).toBeUndefined();
+  });
+
+  it('should return undefined for null or undefined objects', () => {
+    const getC = property('a.b.c');
+    expect(getC(null)).toBeUndefined();
+    expect(getC(undefined)).toBeUndefined();
+  });
+});
