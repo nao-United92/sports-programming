@@ -96,3 +96,42 @@ describe('after', () => {
     expect(mockFn).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('curry', () => {
+  const add = (a, b, c) => a + b + c;
+
+  it('should curry a function', () => {
+    const curriedAdd = curry(add);
+    expect(curriedAdd(1)(2)(3)).toBe(6);
+    expect(curriedAdd(1, 2)(3)).toBe(6);
+    expect(curriedAdd(1)(2, 3)).toBe(6);
+  });
+
+  it('should work with functions with fewer arguments', () => {
+    const multiply = (a, b) => a * b;
+    const curriedMultiply = curry(multiply);
+    expect(curriedMultiply(2)(3)).toBe(6);
+  });
+});
+
+describe('compose', () => {
+  const addOne = (x) => x + 1;
+  const multiplyTwo = (x) => x * 2;
+  const toString = (x) => String(x);
+
+  it('should compose functions from right to left', () => {
+    const composedFn = compose(toString, multiplyTwo, addOne);
+    expect(composedFn(5)).toBe('12'); // (5 + 1) * 2 = 12 -> '12'
+  });
+
+  it('should handle functions with multiple arguments in the first (rightmost) function', () => {
+    const add = (a, b) => a + b;
+    const composedFn = compose(toString, add);
+    expect(composedFn(1, 2)).toBe('3');
+  });
+
+  it('should handle no functions', () => {
+    const noop = compose();
+    expect(noop(1, 2, 3)).toEqual([1, 2, 3]);
+  });
+});
