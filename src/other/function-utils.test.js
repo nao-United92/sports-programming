@@ -63,3 +63,36 @@ describe('memoize', () => {
     expect(mockFn).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('before', () => {
+  it('should call the function until the limit is reached', () => {
+    const mockFn = jest.fn();
+    const limitedFn = before(3, mockFn);
+    limitedFn();
+    limitedFn();
+    limitedFn();
+    expect(mockFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('should return the last result after the limit is reached', () => {
+    const mockFn = jest.fn(a => a);
+    const limitedFn = before(3, mockFn);
+    expect(limitedFn(1)).toBe(1);
+    expect(limitedFn(2)).toBe(2);
+    expect(limitedFn(3)).toBe(2); // Returns the last result
+  });
+});
+
+describe('after', () => {
+  it('should only call the function after being called n times', () => {
+    const mockFn = jest.fn();
+    const delayedFn = after(3, mockFn);
+    delayedFn();
+    delayedFn();
+    expect(mockFn).not.toHaveBeenCalled();
+    delayedFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    delayedFn();
+    expect(mockFn).toHaveBeenCalledTimes(2);
+  });
+});

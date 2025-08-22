@@ -22,3 +22,24 @@ export const memoize = (fn) => {
     return result;
   };
 };
+
+export const before = (n, fn) => {
+  let result;
+  return (...args) => {
+    if (--n > 0) {
+      result = fn(...args);
+    }
+    if (n <= 1) {
+      fn = null;
+    }
+    return result;
+  };
+};
+
+export const after = (n, fn) => {
+  return (...args) => {
+    if (--n < 1) {
+      return fn(...args);
+    }
+  };
+};
