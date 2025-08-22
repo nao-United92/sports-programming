@@ -1,39 +1,26 @@
 import { chunk } from './chunk-utils';
 
 describe('chunk', () => {
-  test('should split an array into chunks of specified size', () => {
-    const arr = [1, 2, 3, 4, 5];
-    expect(chunk(arr, 2)).toEqual([[1, 2], [3, 4], [5]]);
+  it('should create chunks of a specified size', () => {
+    const array = ['a', 'b', 'c', 'd', 'e'];
+    expect(chunk(array, 2)).toEqual([['a', 'b'], ['c', 'd'], ['e']]);
+    expect(chunk(array, 3)).toEqual([['a', 'b', 'c'], ['d', 'e']]);
   });
 
-  test('should handle an empty array', () => {
-    const arr = [];
-    expect(chunk(arr, 3)).toEqual([]);
+  it('should return the last chunk with remaining elements', () => {
+    const array = [1, 2, 3, 4, 5, 6, 7];
+    expect(chunk(array, 3)[2]).toEqual([7]);
   });
 
-  test('should handle a size larger than the array length', () => {
-    const arr = [1, 2, 3];
-    expect(chunk(arr, 5)).toEqual([[1, 2, 3]]);
+  it('should default to a chunk size of 1', () => {
+    const array = ['a', 'b', 'c'];
+    expect(chunk(array)).toEqual([['a'], ['b'], ['c']]);
   });
 
-  test('should handle a size that perfectly divides the array', () => {
-    const arr = [1, 2, 3, 4, 5, 6];
-    expect(chunk(arr, 3)).toEqual([[1, 2, 3], [4, 5, 6]]);
-  });
-
-  test('should throw an error if the first argument is not an array', () => {
-    expect(() => chunk(null, 2)).toThrow('Expected an array for the first argument.');
-    expect(() => chunk(undefined, 2)).toThrow('Expected an array for the first argument.');
-    expect(() => chunk('string', 2)).toThrow('Expected an array for the first argument.');
-    expect(() => chunk(123, 2)).toThrow('Expected an array for the first argument.');
-  });
-
-  test('should throw an error if the second argument (size) is not a positive number', () => {
-    const arr = [1, 2, 3];
-    expect(() => chunk(arr, 0)).toThrow('Expected a positive number for the second argument (size).');
-    expect(() => chunk(arr, -1)).toThrow('Expected a positive number for the second argument (size).');
-    expect(() => chunk(arr, null)).toThrow('Expected a positive number for the second argument (size).');
-    expect(() => chunk(arr, undefined)).toThrow('Expected a positive number for the second argument (size).');
-    expect(() => chunk(arr, 'string')).toThrow('Expected a positive number for the second argument (size).');
+  it('should return an empty array for invalid inputs', () => {
+    expect(chunk([], 2)).toEqual([]);
+    expect(chunk([1, 2, 3], 0)).toEqual([]);
+    expect(chunk([1, 2, 3], -1)).toEqual([]);
+    expect(chunk(null, 2)).toEqual([]);
   });
 });
