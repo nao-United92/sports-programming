@@ -1,35 +1,25 @@
-/**
- * Performs a deep merge of objects and returns a new object.
- * Does not modify the original objects.
- *
- * @param {...object} objects - The objects to merge.
- * @returns {object} - The new merged object.
- */
-function deepMerge(...objects) {
-  const isObject = (item) => (item && typeof item === 'object' && !Array.isArray(item));
-  
-  let result = {};
+const isObject = (item) => {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+}
 
-  for (const source of objects) {
-    if (isObject(source)) {
-      for (const key in source) {
-        if (isObject(source[key])) {
-          // if the key already exists and is an object, we recurse
-          if (key in result && isObject(result[key])) {
-            result[key] = deepMerge(result[key], source[key]);
-          } else {
-            // otherwise, we just assign it (cloning it)
-            result[key] = deepMerge({}, source[key]);
-          }
-        } else {
-          // for non-objects (primitives, arrays), we just assign
-          result[key] = source[key];
+export const deepMerge = (target, ...sources) => {
+  if (!sources.length) {
+    return target;
+  }
+  const source = sources.shift();
+
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) {
+          Object.assign(target, { [key]: {} });
         }
+        deepMerge(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
       }
     }
   }
 
-  return result;
-}
-
-module.exports = { deepMerge };
+  return deepMerge(target, ...sources);
+};

@@ -59,3 +59,26 @@ describe('pick', () => {
     expect(pick(undefined, ['a'])).toEqual({});
   });
 });
+
+describe('omit', () => {
+  const obj = {
+    a: 1,
+    b: '2',
+    c: true,
+  };
+
+  it('should omit specified properties from an object', () => {
+    const omitted = omit(obj, ['b', 'c']);
+    expect(omitted).toEqual({ a: 1 });
+  });
+
+  it('should not change the original object', () => {
+    omit(obj, ['b']);
+    expect(obj).toEqual({ a: 1, b: '2', c: true });
+  });
+
+  it('should handle keys that do not exist', () => {
+    const omitted = omit(obj, ['d', 'e']);
+    expect(omitted).toEqual(obj);
+  });
+});

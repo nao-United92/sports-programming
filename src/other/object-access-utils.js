@@ -18,3 +18,11 @@ export const pick = (obj, keys) => {
     return acc;
   }, {});
 };
+
+export const omit = (obj, keys) => {
+  const newObj = { ...obj };
+  for (const key of keys) {
+    delete newObj[key];
+  }
+  return newObj;
+};
