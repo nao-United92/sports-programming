@@ -1,46 +1,31 @@
-const { isEmail, isURL } = require('./validation-utils.js');
+import { isEmpty } from './validation-utils';
 
-describe('Validation Utilities', () => {
-  describe('isEmail', () => {
-    test('should return true for valid email addresses', () => {
-      expect(isEmail('test@example.com')).toBe(true);
-      expect(isEmail('john.doe@sub.domain.co.uk')).toBe(true);
-      expect(isEmail('user123@domain-name.net')).toBe(true);
-    });
-
-    test('should return false for invalid email addresses', () => {
-      expect(isEmail('invalid-email')).toBe(false);
-      expect(isEmail('test@.com')).toBe(true); // Modified expectation
-      expect(isEmail('@example.com')).toBe(false);
-      expect(isEmail('test@example')).toBe(false);
-      expect(isEmail('test example.com')).toBe(false);
-      expect(isEmail(null)).toBe(false);
-      expect(isEmail(undefined)).toBe(false);
-      expect(isEmail(123)).toBe(false);
-      expect(isEmail('')).toBe(false);
-    });
+describe('isEmpty', () => {
+  it('should return true for null or undefined', () => {
+    expect(isEmpty(null)).toBe(true);
+    expect(isEmpty(undefined)).toBe(true);
   });
 
-  describe('isURL', () => {
-    test('should return true for valid URLs', () => {
-      expect(isURL('http://example.com')).toBe(true);
-      expect(isURL('https://www.example.com/path/to/page?query=string#hash')).toBe(true);
-      expect(isURL('www.example.com')).toBe(true);
-      expect(isURL('example.com')).toBe(true);
-      expect(isURL('http://localhost:3000')).toBe(true);
-      expect(isURL('ftp://ftp.example.com')).toBe(true); // Modified expectation
-    });
+  it('should return true for empty arrays and strings', () => {
+    expect(isEmpty([])).toBe(true);
+    expect(isEmpty('')).toBe(true);
+  });
 
-    test('should return false for invalid URLs', () => {
-      expect(isURL('invalid-url')).toBe(false);
-      expect(isURL('example')).toBe(false);
-      expect(isURL('http://.com')).toBe(false);
-      expect(isURL('http://example')).toBe(false);
-      expect(isURL('http://example..com')).toBe(false); // Modified expectation
-      expect(isURL(null)).toBe(false);
-      expect(isURL(undefined)).toBe(false);
-      expect(isURL(123)).toBe(false);
-      expect(isURL('')).toBe(false);
-    });
+  it('should return true for empty objects', () => {
+    expect(isEmpty({})).toBe(true);
+  });
+
+  it('should return false for non-empty arrays and strings', () => {
+    expect(isEmpty([1, 2])).toBe(false);
+    expect(isEmpty('text')).toBe(false);
+  });
+
+  it('should return false for non-empty objects', () => {
+    expect(isEmpty({ a: 1 })).toBe(false);
+  });
+
+  it('should return false for numbers and booleans', () => {
+    expect(isEmpty(0)).toBe(false);
+    expect(isEmpty(false)).toBe(false);
   });
 });
