@@ -194,3 +194,56 @@ describe('property', () => {
     expect(getC(undefined)).toBeUndefined();
   });
 });
+
+describe('matches', () => {
+  const users = [
+    { 'user': 'barney', 'age': 36, 'active': true },
+    { 'user': 'fred',   'age': 40, 'active': false }
+  ];
+
+  it('should return true if object matches source properties', () => {
+    const matcher = matches({ 'active': true });
+    expect(matcher(users[0])).toBe(true);
+    expect(matcher(users[1])).toBe(false);
+  });
+
+  it('should handle multiple properties', () => {
+    const matcher = matches({ 'age': 36, 'active': true });
+    expect(matcher(users[0])).toBe(true);
+    expect(matcher(users[1])).toBe(false);
+  });
+
+  it('should return true for empty source', () => {
+    const matcher = matches({});
+    expect(matcher(users[0])).toBe(true);
+  });
+});
+
+describe('matchesProperty', () => {
+  const users = [
+    { 'user': 'barney', 'age': 36, 'active': true },
+    { 'user': 'fred',   'age': 40, 'active': false }
+  ];
+
+  it('should return true if property at path matches value', () => {
+    const matcher = matchesProperty('active', true);
+    expect(matcher(users[0])).toBe(true);
+    expect(matcher(users[1])).toBe(false);
+  });
+
+  it('should work with nested paths', () => {
+    const obj = { a: { b: { c: 1 } } };
+    const matcher = matchesProperty('a.b.c', 1);
+    expect(matcher(obj)).toBe(true);
+  });
+
+  it('should return false for non-matching values', () => {
+    const matcher = matchesProperty('age', 30);
+    expect(matcher(users[0])).toBe(false);
+  });
+
+  it('should return false for non-existent paths', () => {
+    const matcher = matchesProperty('x.y', 1);
+    expect(matcher(users[0])).toBe(false);
+  });
+});

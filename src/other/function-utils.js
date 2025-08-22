@@ -85,3 +85,21 @@ export const property = (path) => {
     return result;
   };
 };
+
+export const matches = (source) => {
+  return (obj) => {
+    for (const key in source) {
+      if (!(key in obj) || obj[key] !== source[key]) {
+        return false;
+      }
+    }
+    return true;
+  };
+};
+
+export const matchesProperty = (path, value) => {
+  return (obj) => {
+    const propValue = property(path)(obj);
+    return propValue === value;
+  };
+};
