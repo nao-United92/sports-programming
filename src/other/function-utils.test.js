@@ -135,3 +135,21 @@ describe('compose', () => {
     expect(noop(1, 2, 3)).toEqual([1, 2, 3]);
   });
 });
+
+describe('defer', () => {
+  it('should defer the execution of a function', (done) => {
+    const mockFn = jest.fn();
+    defer(mockFn, 1, 2);
+    expect(mockFn).not.toHaveBeenCalled();
+    setTimeout(() => {
+      expect(mockFn).toHaveBeenCalledWith(1, 2);
+      done();
+    }, 10);
+  });
+});
+
+describe('noop', () => {
+  it('should do nothing', () => {
+    expect(noop()).toBeUndefined();
+  });
+});

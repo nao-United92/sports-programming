@@ -60,3 +60,9 @@ export const compose = (...fns) => {
     }, args);
   };
 };
+
+export const defer = (fn, ...args) => {
+  setTimeout(fn, 1, ...args);
+};
+
+export const noop = () => {};
