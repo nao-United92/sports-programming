@@ -48,3 +48,13 @@ export const snakeCase = (str) => {
   if (typeof str !== 'string' || str.length === 0) return '';
   return toWords(str).map(word => word.toLowerCase()).join('_');
 };
+
+/**
+ * Converts `string` to Start Case.
+ * @param {string} [str=''] The string to convert.
+ * @returns {string} Returns the start cased string.
+ */
+export const startCase = (str) => {
+  if (typeof str !== 'string' || str.length === 0) return '';
+  return toWords(str).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+};

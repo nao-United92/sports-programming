@@ -30,17 +30,28 @@ describe('Case Style Utilities', () => {
     });
   });
 
+  describe('startCase', () => {
+    it('should convert various strings to Start Case', () => {
+      expect(startCase('foo-bar')).toBe('Foo Bar');
+      expect(startCase('foo_bar')).toBe('Foo Bar');
+      expect(startCase('__FOO_BAR__')).toBe('Foo Bar');
+      expect(startCase('foo bar')).toBe('Foo Bar');
+    });
+  });
+
   describe('edge cases', () => {
     it('should handle empty strings', () => {
       expect(camelCase('')).toBe('');
       expect(kebabCase('')).toBe('');
       expect(snakeCase('')).toBe('');
+      expect(startCase('')).toBe('');
     });
 
     it('should handle non-string inputs', () => {
       expect(camelCase(null)).toBe('');
       expect(kebabCase(undefined)).toBe('');
       expect(snakeCase(123)).toBe('');
+      expect(startCase(null)).toBe('');
     });
   });
 
