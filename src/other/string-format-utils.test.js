@@ -1,40 +1,33 @@
-import { truncate, slugify } from './string-format-utils';
+import { truncateString } from './string-format-utils.js';
 
-describe('String Format Utilities', () => {
-  describe('truncate', () => {
-    it('should not truncate a string shorter than the specified length', () => {
-      expect(truncate('hello', 10)).toBe('hello');
+describe('String Formatting Utilities', () => {
+  describe('truncateString', () => {
+    it('should return the original string if it is shorter than maxLength', () => {
+      expect(truncateString('hello world', 20)).toBe('hello world');
     });
 
-    it('should truncate a string longer than the specified length', () => {
-      expect(truncate('hello world', 8)).toBe('hello...');
+    it('should return the original string if it is equal to maxLength', () => {
+      expect(truncateString('hello world', 11)).toBe('hello world');
     });
 
-    it('should use a custom omission string', () => {
-      expect(truncate('hello world', 8, '...')).toBe('hello...');
+    it('should truncate the string and add ellipsis if it is longer than maxLength', () => {
+      expect(truncateString('hello world, this is a long string', 20)).toBe('hello world, this...');
     });
 
-    it('should handle edge cases where length is less than or equal to omission length', () => {
-      expect(truncate('hello world', 3)).toBe('...');
-      expect(truncate('hello world', 2)).toBe('...');
-    });
-  });
-
-  describe('slugify', () => {
-    it('should convert a simple string to a slug', () => {
-      expect(slugify('Hello World')).toBe('hello-world');
+    it('should handle maxLength less than 3', () => {
+      expect(truncateString('hello', 2)).toBe('he');
+      expect(truncateString('hello', 0)).toBe('');
     });
 
-    it('should handle multiple spaces', () => {
-      expect(slugify('  Hello   World  ')).toBe('hello-world');
+    it('should return an empty string for non-string inputs', () => {
+      expect(truncateString(null, 10)).toBe('');
+      expect(truncateString(undefined, 10)).toBe('');
+      expect(truncateString(123, 10)).toBe('');
+      expect(truncateString({}, 10)).toBe('');
     });
 
-    it('should remove special characters', () => {
-      expect(slugify('Hello World!@#$%^&*()')).toBe('hello-world');
-    });
-
-    it('should handle multiple hyphens', () => {
-      expect(slugify('Hello--World')).toBe('hello-world');
+    it('should return an empty string for an empty input string', () => {
+      expect(truncateString('', 10)).toBe('');
     });
   });
 });

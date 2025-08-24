@@ -1,34 +1,20 @@
 /**
- * Truncates a string if it's longer than the given maximum string length.
- * The last characters of the truncated string are replaced with the omission string which defaults to "...".
+ * Truncates a string to a specified maximum length and appends an ellipsis if it exceeds that length.
  *
- * @param {string} string The string to truncate.
- * @param {number} length The maximum string length.
- * @param {string} [omission='...'] The string to indicate text is omitted.
- * @returns {string} Returns the truncated string.
+ * @param {string} str The input string.
+ * @param {number} maxLength The maximum allowed length of the string before truncation.
+ * @returns {string} The truncated string with an ellipsis, or the original string if not truncated.
  */
-export const truncate = (string, length, omission = '...') => {
-  if (string.length <= length) {
-    return string;
+export function truncateString(str, maxLength) {
+  if (typeof str !== 'string') {
+    return '';
   }
-  if (length <= omission.length) {
-    return omission;
+  if (maxLength < 3) {
+    // If maxLength is too small to accommodate ellipsis, just return first maxLength chars
+    return str.substring(0, maxLength);
   }
-  return string.slice(0, length - omission.length) + omission;
-};
-
-/**
- * Converts a string into a URL-friendly slug.
- *
- * @param {string} string The string to convert.
- * @returns {string} Returns the slug.
- */
-export const slugify = (string) => {
-  return string
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-    .replace(/\-\-+/g, '-'); // Replace multiple - with single -
-};
+  if (str.length > maxLength) {
+    return str.substring(0, maxLength - 3) + '...';
+  }
+  return str;
+}
