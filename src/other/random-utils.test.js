@@ -1,46 +1,53 @@
-import { random } from './random-utils.js';
+import { getRandomInt } from './random-utils.js';
 
-describe('random', () => {
-  const isBetween = (value, lower, upper) => value >= lower && value <= upper;
+describe('Random Utilities', () => {
+  describe('getRandomInt', () => {
+    it('should return an integer within the specified range (inclusive)', () => {
+      const min = 1;
+      const max = 10;
+      for (let i = 0; i < 100; i++) {
+        const randomNumber = getRandomInt(min, max);
+        expect(randomNumber).toBeGreaterThanOrEqual(min);
+        expect(randomNumber).toBeLessThanOrEqual(max);
+        expect(Number.isInteger(randomNumber)).toBe(true);
+      }
+    });
 
-  test('should return an integer between the bounds', () => {
-    const result = random(0, 5);
-    expect(Number.isInteger(result)).toBe(true);
-    expect(isBetween(result, 0, 5)).toBe(true);
-  });
+    it('should return the same number if min and max are equal', () => {
+      expect(getRandomInt(5, 5)).toBe(5);
+    });
 
-  test('should handle a single argument, returning between 0 and the value', () => {
-    const result = random(5);
-    expect(Number.isInteger(result)).toBe(true);
-    expect(isBetween(result, 0, 5)).toBe(true);
-  });
+    it('should handle negative numbers', () => {
+      const min = -10;
+      const max = -1;
+      for (let i = 0; i < 100; i++) {
+        const randomNumber = getRandomInt(min, max);
+        expect(randomNumber).toBeGreaterThanOrEqual(min);
+        expect(randomNumber).toBeLessThanOrEqual(max);
+        expect(Number.isInteger(randomNumber)).toBe(true);
+      }
+    });
 
-  test('should return a floating-point number if floating is true', () => {
-    const result = random(0, 5, true);
-    expect(Number.isInteger(result)).toBe(false);
-    expect(isBetween(result, 0, 5)).toBe(true);
-  });
+    it('should handle min greater than max by swapping them', () => {
+      const min = 10;
+      const max = 1;
+      for (let i = 0; i < 100; i++) {
+        const randomNumber = getRandomInt(min, max);
+        expect(randomNumber).toBeGreaterThanOrEqual(1);
+        expect(randomNumber).toBeLessThanOrEqual(10);
+        expect(Number.isInteger(randomNumber)).toBe(true);
+      }
+    });
 
-  test('should return a floating-point number if one of the bounds is a float', () => {
-    const result = random(0, 2.5);
-    expect(Number.isInteger(result)).toBe(false);
-    expect(isBetween(result, 0, 2.5)).toBe(true);
-  });
-
-  test('should handle negative ranges', () => {
-    const result = random(-10, -5);
-    expect(Number.isInteger(result)).toBe(true);
-    expect(isBetween(result, -10, -5)).toBe(true);
-  });
-
-  test('should handle a single negative argument', () => {
-    const result = random(-5);
-    expect(Number.isInteger(result)).toBe(true);
-    expect(isBetween(result, -5, 0)).toBe(true);
-  });
-
-  test('should default to a number between 0 and 1', () => {
-    const result = random();
-    expect(isBetween(result, 0, 1)).toBe(true);
+    it('should produce different numbers over multiple calls (basic randomness check)', () => {
+      const min = 1;
+      const max = 100;
+      const results = new Set();
+      for (let i = 0; i < 50; i++) {
+        results.add(getRandomInt(min, max));
+      }
+      // Expect more than one unique number for a reasonable range and number of calls
+      expect(results.size).toBeGreaterThan(1);
+    });
   });
 });
