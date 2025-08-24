@@ -1,46 +1,56 @@
-import { formatDate, getDaysInMonth } from './date-format-utils.js';
+import { formatDate, parseDate } from './date-format-utils.js';
 
-describe('dateFormatUtils', () => {
+describe('Date Formatting Utilities', () => {
   describe('formatDate', () => {
-    it('should format a date in en-US locale', () => {
-      const date = new Date('2023-01-15T10:00:00Z');
-      expect(formatDate(date, 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })).toBe('January 15, 2023');
+    const date = new Date(2023, 10, 27, 15, 30, 45); // November 27, 2023 15:30:45
+
+    it('should format date in YYYY-MM-DD format', () => {
+      expect(formatDate(date, 'YYYY-MM-DD')).toBe('2023-11-27');
     });
 
-    it('should format a date in ja-JP locale', () => {
-      const date = new Date('2023-01-15T10:00:00Z');
-      expect(formatDate(date, 'ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })).toBe('2023年1月15日');
+    it('should format date in MM/DD/YYYY format', () => {
+      expect(formatDate(date, 'MM/DD/YYYY')).toBe('11/27/2023');
     });
 
-    it('should return an empty string for invalid date input', () => {
-      expect(formatDate(null, 'en-US')).toBe('');
-      expect(formatDate(undefined, 'en-US')).toBe('');
-      expect(formatDate('invalid date', 'en-US')).toBe('');
-      expect(formatDate(new Date('invalid'), 'en-US')).toBe('');
+    it('should format time in HH:mm:ss format', () => {
+      expect(formatDate(date, 'HH:mm:ss')).toBe('15:30:45');
     });
 
-    it('should handle different options', () => {
-      const date = new Date('2023-01-15T10:00:00Z');
-      expect(formatDate(date, 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })).toBe('Sunday, January 15, 2023');
+    it('should format full date and time', () => {
+      expect(formatDate(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-11-27 15:30:45');
+    });
+
+    it('should return empty string for invalid date', () => {
+      expect(formatDate(new Date('invalid'), 'YYYY-MM-DD')).toBe('');
+      expect(formatDate(null, 'YYYY-MM-DD')).toBe('');
     });
   });
 
-  describe('getDaysInMonth', () => {
-    it('should return the correct number of days for a common month', () => {
-      expect(getDaysInMonth(2023, 1)).toBe(31); // January
-      expect(getDaysInMonth(2023, 2)).toBe(28); // February (non-leap year)
-      expect(getDaysInMonth(2023, 4)).toBe(30); // April
+  describe('parseDate', () => {
+    it('should parse date in YYYY-MM-DD format', () => {
+      const parsed = parseDate('2023-11-27', 'YYYY-MM-DD');
+      expect(parsed).toEqual(new Date(2023, 10, 27, 0, 0, 0));
     });
 
-    it('should return 29 for February in a leap year', () => {
-      expect(getDaysInMonth(2024, 2)).toBe(29); // February (leap year)
+    it('should parse date in MM/DD/YYYY format', () => {
+      const parsed = parseDate('11/27/2023', 'MM/DD/YYYY');
+      expect(parsed).toEqual(new Date(2023, 10, 27, 0, 0, 0));
     });
 
-    it('should return 0 for invalid month or year', () => {
-      expect(getDaysInMonth(2023, 0)).toBe(0);
-      expect(getDaysInMonth(2023, 13)).toBe(0);
-      expect(getDaysInMonth(null, 1)).toBe(0);
-      expect(getDaysInMonth(2023, null)).toBe(0);
+    it('should parse time in HH:mm:ss format', () => {
+      const parsed = parseDate('15:30:45', 'HH:mm:ss');
+      expect(parsed).toEqual(new Date(0, 0, 1, 15, 30, 45)); // Year, month, day default to 0,0,1
+    });
+
+    it('should parse full date and time', () => {
+      const parsed = parseDate('2023-11-27 15:30:45', 'YYYY-MM-DD HH:mm:ss');
+      expect(parsed).toEqual(new Date(2023, 10, 27, 15, 30, 45));
+    });
+
+    it('should return null for invalid date string or format mismatch', () => {
+      expect(parseDate('2023/11/27', 'YYYY-MM-DD')).toBeNull(); // Format mismatch
+      expect(parseDate('invalid-date', 'YYYY-MM-DD')).toBeNull();
+      expect(parseDate('2023-99-99', 'YYYY-MM-DD')).toBeNull(); // Invalid date components
     });
   });
 });
