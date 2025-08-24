@@ -58,3 +58,23 @@ export function isEmpty(value) {
 
   return false;
 }
+
+/**
+ * Creates an object composed of the picked `object` properties.
+ * @param {object} object The source object.
+ * @param {Array<string>} paths The property keys to pick.
+ * @returns {object} Returns the new object.
+ */
+export function pick(object, paths) {
+  const result = {};
+  if (object === null || typeof object !== 'object') {
+    return result;
+  }
+
+  for (const path of paths) {
+    if (Object.prototype.hasOwnProperty.call(object, path)) {
+      result[path] = object[path];
+    }
+  }
+  return result;
+}
