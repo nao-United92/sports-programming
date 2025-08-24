@@ -1,25 +1,25 @@
-export const throttle = (fn, delay) => {
-  let throttled = false;
-  let lastArgs = null;
-  let timeoutId = null;
+/**
+ * Creates a throttled function that only invokes `func` at most once per every `delay` milliseconds.
+ * @param {Function} func The function to throttle.
+ * @param {number} delay The number of milliseconds to throttle invocations to.
+ * @returns {Function} Returns the new throttled function.
+ */
+export function throttle(func, delay) {
+  let lastCall = 0;
+  let timeoutId;
 
-  const throttledFn = (...args) => {
-    if (throttled) {
-      lastArgs = args;
-      return;
+  return function(...args) {
+    const now = new Date().getTime();
+
+    if (now - lastCall < delay) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        lastCall = now;
+        func.apply(this, args);
+      }, delay);
+    } else {
+      lastCall = now;
+      func.apply(this, args);
     }
-
-    throttled = true;
-    fn(...args);
-
-    timeoutId = setTimeout(() => {
-      throttled = false;
-      if (lastArgs) {
-        throttledFn(...lastArgs);
-        lastArgs = null;
-      }
-    }, delay);
   };
-
-  return throttledFn;
-};
+}
