@@ -1,41 +1,45 @@
-import { clamp, inRange } from './number-utils.js';
+import { round } from './number-utils.js';
 
 describe('Number Utilities', () => {
-  describe('clamp', () => {
-    it('should clamp a number to the lower bound', () => {
-      expect(clamp(-10, -5, 5)).toBe(-5);
+  describe('round', () => {
+    it('should round a number to the nearest integer by default', () => {
+      expect(round(10.4)).toBe(10);
+      expect(round(10.5)).toBe(11);
+      expect(round(10.6)).toBe(11);
+      expect(round(-10.4)).toBe(-10);
+      expect(round(-10.5)).toBe(-10); // Math.round rounds .5 up for positive, down for negative
+      expect(round(-10.6)).toBe(-11);
     });
 
-    it('should clamp a number to the upper bound', () => {
-      expect(clamp(10, -5, 5)).toBe(5);
+    it('should round a number to a specified precision', () => {
+      expect(round(10.123, 2)).toBe(10.12);
+      expect(round(10.125, 2)).toBe(10.13);
+      expect(round(10.126, 2)).toBe(10.13);
+      expect(round(10.999, 2)).toBe(11.00);
     });
 
-    it('should not clamp a number within the range', () => {
-      expect(clamp(0, -5, 5)).toBe(0);
-    });
-  });
-
-  describe('inRange', () => {
-    it('should return true for a number within the range', () => {
-      expect(inRange(3, 1, 5)).toBe(true);
+    it('should handle zero precision', () => {
+      expect(round(10.5, 0)).toBe(11);
+      expect(round(10.49, 0)).toBe(10);
     });
 
-    it('should return false for a number outside the range', () => {
-      expect(inRange(6, 1, 5)).toBe(false);
+    it('should handle negative precision', () => {
+      expect(round(12345, -2)).toBe(12300);
+      expect(round(12355, -2)).toBe(12400);
+      expect(round(12345.67, -1)).toBe(12350);
     });
 
-    it('should handle a swapped range', () => {
-      expect(inRange(3, 5, 1)).toBe(true);
+    it('should return NaN for non-numeric input', () => {
+      expect(isNaN(round('abc'))).toBe(true);
+      expect(isNaN(round(null))).toBe(true);
+      expect(isNaN(round(undefined))).toBe(true);
+      expect(isNaN(round({}))).toBe(true);
     });
 
-    it('should work with a single range argument', () => {
-      expect(inRange(3, 5)).toBe(true);
-      expect(inRange(6, 5)).toBe(false);
-    });
-
-    it('should include the bounds', () => {
-      expect(inRange(1, 1, 5)).toBe(true);
-      expect(inRange(5, 1, 5)).toBe(true);
+    it('should handle non-numeric precision gracefully', () => {
+      expect(round(10.123, 'abc')).toBe(10);
+      expect(round(10.123, null)).toBe(10);
+      expect(round(10.123, undefined)).toBe(10);
     });
   });
 });

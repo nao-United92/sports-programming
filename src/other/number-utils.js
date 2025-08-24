@@ -1,25 +1,18 @@
 /**
- * Clamps a number within the inclusive lower and upper bounds.
- * @param {number} number The number to clamp.
- * @param {number} lower The lower bound.
- * @param {number} upper The upper bound.
- * @returns {number} Returns the clamped number.
+ * Rounds a number to a specified precision.
+ *
+ * @param {number} number The number to round.
+ * @param {number} [precision=0] The number of decimal places to round to.
+ * @returns {number} The rounded number.
  */
-export function clamp(number, lower, upper) {
-  return Math.max(lower, Math.min(number, upper));
-}
-
-/**
- * Checks if a number is between two numbers (inclusive).
- * @param {number} number The number to check.
- * @param {number} start The start of the range.
- * @param {number} end The end of the range.
- * @returns {boolean} Returns true if the number is in the range, else false.
- */
-export function inRange(number, start, end) {
-  if (end === undefined) {
-    end = start;
-    start = 0;
+export function round(number, precision = 0) {
+  if (typeof number !== 'number' || isNaN(number)) {
+    return NaN;
   }
-  return number >= Math.min(start, end) && number <= Math.max(start, end);
+  if (typeof precision !== 'number' || isNaN(precision)) {
+    precision = 0;
+  }
+
+  const multiplier = Math.pow(10, precision);
+  return Math.round(number * multiplier) / multiplier;
 }
