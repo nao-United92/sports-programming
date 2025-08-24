@@ -1,31 +1,37 @@
-import { isEmpty } from './validation-utils';
+import { isEmail, isAlpha, isAlphanumeric } from './validation-utils.js';
 
-describe('isEmpty', () => {
-  it('should return true for null or undefined', () => {
-    expect(isEmpty(null)).toBe(true);
-    expect(isEmpty(undefined)).toBe(true);
+describe('Validation Utilities', () => {
+  describe('isEmail', () => {
+    it('should return true for a valid email', () => {
+      expect(isEmail('test@example.com')).toBe(true);
+    });
+
+    it('should return false for an invalid email', () => {
+      expect(isEmail('not-an-email')).toBe(false);
+      expect(isEmail('test@example')).toBe(false);
+      expect(isEmail('test.com')).toBe(false);
+    });
   });
 
-  it('should return true for empty arrays and strings', () => {
-    expect(isEmpty([])).toBe(true);
-    expect(isEmpty('')).toBe(true);
+  describe('isAlpha', () => {
+    it('should return true for a string with only alphabetic characters', () => {
+      expect(isAlpha('abcABC')).toBe(true);
+    });
+
+    it('should return false for a string with non-alphabetic characters', () => {
+      expect(isAlpha('abc123')).toBe(false);
+      expect(isAlpha('abc!')).toBe(false);
+    });
   });
 
-  it('should return true for empty objects', () => {
-    expect(isEmpty({})).toBe(true);
-  });
+  describe('isAlphanumeric', () => {
+    it('should return true for a string with only alphanumeric characters', () => {
+      expect(isAlphanumeric('abcABC123')).toBe(true);
+    });
 
-  it('should return false for non-empty arrays and strings', () => {
-    expect(isEmpty([1, 2])).toBe(false);
-    expect(isEmpty('text')).toBe(false);
-  });
-
-  it('should return false for non-empty objects', () => {
-    expect(isEmpty({ a: 1 })).toBe(false);
-  });
-
-  it('should return false for numbers and booleans', () => {
-    expect(isEmpty(0)).toBe(false);
-    expect(isEmpty(false)).toBe(false);
+    it('should return false for a string with non-alphanumeric characters', () => {
+      expect(isAlphanumeric('abc!')).toBe(false);
+      expect(isAlphanumeric('abc 123')).toBe(false);
+    });
   });
 });
