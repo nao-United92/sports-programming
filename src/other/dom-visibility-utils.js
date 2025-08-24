@@ -1,43 +1,28 @@
 /**
- * 指定されたDOM要素の表示状態を切り替えます。
- * 要素が非表示の場合は表示し、表示されている場合は非表示にします。
- * @param {HTMLElement} element - 表示状態を切り替えるDOM要素。
- * @param {string} [displayStyle='block'] - 要素を表示する際に適用するdisplayスタイル。デフォルトは'block'。
+ * Checks if an element is visible (not display: none or visibility: hidden).
+ * @param {HTMLElement} element The element to check.
+ * @returns {boolean} True if the element is visible, false otherwise.
  */
-export function toggle(element, displayStyle = 'block') {
-  if (!(element instanceof HTMLElement)) {
-    console.warn('Invalid element provided to toggle.', element);
+export function isVisible(element) {
+  if (!element) {
+    return false;
+  }
+  const style = window.getComputedStyle(element);
+  return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+}
+
+/**
+ * Toggles the visibility of an element.
+ * @param {HTMLElement} element The element to toggle visibility for.
+ * @param {string} [display='block'] The display value to set when showing the element.
+ */
+export function toggleVisibility(element, display = 'block') {
+  if (!element) {
     return;
   }
-
-  if (element.style.display === 'none') {
-    element.style.display = displayStyle;
-  } else {
+  if (isVisible(element)) {
     element.style.display = 'none';
+  } else {
+    element.style.display = display;
   }
-}
-
-/**
- * Shows a DOM element by setting its display style.
- * @param {HTMLElement} element - The DOM element to show.
- * @param {string} [displayStyle='block'] - The display style to apply. Defaults to 'block'.
- */
-export function show(element, displayStyle = 'block') {
-  if (!(element instanceof HTMLElement)) {
-    console.warn('Invalid element provided to show.', element);
-    return;
-  }
-  element.style.display = displayStyle;
-}
-
-/**
- * Hides a DOM element by setting its display style to 'none'.
- * @param {HTMLElement} element - The DOM element to hide.
- */
-export function hide(element) {
-  if (!(element instanceof HTMLElement)) {
-    console.warn('Invalid element provided to hide.', element);
-    return;
-  }
-  element.style.display = 'none';
 }
