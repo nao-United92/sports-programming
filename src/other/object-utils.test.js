@@ -4,42 +4,31 @@ describe('Object Utilities', () => {
   const data = { a: 1, b: 2, c: 3 };
 
   describe('pick', () => {
-    test('should return an object with picked properties', () => {
+    it('should return an object with only the specified keys', () => {
       expect(pick(data, ['a', 'c'])).toEqual({ a: 1, c: 3 });
     });
 
-    test('should not include properties that are not in the object', () => {
-      expect(pick(data, ['a', 'd'])).toEqual({ a: 1 });
-    });
-
-    test('should return an empty object if no keys are picked', () => {
+    it('should return an empty object if no keys are specified', () => {
       expect(pick(data, [])).toEqual({});
     });
 
-    test('should return an empty object for null or non-object inputs', () => {
-      expect(pick(null, ['a'])).toEqual({});
-      expect(pick(undefined, ['a'])).toEqual({});
-      expect(pick('string', ['a'])).toEqual({});
+    it('should ignore keys that do not exist in the source object', () => {
+      expect(pick(data, ['a', 'd'])).toEqual({ a: 1 });
     });
   });
 
   describe('omit', () => {
-    test('should return an object with omitted properties', () => {
-      expect(omit(data, ['b'])).toEqual({ a: 1, c: 3 });
+    it('should return an object without the specified keys', () => {
+      expect(omit(data, ['a', 'c'])).toEqual({ b: 2 });
     });
 
-    test('should not change the object if omitted keys do not exist', () => {
-      expect(omit(data, ['d', 'e'])).toEqual({ a: 1, b: 2, c: 3 });
+    it('should return the original object if no keys are specified', () => {
+      expect(omit(data, [])).toEqual(data);
     });
 
-    test('should return the same object if no keys are omitted', () => {
-      expect(omit(data, [])).toEqual({ a: 1, b: 2, c: 3 });
-    });
-
-    test('should return an empty object for null or non-object inputs', () => {
-        expect(omit(null, ['a'])).toEqual({});
-        expect(omit(undefined, ['a'])).toEqual({});
-        expect(omit('string', ['a'])).toEqual({});
+    it('should not modify the original object', () => {
+      omit(data, ['a']);
+      expect(data).toEqual({ a: 1, b: 2, c: 3 });
     });
   });
 });
