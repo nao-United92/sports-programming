@@ -1,4 +1,4 @@
-import { mapObject, filterObject } from './collection-object-utils.js';
+import { mapObject, filterObject, isEmpty } from './collection-object-utils.js';
 
 describe('Collection Object Utilities', () => {
   const data = { a: 1, b: 2, c: 3 };
@@ -36,6 +36,36 @@ describe('Collection Object Utilities', () => {
 
     it('should return an empty object for an empty input', () => {
       expect(filterObject({}, (value) => value)).toEqual({});
+    });
+  });
+
+  describe('isEmpty', () => {
+    it('should return true for null or undefined', () => {
+      expect(isEmpty(null)).toBe(true);
+      expect(isEmpty(undefined)).toBe(true);
+    });
+
+    it('should return true for empty string, array, map, set, and object', () => {
+      expect(isEmpty('')).toBe(true);
+      expect(isEmpty([])).toBe(true);
+      expect(isEmpty(new Map())).toBe(true);
+      expect(isEmpty(new Set())).toBe(true);
+      expect(isEmpty({})).toBe(true);
+    });
+
+    it('should return false for non-empty string, array, map, set, and object', () => {
+      expect(isEmpty('hello')).toBe(false);
+      expect(isEmpty([1, 2])).toBe(false);
+      expect(isEmpty(new Map([['a', 1]]))).toBe(false);
+      expect(isEmpty(new Set([1, 2]))).toBe(false);
+      expect(isEmpty({ a: 1 })).toBe(false);
+    });
+
+    it('should return false for numbers and booleans', () => {
+      expect(isEmpty(0)).toBe(false);
+      expect(isEmpty(123)).toBe(false);
+      expect(isEmpty(true)).toBe(false);
+      expect(isEmpty(false)).toBe(false);
     });
   });
 });
