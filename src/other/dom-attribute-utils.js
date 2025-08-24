@@ -1,74 +1,50 @@
 /**
- * Gets the value of a specified attribute from an HTML element.
- * @param {HTMLElement} element The HTML element.
- * @param {string} attributeName The name of the attribute.
- * @returns {string|null} The attribute value, or null if not found.
+ * Gets the value of an attribute for the first element in the set of matched elements.
+ * @param {HTMLElement} element The element to get the attribute from.
+ * @param {string} attribute The name of the attribute to get.
+ * @returns {string | null} The attribute value, or null if the attribute is not set.
  */
-function getAttribute(element, attributeName) {
-  if (!element || typeof element.getAttribute !== 'function') {
+export function getAttribute(element, attribute) {
+  if (!element || !attribute) {
     return null;
   }
-  return element.getAttribute(attributeName);
+  return element.getAttribute(attribute);
 }
 
 /**
- * Checks if an HTML element has a specified attribute.
- * @param {HTMLElement} element The HTML element.
- * @param {string} attributeName The name of the attribute.
+ * Sets one or more attributes for the set of matched elements.
+ * @param {HTMLElement} element The element to set the attribute on.
+ * @param {string} attribute The name of the attribute to set.
+ * @param {string} value The value to set the attribute to.
+ */
+export function setAttribute(element, attribute, value) {
+  if (!element || !attribute) {
+    return;
+  }
+  element.setAttribute(attribute, value);
+}
+
+/**
+ * Checks if an element has a specific attribute.
+ * @param {HTMLElement} element The element to check.
+ * @param {string} attribute The name of the attribute to check for.
  * @returns {boolean} True if the element has the attribute, false otherwise.
  */
-function hasAttribute(element, attributeName) {
-  if (!element || typeof element.hasAttribute !== 'function') {
+export function hasAttribute(element, attribute) {
+  if (!element || !attribute) {
     return false;
   }
-  return element.hasAttribute(attributeName);
+  return element.hasAttribute(attribute);
 }
 
 /**
- * Sets the value of a specified attribute for an HTML element.
- * @param {HTMLElement} element The HTML element.
- * @param {string} attributeName The name of the attribute.
- * @param {string} value The value to set.
+ * Removes an attribute from each element in the set of matched elements.
+ * @param {HTMLElement} element The element to remove the attribute from.
+ * @param {string} attribute The name of the attribute to remove.
  */
-function setAttribute(element, attributeName, value) {
-  if (!element || typeof element.setAttribute !== 'function') {
+export function removeAttribute(element, attribute) {
+  if (!element || !attribute) {
     return;
   }
-  element.setAttribute(attributeName, value);
+  element.removeAttribute(attribute);
 }
-
-/**
- * Removes a specified attribute from an HTML element.
- * @param {HTMLElement} element The HTML element.
- * @param {string} attributeName The name of the attribute.
- */
-function removeAttribute(element, attributeName) {
-  if (!element || typeof element.removeAttribute !== 'function') {
-    return;
-  }
-  element.removeAttribute(attributeName);
-}
-
-/**
- * Sets multiple attributes for an HTML element from an object.
- * @param {HTMLElement} element The HTML element.
- * @param {Object<string, string>} attributes An object where keys are attribute names and values are attribute values.
- */
-function setAttributes(element, attributes) {
-  if (!element || typeof element.setAttribute !== 'function' || typeof attributes !== 'object' || attributes === null) {
-    return;
-  }
-  for (const key in attributes) {
-    if (Object.prototype.hasOwnProperty.call(attributes, key)) {
-      element.setAttribute(key, attributes[key]);
-    }
-  }
-}
-
-module.exports = {
-  getAttribute,
-  hasAttribute,
-  setAttribute,
-  removeAttribute,
-  setAttributes
-};
