@@ -1,20 +1,12 @@
-const wordSeparators = /[^a-zA-Z0-9]+(.)?|([a-z])([A-Z])/g;
-const upperCase = /[A-Z]/;
-
 const toWords = (str) => {
-  const words = [];
-  str.replace(wordSeparators, (match, chr, lower, upper) => {
-    if (lower) {
-      words.push(lower);
-    }
-    if (chr) {
-      words.push(chr.toUpperCase());
-    } else if (upper) {
-      words.push(upper.toLowerCase());
-    }
-  });
-  return words;
+  return str
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2') // camelCase to "camel Case"
+    .replace(/[^a-zA-Z0-9]+/g, ' ') // Replace non-alphanumeric with space
+    .toLowerCase()
+    .trim()
+    .split(' ');
 };
+
 
 /**
  * Converts `string` to camelCase.
@@ -57,4 +49,14 @@ export const snakeCase = (str) => {
 export const startCase = (str) => {
   if (typeof str !== 'string' || str.length === 0) return '';
   return toWords(str).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+};
+
+/**
+ * Converts `string` to PascalCase.
+ * @param {string} [str=''] The string to convert.
+ * @returns {string} Returns the Pascal cased string.
+ */
+export const pascalCase = (str) => {
+  if (typeof str !== 'string' || str.length === 0) return '';
+  return toWords(str).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('');
 };

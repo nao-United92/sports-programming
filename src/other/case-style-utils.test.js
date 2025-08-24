@@ -1,4 +1,4 @@
-import { camelCase, kebabCase, snakeCase } from './case-style-utils.js';
+import { camelCase, kebabCase, snakeCase, startCase, pascalCase } from './case-style-utils.js';
 
 describe('Case Style Utilities', () => {
 
@@ -36,6 +36,28 @@ describe('Case Style Utilities', () => {
       expect(startCase('foo_bar')).toBe('Foo Bar');
       expect(startCase('__FOO_BAR__')).toBe('Foo Bar');
       expect(startCase('foo bar')).toBe('Foo Bar');
+    });
+  });
+
+  describe('pascalCase', () => {
+    it('should convert various strings to PascalCase', () => {
+      expect(pascalCase('foo-bar')).toBe('FooBar');
+      expect(pascalCase('foo_bar')).toBe('FooBar');
+      expect(pascalCase('Foo Bar')).toBe('FooBar');
+      expect(pascalCase('--FOO-BAR--')).toBe('FooBar');
+      expect(pascalCase('__FOO_BAR__')).toBe('FooBar');
+      expect(pascalCase('fooBar')).toBe('FooBar'); // Already camelCase
+      expect(pascalCase('FooBar')).toBe('FooBar'); // Already PascalCase
+    });
+
+    it('should handle empty strings', () => {
+      expect(pascalCase('')).toBe('');
+    });
+
+    it('should handle non-string inputs', () => {
+      expect(pascalCase(null)).toBe('');
+      expect(pascalCase(undefined)).toBe('');
+      expect(pascalCase(123)).toBe('');
     });
   });
 
