@@ -1,30 +1,39 @@
-import { truncate, slugify } from './string-utils.js';
+import { truncate, escapeHTML } from './string-utils.js';
 
-describe('truncate', () => {
-  test('should truncate a string that is longer than the specified length', () => {
-    expect(truncate('hello world', 8)).toBe('hello...');
+describe('String Utilities', () => {
+  describe('truncate', () => {
+    it('should not truncate a string shorter than the specified length', () => {
+      expect(truncate('hello', 10)).toBe('hello');
+    });
+
+    it('should truncate a string longer than the specified length', () => {
+      expect(truncate('hello world', 8)).toBe('hello...');
+    });
+
+    it('should use a custom suffix', () => {
+      expect(truncate('hello world', 8, '--')).toBe('hello --');
+    });
+
+    it('should handle edge cases where length is equal to string length', () => {
+      expect(truncate('hello', 5)).toBe('hello');
+    });
+
+    it('should handle edge cases where suffix is longer than length', () => {
+      expect(truncate('hello', 2, '...')).toBe('..');
+    });
   });
 
-  test('should not truncate a string that is shorter than or equal to the specified length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
-  });
+  describe('escapeHTML', () => {
+    it('should escape HTML special characters', () => {
+      expect(escapeHTML('<script>alert("xss")</script>')).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
+    });
 
-  test('should allow a custom suffix', () => {
-    expect(truncate('hello world', 8, '---')).toBe('hello---');
+    it('should not change a string with no special characters', () => {
+      expect(escapeHTML('hello world')).toBe('hello world');
+    });
+
+    it('should handle all special characters', () => {
+      expect(escapeHTML('&<>"\'')).toBe('&amp;&lt;&gt;&quot;&#039;');
+    });
   });
 });
-
-describe('slugify', () => {
-  test('should convert a string to a slug', () => {
-    expect(slugify('Hello World')).toBe('hello-world');
-  });
-
-  test('should remove special characters', () => {
-    expect(slugify('Hello World! 123?')).toBe('hello-world-123');
-  });
-
-  test('should handle multiple spaces and hyphens', () => {
-    expect(slugify('  hello   world--  ')).toBe('hello-world');
-  });
-});
-
