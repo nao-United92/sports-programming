@@ -1,18 +1,25 @@
 /**
- * Rounds a number to a specified number of decimal places.
- * @param {number} num The number to round.
- * @param {number} decimalPlaces The number of decimal places to round to.
- * @returns {number} The rounded number.
+ * Clamps a number within the inclusive lower and upper bounds.
+ * @param {number} number The number to clamp.
+ * @param {number} lower The lower bound.
+ * @param {number} upper The upper bound.
+ * @returns {number} Returns the clamped number.
  */
-function roundToDecimal(num, decimalPlaces) {
-  if (typeof num !== 'number' || isNaN(num)) {
-    return NaN; // Handle non-numeric input
-  }
-  if (decimalPlaces < 0) {
-    return num; // Negative decimal places don't make sense for rounding
-  }
-  const factor = Math.pow(10, decimalPlaces);
-  return Math.round(num * factor) / factor;
+export function clamp(number, lower, upper) {
+  return Math.max(lower, Math.min(number, upper));
 }
 
-module.exports = { roundToDecimal };
+/**
+ * Checks if a number is between two numbers (inclusive).
+ * @param {number} number The number to check.
+ * @param {number} start The start of the range.
+ * @param {number} end The end of the range.
+ * @returns {boolean} Returns true if the number is in the range, else false.
+ */
+export function inRange(number, start, end) {
+  if (end === undefined) {
+    end = start;
+    start = 0;
+  }
+  return number >= Math.min(start, end) && number <= Math.max(start, end);
+}

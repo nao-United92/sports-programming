@@ -1,34 +1,41 @@
-const { roundToDecimal } = require('./number-utils.js');
+import { clamp, inRange } from './number-utils.js';
 
-describe('roundToDecimal', () => {
-  test('should round a number to the specified decimal places', () => {
-    expect(roundToDecimal(123.456, 2)).toBe(123.46);
-    expect(roundToDecimal(123.454, 2)).toBe(123.45);
-    expect(roundToDecimal(123.455, 2)).toBe(123.46); // Standard rounding (round half up)
+describe('Number Utilities', () => {
+  describe('clamp', () => {
+    it('should clamp a number to the lower bound', () => {
+      expect(clamp(-10, -5, 5)).toBe(-5);
+    });
+
+    it('should clamp a number to the upper bound', () => {
+      expect(clamp(10, -5, 5)).toBe(5);
+    });
+
+    it('should not clamp a number within the range', () => {
+      expect(clamp(0, -5, 5)).toBe(0);
+    });
   });
 
-  test('should round to zero decimal places', () => {
-    expect(roundToDecimal(123.5, 0)).toBe(124);
-    expect(roundToDecimal(123.4, 0)).toBe(123);
-  });
+  describe('inRange', () => {
+    it('should return true for a number within the range', () => {
+      expect(inRange(3, 1, 5)).toBe(true);
+    });
 
-  test('should handle negative numbers', () => {
-    expect(roundToDecimal(-123.456, 2)).toBe(-123.46);
-    expect(roundToDecimal(-123.454, 2)).toBe(-123.45);
-  });
+    it('should return false for a number outside the range', () => {
+      expect(inRange(6, 1, 5)).toBe(false);
+    });
 
-  test('should return NaN for non-numeric input', () => {
-    expect(roundToDecimal('abc', 2)).toBeNaN();
-    expect(roundToDecimal(null, 2)).toBeNaN();
-    expect(roundToDecimal(undefined, 2)).toBeNaN();
-  });
+    it('should handle a swapped range', () => {
+      expect(inRange(3, 5, 1)).toBe(true);
+    });
 
-  test('should return the number itself if decimalPlaces is negative', () => {
-    expect(roundToDecimal(123.456, -1)).toBe(123.456);
-  });
+    it('should work with a single range argument', () => {
+      expect(inRange(3, 5)).toBe(true);
+      expect(inRange(6, 5)).toBe(false);
+    });
 
-  test('should handle numbers with fewer decimal places than specified', () => {
-    expect(roundToDecimal(123.4, 2)).toBe(123.4);
-    expect(roundToDecimal(123, 2)).toBe(123);
+    it('should include the bounds', () => {
+      expect(inRange(1, 1, 5)).toBe(true);
+      expect(inRange(5, 1, 5)).toBe(true);
+    });
   });
 });
