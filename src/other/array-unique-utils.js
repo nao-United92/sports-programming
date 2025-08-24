@@ -30,3 +30,28 @@ export function uniqueBy(array, iteratee) {
     return true;
   });
 }
+
+/**
+ * Creates a duplicate-free array, based on the value of a specified key in each object.
+ * @param {Array<object>} array The array of objects to inspect.
+ * @param {string} key The key whose value will be used to determine uniqueness.
+ * @returns {Array<object>} Returns the new duplicate free array.
+ */
+export function uniqueByKey(array, key) {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  const seen = new Set();
+  return array.filter(item => {
+    if (item === null || typeof item !== 'object' || !item.hasOwnProperty(key)) {
+      return true; // Keep items that are not objects or don't have the key
+    }
+    const value = item[key];
+    if (seen.has(value)) {
+      return false;
+    }
+    seen.add(value);
+    return true;
+  });
+}
+

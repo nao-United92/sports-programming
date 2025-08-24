@@ -1,4 +1,4 @@
-import { unique, uniqueBy } from './array-unique-utils';
+import { unique, uniqueBy, uniqueByKey } from './array-unique-utils';
 
 describe('unique', () => {
   test('should return a new array with unique values', () => {
@@ -64,5 +64,61 @@ describe('uniqueBy', () => {
     const arr = [{ id: { a: 1 }, name: 'x' }, { id: { a: 1 }, name: 'y' }];
     const iteratee = (item) => JSON.stringify(item.id);
     expect(uniqueBy(arr, iteratee)).toEqual([{ id: { a: 1 }, name: 'x' }]);
+  });
+});
+
+describe('uniqueByKey', () => {
+  test('should return a new array with unique values based on a key', () => {
+    const arr = [
+      { id: 1, name: 'a' },
+      { id: 2, name: 'b' },
+      { id: 1, name: 'c' },
+      { id: 3, name: 'd' },
+      { id: 2, name: 'e' },
+    ];
+    expect(uniqueByKey(arr, 'id')).toEqual([
+      { id: 1, name: 'a' },
+      { id: 2, name: 'b' },
+      { id: 3, name: 'd' },
+    ]);
+  });
+
+  test('should handle empty array', () => {
+    expect(uniqueByKey([], 'id')).toEqual([]);
+  });
+
+  test('should handle non-array input', () => {
+    expect(uniqueByKey(null, 'id')).toEqual([]);
+    expect(uniqueByKey(undefined, 'id')).toEqual([]);
+    expect(uniqueByKey(123, 'id')).toEqual([]);
+  });
+
+  test('should handle objects without the specified key', () => {
+    const arr = [
+      { id: 1, name: 'a' },
+      { name: 'b' }, // Missing 'id' key
+      { id: 2, name: 'c' },
+    ];
+    expect(uniqueByKey(arr, 'id')).toEqual([
+      { id: 1, name: 'a' },
+      { name: 'b' },
+      { id: 2, name: 'c' },
+    ]);
+  });
+
+  test('should handle different data types for the key value', () => {
+    const arr = [
+      { value: 1, type: 'number' },
+      { value: '1', type: 'string' },
+      { value: 1, type: 'another number' },
+      { value: true, type: 'boolean' },
+      { value: 'true', type: 'string' },
+    ];
+    expect(uniqueByKey(arr, 'value')).toEqual([
+      { value: 1, type: 'number' },
+      { value: '1', type: 'string' },
+      { value: true, type: 'boolean' },
+      { value: 'true', type: 'string' },
+    ]);
   });
 });
