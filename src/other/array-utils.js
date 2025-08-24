@@ -368,3 +368,19 @@ export function isEqualArray(arr1, arr2) {
   }
   return true;
 }
+
+/**
+ * Checks if `array` contains all `elements` from the `elements` array.
+ * @param {Array} array The array to inspect.
+ * @param {Array} elements The elements to check for.
+ * @returns {boolean} Returns `true` if `array` contains all `elements`, else `false`.
+ */
+export function containsAll(array, elements) {
+  if (!Array.isArray(array) || !Array.isArray(elements)) {
+    return false;
+  }
+  if (elements.length === 0) {
+    return true;
+  }
+  return elements.every(elem => array.includes(elem));
+}

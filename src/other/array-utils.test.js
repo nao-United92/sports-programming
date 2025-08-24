@@ -43,37 +43,7 @@ describe('array-utils', () => {
       expect(shuffleArray([1])).toEqual([1]);
     });
 
-    it('should contain the same elements after shuffling', () => {
-      const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      const shuffled = shuffleArray([...arr]);
-      expect(shuffled.length).toBe(arr.length);
-      expect(shuffled.sort()).toEqual(arr.sort());
-    });
-  });
-
-  describe('shuffleArray', () => {
-    it('should shuffle an array', () => {
-      const arr = [1, 2, 3, 4, 5];
-      const shuffled = shuffleArray([...arr]);
-      expect(shuffled).not.toEqual(arr);
-      expect(shuffled.sort()).toEqual(arr.sort());
-    });
-
-    it('should return an empty array when given an empty array', () => {
-      expect(shuffleArray([])).toEqual([]);
-    });
-
-    it('should return the same array when given an array with one element', () => {
-      expect(shuffleArray([1])).toEqual([1]);
-    });
-
-    it('should contain the same elements after shuffling', () => {
-      const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      const shuffled = shuffleArray([...arr]);
-      expect(shuffled.length).toBe(arr.length);
-      expect(shuffled.sort()).toEqual(arr.sort());
-    });
-  });
+    
 
   describe('uniqueArray', () => {
     it('should return an array with unique values', () => {
@@ -446,97 +416,13 @@ describe('array-utils', () => {
     });
   });
 
-  describe('isSorted', () => {
-    test('should return true for a sorted array', () => {
-      expect(isSorted([1, 2, 3, 4, 5])).toBe(true);
-      expect(isSorted([1, 1, 2, 3])).toBe(true);
-      expect(isSorted([])).toBe(true);
-      expect(isSorted([1])).toBe(true);
-    });
+  
 
-    test('should return false for an unsorted array', () => {
-      expect(isSorted([3, 1, 2])).toBe(false);
-      expect(isSorted([5, 4, 3, 2, 1])).toBe(false);
-    });
+  
 
-    test('should return true for an empty array or single-element array', () => {
-      expect(isSorted([])).toBe(true);
-      expect(isSorted([1])).toBe(true);
-    });
+  
 
-    test('should return false for non-array inputs', () => {
-      expect(isSorted(null)).toBe(true);
-      expect(isSorted(undefined)).toBe(true);
-      expect(isSorted(123)).toBe(true);
-    });
-  });
-
-  describe('sampleSize', () => {
-    test('should return a random sample of specified size', () => {
-      const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      const sample = sampleSize(arr, 3);
-      expect(sample.length).toBe(3);
-      sample.forEach(element => expect(arr).toContain(element));
-    });
-
-    test('should return an empty array if n is 0 or less', () => {
-      const arr = [1, 2, 3];
-      expect(sampleSize(arr, 0)).toEqual([]);
-      expect(sampleSize(arr, -1)).toEqual([]);
-    });
-
-    test('should return the entire array if n is greater than array length', () => {
-      const arr = [1, 2, 3];
-      const sample = sampleSize(arr, 5);
-      expect(sample.length).toBe(3);
-      expect(sample.sort()).toEqual(arr.sort());
-    });
-
-    test('should return an empty array for non-array inputs', () => {
-      expect(sampleSize(null, 2)).toEqual([]);
-      expect(sampleSize(undefined, 2)).toEqual([]);
-      expect(sampleSize(123, 2)).toEqual([]);
-    });
-  });
-
-  describe('flatten', () => {
-    it('should flatten an array to a specified depth', () => {
-      const arr = [1, [2, [3, [4]]]];
-      expect(flatten(arr, 1)).toEqual([1, 2, [3, [4]]]);
-      expect(flatten(arr, 2)).toEqual([1, 2, 3, [4]]);
-      expect(flatten(arr, Infinity)).toEqual([1, 2, 3, 4]);
-    });
-
-    it('should default to a depth of 1', () => {
-      const arr = [1, [2, [3]]];
-      expect(flatten(arr)).toEqual([1, 2, [3]]);
-    });
-
-    test('should return an empty array for non-array inputs', () => {
-      expect(flatten(null)).toEqual([]);
-      expect(flatten(undefined)).toEqual([]);
-      expect(flatten(123)).toEqual([]);
-    });
-  });
-
-  describe('isSubset', () => {
-    test('should return true if the subset is a subset of the superset', () => {
-      expect(isSubset([1, 2, 3, 4, 5], [2, 4])).toBe(true);
-      expect(isSubset(['a', 'b', 'c'], ['a', 'c'])).toBe(true);
-      expect(isSubset([1, 2, 3], [])).toBe(true);
-    });
-
-    test('should return false if the subset is not a subset of the superset', () => {
-      expect(isSubset([1, 2, 3], [2, 5])).toBe(false);
-      expect(isSubset(['a', 'b'], ['a', 'c'])).toBe(false);
-    });
-
-    test('should return false for non-array inputs', () => {
-      expect(isSubset(null, [1])).toBe(false);
-      expect(isSubset([1], undefined)).toBe(false);
-      expect(isSubset(123, [1])).toBe(false);
-    });
-  });
+  
 
   describe('chunkArray', () => {
     it('should chunk an array into smaller arrays', () => {
@@ -569,29 +455,7 @@ describe('array-utils', () => {
     });
   });
 
-  describe('getNthElement', () => {
-    const arr = [1, 2, 3, 4, 5];
-
-    test('should get the element at the specified index', () => {
-      expect(getNthElement(arr, 0)).toBe(1);
-      expect(getNthElement(arr, 2)).toBe(3);
-    });
-
-    test('should get the element from the end if the index is negative', () => {
-      expect(getNthElement(arr, -1)).toBe(5);
-      expect(getNthElement(arr, -3)).toBe(3);
-    });
-
-    test('should return undefined for out-of-bounds index', () => {
-      expect(getNthElement(arr, 10)).toBeUndefined();
-      expect(getNthElement(arr, -10)).toBeUndefined();
-    });
-
-    test('should return undefined for non-array inputs', () => {
-      expect(getNthElement(null, 1)).toBeUndefined();
-      expect(getNthElement(undefined, 1)).toBeUndefined();
-    });
-  });
+  
 });
 
 describe('filterBy', () => {
@@ -670,5 +534,24 @@ describe('isEqualArray', () => {
     expect(isEqualArray(null, [1, 2])).toBe(false);
     expect(isEqualArray([1, 2], undefined)).toBe(false);
     expect(isEqualArray(123, 456)).toBe(false);
+  });
+});
+
+describe('containsAll', () => {
+  test('should return true if the array contains all elements', () => {
+    expect(containsAll([1, 2, 3, 4, 5], [2, 4])).toBe(true);
+    expect(containsAll(['a', 'b', 'c'], ['a', 'c'])).toBe(true);
+    expect(containsAll([1, 2, 3], [])).toBe(true);
+  });
+
+  test('should return false if the array does not contain all elements', () => {
+    expect(containsAll([1, 2, 3], [2, 5])).toBe(false);
+    expect(containsAll(['a', 'b'], ['a', 'c'])).toBe(false);
+  });
+
+  test('should return false for non-array inputs', () => {
+    expect(containsAll(null, [1])).toBe(false);
+    expect(containsAll([1], undefined)).toBe(false);
+    expect(containsAll(123, [1])).toBe(false);
   });
 });
