@@ -32,3 +32,31 @@ export function compact(array) {
   }
   return array.filter(Boolean);
 }
+
+/**
+ * Removes all elements from `array` for which `predicate` returns truthy.
+ * This function returns a new array with the removed elements. The original array is not mutated.
+ *
+ * @param {Array} array The array to modify.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the new array of removed elements.
+ */
+export function removeIf(array, predicate) {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+
+  const removed = [];
+  const remaining = [];
+
+  for (const item of array) {
+    if (predicate(item)) {
+      removed.push(item);
+    } else {
+      remaining.push(item);
+    }
+  }
+  // Note: This implementation does not mutate the original array, it returns the removed elements.
+  // If mutation of the original array is desired, a different approach would be needed.
+  return removed;
+}
