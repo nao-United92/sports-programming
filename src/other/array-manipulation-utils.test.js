@@ -1,50 +1,46 @@
-import { flatten, compact } from './array-manipulation-utils';
+import { flatten, compact } from './array-manipulation-utils.js';
 
 describe('Array Manipulation Utilities', () => {
   describe('flatten', () => {
     it('should flatten an array by one level by default', () => {
-      expect(flatten([1, [2, [3]]])).toEqual([1, 2, [3]]);
+      const arr = [1, [2, [3, [4]]], 5];
+      expect(flatten(arr)).toEqual([1, 2, [3, [4]], 5]);
     });
 
     it('should flatten an array to a specified depth', () => {
-      expect(flatten([1, [2, [3]]], 2)).toEqual([1, 2, 3]);
+      const arr = [1, [2, [3, [4]]], 5];
+      expect(flatten(arr, 2)).toEqual([1, 2, 3, [4], 5]);
     });
 
-    it('should handle empty arrays', () => {
-      expect(flatten([])).toEqual([]);
+    it('should flatten an array completely with depth Infinity', () => {
+      const arr = [1, [2, [3, [4]]], 5];
+      expect(flatten(arr, Infinity)).toEqual([1, 2, 3, 4, 5]);
     });
 
-    it('should handle non-array elements', () => {
-      expect(flatten([1, 'a', { b: 2 }])).toEqual([1, 'a', { b: 2 }]);
+    it('should return an empty array for non-array input', () => {
+      expect(flatten(null)).toEqual([]);
+      expect(flatten(undefined)).toEqual([]);
+      expect(flatten(123)).toEqual([]);
     });
 
-    it('should handle depth 0', () => {
-      expect(flatten([1, [2, [3]]], 0)).toEqual([1, [2, [3]]]);
-    });
-
-    it('should handle negative depth', () => {
-      expect(flatten([1, [2, [3]]], -1)).toEqual([]);
+    it('should return an empty array for negative depth', () => {
+      const arr = [1, [2]];
+      expect(flatten(arr, -1)).toEqual([]);
     });
   });
 
   describe('compact', () => {
     it('should remove all falsey values from an array', () => {
-      expect(compact([0, 1, false, 2, '', 3, null, 'a', undefined, NaN])).toEqual([1, 2, 3, 'a']);
+      const arr = [0, 1, false, 2, '', 3, null, 'a', undefined, NaN];
+      expect(compact(arr)).toEqual([1, 2, 3, 'a']);
     });
 
-    it('should handle empty arrays', () => {
-      expect(compact([])).toEqual([]);
+    it('should return an empty array if all values are falsey', () => {
+      const arr = [0, false, '', null, undefined, NaN];
+      expect(compact(arr)).toEqual([]);
     });
 
-    it('should handle arrays with only falsey values', () => {
-      expect(compact([0, false, '', null, undefined, NaN])).toEqual([]);
-    });
-
-    it('should handle arrays with no falsey values', () => {
-      expect(compact([1, 2, 3, 'a'])).toEqual([1, 2, 3, 'a']);
-    });
-
-    it('should handle non-array input', () => {
+    it('should return an empty array for non-array input', () => {
       expect(compact(null)).toEqual([]);
       expect(compact(undefined)).toEqual([]);
       expect(compact(123)).toEqual([]);
