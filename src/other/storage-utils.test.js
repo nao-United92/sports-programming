@@ -1,69 +1,97 @@
-import { localStore, sessionStore } from './storage-utils';
+import {
+  setLocalStorage,
+  getLocalStorage,
+  removeLocalStorage,
+  setSessionStorage,
+  getSessionStorage,
+  removeSessionStorage,
+} from './storage-utils.js';
 
-const createStorageMock = () => {
+// Mock localStorage and sessionStorage for Jest
+const localStorageMock = (() => {
   let store = {};
   return {
-    getItem: jest.fn((key) => store[key] || null),
-    setItem: jest.fn((key, value) => {
+    getItem: key => store[key] || null,
+    setItem: (key, value) => {
       store[key] = value.toString();
-    }),
-    removeItem: jest.fn((key) => {
+    },
+    removeItem: key => {
       delete store[key];
-    }),
-    clear: jest.fn(() => {
+    },
+    clear: () => {
       store = {};
-    }),
+    },
   };
-};
+})();
 
-Object.defineProperty(window, 'localStorage', { value: createStorageMock() });
-Object.defineProperty(window, 'sessionStorage', { value: createStorageMock() });
+const sessionStorageMock = (() => {
+  let store = {};
+  return {
+    getItem: key => store[key] || null,
+    setItem: (key, value) => {
+      store[key] = value.toString();
+    },
+    removeItem: key => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    },
+  };
+})();
 
-describe('Storage Utilities', () => {
-  afterEach(() => {
-    window.localStorage.clear();
-    window.sessionStorage.clear();
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
+
+describe('Web Storage Utilities', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
   });
 
-  describe('localStore', () => {
-    it('should set and get an item', () => {
-      localStore.set('test', { a: 1 });
-      expect(localStore.get('test')).toEqual({ a: 1 });
+  describe('localStorage', () => {
+    it('should set and get a string', () => {
+      setLocalStorage('name', 'John');
+      expect(getLocalStorage('name')).toBe('John');
+    });
+
+    it('should set and get an object', () => {
+      const user = { name: 'John', age: 30 };
+      setLocalStorage('user', user);
+      expect(getLocalStorage('user')).toEqual(user);
     });
 
     it('should remove an item', () => {
-      localStore.set('test', 1);
-      localStore.remove('test');
-      expect(localStore.get('test')).toBeNull();
+      setLocalStorage('name', 'John');
+      removeLocalStorage('name');
+      expect(getLocalStorage('name')).toBeNull();
     });
 
-    it('should clear all items', () => {
-      localStore.set('test1', 1);
-      localStore.set('test2', 2);
-      localStore.clear();
-      expect(localStore.get('test1')).toBeNull();
-      expect(localStore.get('test2')).toBeNull();
+    it('should return null for a non-existent key', () => {
+      expect(getLocalStorage('non-existent')).toBeNull();
     });
   });
 
-  describe('sessionStore', () => {
-    it('should set and get an item', () => {
-      sessionStore.set('test', { a: 1 });
-      expect(sessionStore.get('test')).toEqual({ a: 1 });
+  describe('sessionStorage', () => {
+    it('should set and get a string', () => {
+      setSessionStorage('name', 'Jane');
+      expect(getSessionStorage('name')).toBe('Jane');
+    });
+
+    it('should set and get an object', () => {
+      const user = { name: 'Jane', age: 25 };
+      setSessionStorage('user', user);
+      expect(getSessionStorage('user')).toEqual(user);
     });
 
     it('should remove an item', () => {
-      sessionStore.set('test', 1);
-      sessionStore.remove('test');
-      expect(sessionStore.get('test')).toBeNull();
+      setSessionStorage('name', 'Jane');
+      removeSessionStorage('name');
+      expect(getSessionStorage('name')).toBeNull();
     });
 
-    it('should clear all items', () => {
-      sessionStore.set('test1', 1);
-      sessionStore.set('test2', 2);
-      sessionStore.clear();
-      expect(sessionStore.get('test1')).toBeNull();
-      expect(sessionStore.get('test2')).toBeNull();
+    it('should return null for a non-existent key', () => {
+      expect(getSessionStorage('non-existent')).toBeNull();
     });
   });
 });
