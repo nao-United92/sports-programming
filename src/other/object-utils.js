@@ -1,29 +1,23 @@
 /**
- * Creates an object composed of the picked object properties.
- * @param {object} obj The source object.
- * @param {string[]} keys The property keys to pick.
- * @returns {object} Returns the new object.
+ * Deeply merges properties from a source object into a target object.
+ * This function mutates the target object.
+ * Arrays are replaced, not merged.
+ *
+ * @param {object} target The target object to merge into.
+ * @param {object} source The source object to merge from.
+ * @returns {object} The merged target object.
  */
-export function pick(obj, keys) {
-  const result = {};
-  for (const key of keys) {
-    if (key in obj) {
-      result[key] = obj[key];
+export function deepMerge(target, source) {
+  for (const key in source) {
+    if (source.hasOwnProperty(key)) {
+      if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key]) && typeof target[key] === 'object' && target[key] !== null && !Array.isArray(target[key])) {
+        // If both are objects, deep merge
+        target[key] = deepMerge(target[key] || {}, source[key]);
+      } else {
+        // Otherwise, replace the target property with the source property
+        target[key] = source[key];
+      }
     }
   }
-  return result;
-}
-
-/**
- * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
- * @param {object} obj The source object.
- * @param {string[]} keys The property keys to omit.
- * @returns {object} Returns the new object.
- */
-export function omit(obj, keys) {
-  const result = { ...obj };
-  for (const key of keys) {
-    delete result[key];
-  }
-  return result;
+  return target;
 }
