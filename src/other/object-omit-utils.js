@@ -1,19 +1,17 @@
 /**
- * オブジェクトから指定されたキーを削除した新しいオブジェクトを返します。
- * @param {object} obj - 処理対象のオブジェクト。
- * @param {string[]} keysToOmit - 削除するキーの配列。
- * @returns {object} 指定されたキーが削除された新しいオブジェクト。
+ * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
+ *
+ * @param {Object} object The source object.
+ * @param {string[]} keys The property paths to omit.
+ * @returns {Object} Returns the new object.
  */
-export function omit(obj, keysToOmit) {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
+export const omit = (object, keys) => {
+  if (object === null || object === undefined) {
+    return {};
   }
-
-  const newObj = {};
-  for (const key of Object.keys(obj)) {
-    if (!keysToOmit.includes(key)) {
-      newObj[key] = obj[key];
-    }
-  }
-  return newObj;
-}
+  const newObject = { ...object };
+  keys.forEach(key => {
+    delete newObject[key];
+  });
+  return newObject;
+};
