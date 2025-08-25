@@ -22,3 +22,23 @@ export const flattenDeep = (arr) => {
   }
   return arr.reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
 };
+
+/**
+ * Recursively flattens array up to `depth` times.
+ * @param {Array} arr The array to flatten.
+ * @param {number} depth The maximum recursion depth.
+ * @returns {Array} Returns the new flattened array.
+ */
+export const flattenDepth = (arr, depth) => {
+  if (!Array.isArray(arr) || depth < 1) {
+    return arr;
+  }
+
+  return arr.reduce((acc, val) => {
+    if (Array.isArray(val) && depth > 0) {
+      return acc.concat(flattenDepth(val, depth - 1));
+    } else {
+      return acc.concat(val);
+    }
+  }, []);
+};
