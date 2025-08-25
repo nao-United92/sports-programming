@@ -1,58 +1,41 @@
-import { promiseWithTimeout } from './promise-timeout-utils.js';
+const { promiseWithTimeout } = require('./promise-timeout-utils.js');
 
 jest.useFakeTimers();
 
 describe('promiseWithTimeout', () => {
-  test('should resolve the promise if it completes before the timeout', async () => {
-    const fastPromise = new Promise(resolve => setTimeout(() => resolve('Success'), 500));
-    const { promise, cancel } = promiseWithTimeout(fastPromise, 1000);
+  it('should resolve with the promise value if it resolves before the timeout', async () => {
+    const slowPromise = new Promise(resolve => setTimeout(() => resolve('Success'), 50));
+    const promise = promiseWithTimeout(slowPromise, 100);
 
-    const onResolve = jest.fn();
-    promise.then(onResolve);
+    jest.advanceTimersByTime(50);
 
-    jest.advanceTimersByTime(500);
-
-    await Promise.resolve();
-
-    expect(onResolve).toHaveBeenCalledWith('Success');
-    cancel();
+    await expect(promise).resolves.toBe('Success');
   });
 
-  test('should reject with a timeout error if the promise takes too long', async () => {
-    const slowPromise = new Promise(resolve => setTimeout(() => resolve('Success'), 2000));
-    const { promise, cancel } = promiseWithTimeout(slowPromise, 1000);
+  it('should reject with the promise error if it rejects before the timeout', async () => {
+    const slowPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Failure')), 50));
+    const promise = promiseWithTimeout(slowPromise, 100);
 
-    const onReject = jest.fn();
-    promise.catch(onReject);
+    jest.advanceTimersByTime(50);
 
-    jest.advanceTimersByTime(1000);
-
-    await Promise.resolve();
-
-    expect(onReject).toHaveBeenCalledWith(new Error('Promise timed out after 1000 ms'));
-    cancel();
+    await expect(promise).rejects.toThrow('Failure');
   });
 
-  test('should be able to cancel the timeout', async () => {
-    const promiseThatWillTimeout = new Promise(resolve => setTimeout(() => resolve('Success'), 1500));
-    const { promise, cancel } = promiseWithTimeout(promiseThatWillTimeout, 1000);
+  it('should reject with a timeout error if the promise takes too long to resolve', async () => {
+    const verySlowPromise = new Promise(resolve => setTimeout(() => resolve('Success'), 200));
+    const promise = promiseWithTimeout(verySlowPromise, 100);
 
-    const onReject = jest.fn();
-    promise.catch(onReject);
+    jest.advanceTimersByTime(100);
 
-    cancel();
+    await expect(promise).rejects.toThrow('Promise timed out');
+  });
 
-    jest.advanceTimersByTime(1000);
+  it('should use a custom error message for the timeout', async () => {
+    const verySlowPromise = new Promise(resolve => setTimeout(() => resolve('Success'), 200));
+    const promise = promiseWithTimeout(verySlowPromise, 100, 'Request took too long to complete');
 
-    await Promise.resolve();
+    jest.advanceTimersByTime(100);
 
-    expect(onReject).not.toHaveBeenCalled();
-
-    const onResolve = jest.fn();
-    promiseThatWillTimeout.then(onResolve);
-
-    jest.advanceTimersByTime(500);
-    await Promise.resolve();
-    expect(onResolve).toHaveBeenCalledWith('Success');
+    await expect(promise).rejects.toThrow('Request took too long to complete');
   });
 });
