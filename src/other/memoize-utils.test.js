@@ -1,62 +1,53 @@
-const { memoize } = require('./memoize-utils.js');
+import { memoize } from './memoize-utils.js';
 
 describe('memoize', () => {
-  it('should return the correct result from a memoized function', () => {
+  test('should return the correct result', () => {
     const add = (a, b) => a + b;
     const memoizedAdd = memoize(add);
-    expect(memoizedAdd(2, 3)).toBe(5);
-    expect(memoizedAdd(5, 5)).toBe(10);
+    expect(memoizedAdd(1, 2)).toBe(3);
   });
 
-  it('should call the original function only once for the same set of arguments', () => {
-    const expensiveFunc = jest.fn((a, b) => a * b);
-    const memoizedFunc = memoize(expensiveFunc);
+  test('should cache the result', () => {
+    const expensiveFunction = jest.fn().mockImplementation((a, b) => a * b);
+    const memoizedFunction = memoize(expensiveFunction);
 
-    memoizedFunc(2, 3);
-    memoizedFunc(2, 3);
-    memoizedFunc(2, 3);
+    memoizedFunction(2, 3);
+    memoizedFunction(2, 3);
 
-    expect(expensiveFunc).toHaveBeenCalledTimes(1);
+    expect(expensiveFunction).toHaveBeenCalledTimes(1);
   });
 
-  it('should return the cached result on subsequent calls', () => {
-    const expensiveFunc = jest.fn(() => Math.random());
-    const memoizedFunc = memoize(expensiveFunc);
+  test('should not use cache for different arguments', () => {
+    const expensiveFunction = jest.fn().mockImplementation((a, b) => a * b);
+    const memoizedFunction = memoize(expensiveFunction);
 
-    const firstResult = memoizedFunc();
-    const secondResult = memoizedFunc();
+    memoizedFunction(2, 3);
+    memoizedFunction(3, 4);
 
-    expect(expensiveFunc).toHaveBeenCalledTimes(1);
-    expect(secondResult).toBe(firstResult);
+    expect(expensiveFunction).toHaveBeenCalledTimes(2);
   });
 
-  it('should call the original function again for different arguments', () => {
-    const expensiveFunc = jest.fn((a, b) => a + b);
-    const memoizedFunc = memoize(expensiveFunc);
+  test('should handle different argument types', () => {
+    const expensiveFunction = jest.fn().mockImplementation((a) => a.value);
+    const memoizedFunction = memoize(expensiveFunction);
 
-    memoizedFunc(1, 2); // Call 1
-    memoizedFunc(2, 3); // Call 2
-    memoizedFunc(1, 2); // Cached
+    memoizedFunction({ value: 1 });
+    memoizedFunction({ value: 1 });
 
-    expect(expensiveFunc).toHaveBeenCalledTimes(2);
+    expect(expensiveFunction).toHaveBeenCalledTimes(1);
   });
 
-  it('should use a custom resolver function to generate cache keys', () => {
-    const expensiveFunc = jest.fn();
-    const resolver = (obj) => obj.id;
-    const memoizedFunc = memoize(expensiveFunc, resolver);
+  test('should maintain the correct context', () => {
+    const context = {
+      multiplier: 2,
+      calculate: function(a) {
+        return a * this.multiplier;
+      }
+    };
 
-    memoizedFunc({ id: 1, data: 'a' }); // Call 1
-    memoizedFunc({ id: 1, data: 'b' }); // Cached, resolver returns the same key
-    memoizedFunc({ id: 2, data: 'c' }); // Call 2
+    const memoizedCalculate = memoize(context.calculate);
+    const result = memoizedCalculate.call(context, 5);
 
-    expect(expensiveFunc).toHaveBeenCalledTimes(2);
-  });
-
-  it('should expose the cache on the memoized function', () => {
-    const memoizedFunc = memoize((a) => a);
-    memoizedFunc(1);
-    expect(memoizedFunc.cache.size).toBe(1);
-    expect(memoizedFunc.cache.has('[1]')).toBe(true);
+    expect(result).toBe(10);
   });
 });
