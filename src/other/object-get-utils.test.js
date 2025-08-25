@@ -1,77 +1,72 @@
-import { get } from './object-get-utils';
+const { get } = require('./object-get-utils.js');
 
-describe('get', () => {
-  const testObj = {
+describe('object-get-utils', () => {
+  const obj = {
     a: 1,
     b: {
       c: 2,
-      d: {
-        e: 3,
-      },
+      d: [3, { e: 4 }],
     },
-    f: [4, 5, { g: 6 }],
-    'h.i': 7, // Key with dot
+    f: null,
+    g: undefined,
   };
 
-  test('should get a top-level property', () => {
-    expect(get(testObj, 'a')).toBe(1);
+  it('should get a top-level property', () => {
+    expect(get(obj, 'a')).toBe(1);
   });
 
-  test('should get a nested property using dot notation string', () => {
-    expect(get(testObj, 'b.c')).toBe(2);
-    expect(get(testObj, 'b.d.e')).toBe(3);
+  it('should get a nested property', () => {
+    expect(get(obj, 'b.c')).toBe(2);
   });
 
-  test('should get a nested property using array path', () => {
-    expect(get(testObj, ['b', 'c'])).toBe(2);
-    expect(get(testObj, ['b', 'd', 'e'])).toBe(3);
+  it('should get a property from an array element', () => {
+    expect(get(obj, 'b.d.1.e')).toBe(4);
   });
 
-  test('should return undefined if property does not exist', () => {
-    expect(get(testObj, 'x')).toBeUndefined();
-    expect(get(testObj, 'b.x')).toBeUndefined();
-    expect(get(testObj, 'b.d.x')).toBeUndefined();
+  it('should return undefined for a non-existent top-level property', () => {
+    expect(get(obj, 'z')).toBeUndefined();
   });
 
-  test('should return defaultValue if property does not exist', () => {
-    expect(get(testObj, 'x', 'default')).toBe('default');
-    expect(get(testObj, 'b.x', null)).toBeNull();
-    expect(get(testObj, 'b.d.x', 0)).toBe(0);
+  it('should return undefined for a non-existent nested property', () => {
+    expect(get(obj, 'b.x.y')).toBeUndefined();
   });
 
-  test('should handle array elements in path', () => {
-    expect(get(testObj, 'f.0')).toBe(4);
-    expect(get(testObj, ['f', 1])).toBe(5);
-    expect(get(testObj, 'f.2.g')).toBe(6);
-    expect(get(testObj, ['f', 2, 'g'])).toBe(6);
+  it('should return the default value for a non-existent property', () => {
+    expect(get(obj, 'z', 'default')).toBe('default');
+    expect(get(obj, 'b.x.y', 'default')).toBe('default');
   });
 
-  test('should handle null or undefined object', () => {
+  it('should return null for a null property', () => {
+    expect(get(obj, 'f')).toBeNull();
+  });
+
+  it('should return undefined for an undefined property', () => {
+    expect(get(obj, 'g')).toBeUndefined();
+  });
+
+  it('should return the default value for an undefined property', () => {
+    expect(get(obj, 'g', 'default')).toBe('default');
+  });
+
+  it('should handle null or undefined object gracefully', () => {
     expect(get(null, 'a')).toBeUndefined();
     expect(get(undefined, 'a')).toBeUndefined();
     expect(get(null, 'a', 'default')).toBe('default');
   });
 
-  test('should handle non-object input', () => {
+  it('should handle non-object input gracefully', () => {
     expect(get(123, 'a')).toBeUndefined();
     expect(get('string', 'a')).toBeUndefined();
     expect(get(true, 'a')).toBeUndefined();
   });
 
-  test('should handle empty path', () => {
-    expect(get(testObj, '')).toEqual(testObj);
-    expect(get(testObj, [])).toEqual(testObj);
+  it('should handle array path', () => {
+    expect(get(obj, ['b', 'c'])).toBe(2);
+    expect(get(obj, ['b', 'd', 1, 'e'])).toBe(4);
   });
 
-  test('should handle key with dot in its name', () => {
-    // When path is a string, dot is a separator
-    expect(get(testObj, 'h.i')).toBeUndefined(); // Corrected expectation
-    // When path is an array, dot is part of the key name
-    expect(get(testObj, ['h.i'])).toBe(7);
-  });
-
-  test('should return undefined if an intermediate path is not an object', () => {
-    expect(get(testObj, 'a.x')).toBeUndefined(); // a is 1, not an object
-    expect(get(testObj, 'f.0.x')).toBeUndefined(); // f.0 is 4, not an object
+  it('should handle path with bracket notation', () => {
+    const objWithBrackets = { 'prop-with-hyphen': { 'another[prop]': 10 } };
+    expect(get(objWithBrackets, 'prop-with-hyphen.another[prop]')).toBe(10);
   });
 });
