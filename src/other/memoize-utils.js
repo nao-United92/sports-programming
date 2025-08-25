@@ -1,15 +1,17 @@
 /**
- * Creates a memoized version of a function.
- * The result of the function will be cached based on its arguments.
+ * Creates a new function that, when called, caches the result of calling `func` and
+ * returns the cached result for subsequent calls with the same arguments.
  *
- * @param {Function} func The function to memoize.
+ * @param {Function} func The function to have its output memoized.
+ * @param {Function} [resolver] The function to resolve the cache key. By default, arguments are stringified.
  * @returns {Function} Returns the new memoized function.
  */
-export function memoize(func) {
+export const memoize = (func, resolver) => {
   const cache = new Map();
 
-  return function(...args) {
-    const key = JSON.stringify(args);
+  const memoized = function(...args) {
+    const key = resolver ? resolver.apply(this, args) : JSON.stringify(args);
+
     if (cache.has(key)) {
       return cache.get(key);
     }
@@ -18,4 +20,7 @@ export function memoize(func) {
     cache.set(key, result);
     return result;
   };
-}
+
+  memoized.cache = cache;
+  return memoized;
+};
