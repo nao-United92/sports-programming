@@ -1,36 +1,33 @@
-import { uniqueId } from './unique-id-utils';
+const { uniqueId, _resetUniqueIdCounter } = require('./unique-id-utils.js');
 
 describe('uniqueId', () => {
-  // Reset counter before each test to ensure consistent results
-  let originalIdCounter;
   beforeEach(() => {
-    originalIdCounter = global.idCounter;
-    global.idCounter = 0; // Assuming idCounter is globally accessible for testing
+    // Reset counters before each test to ensure independence
+    _resetUniqueIdCounter('test_');
+    _resetUniqueIdCounter('id_');
+    _resetUniqueIdCounter('prefixA_');
+    _resetUniqueIdCounter('prefixB_');
   });
 
-  afterEach(() => {
-    global.idCounter = originalIdCounter;
+  it('should generate sequential IDs with a given prefix', () => {
+    expect(uniqueId('test_')).toBe('test_1');
+    expect(uniqueId('test_')).toBe('test_2');
+    expect(uniqueId('test_')).toBe('test_3');
   });
 
-  it('should generate unique IDs', () => {
-    const id1 = uniqueId();
-    const id2 = uniqueId();
-    expect(id1).not.toBe(id2);
+  it('should use a default prefix if none is provided', () => {
+    expect(uniqueId()).toBe('id_1');
+    expect(uniqueId()).toBe('id_2');
   });
 
-  it('should generate IDs with a prefix', () => {
-    const id = uniqueId('prefix-');
-    expect(id).toMatch(/^prefix-\d+$/);
+  it('should maintain separate counters for different prefixes', () => {
+    expect(uniqueId('prefixA_')).toBe('prefixA_1');
+    expect(uniqueId('prefixB_')).toBe('prefixB_1');
+    expect(uniqueId('prefixA_')).toBe('prefixA_2');
+    expect(uniqueId('prefixB_')).toBe('prefixB_2');
   });
 
-  it('should increment the ID counter', () => {
-    const id1 = uniqueId();
-    const id2 = uniqueId();
-    expect(parseInt(id2.replace(/\D/g, ''))).toBe(parseInt(id1.replace(/\D/g, '')) + 1);
-  });
-
-  it('should work without a prefix', () => {
-    const id = uniqueId();
-    expect(id).toMatch(/^\d+$/);
+  it('should return a string', () => {
+    expect(typeof uniqueId()).toBe('string');
   });
 });
