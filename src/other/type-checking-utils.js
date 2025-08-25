@@ -1,69 +1,55 @@
 /**
- * Checks if a value is an object.
+ * Checks if `value` is a plain object, created by either `{}`, `new Object()`, or `Object.create(null)`.
  * @param {*} value The value to check.
- * @returns {boolean} True if the value is an object, false otherwise.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
  */
-export const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+export const isObject = (value) => {
+  if (value === null || typeof value !== 'object') {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === null || proto === Object.prototype;
+};
 
 /**
- * Checks if a value is a function.
+ * Checks if `value` is classified as a `Function` object.
  * @param {*} value The value to check.
- * @returns {boolean} True if the value is a function, false otherwise.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  */
 export const isFunction = (value) => typeof value === 'function';
 
 /**
- * Checks if a value is a string.
+ * Checks if `value` is classified as a `String` primitive or object.
  * @param {*} value The value to check.
- * @returns {boolean} True if the value is a string, false otherwise.
+ * @returns {boolean} Returns `true` if `value` is a string, else `false`.
  */
 export const isString = (value) => typeof value === 'string';
 
 /**
- * Checks if a value is a number.
+ * Checks if `value` is classified as a `Number` primitive or object.
+ * This method does not count `NaN` and `Infinity` as numbers.
  * @param {*} value The value to check.
- * @returns {boolean} True if the value is a number, false otherwise.
+ * @returns {boolean} Returns `true` if `value` is a number, else `false`.
  */
-export const isNumber = (value) => typeof value === 'number' && !isNaN(value);
+export const isNumber = (value) => typeof value === 'number' && isFinite(value);
 
 /**
- * Checks if a value is a boolean.
+ * Checks if `value` is classified as an `Array` object.
  * @param {*} value The value to check.
- * @returns {boolean} True if the value is a boolean, false otherwise.
- */
-export const isBoolean = (value) => typeof value === 'boolean';
-
-/**
- * Checks if a value is an array.
- * @param {*} value The value to check.
- * @returns {boolean} True if the value is an array, false otherwise.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
  */
 export const isArray = (value) => Array.isArray(value);
 
 /**
- * Checks if a value is null.
+ * Checks if `value` is `null`.
  * @param {*} value The value to check.
- * @returns {boolean} True if the value is null, false otherwise.
+ * @returns {boolean} Returns `true` if `value` is `null`, else `false`.
  */
 export const isNull = (value) => value === null;
 
 /**
- * Checks if a value is undefined.
+ * Checks if `value` is `undefined`.
  * @param {*} value The value to check.
- * @returns {boolean} True if the value is undefined, false otherwise.
+ * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
  */
 export const isUndefined = (value) => typeof value === 'undefined';
-
-/**
- * Checks if a value is a Date object.
- * @param {*} value The value to check.
- * @returns {boolean} True if the value is a Date object, false otherwise.
- */
-export const isDate = (value) => value instanceof Date;
-
-/**
- * Checks if a value is a RegExp object.
- * @param {*} value The value to check.
- * @returns {boolean} True if the value is a RegExp object, false otherwise.
- */
-export const isRegExp = (value) => value instanceof RegExp;
