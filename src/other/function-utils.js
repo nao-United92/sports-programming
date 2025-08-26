@@ -1,105 +1,33 @@
+export const throttle = (func, wait) => {
+  let inThrottle, lastFn, lastTime;
+  return function() {
+    const context = this, args = arguments;
+    if (!inThrottle) {
+      func.apply(context, args);
+      lastTime = Date.now();
+      inThrottle = true;
+    } else {
+      clearTimeout(lastFn);
+      lastFn = setTimeout(function() {
+        if (Date.now() - lastTime >= wait) {
+          func.apply(context, args);
+          lastTime = Date.now();
+        }
+      }, Math.max(wait - (Date.now() - lastTime), 0));
+    }
+  };
+};
+
 export const once = (fn) => {
-  let done = false;
+  let hasBeenCalled = false;
   let result;
-  return (...args) => {
-    if (!done) {
-      done = true;
-      result = fn(...args);
+
+  return function(...args) {
+    if (!hasBeenCalled) {
+      hasBeenCalled = true;
+      result = fn.apply(this, args);
+      return result;
     }
     return result;
-  };
-};
-
-export const memoize = (fn) => {
-  const cache = new Map();
-  return (...args) => {
-    const key = JSON.stringify(args);
-    if (cache.has(key)) {
-      return cache.get(key);
-    }
-    const result = fn(...args);
-    cache.set(key, result);
-    return result;
-  };
-};
-
-export const before = (n, fn) => {
-  let result;
-  return (...args) => {
-    if (--n > 0) {
-      result = fn(...args);
-    }
-    if (n <= 1) {
-      fn = null;
-    }
-    return result;
-  };
-};
-
-export const after = (n, fn) => {
-  return (...args) => {
-    if (--n < 1) {
-      return fn(...args);
-    }
-  };
-};
-
-export const curry = (fn) => {
-  return function curried(...args) {
-    if (args.length >= fn.length) {
-      return fn(...args);
-    }
-    return (...nextArgs) => curried(...args, ...nextArgs);
-  };
-};
-
-export const compose = (...fns) => {
-  return (...args) => {
-    return fns.reduceRight((res, fn) => {
-      return Array.isArray(res) ? fn(...res) : fn(res);
-    }, args);
-  };
-};
-
-export const defer = (fn, ...args) => {
-  setTimeout(fn, 1, ...args);
-};
-
-export const noop = () => {};
-
-export const identity = (value) => value;
-
-export const property = (path) => {
-  return (obj) => {
-    if (obj == null) {
-      return undefined;
-    }
-    const keys = Array.isArray(path) ? path : path.split('.');
-    let result = obj;
-    for (const key of keys) {
-      result = result?.[key];
-      if (result === undefined) {
-        return undefined;
-      }
-    }
-    return result;
-  };
-};
-
-export const matches = (source) => {
-  return (obj) => {
-    for (const key in source) {
-      if (!(key in obj) || obj[key] !== source[key]) {
-        return false;
-      }
-    }
-    return true;
-  };
-};
-
-export const matchesProperty = (path, value) => {
-  return (obj) => {
-    const propValue = property(path)(obj);
-    return propValue === value;
   };
 };
