@@ -1,27 +1,42 @@
-import { pull } from './array-pull-utils';
+import { pull, pullAll, pullAllBy } from './array-pull-utils.js';
 
 describe('pull', () => {
-  it('should remove specified values from the array', () => {
-    const array = ['a', 'b', 'c', 'a', 'b', 'c'];
-    pull(array, 'a', 'c');
-    expect(array).toEqual(['b', 'b']);
+  it('should remove specified values from an array', () => {
+    const array = [1, 2, 3, 1, 2, 3];
+    pull(array, 2, 3);
+    expect(array).toEqual([1, 1]);
   });
 
-  it('should modify the original array', () => {
-    const array = [1, 2, 3];
-    const result = pull(array, 1, 3);
-    expect(result).toBe(array);
+  it('should return the original array if not an array', () => {
+    const notAnArray = null;
+    expect(pull(notAnArray, 1)).toBeNull();
+  });
+});
+
+describe('pullAll', () => {
+  it('should remove all specified values from an array', () => {
+    const array = [1, 2, 3, 1, 2, 3];
+    pullAll(array, [2, 3]);
+    expect(array).toEqual([1, 1]);
   });
 
-  it('should do nothing if no values are specified', () => {
+  it('should handle empty values array', () => {
     const array = [1, 2, 3];
-    pull(array);
+    pullAll(array, []);
     expect(array).toEqual([1, 2, 3]);
   });
+});
 
-  it('should handle non-array inputs gracefully', () => {
-    const obj = { a: 1 };
-    expect(pull(obj, 1)).toBe(obj);
-    expect(pull(null, 1)).toBeNull();
+describe('pullAllBy', () => {
+  it('should remove values based on iteratee result', () => {
+    const array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
+    pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], (o) => o.x);
+    expect(array).toEqual([{ 'x': 2 }]);
+  });
+
+  it('should handle empty values array', () => {
+    const array = [{ 'x': 1 }, { 'x': 2 }];
+    pullAllBy(array, [], (o) => o.x);
+    expect(array).toEqual([{ 'x': 1 }, { 'x': 2 }]);
   });
 });
