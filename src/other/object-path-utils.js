@@ -1,38 +1,36 @@
-const get = (obj, path, defaultValue = undefined) => {
-  if (obj === null || typeof obj !== 'object') {
-    return defaultValue;
-  }
+const stringToPath = (path) => {
+  if (typeof path !== 'string') return path;
+  const result = [];
+  path.replace(/[^.[\].]+|\[(?:.|
+)]|\[(.*?)]/g, (match, key) => {
+    result.push(key || match.replace(/\\(.)/g, '$1'));
+  });
+  return result;
+};
 
-  const pathParts = Array.isArray(path) ? path : path.split('.');
-  let current = obj;
-
-  for (let i = 0; i < pathParts.length; i++) {
-    const part = pathParts[i];
-    if (current === null || typeof current !== 'object' || !current.hasOwnProperty(part)) {
+export const get = (obj, path, defaultValue) => {
+  const keys = Array.isArray(path) ? path : stringToPath(path);
+  let result = obj;
+  for (const key of keys) {
+    result = result?.[key];
+    if (result === undefined) {
       return defaultValue;
     }
-    current = current[part];
   }
-  return current;
+  return result;
 };
 
-const set = (obj, path, value) => {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
-  }
-
-  const pathParts = Array.isArray(path) ? path : path.split('.');
+export const has = (obj, path) => {
+  const keys = Array.isArray(path) ? path : stringToPath(path);
   let current = obj;
-
-  for (let i = 0; i < pathParts.length - 1; i++) {
-    const part = pathParts[i];
-    if (current[part] === null || typeof current[part] !== 'object' || !current.hasOwnProperty(part)) {
-      current[part] = {};
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (current == null || !Object.prototype.hasOwnProperty.call(current, key)) {
+      return false;
     }
-    current = current[part];
+    current = current[key];
   }
-  current[pathParts[pathParts.length - 1]] = value;
-  return obj;
+  // Check if the final key exists, even if its value is undefined
+  const lastKey = keys[keys.length - 1];
+  return keys.length > 0 ? Object.prototype.hasOwnProperty.call(current, lastKey) : true;
 };
-
-module.exports = { get, set };

@@ -1,92 +1,69 @@
-const { get, set } = require('./object-path-utils');
+import { get, has } from './object-path-utils.js';
 
 describe('get', () => {
   const obj = {
     a: {
       b: {
-        c: 123,
-        d: [4, 5, 6]
+        c: [1, 2, 3]
       },
-      e: null
+      d: 'hello'
     },
-    f: 'hello'
+    'e.f': 'world'
   };
 
-  test('should get a value using dot notation path', () => {
-    expect(get(obj, 'a.b.c')).toBe(123);
+  it('should get a nested property value using a string path', () => {
+    expect(get(obj, 'a.b.c[0]')).toBe(1);
+    expect(get(obj, 'a.d')).toBe('hello');
   });
 
-  test('should get a value using array path', () => {
-    expect(get(obj, ['a', 'b', 'c'])).toBe(123);
+  it('should get a nested property value using an array path', () => {
+    expect(get(obj, ['a', 'b', 'c', '0'])).toBe(1);
   });
 
-  test('should return default value for non-existent path', () => {
+  it('should return the default value for non-existent paths', () => {
     expect(get(obj, 'a.b.x', 'default')).toBe('default');
+    expect(get(obj, 'x.y.z', null)).toBeNull();
   });
 
-  test('should return undefined for non-existent path without default value', () => {
+  it('should return undefined for non-existent paths when no default value is provided', () => {
     expect(get(obj, 'a.b.x')).toBeUndefined();
   });
 
-  test('should handle null intermediate path', () => {
-    expect(get(obj, 'a.e.g', 'default')).toBe('default');
-  });
-
-  test('should handle non-object intermediate path', () => {
-    expect(get(obj, 'f.g', 'default')).toBe('default');
-  });
-
-  test('should get array element', () => {
-    expect(get(obj, 'a.b.d.1')).toBe(5);
-  });
-
-  test('should handle null or non-object input', () => {
-    expect(get(null, 'a.b', 'default')).toBe('default');
-    expect(get(undefined, 'a.b', 'default')).toBe('default');
-    expect(get('string', 'a.b', 'default')).toBe('default');
+  it('should handle paths with special characters', () => {
+    expect(get(obj, 'e.f')).toBe('world');
   });
 });
 
-describe('set', () => {
-  test('should set a value using dot notation path', () => {
-    const obj = {};
-    set(obj, 'a.b.c', 123);
-    expect(obj).toEqual({ a: { b: { c: 123 } } });
+describe('has', () => {
+  const obj = {
+    a: {
+      b: {
+        c: 1,
+        d: undefined
+      }
+    },
+    'e.f': 2
+  };
+
+  it('should return true for existing paths', () => {
+    expect(has(obj, 'a.b.c')).toBe(true);
+    expect(has(obj, ['a', 'b'])).toBe(true);
   });
 
-  test('should set a value using array path', () => {
-    const obj = {};
-    set(obj, ['x', 'y', 'z'], 'test');
-    expect(obj).toEqual({ x: { y: { z: 'test' } } });
+  it('should return true for existing paths with undefined values', () => {
+    expect(has(obj, 'a.b.d')).toBe(true);
   });
 
-  test('should overwrite existing value', () => {
-    const obj = { a: { b: { c: 1 } } };
-    set(obj, 'a.b.c', 2);
-    expect(obj.a.b.c).toBe(2);
+  it('should return false for non-existent paths', () => {
+    expect(has(obj, 'a.b.x')).toBe(false);
+    expect(has(obj, 'x.y.z')).toBe(false);
   });
 
-  test('should create intermediate objects if they do not exist', () => {
-    const obj = { a: {} };
-    set(obj, 'a.b.c', 123);
-    expect(obj).toEqual({ a: { b: { c: 123 } } });
+  it('should handle paths with special characters', () => {
+    expect(has(obj, 'e.f')).toBe(true);
   });
 
-  test('should handle setting value at root level', () => {
-    const obj = {};
-    set(obj, 'key', 'value');
-    expect(obj).toEqual({ key: 'value' });
-  });
-
-  test('should return the modified object', () => {
-    const obj = {};
-    const result = set(obj, 'a.b', 1);
-    expect(result).toBe(obj);
-  });
-
-  test('should handle null or non-object input for obj', () => {
-    expect(set(null, 'a.b', 1)).toBeNull();
-    expect(set(undefined, 'a.b', 1)).toBeUndefined();
-    expect(set('string', 'a.b', 1)).toBe('string');
+  it('should return false for paths that go through null or undefined', () => {
+    expect(has(obj, 'a.b.c.x')).toBe(false);
   });
 });
