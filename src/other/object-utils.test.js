@@ -1,65 +1,32 @@
-import { deepMerge } from './object-utils.js';
+import { isPlainObject } from './object-utils.js';
 
-describe('Object Utilities', () => {
-  describe('deepMerge', () => {
-    it('should merge properties of two flat objects', () => {
-      const target = { a: 1, b: 2 };
-      const source = { c: 3, d: 4 };
-      const result = deepMerge(target, source);
-      expect(result).toEqual({ a: 1, b: 2, c: 3, d: 4 });
-      expect(result).toBe(target); // Should mutate target
+describe('object-utils', () => {
+  describe('isPlainObject', () => {
+    it('should return true for plain objects', () => {
+      expect(isPlainObject({})).toBe(true);
+      expect(isPlainObject({ a: 1 })).toBe(true);
+      expect(isPlainObject(new Object())).toBe(true);
     });
 
-    it('should overwrite existing properties', () => {
-      const target = { a: 1, b: 2 };
-      const source = { b: 3, c: 4 };
-      const result = deepMerge(target, source);
-      expect(result).toEqual({ a: 1, b: 3, c: 4 });
+    it('should return false for non-plain objects', () => {
+      function MyClass() {}
+      expect(isPlainObject(new MyClass())).toBe(false);
+      expect(isPlainObject([])).toBe(false);
+      expect(isPlainObject(new Map())).toBe(false);
+      expect(isPlainObject(/a/)).toBe(false);
+      expect(isPlainObject(new Date())).toBe(false);
     });
 
-    it('should deeply merge nested objects', () => {
-      const target = { a: 1, b: { c: 2, d: 3 } };
-      const source = { b: { e: 4 }, f: 5 };
-      const result = deepMerge(target, source);
-      expect(result).toEqual({ a: 1, b: { c: 2, d: 3, e: 4 }, f: 5 });
-      expect(result.b).toBe(target.b); // Should mutate nested object
+    it('should return false for primitive values', () => {
+      expect(isPlainObject(null)).toBe(false);
+      expect(isPlainObject(undefined)).toBe(false);
+      expect(isPlainObject(123)).toBe(false);
+      expect(isPlainObject('abc')).toBe(false);
+      expect(isPlainObject(true)).toBe(false);
+      expect(isPlainObject(Symbol('a'))).toBe(false);
     });
-
-    it('should handle nested objects that are initially undefined in target', () => {
-      const target = { a: 1 };
-      const source = { b: { c: 2 } };
-      const result = deepMerge(target, source);
-      expect(result).toEqual({ a: 1, b: { c: 2 } });
-    });
-
-    it('should replace arrays, not merge them', () => {
-      const target = { a: [1, 2], b: 3 };
-      const source = { a: [3, 4], c: 5 };
-      const result = deepMerge(target, source);
-      expect(result).toEqual({ a: [3, 4], b: 3, c: 5 });
-    });
-
-    it('should handle null and undefined values correctly', () => {
-      const target = { a: 1, b: null };
-      const source = { a: null, b: undefined, c: 3 };
-      const result = deepMerge(target, source);
-      expect(result).toEqual({ a: null, b: undefined, c: 3 });
-    });
-
-    it('should return the target object even if source is empty', () => {
-      const target = { a: 1 };
-      const source = {};
-      const result = deepMerge(target, source);
-      expect(result).toEqual({ a: 1 });
-      expect(result).toBe(target);
-    });
-
-    it('should return the target object even if target is empty', () => {
-      const target = {};
-      const source = { a: 1 };
-      const result = deepMerge(target, source);
-      expect(result).toEqual({ a: 1 });
-      expect(result).toBe(target);
+     it('should return true for objects created with Object.create(null)', () => {
+      expect(isPlainObject(Object.create(null))).toBe(true);
     });
   });
 });

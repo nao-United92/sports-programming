@@ -1,15 +1,35 @@
 /**
- * Generates a random alphanumeric string of a specified length.
+ * Escapes HTML special characters in a string.
  *
- * @param {number} length The desired length of the random string.
- * @returns {string} The generated random string.
+ * @param {string} str The string to escape.
+ * @returns {string} Returns the escaped string.
  */
-export function generateRandomString(length) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
+export const escapeHTML = (str) => {
+  if (typeof str !== 'string') return '';
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return str.replace(/[&<>"']/g, (m) => map[m]);
+};
+
+/**
+ * Unescapes HTML special characters in a string.
+ *
+ * @param {string} str The string to unescape.
+ * @returns {string} Returns the unescaped string.
+ */
+export const unescapeHTML = (str) => {
+  if (typeof str !== 'string') return '';
+  const map = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#039;': "'",
+  };
+  return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, (m) => map[m]);
+};
