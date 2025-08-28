@@ -1,4 +1,4 @@
-import { camelCase, kebabCase, snakeCase, startCase, pascalCase } from './case-style-utils.js';
+import { camelCase, kebabCase, snakeCase, startCase, pascalCase, toggleCase } from './case-style-utils.js';
 
 describe('Case Style Utilities', () => {
 
@@ -58,6 +58,24 @@ describe('Case Style Utilities', () => {
       expect(pascalCase(null)).toBe('');
       expect(pascalCase(undefined)).toBe('');
       expect(pascalCase(123)).toBe('');
+    });
+  });
+
+  describe('toggleCase', () => {
+    it('should toggle the case of a string', () => {
+      expect(toggleCase('Hello World')).toBe('hELLO wORLD');
+      expect(toggleCase('hELLO wORLD')).toBe('Hello World');
+      expect(toggleCase('123!@#')).toBe('123!@#');
+    });
+
+    it('should handle empty strings', () => {
+      expect(toggleCase('')).toBe('');
+    });
+
+    it('should handle non-string inputs', () => {
+      expect(toggleCase(null)).toBe('');
+      expect(toggleCase(undefined)).toBe('');
+      expect(toggleCase(123)).toBe('');
     });
   });
 

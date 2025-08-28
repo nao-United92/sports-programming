@@ -60,3 +60,20 @@ export const pascalCase = (str) => {
   if (typeof str !== 'string' || str.length === 0) return '';
   return toWords(str).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('');
 };
+
+/**
+ * Converts `string` to toggle case.
+ * @param {string} [str=''] The string to convert.
+ * @returns {string} Returns the toggle cased string.
+ */
+export const toggleCase = (str) => {
+  if (typeof str !== 'string' || str.length === 0) return '';
+  return str.split('').map(char => {
+    if (char >= 'a' && char <= 'z') {
+      return char.toUpperCase();
+    } else if (char >= 'A' && char <= 'Z') {
+      return char.toLowerCase();
+    }
+    return char;
+  }).join('');
+};
