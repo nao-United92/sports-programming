@@ -1,24 +1,25 @@
-export const throttle = (func, limit) => {
-  let inThrottle;
-  let lastResult;
-  let lastArgs;
-  let lastThis;
+/**
+ * Creates a throttled function that only invokes `func` at most once per every `wait` milliseconds.
+ *
+ * @param {Function} func The function to throttle.
+ * @param {number} wait The number of milliseconds to throttle invocations to.
+ * @returns {Function} Returns the new throttled function.
+ */
+export const throttle = (func, wait) => {
+  let inThrottle = false;
+  let lastArgs = null;
+  let lastThis = null;
 
   return function(...args) {
-    const context = this;
     lastArgs = args;
-    lastThis = context;
+    lastThis = this;
 
     if (!inThrottle) {
       inThrottle = true;
-      lastResult = func.apply(context, args);
+      func.apply(lastThis, lastArgs);
       setTimeout(() => {
         inThrottle = false;
-        if (lastArgs !== args || lastThis !== context) {
-          lastResult = func.apply(lastThis, lastArgs);
-        }
-      }, limit);
+      }, wait);
     }
-    return lastResult;
   };
 };
