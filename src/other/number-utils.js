@@ -1,18 +1,23 @@
 /**
- * Rounds a number to a specified precision.
+ * Checks if a number is even.
  *
- * @param {number} number The number to round.
- * @param {number} [precision=0] The number of decimal places to round to.
- * @returns {number} The rounded number.
+ * @param {number} num The number to check.
+ * @returns {boolean} Returns `true` if the number is even, else `false`.
  */
-export function round(number, precision = 0) {
-  if (typeof number !== 'number' || isNaN(number)) {
-    return NaN;
-  }
-  if (typeof precision !== 'number' || isNaN(precision)) {
-    precision = 0;
-  }
+export const isEven = (num) => num % 2 === 0;
 
-  const multiplier = Math.pow(10, precision);
-  return Math.round(number * multiplier) / multiplier;
-}
+/**
+ * Checks if a number is odd.
+ *
+ * @param {number} num The number to check.
+ * @returns {boolean} Returns `true` if the number is odd, else `false`.
+ */
+export const isOdd = (num) => num % 2 !== 0;
+
+/**
+ * Calculates the average of an array of numbers.
+ *
+ * @param {number[]} arr The array of numbers.
+ * @returns {number} Returns the average of the numbers.
+ */
+export const average = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
