@@ -1,33 +1,37 @@
-import { escapeHTML, unescapeHTML } from './string-utils.js';
+import { truncate, slugify } from './string-utils';
 
-describe('string-utils', () => {
-  describe('escapeHTML', () => {
-    it('should escape HTML special characters', () => {
-      expect(escapeHTML('<script>alert("xss")</script>')).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
-      expect(escapeHTML("it's a 'test'")).toBe('it&#039;s a &#039;test&#039;');
-      expect(escapeHTML('a & b')).toBe('a &amp; b');
+describe('String Utilities', () => {
+  // truncate tests
+  describe('truncate', () => {
+    test('should not truncate if string is shorter than length', () => {
+      expect(truncate('hello', 10)).toBe('hello');
     });
 
-    it('should return an empty string for non-string inputs', () => {
-      expect(escapeHTML(null)).toBe('');
-      expect(escapeHTML(undefined)).toBe('');
-      expect(escapeHTML(123)).toBe('');
-      expect(escapeHTML({})).toBe('');
+    test('should not truncate if string is equal to length', () => {
+      expect(truncate('hello', 5)).toBe('hello');
+    });
+
+    test('should truncate string if it is longer than length', () => {
+      expect(truncate('hello world', 5)).toBe('hello...');
     });
   });
 
-  describe('unescapeHTML', () => {
-    it('should unescape HTML special characters', () => {
-      expect(unescapeHTML('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;')).toBe('<script>alert("xss")</script>');
-      expect(unescapeHTML('it&#039;s a &#039;test&#039;')).toBe("it's a 'test'");
-      expect(unescapeHTML('a &amp; b')).toBe('a & b');
+  // slugify tests
+  describe('slugify', () => {
+    test('should convert spaces to hyphens', () => {
+      expect(slugify('hello world')).toBe('hello-world');
     });
 
-    it('should return an empty string for non-string inputs', () => {
-      expect(unescapeHTML(null)).toBe('');
-      expect(unescapeHTML(undefined)).toBe('');
-      expect(unescapeHTML(123)).toBe('');
-      expect(unescapeHTML({})).toBe('');
+    test('should convert to lower case', () => {
+      expect(slugify('Hello World')).toBe('hello-world');
+    });
+
+    test('should remove special characters', () => {
+      expect(slugify('hello world! 123')).toBe('hello-world-123');
+    });
+
+    test('should handle multiple spaces', () => {
+      expect(slugify('hello   world')).toBe('hello-world');
     });
   });
 });

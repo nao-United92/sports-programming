@@ -1,35 +1,24 @@
 /**
- * Escapes HTML special characters in a string.
- *
- * @param {string} str The string to escape.
- * @returns {string} Returns the escaped string.
+ * 文字列を指定された長さに切り詰めます。
+ * @param {string} str - 切り詰める文字列。
+ * @param {number} length - 最大長。
+ * @returns {string} 切り詰められた文字列。
  */
-export const escapeHTML = (str) => {
-  if (typeof str !== 'string') return '';
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
-  };
-  return str.replace(/[&<>"']/g, (m) => map[m]);
+export const truncate = (str, length) => {
+  if (str.length <= length) {
+    return str;
+  }
+  return str.slice(0, length) + '...';
 };
 
 /**
- * Unescapes HTML special characters in a string.
- *
- * @param {string} str The string to unescape.
- * @returns {string} Returns the unescaped string.
+ * 文字列をスラッグ形式に変換します。
+ * @param {string} str - スラッグに変換する文字列。
+ * @returns {string} スラッグ形式の文字列。
  */
-export const unescapeHTML = (str) => {
-  if (typeof str !== 'string') return '';
-  const map = {
-    '&amp;': '&',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#039;': "'",
-  };
-  return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, (m) => map[m]);
+export const slugify = (str) => {
+  return str
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '');
 };
