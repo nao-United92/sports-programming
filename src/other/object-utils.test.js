@@ -1,4 +1,4 @@
-const { isEmpty, pick } = require('./object-utils.js');
+const { isEmpty, pick, omit } = require('./object-utils.js');
 
 describe('isEmpty', () => {
   test('should return true for an empty object', () => {
@@ -58,5 +58,46 @@ describe('pick', () => {
     const child = Object.create(parent);
     child.b = 2;
     expect(pick(child, ['a', 'b'])).toEqual({ b: 2 });
+  });
+});
+
+describe('omit', () => {
+  const obj = { a: 1, b: '2', c: true };
+
+  test('should create an object with omitted properties', () => {
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: '2' });
+  });
+
+  test('should return a new object', () => {
+    const result = omit(obj, ['a']);
+    expect(result).not.toBe(obj);
+  });
+
+  test('should not modify the original object', () => {
+    const original = { a: 1, b: 2 };
+    omit(original, ['a']);
+    expect(original).toEqual({ a: 1, b: 2 });
+  });
+
+  test('should ignore keys that are not in the object', () => {
+    expect(omit(obj, ['d', 'e'])).toEqual(obj);
+  });
+
+  test('should return an equivalent object if no keys are omitted', () => {
+    expect(omit(obj, [])).toEqual(obj);
+  });
+
+  test('should handle null and undefined input', () => {
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
+  });
+
+  test('should only omit own properties, not inherited ones', () => {
+    const parent = { inherited: 'yes' };
+    const child = Object.create(parent);
+    child.own = 'yes';
+    const result = omit(child, ['inherited']); // 'inherited' is not an own property
+    expect(result).toEqual({ own: 'yes' });
+    expect('inherited' in result).toBe(false); // Spread doesn't copy inherited props
   });
 });

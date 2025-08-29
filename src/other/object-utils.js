@@ -31,7 +31,26 @@ const pick = (obj, keys) => {
   return result;
 };
 
+/**
+ * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
+ *
+ * @param {object} obj The source object.
+ * @param {string[]} keys The property keys to omit.
+ * @returns {object} Returns the new object.
+ */
+const omit = (obj, keys) => {
+  if (obj == null) {
+    return {};
+  }
+  const result = { ...obj };
+  for (const key of keys) {
+    delete result[key];
+  }
+  return result;
+};
+
 module.exports = {
   isEmpty,
   pick,
+  omit,
 };
