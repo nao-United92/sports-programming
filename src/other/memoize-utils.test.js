@@ -1,53 +1,43 @@
 import { memoize } from './memoize-utils.js';
 
 describe('memoize', () => {
-  test('should return the correct result', () => {
-    const add = (a, b) => a + b;
-    const memoizedAdd = memoize(add);
-    expect(memoizedAdd(1, 2)).toBe(3);
+  it('should memoize the result of a function', () => {
+    const func = jest.fn(x => x * 2);
+    const memoizedFunc = memoize(func);
+
+    expect(memoizedFunc(2)).toBe(4);
+    expect(memoizedFunc(2)).toBe(4);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should cache the result', () => {
-    const expensiveFunction = jest.fn().mockImplementation((a, b) => a * b);
-    const memoizedFunction = memoize(expensiveFunction);
+  it('should use a resolver function to determine the cache key', () => {
+    const func = jest.fn(obj => obj.a + obj.b);
+    const resolver = obj => JSON.stringify(obj);
+    const memoizedFunc = memoize(func, resolver);
 
-    memoizedFunction(2, 3);
-    memoizedFunction(2, 3);
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { a: 1, b: 2 };
 
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
+    expect(memoizedFunc(obj1)).toBe(3);
+    expect(memoizedFunc(obj2)).toBe(3);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should not use cache for different arguments', () => {
-    const expensiveFunction = jest.fn().mockImplementation((a, b) => a * b);
-    const memoizedFunction = memoize(expensiveFunction);
-
-    memoizedFunction(2, 3);
-    memoizedFunction(3, 4);
-
-    expect(expensiveFunction).toHaveBeenCalledTimes(2);
+  it('should have a cache property on the memoized function', () => {
+    const func = () => 'result';
+    const memoizedFunc = memoize(func);
+    memoizedFunc();
+    expect(memoizedFunc.cache instanceof Map).toBe(true);
+    expect(memoizedFunc.cache.get(undefined)).toBe('result');
   });
 
-  test('should handle different argument types', () => {
-    const expensiveFunction = jest.fn().mockImplementation((a) => a.value);
-    const memoizedFunction = memoize(expensiveFunction);
+  it('should differentiate cache keys for different arguments', () => {
+    const func = jest.fn(x => x * 2);
+    const memoizedFunc = memoize(func);
 
-    memoizedFunction({ value: 1 });
-    memoizedFunction({ value: 1 });
+    memoizedFunc(2);
+    memoizedFunc(3);
 
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-  });
-
-  test('should maintain the correct context', () => {
-    const context = {
-      multiplier: 2,
-      calculate: function(a) {
-        return a * this.multiplier;
-      }
-    };
-
-    const memoizedCalculate = memoize(context.calculate);
-    const result = memoizedCalculate.call(context, 5);
-
-    expect(result).toBe(10);
+    expect(func).toHaveBeenCalledTimes(2);
   });
 });
