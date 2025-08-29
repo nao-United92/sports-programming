@@ -1,25 +1,29 @@
 /**
- * Sets the value at `path` of `object`. If a portion of `path` doesn't exist, it's created.
- * Arrays are created for missing index properties while objects are created for all other missing properties.
- * This function mutates `object`.
+ * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
+ * it's created. Arrays are created for integer-indexed properties.
  *
- * @param {Object} obj The object to modify.
- * @param {string|string[]} path The path of the property to set.
+ * @param {Object} object The object to modify.
+ * @param {Array|string} path The path of the property to set.
  * @param {*} value The value to set.
  * @returns {Object} Returns `object`.
  */
-export const set = (obj, path, value) => {
-  const pathArray = Array.isArray(path) ? path : path.split('.');
-  let current = obj;
+export const set = (object, path, value) => {
+  const pathArray = Array.isArray(path)
+    ? path
+    : path.match(/([^[.\]])+/g); // This regex extracts parts like 'a', '0', 'b', 'c'
 
-  for (let i = 0; i < pathArray.length - 1; i++) {
+  let current = object;
+  for (let i = 0; i < pathArray.length; i++) {
     const key = pathArray[i];
-    if (current[key] === undefined || typeof current[key] !== 'object') {
-      current[key] = {};
+    if (i === pathArray.length - 1) {
+      current[key] = value;
+    } else {
+      if (!current[key]) {
+        // Check if the next key is an integer to decide between array or object
+        current[key] = (Number.isInteger(Number(pathArray[i + 1]))) ? [] : {};
+      }
+      current = current[key];
     }
-    current = current[key];
   }
-
-  current[pathArray[pathArray.length - 1]] = value;
-  return obj;
+  return object;
 };

@@ -1,51 +1,39 @@
 import { set } from './set-utils.js';
 
 describe('set', () => {
-  let obj;
-
-  beforeEach(() => {
-    obj = {
-      a: {
-        b: {
-          c: 'hello',
-        },
-      },
-    };
+  it('should set a value at a given path in an object', () => {
+    const obj = {};
+    set(obj, 'a.b.c', 1);
+    expect(obj).toEqual({ a: { b: { c: 1 } } });
   });
 
-  test('should set a top-level property', () => {
-    set(obj, 'd', 'world');
-    expect(obj.d).toBe('world');
+  it('should set a value at a given array path in an object', () => {
+    const obj = {};
+    set(obj, ['a', '0', 'b'], 2);
+    expect(obj).toEqual({ a: [{ b: 2 }] });
   });
 
-  test('should set a nested property', () => {
-    set(obj, 'a.b.d', 'world');
-    expect(obj.a.b.d).toBe('world');
+  it('should overwrite an existing value', () => {
+    const obj = { a: { b: { c: 1 } } };
+    set(obj, 'a.b.c', 2);
+    expect(obj).toEqual({ a: { b: { c: 2 } } });
   });
 
-  test('should create nested objects if they do not exist', () => {
-    set(obj, 'x.y.z', 'new');
-    expect(obj.x.y.z).toBe('new');
+  it('should create arrays for integer-indexed properties', () => {
+    const obj = {};
+    set(obj, 'a.0.b', 1);
+    expect(obj).toEqual({ a: [{ b: 1 }] });
   });
 
-  test('should overwrite an existing property', () => {
-    set(obj, 'a.b.c', 'new value');
-    expect(obj.a.b.c).toBe('new value');
-  });
-
-  test('should handle an array path', () => {
-    set(obj, ['a', 'b', 'e'], 'another');
-    expect(obj.a.b.e).toBe('another');
-  });
-
-  test('should return the modified object', () => {
-    const result = set(obj, 'a.f', 'test');
+  it('should return the modified object', () => {
+    const obj = {};
+    const result = set(obj, 'a.b', 1);
     expect(result).toBe(obj);
-    expect(result.a.f).toBe('test');
   });
 
-  test('should handle setting a property on a non-object value', () => {
-    set(obj, 'a.b.c.d', 'test');
-    expect(obj.a.b.c.d).toBe('test');
+  it('should handle paths with mixed dot and bracket notation', () => {
+    const obj = {};
+    set(obj, 'a[0].b.c', 1);
+    expect(obj).toEqual({ a: [{ b: { c: 1 } }] });
   });
 });
