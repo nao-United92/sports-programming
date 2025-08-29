@@ -13,6 +13,23 @@ const truncate = (str, length, suffix = '...') => {
   return str.slice(0, length - suffix.length) + suffix;
 };
 
+/**
+ * Converts a string into a URL-friendly slug.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} The slugified string.
+ */
+const slugify = (str) => {
+  return str
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+    .replace(/\-\-+/g, '-'); // Replace multiple - with single -
+};
+
 module.exports = {
   truncate,
+  slugify,
 };
