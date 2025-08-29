@@ -11,6 +11,27 @@ const isEmpty = (obj) => {
   return Object.keys(obj).length === 0;
 };
 
+/**
+ * Creates an object composed of the picked object properties.
+ *
+ * @param {object} obj The source object.
+ * @param {string[]} keys The property keys to pick.
+ * @returns {object} Returns the new object.
+ */
+const pick = (obj, keys) => {
+  const result = {};
+  if (obj == null) {
+    return result;
+  }
+  for (const key of keys) {
+    if (obj.hasOwnProperty(key)) {
+      result[key] = obj[key];
+    }
+  }
+  return result;
+};
+
 module.exports = {
   isEmpty,
+  pick,
 };
