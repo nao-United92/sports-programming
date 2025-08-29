@@ -1,14 +1,19 @@
 /**
- * Deep freezes an object, making it immutable.
+ * Deep freezes an object.
  *
- * @param {T} obj The object to deep freeze.
- * @returns {T} The deep frozen object.
- * @template T
+ * @param {Object} object The object to deep freeze.
+ * @returns {Object} The deep frozen object.
  */
-export const deepFreeze = (obj) => {
-  if (obj && typeof obj === 'object' && !Object.isFrozen(obj)) {
-    Object.freeze(obj);
-    Object.keys(obj).forEach(key => deepFreeze(obj[key]));
+export const deepFreeze = (object) => {
+  const propNames = Object.getOwnPropertyNames(object);
+
+  for (const name of propNames) {
+    const value = object[name];
+
+    if (value && typeof value === "object") {
+      deepFreeze(value);
+    }
   }
-  return obj;
+
+  return Object.freeze(object);
 };

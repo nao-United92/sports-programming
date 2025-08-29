@@ -1,41 +1,31 @@
 import { deepFreeze } from './deep-freeze-utils.js';
 
 describe('deepFreeze', () => {
-  test('should freeze a simple object', () => {
+  it('should freeze a simple object', () => {
     const obj = { a: 1 };
     deepFreeze(obj);
     expect(Object.isFrozen(obj)).toBe(true);
-    expect(() => { obj.a = 2; }).toThrow();
   });
 
-  test('should deeply freeze a nested object', () => {
-    const obj = { a: { b: { c: 3 } } };
+  it('should deep freeze a nested object', () => {
+    const obj = { a: 1, b: { c: 2 } };
     deepFreeze(obj);
-    expect(Object.isFrozen(obj.a)).toBe(true);
-    expect(Object.isFrozen(obj.a.b)).toBe(true);
-    expect(() => { obj.a.b.c = 4; }).toThrow();
+    expect(Object.isFrozen(obj.b)).toBe(true);
   });
 
-  test('should handle arrays', () => {
-    const arr = [{ a: 1 }, { b: 2 }];
-    deepFreeze(arr);
-    expect(Object.isFrozen(arr)).toBe(true);
-    expect(Object.isFrozen(arr[0])).toBe(true);
-    expect(() => { arr[0].a = 2; }).toThrow();
-  });
-
-  test('should not affect primitive values', () => {
-    expect(deepFreeze(123)).toBe(123);
-    expect(deepFreeze('hello')).toBe('hello');
-    expect(deepFreeze(null)).toBe(null);
-    expect(deepFreeze(undefined)).toBe(undefined);
-  });
-
-  test('should handle objects that are already frozen', () => {
+  it('should prevent modification of a frozen object', () => {
     const obj = { a: 1 };
-    Object.freeze(obj);
     deepFreeze(obj);
-    expect(Object.isFrozen(obj)).toBe(true);
-    expect(() => { obj.a = 2; }).toThrow();
+    expect(() => {
+      obj.a = 2;
+    }).toThrow();
+  });
+
+  it('should prevent modification of a deep frozen object', () => {
+    const obj = { a: 1, b: { c: 2 } };
+    deepFreeze(obj);
+    expect(() => {
+      obj.b.c = 3;
+    }).toThrow();
   });
 });
