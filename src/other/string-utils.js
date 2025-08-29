@@ -1,24 +1,18 @@
 /**
- * 文字列を指定された長さに切り詰めます。
- * @param {string} str - 切り詰める文字列。
- * @param {number} length - 最大長。
- * @returns {string} 切り詰められた文字列。
+ * Truncates a string to a specified length, appending a suffix if truncated.
+ *
+ * @param {string} str The string to truncate.
+ * @param {number} length The maximum length of the string.
+ * @param {string} [suffix='...'] The suffix to append if the string is truncated.
+ * @returns {string} The truncated string.
  */
-export const truncate = (str, length) => {
+const truncate = (str, length, suffix = '...') => {
   if (str.length <= length) {
     return str;
   }
-  return str.slice(0, length) + '...';
+  return str.slice(0, length - suffix.length) + suffix;
 };
 
-/**
- * 文字列をスラッグ形式に変換します。
- * @param {string} str - スラッグに変換する文字列。
- * @returns {string} スラッグ形式の文字列。
- */
-export const slugify = (str) => {
-  return str
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '');
+module.exports = {
+  truncate,
 };
