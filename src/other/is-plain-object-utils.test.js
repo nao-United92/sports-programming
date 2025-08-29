@@ -1,10 +1,10 @@
-const { isPlainObject } = require('./is-plain-object-utils');
+import { isPlainObject } from './is-plain-object-utils';
 
 describe('isPlainObject', () => {
-  test('should return true for a plain object', () => {
+  test('should return true for plain objects', () => {
     expect(isPlainObject({})).toBe(true);
-    expect(isPlainObject({ a: 1 })).toBe(true);
     expect(isPlainObject(Object.create(null))).toBe(true);
+    expect(isPlainObject(Object.create(Object.prototype))).toBe(true);
   });
 
   test('should return false for arrays', () => {
@@ -26,7 +26,7 @@ describe('isPlainObject', () => {
     expect(isPlainObject(1)).toBe(false);
     expect(isPlainObject('string')).toBe(false);
     expect(isPlainObject(true)).toBe(false);
-    expect(isPlainObject(Symbol('sym'))).toBe(false);
+    expect(isPlainObject(Symbol('test'))).toBe(false);
   });
 
   test('should return false for instances of custom classes', () => {

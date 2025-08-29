@@ -1,5 +1,5 @@
 /**
- * Checks if `value` is a plain object, that is, an object created by the `Object` constructor or one with a `[[Prototype]]` of `null`.
+ * Checks if `value` is a plain object, that is, an object created by the `Object` constructor or one with a `null` prototype.
  *
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
@@ -11,13 +11,11 @@ function isPlainObject(value) {
 
   const proto = Object.getPrototypeOf(value);
   if (proto === null) {
-    return true;
+    return true; // Object.create(null)
   }
 
-  let Ctor = Object.prototype.hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  const Ctor = Object.prototype.hasOwnProperty.call(proto, 'constructor') && proto.constructor;
   return typeof Ctor === 'function' && Ctor instanceof Ctor && Function.prototype.toString.call(Ctor) === Function.prototype.toString.call(Object);
 }
 
-module.exports = {
-  isPlainObject
-};
+export { isPlainObject };
