@@ -1,21 +1,26 @@
 import { shuffle } from './shuffle-utils.js';
 
 describe('shuffle', () => {
-  test('should return an array with the same elements', () => {
+  it('should return a new array with the same elements', () => {
     const array = [1, 2, 3, 4, 5];
-    const shuffledArray = shuffle(array);
-    expect(shuffledArray).toHaveLength(array.length);
-    expect(shuffledArray.sort()).toEqual(array.sort());
+    const shuffled = shuffle(array);
+    expect(shuffled).toHaveLength(array.length);
+    expect(shuffled.sort()).toEqual(array.sort());
   });
 
-  test('should return a differently ordered array', () => {
-    const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    const shuffledArray = shuffle(array);
-    // Note: This test has a small chance of failing if the shuffled array is the same as the original.
-    expect(shuffledArray).not.toEqual(array);
+  it('should not modify the original array', () => {
+    const array = [1, 2, 3, 4, 5];
+    const original = [...array];
+    shuffle(array);
+    expect(array).toEqual(original);
   });
 
-  test('should handle an empty array', () => {
+  it('should return an empty array for an empty array input', () => {
     expect(shuffle([])).toEqual([]);
+  });
+
+  it('should return an empty array for null or undefined input', () => {
+    expect(shuffle(null)).toEqual([]);
+    expect(shuffle(undefined)).toEqual([]);
   });
 });
