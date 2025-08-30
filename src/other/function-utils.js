@@ -1,33 +1,27 @@
-export const throttle = (func, wait) => {
-  let inThrottle, lastFn, lastTime;
-  return function() {
-    const context = this, args = arguments;
-    if (!inThrottle) {
-      func.apply(context, args);
-      lastTime = Date.now();
-      inThrottle = true;
-    } else {
-      clearTimeout(lastFn);
-      lastFn = setTimeout(function() {
-        if (Date.now() - lastTime >= wait) {
-          func.apply(context, args);
-          lastTime = Date.now();
-        }
-      }, Math.max(wait - (Date.now() - lastTime), 0));
-    }
-  };
-};
+/**
+ * Creates a memoized version of a function. The memoized function caches the results
+ * of function calls and returns the cached result when the same inputs occur again.
+ *
+ * @param {Function} func The function to have its output memoized.
+ * @param {Function} [resolver] The function to resolve the cache key. Defaults to using the first argument.
+ * @returns {Function} Returns the new memoized function.
+ */
+const memoize = (func, resolver) => {
+  const memoized = function(...args) {
+    const key = resolver ? resolver.apply(this, args) : args[0];
+    const cache = memoized.cache;
 
-export const once = (fn) => {
-  let hasBeenCalled = false;
-  let result;
-
-  return function(...args) {
-    if (!hasBeenCalled) {
-      hasBeenCalled = true;
-      result = fn.apply(this, args);
-      return result;
+    if (cache.has(key)) {
+      return cache.get(key);
     }
+    const result = func.apply(this, args);
+    cache.set(key, result);
     return result;
   };
+  memoized.cache = new Map();
+  return memoized;
+};
+
+module.exports = {
+  memoize,
 };
