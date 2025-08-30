@@ -384,3 +384,22 @@ export function containsAll(array, elements) {
   }
   return elements.every(elem => array.includes(elem));
 }
+
+/**
+ * Creates an array of unique values that is the symmetric difference of the two arrays.
+ * @param {Array} arr1 The first array.
+ * @param {Array} arr2 The second array.
+ * @returns {Array} Returns the new array of filtered values.
+ */
+export function xor(arr1, arr2) {
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    return [];
+  }
+  const set1 = new Set(arr1);
+  const set2 = new Set(arr2);
+
+  const diff1 = arr1.filter(item => !set2.has(item));
+  const diff2 = arr2.filter(item => !set1.has(item));
+
+  return [...new Set([...diff1, ...diff2])];
+}

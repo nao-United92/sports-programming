@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy, isEqualArray } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy, isEqualArray, xor } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -553,5 +553,28 @@ describe('containsAll', () => {
     expect(containsAll(null, [1])).toBe(false);
     expect(containsAll([1], undefined)).toBe(false);
     expect(containsAll(123, [1])).toBe(false);
+  });
+});
+
+describe('xor', () => {
+  it('should return the symmetric difference of two arrays', () => {
+    expect(xor([1, 2, 3], [2, 3, 4])).toEqual([1, 4]);
+    expect(xor(['a', 'b', 'c'], ['b', 'd'])).toEqual(['a', 'c', 'd']);
+    expect(xor([1, 2], [3, 4])).toEqual([1, 2, 3, 4]);
+  });
+
+  it('should handle empty arrays', () => {
+    expect(xor([], [1, 2])).toEqual([1, 2]);
+    expect(xor([1, 2], [])).toEqual([1, 2]);
+    expect(xor([], [])).toEqual([]);
+  });
+
+  it('should handle arrays with duplicate values within themselves', () => {
+    expect(xor([1, 1, 2], [2, 3, 3])).toEqual([1, 3]);
+  });
+
+  it('should handle non-array inputs gracefully', () => {
+    expect(xor(null, [1, 2])).toEqual([]);
+    expect(xor([1, 2], undefined)).toEqual([]);
   });
 });
