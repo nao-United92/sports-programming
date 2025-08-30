@@ -1,4 +1,4 @@
-import { camelCase, kebabCase, snakeCase, startCase, pascalCase, toggleCase } from './case-style-utils.js';
+import { camelCase, kebabCase, snakeCase, startCase, pascalCase, toggleCase, pascalCaseToKebabCase, pascalCaseToSnakeCase } from './case-style-utils.js';
 
 describe('Case Style Utilities', () => {
 
@@ -76,6 +76,44 @@ describe('Case Style Utilities', () => {
       expect(toggleCase(null)).toBe('');
       expect(toggleCase(undefined)).toBe('');
       expect(toggleCase(123)).toBe('');
+    });
+  });
+
+  describe('pascalCaseToKebabCase', () => {
+    it('should convert PascalCase to kebab-case', () => {
+      expect(pascalCaseToKebabCase('HelloWorld')).toBe('hello-world');
+      expect(pascalCaseToKebabCase('AnotherExampleString')).toBe('another-example-string');
+      expect(pascalCaseToKebabCase('APIResponse')).toBe('api-response');
+      expect(pascalCaseToKebabCase('SingleWord')).toBe('single-word');
+    });
+
+    it('should handle empty strings', () => {
+      expect(pascalCaseToKebabCase('')).toBe('');
+    });
+
+    it('should handle non-string inputs', () => {
+      expect(pascalCaseToKebabCase(null)).toBe('');
+      expect(pascalCaseToKebabCase(undefined)).toBe('');
+      expect(pascalCaseToKebabCase(123)).toBe('');
+    });
+  });
+
+  describe('pascalCaseToSnakeCase', () => {
+    it('should convert PascalCase to snake_case', () => {
+      expect(pascalCaseToSnakeCase('HelloWorld')).toBe('hello_world');
+      expect(pascalCaseToSnakeCase('AnotherExampleString')).toBe('another_example_string');
+      expect(pascalCaseToSnakeCase('APIResponse')).toBe('api_response');
+      expect(pascalCaseToSnakeCase('SingleWord')).toBe('single_word');
+    });
+
+    it('should handle empty strings', () => {
+      expect(pascalCaseToSnakeCase('')).toBe('');
+    });
+
+    it('should handle non-string inputs', () => {
+      expect(pascalCaseToSnakeCase(null)).toBe('');
+      expect(pascalCaseToSnakeCase(undefined)).toBe('');
+      expect(pascalCaseToSnakeCase(123)).toBe('');
     });
   });
 

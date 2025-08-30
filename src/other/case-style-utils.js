@@ -77,3 +77,5 @@ export const toggleCase = (str) => {
     return char;
   }).join('');
 };
+
+const pascalCaseToWords = (str) => {  return str    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')    .replace(/([a-z\d])([A-Z])/g, '$1 $2')    .toLowerCase()    .split(' ');};/** * Converts `string` from PascalCase to kebab-case. * @param {string} [str=''] The string to convert. * @returns {string} Returns the kebab-cased string. */export const pascalCaseToKebabCase = (str) => {  if (typeof str !== 'string' || str.length === 0) return '';  return pascalCaseToWords(str).join('-');};/** * Converts `string` from PascalCase to snake_case. * @param {string} [str=''] The string to convert. * @returns {string} Returns the snake_cased string. */export const pascalCaseToSnakeCase = (str) => {  if (typeof str !== 'string' || str.length === 0) return '';  return pascalCaseToWords(str).join('_');};
