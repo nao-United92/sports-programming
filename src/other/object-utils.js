@@ -1,56 +1,45 @@
 /**
- * Checks if an object is empty (has no own enumerable string-keyed properties).
- *
- * @param {object} obj The object to check.
- * @returns {boolean} Returns `true` if the object is empty, else `false`.
+ * Gets the value at a nested path within an object.
+ * @param {object} obj The object to query.
+ * @param {string|string[]} path The path of the property to retrieve.
+ * @param {*} [defaultValue] The value returned for unresolved values.
+ * @returns {*} Returns the resolved value, else the defaultValue.
  */
-const isEmpty = (obj) => {
-  if (obj == null) {
-    return true;
-  }
-  return Object.keys(obj).length === 0;
+const get = (obj, path, defaultValue = undefined) => {
+  const pathArray = Array.isArray(path) ? path : path.replace(/[\[\]]/g, '.').replace(/\.\./g, '.').split('.');
+  const result = pathArray.reduce((acc, key) => (acc && acc[key] != null ? acc[key] : undefined), obj);
+  return result === undefined ? defaultValue : result;
 };
 
 /**
- * Creates an object composed of the picked object properties.
- *
- * @param {object} obj The source object.
- * @param {string[]} keys The property keys to pick.
- * @returns {object} Returns the new object.
+ * Sets the value at a nested path within an object. This function mutates the object.
+ * @param {object} obj The object to modify.
+ * @param {string|string[]} path The path of the property to set.
+ * @param {*} value The value to set.
+ * @returns {object} Returns the modified object.
  */
-const pick = (obj, keys) => {
-  const result = {};
-  if (obj == null) {
-    return result;
+const set = (obj, path, value) => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
   }
-  for (const key of keys) {
-    if (obj.hasOwnProperty(key)) {
-      result[key] = obj[key];
+  const pathArray = Array.isArray(path) ? path : path.replace(/[\[\]]/g, '.').replace(/\.\./g, '.').split('.');
+  let current = obj;
+  for (let i = 0; i < pathArray.length; i++) {
+    const key = pathArray[i];
+    if (i === pathArray.length - 1) {
+      current[key] = value;
+    } else {
+      if (current[key] == null || typeof current[key] !== 'object') {
+        const nextKey = pathArray[i + 1];
+        current[key] = /^\d+$/.test(nextKey) ? [] : {};
+      }
+      current = current[key];
     }
   }
-  return result;
-};
-
-/**
- * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
- *
- * @param {object} obj The source object.
- * @param {string[]} keys The property keys to omit.
- * @returns {object} Returns the new object.
- */
-const omit = (obj, keys) => {
-  if (obj == null) {
-    return {};
-  }
-  const result = { ...obj };
-  for (const key of keys) {
-    delete result[key];
-  }
-  return result;
+  return obj;
 };
 
 module.exports = {
-  isEmpty,
-  pick,
-  omit,
+  get,
+  set,
 };

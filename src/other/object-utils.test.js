@@ -1,103 +1,108 @@
-const { isEmpty, pick, omit } = require('./object-utils.js');
+const { get, set } = require('./object-utils.js');
 
-describe('isEmpty', () => {
-  test('should return true for an empty object', () => {
-    expect(isEmpty({})).toBe(true);
+describe('object-utils', () => {
+  let testObj;
+
+  beforeEach(() => {
+    testObj = {
+      a: {
+        b: {
+          c: 1,
+        },
+        d: [2, 3],
+      },
+      e: null,
+    };
   });
 
-  test('should return false for a non-empty object', () => {
-    expect(isEmpty({ a: 1 })).toBe(false);
+  describe('get', () => {
+    it('should get a value from a nested path using a string', () => {
+      expect(get(testObj, 'a.b.c')).toBe(1);
+    });
+
+    it('should get a value from a nested path using an array', () => {
+      expect(get(testObj, ['a', 'b', 'c'])).toBe(1);
+    });
+
+    it('should get an array value', () => {
+      expect(get(testObj, 'a.d')).toEqual([2, 3]);
+    });
+
+    it('should get a value from an array by index using dot notation', () => {
+      expect(get(testObj, 'a.d.0')).toBe(2);
+    });
+
+    it('should get a value from an array by index using bracket notation', () => {
+      expect(get(testObj, 'a.d[1]')).toBe(3);
+    });
+
+    it('should return undefined for a non-existent path', () => {
+      expect(get(testObj, 'a.x.y')).toBeUndefined();
+    });
+
+    it('should return the default value for a non-existent path', () => {
+      expect(get(testObj, 'a.x.y', 'default')).toBe('default');
+    });
+
+    it('should return the default value for a path that ends in a nullish value', () => {
+        expect(get(testObj, 'e.f', 'default')).toBe('default');
+    });
+
+    it('should handle null or undefined objects', () => {
+      expect(get(null, 'a.b')).toBeUndefined();
+      expect(get(undefined, 'a.b', 'default')).toBe('default');
+    });
   });
 
-  test('should return true for null', () => {
-    expect(isEmpty(null)).toBe(true);
-  });
+  describe('set', () => {
+    it('should set a value on a nested path using a string', () => {
+      set(testObj, 'a.b.c', 100);
+      expect(testObj.a.b.c).toBe(100);
+    });
 
-  test('should return true for undefined', () => {
-    expect(isEmpty(undefined)).toBe(true);
-  });
+    it('should set a value on a nested path using an array', () => {
+      set(testObj, ['a', 'b', 'c'], 100);
+      expect(testObj.a.b.c).toBe(100);
+    });
 
-  test('should return true for an object with only inherited properties', () => {
-    const parent = { a: 1 };
-    const child = Object.create(parent);
-    expect(isEmpty(child)).toBe(true);
-  });
+    it('should create nested objects if they do not exist', () => {
+      const obj = {};
+      set(obj, 'x.y.z', 200);
+      expect(obj.x.y.z).toBe(200);
+    });
 
-  test('should return true for an empty array', () => {
-    expect(isEmpty([])).toBe(true);
-  });
+    it('should overwrite an existing value', () => {
+      const newObj = { a: 1 };
+      set(testObj, 'a.b', newObj);
+      expect(testObj.a.b).toBe(newObj);
+    });
 
-  test('should return false for a non-empty array', () => {
-    expect(isEmpty([1, 2])).toBe(false);
-  });
-});
+    it('should set a value on an array by index using dot notation', () => {
+        set(testObj, 'a.d.1', 99);
+        expect(testObj.a.d[1]).toBe(99);
+    });
 
-describe('pick', () => {
-  test('should create an object with picked properties', () => {
-    const obj = { a: 1, b: '2', c: true };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: true });
-  });
+    it('should set a value on an array by index using bracket notation', () => {
+        set(testObj, 'a.d[0]', 88);
+        expect(testObj.a.d[0]).toBe(88);
+    });
 
-  test('should ignore keys that are not in the object', () => {
-    const obj = { a: 1, b: '2' };
-    expect(pick(obj, ['a', 'd'])).toEqual({ a: 1 });
-  });
+    it('should create nested arrays and objects as needed', () => {
+        const obj = {};
+        set(obj, 'a[0].b', 'test');
+        expect(obj.a[0].b).toBe('test');
+    });
 
-  test('should return an empty object if no keys are picked', () => {
-    const obj = { a: 1, b: '2' };
-    expect(pick(obj, [])).toEqual({});
-  });
+    it('should not throw on null or undefined objects and return the object', () => {
+        expect(set(null, 'a.b', 1)).toBe(null);
+        expect(set(undefined, 'a.b', 1)).toBe(undefined);
+    });
 
-  test('should return an empty object if the input object is null or undefined', () => {
-    expect(pick(null, ['a'])).toEqual({});
-    expect(pick(undefined, ['a'])).toEqual({});
-  });
-
-  test('should not pick inherited properties', () => {
-    const parent = { a: 1 };
-    const child = Object.create(parent);
-    child.b = 2;
-    expect(pick(child, ['a', 'b'])).toEqual({ b: 2 });
-  });
-});
-
-describe('omit', () => {
-  const obj = { a: 1, b: '2', c: true };
-
-  test('should create an object with omitted properties', () => {
-    expect(omit(obj, ['a', 'c'])).toEqual({ b: '2' });
-  });
-
-  test('should return a new object', () => {
-    const result = omit(obj, ['a']);
-    expect(result).not.toBe(obj);
-  });
-
-  test('should not modify the original object', () => {
-    const original = { a: 1, b: 2 };
-    omit(original, ['a']);
-    expect(original).toEqual({ a: 1, b: 2 });
-  });
-
-  test('should ignore keys that are not in the object', () => {
-    expect(omit(obj, ['d', 'e'])).toEqual(obj);
-  });
-
-  test('should return an equivalent object if no keys are omitted', () => {
-    expect(omit(obj, [])).toEqual(obj);
-  });
-
-  test('should handle null and undefined input', () => {
-    expect(omit(null, ['a'])).toEqual({});
-    expect(omit(undefined, ['a'])).toEqual({});
-  });
-
-  test('should only omit own properties, not inherited ones', () => {
-    const parent = { inherited: 'yes' };
-    const child = Object.create(parent);
-    child.own = 'yes';
-    const result = omit(child, ['inherited']); // 'inherited' is not an own property
-    expect(result).toEqual({ own: 'yes' });
-    expect('inherited' in result).toBe(false); // Spread doesn't copy inherited props
+    it('should mutate the original object', () => {
+        const original = {};
+        const result = set(original, 'a.b', 1);
+        expect(result).toBe(original);
+        expect(original.a.b).toBe(1);
+    });
   });
 });
