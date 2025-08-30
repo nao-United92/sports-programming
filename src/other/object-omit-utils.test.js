@@ -1,23 +1,28 @@
 import { omit } from './object-omit-utils.js';
 
 describe('omit', () => {
-  test('should create an object with omitted properties', () => {
-    const object = { 'a': 1, 'b': '2', 'c': 3 };
-    expect(omit(object, ['a', 'c'])).toEqual({ 'b': '2' });
+  it('should create an object without omitted properties', () => {
+    const object = { a: 1, b: '2', c: 3 };
+    expect(omit(object, ['a', 'c'])).toEqual({ b: '2' });
   });
 
-  test('should return an empty object if the source object is null or undefined', () => {
-    expect(omit(null, ['a', 'c'])).toEqual({});
-    expect(omit(undefined, ['a', 'c'])).toEqual({});
+  it('should work with a single property', () => {
+    const object = { a: 1, b: '2', c: 3 };
+    expect(omit(object, 'a')).toEqual({ b: '2', c: 3 });
   });
 
-  test('should handle keys that are not in the source object', () => {
-    const object = { 'a': 1, 'b': '2' };
-    expect(omit(object, ['d'])).toEqual({ 'a': 1, 'b': '2' });
+  it('should return the original object if no properties are omitted', () => {
+    const object = { a: 1, b: '2', c: 3 };
+    expect(omit(object, ['d', 'e'])).toEqual({ a: 1, b: '2', c: 3 });
   });
 
-  test('should return the original object if no keys are provided', () => {
-    const object = { 'a': 1, 'b': '2' };
-    expect(omit(object, [])).toEqual({ 'a': 1, 'b': '2' });
+  it('should return an empty object if the source object is null or undefined', () => {
+    expect(omit(null, ['a', 'b'])).toEqual({});
+    expect(omit(undefined, ['a', 'b'])).toEqual({});
+  });
+
+  it('should return the original object if paths are empty', () => {
+    const object = { a: 1, b: '2', c: 3 };
+    expect(omit(object, [])).toEqual({ a: 1, b: '2', c: 3 });
   });
 });
