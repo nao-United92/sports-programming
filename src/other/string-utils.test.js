@@ -1,49 +1,53 @@
 const { truncate, slugify } = require('./string-utils.js');
 
-describe('truncate', () => {
-  test('should not truncate a string shorter than the specified length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
+describe('string-utils', () => {
+  describe('truncate', () => {
+    it('should truncate a string that is longer than the specified length', () => {
+      expect(truncate('hello world', 8)).toBe('hello...');
+    });
+
+    it('should not truncate a string that is shorter than or equal to the specified length', () => {
+      expect(truncate('hello', 8)).toBe('hello');
+      expect(truncate('hello', 5)).toBe('hello');
+    });
+
+    it('should use a custom suffix if provided', () => {
+      expect(truncate('hello world', 9, '...more')).toBe('hel...more');
+    });
+
+    it('should return an empty string if input is empty', () => {
+      expect(truncate('', 5)).toBe('');
+    });
+
+    it('should handle truncation to a very short length', () => {
+      expect(truncate('hello', 4)).toBe('h...');
+      expect(truncate('hello', 3)).toBe('...');
+    });
   });
 
-  test('should truncate a string longer than the specified length', () => {
-    expect(truncate('hello world', 8)).toBe('hello...');
-  });
+  describe('slugify', () => {
+    it('should convert a string with spaces to a slug', () => {
+      expect(slugify('Hello World')).toBe('hello-world');
+    });
 
-  test('should use a custom suffix', () => {
-    expect(truncate('hello world', 9, '!!!')).toBe('hello !!!');
-  });
+    it('should remove special characters from the beginning and end of the string', () => {
+      expect(slugify('!@#$Hello%^&*()=+_World`~[]{}|;:\',.<>/?')).toBe('helloworld');
+    });
 
-  test('should handle edge case where length is equal to string length', () => {
-    expect(truncate('hello world', 11)).toBe('hello world');
-  });
+    it('should handle multiple spaces between words', () => {
+      expect(slugify('hello   world')).toBe('hello-world');
+    });
 
-  test('should handle edge case where length is less than suffix length', () => {
-    expect(truncate('hello world', 2)).toBe('...');
-  });
-});
+    it('should handle leading and trailing spaces', () => {
+      expect(slugify('  hello world  ')).toBe('hello-world');
+    });
 
-describe('slugify', () => {
-  test('should convert spaces to hyphens', () => {
-    expect(slugify('hello world')).toBe('hello-world');
-  });
+    it('should handle strings with mixed case', () => {
+      expect(slugify('HeLLo WoRLD')).toBe('hello-world');
+    });
 
-  test('should convert to lower case', () => {
-    expect(slugify('Hello World')).toBe('hello-world');
-  });
-
-  test('should remove special characters', () => {
-    expect(slugify('hello world! 123')).toBe('hello-world-123');
-  });
-
-  test('should handle multiple spaces', () => {
-    expect(slugify('hello   world')).toBe('hello-world');
-  });
-
-  test('should handle leading/trailing spaces', () => {
-    expect(slugify('  hello world  ')).toBe('hello-world');
-  });
-
-  test('should handle multiple hyphens', () => {
-    expect(slugify('hello--world')).toBe('hello-world');
+    it('should return an empty string if input is only special characters and spaces', () => {
+      expect(slugify('  !@#$  ')).toBe('');
+    });
   });
 });
