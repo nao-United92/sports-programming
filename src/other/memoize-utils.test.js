@@ -1,43 +1,65 @@
 import { memoize } from './memoize-utils.js';
 
 describe('memoize', () => {
-  it('should memoize the result of a function', () => {
-    const func = jest.fn(x => x * 2);
-    const memoizedFunc = memoize(func);
+  it('should memoize a function with a single argument', () => {
+    const myFn = jest.fn(x => x * 2);
+    const memoizedFn = memoize(myFn);
 
-    expect(memoizedFunc(2)).toBe(4);
-    expect(memoizedFunc(2)).toBe(4);
-    expect(func).toHaveBeenCalledTimes(1);
+    expect(memoizedFn(2)).toBe(4);
+    expect(memoizedFn(2)).toBe(4);
+    expect(myFn).toHaveBeenCalledTimes(1);
+
+    expect(memoizedFn(3)).toBe(6);
+    expect(memoizedFn(3)).toBe(6);
+    expect(myFn).toHaveBeenCalledTimes(2);
   });
 
   it('should use a resolver function to determine the cache key', () => {
-    const func = jest.fn(obj => obj.a + obj.b);
-    const resolver = obj => JSON.stringify(obj);
-    const memoizedFunc = memoize(func, resolver);
+    const myFn = jest.fn();
+    const resolver = (...args) => args.join('_');
+    const memoizedFn = memoize(myFn, resolver);
 
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { a: 1, b: 2 };
+    memoizedFn(1, 2);
+    memoizedFn(1, 2);
+    expect(myFn).toHaveBeenCalledTimes(1);
 
-    expect(memoizedFunc(obj1)).toBe(3);
-    expect(memoizedFunc(obj2)).toBe(3);
-    expect(func).toHaveBeenCalledTimes(1);
+    memoizedFn(1, 3);
+    expect(myFn).toHaveBeenCalledTimes(2);
   });
 
-  it('should have a cache property on the memoized function', () => {
-    const func = () => 'result';
-    const memoizedFunc = memoize(func);
-    memoizedFunc();
-    expect(memoizedFunc.cache instanceof Map).toBe(true);
-    expect(memoizedFunc.cache.get(undefined)).toBe('result');
+  it('should expose the cache on the memoized function', () => {
+    const memoizedFn = memoize(() => {});
+    expect(memoizedFn.cache).toBeInstanceOf(Map);
   });
 
-  it('should differentiate cache keys for different arguments', () => {
-    const func = jest.fn(x => x * 2);
-    const memoizedFunc = memoize(func);
+  it('should allow clearing the cache', () => {
+    const myFn = jest.fn(x => x * 2);
+    const memoizedFn = memoize(myFn);
 
-    memoizedFunc(2);
-    memoizedFunc(3);
+    expect(memoizedFn(2)).toBe(4);
+    expect(myFn).toHaveBeenCalledTimes(1);
 
-    expect(func).toHaveBeenCalledTimes(2);
+    memoizedFn.cache.clear();
+
+    expect(memoizedFn(2)).toBe(4);
+    expect(myFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('should handle `this` context correctly', () => {
+    const context = {
+      multiplier: 2,
+      myFn: function(x) {
+        return x * this.multiplier;
+      }
+    };
+    context.memoizedFn = memoize(context.myFn);
+
+    const result = context.memoizedFn(5);
+    expect(result).toBe(10);
+
+    context.multiplier = 3;
+    // Should return cached result
+    const result2 = context.memoizedFn(5);
+    expect(result2).toBe(10);
   });
 });
