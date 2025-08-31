@@ -1,25 +1,24 @@
 import { once } from './once-utils.js';
 
 describe('once', () => {
-  it('should only call the original function once', () => {
-    const func = jest.fn();
-    const onceFunc = once(func);
+  it('should only call the function once', () => {
+    const myFn = jest.fn();
+    const onceFn = once(myFn);
 
-    onceFunc();
-    onceFunc();
-    onceFunc();
+    onceFn();
+    onceFn();
+    onceFn();
 
-    expect(func).toHaveBeenCalledTimes(1);
+    expect(myFn).toHaveBeenCalledTimes(1);
   });
 
-  it('should return the result of the first call on subsequent calls', () => {
-    let i = 0;
-    const func = () => ++i;
-    const onceFunc = once(func);
+  it('should return the result of the first call', () => {
+    let i = 1;
+    const onceFn = once(() => i++);
 
-    const result1 = onceFunc();
-    const result2 = onceFunc();
-    const result3 = onceFunc();
+    const result1 = onceFn();
+    const result2 = onceFn();
+    const result3 = onceFn();
 
     expect(result1).toBe(1);
     expect(result2).toBe(1);
@@ -27,21 +26,30 @@ describe('once', () => {
   });
 
   it('should pass arguments to the original function', () => {
-    const func = jest.fn();
-    const onceFunc = once(func);
+    const myFn = jest.fn();
+    const onceFn = once(myFn);
 
-    onceFunc(1, 2, 3);
+    onceFn(1, 2, 3);
+    onceFn(4, 5, 6);
 
-    expect(func).toHaveBeenCalledWith(1, 2, 3);
+    expect(myFn).toHaveBeenCalledWith(1, 2, 3);
+    expect(myFn).not.toHaveBeenCalledWith(4, 5, 6);
   });
 
-  it('should maintain the context of the original function', () => {
-    const func = jest.fn();
-    const onceFunc = once(func);
-    const context = { onceFunc };
+  it('should maintain the `this` context', () => {
+    const myFn = jest.fn(function() { return this.value; });
+    const context = {
+      value: 10,
+      onceFn: once(myFn)
+    };
 
-    context.onceFunc();
+    const result = context.onceFn();
+    expect(result).toBe(10);
+    expect(myFn).toHaveBeenCalledTimes(1);
 
-    expect(func.mock.contexts[0]).toBe(context);
+    context.value = 20;
+    const result2 = context.onceFn();
+    expect(result2).toBe(10); // Still the first result
+    expect(myFn).toHaveBeenCalledTimes(1);
   });
 });
