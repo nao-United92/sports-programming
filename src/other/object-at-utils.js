@@ -1,9 +1,12 @@
-import { get } from './object-path-utils.js';
+import { get } from './object-get-utils.js';
 
-export const at = (obj, paths) => {
-  const result = [];
-  for (const path of paths) {
-    result.push(get(obj, path));
-  }
-  return result;
-};
+/**
+ * Creates an array of values corresponding to paths of object.
+ *
+ * @param {Object} object The object to iterate over.
+ * @param {...(string|string[])} [paths] The property paths to pick.
+ * @returns {Array} Returns the new array of picked values.
+ */
+export function at(object, ...paths) {
+  return paths.flat().map(path => get(object, path));
+}
