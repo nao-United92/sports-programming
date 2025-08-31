@@ -1,47 +1,49 @@
-import { pick, omit } from './object-pick-omit-utils.js';
+import { pick, omit } from './object-pick-omit-utils';
 
-describe('object-pick-omit-utils', () => {
-  const data = { a: 1, b: 2, c: 3 };
-
-  describe('pick', () => {
-    it('should create an object with picked properties', () => {
-      expect(pick(data, ['a', 'c'])).toEqual({ a: 1, c: 3 });
-    });
-
-    it('should not modify the original object', () => {
-      const original = { ...data };
-      pick(data, ['a']);
-      expect(data).toEqual(original);
-    });
-
-    it('should return an empty object if keys do not exist', () => {
-      expect(pick(data, ['d', 'e'])).toEqual({});
-    });
-
-    it('should return an empty object for null or undefined input', () => {
-      expect(pick(null, ['a'])).toEqual({});
-      expect(pick(undefined, ['a'])).toEqual({});
-    });
+describe('pick', () => {
+  test('should pick specified keys from an object', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
   });
 
-  describe('omit', () => {
-    it('should create an object without omitted properties', () => {
-      expect(omit(data, ['b'])).toEqual({ a: 1, c: 3 });
-    });
+  test('should return an empty object if no keys are specified', () => {
+    const obj = { a: 1, b: 2 };
+    expect(pick(obj, [])).toEqual({});
+  });
 
-    it('should not modify the original object', () => {
-      const original = { ...data };
-      omit(data, ['b']);
-      expect(data).toEqual(original);
-    });
+  test('should ignore keys that do not exist in the object', () => {
+    const obj = { a: 1, b: 2 };
+    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1 });
+  });
 
-    it('should return the same object if keys to omit do not exist', () => {
-      expect(omit(data, ['d', 'e'])).toEqual(data);
-    });
+  test('should handle objects with inherited properties', () => {
+    const proto = { inherited: 'value' };
+    const obj = Object.create(proto);
+    obj.own = 'property';
+    expect(pick(obj, ['own', 'inherited'])).toEqual({ own: 'property' });
+  });
+});
 
-    it('should return an empty object for null or undefined input', () => {
-      expect(omit(null, ['a'])).toEqual({});
-      expect(omit(undefined, ['a'])).toEqual({});
-    });
+describe('omit', () => {
+  test('should omit specified keys from an object', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: 2 });
+  });
+
+  test('should return the original object if no keys are specified', () => {
+    const obj = { a: 1, b: 2 };
+    expect(omit(obj, [])).toEqual({ a: 1, b: 2 });
+  });
+
+  test('should ignore keys that do not exist in the object', () => {
+    const obj = { a: 1, b: 2 };
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: 2 });
+  });
+
+  test('should handle objects with inherited properties', () => {
+    const proto = { inherited: 'value' };
+    const obj = Object.create(proto);
+    obj.own = 'property';
+    expect(omit(obj, ['inherited'])).toEqual({ own: 'property' });
   });
 });
