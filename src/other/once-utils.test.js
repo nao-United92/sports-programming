@@ -1,55 +1,52 @@
 import { once } from './once-utils.js';
 
 describe('once', () => {
-  it('should only call the function once', () => {
-    const myFn = jest.fn();
-    const onceFn = once(myFn);
+  test('should call the original function only once', () => {
+    const mockFn = jest.fn();
+    const onceFn = once(mockFn);
 
     onceFn();
     onceFn();
     onceFn();
 
-    expect(myFn).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  it('should return the result of the first call', () => {
-    let i = 1;
-    const onceFn = once(() => i++);
+  test('should return the value from the first call on subsequent calls', () => {
+    let i = 0;
+    const onceFn = once(() => ++i);
 
-    const result1 = onceFn();
-    const result2 = onceFn();
-    const result3 = onceFn();
+    const firstResult = onceFn();
+    const secondResult = onceFn();
+    const thirdResult = onceFn();
 
-    expect(result1).toBe(1);
-    expect(result2).toBe(1);
-    expect(result3).toBe(1);
+    expect(firstResult).toBe(1);
+    expect(secondResult).toBe(1);
+    expect(thirdResult).toBe(1);
   });
 
-  it('should pass arguments to the original function', () => {
-    const myFn = jest.fn();
-    const onceFn = once(myFn);
+  test('should pass arguments to the original function on the first call', () => {
+    const mockFn = jest.fn((a, b) => a + b);
+    const onceFn = once(mockFn);
 
-    onceFn(1, 2, 3);
-    onceFn(4, 5, 6);
+    const result = onceFn(3, 5);
 
-    expect(myFn).toHaveBeenCalledWith(1, 2, 3);
-    expect(myFn).not.toHaveBeenCalledWith(4, 5, 6);
+    expect(mockFn).toHaveBeenCalledWith(3, 5);
+    expect(result).toBe(8);
+
+    // Subsequent call with different args should not affect the result or call the mock again
+    const secondResult = onceFn(10, 20);
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(secondResult).toBe(8);
   });
 
-  it('should maintain the `this` context', () => {
-    const myFn = jest.fn(function() { return this.value; });
-    const context = {
-      value: 10,
-      onceFn: once(myFn)
-    };
+  test('should maintain the `this` context', () => {
+    const mockFn = jest.fn(function() { return this.value; });
+    const context = { value: 'test', onceFn: once(mockFn) };
 
     const result = context.onceFn();
-    expect(result).toBe(10);
-    expect(myFn).toHaveBeenCalledTimes(1);
 
-    context.value = 20;
-    const result2 = context.onceFn();
-    expect(result2).toBe(10); // Still the first result
-    expect(myFn).toHaveBeenCalledTimes(1);
+    expect(result).toBe('test');
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 });
