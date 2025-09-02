@@ -1,53 +1,56 @@
-import { getRandomInt } from './random-utils.js';
+import { random } from './random-utils.js';
 
-describe('Random Utilities', () => {
-  describe('getRandomInt', () => {
-    it('should return an integer within the specified range (inclusive)', () => {
-      const min = 1;
-      const max = 10;
-      for (let i = 0; i < 100; i++) {
-        const randomNumber = getRandomInt(min, max);
-        expect(randomNumber).toBeGreaterThanOrEqual(min);
-        expect(randomNumber).toBeLessThanOrEqual(max);
-        expect(Number.isInteger(randomNumber)).toBe(true);
-      }
-    });
+describe('random', () => {
+  // Restore Math.random() after each test to ensure isolation
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
-    it('should return the same number if min and max are equal', () => {
-      expect(getRandomInt(5, 5)).toBe(5);
-    });
+  test('should generate a random integer within a specified range', () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0.1); // Ensure it's not exactly 0 or 1
+    const num = random(1, 10);
+    expect(num).toBeGreaterThanOrEqual(1);
+    expect(num).toBeLessThanOrEqual(10);
+    expect(Number.isInteger(num)).toBe(true);
+  });
 
-    it('should handle negative numbers', () => {
-      const min = -10;
-      const max = -1;
-      for (let i = 0; i < 100; i++) {
-        const randomNumber = getRandomInt(min, max);
-        expect(randomNumber).toBeGreaterThanOrEqual(min);
-        expect(randomNumber).toBeLessThanOrEqual(max);
-        expect(Number.isInteger(randomNumber)).toBe(true);
-      }
-    });
+  test('should generate a random floating-point number within a specified range', () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0.51); // Ensure non-integer result
+    const num = random(1.5, 10.5);
+    expect(num).toBeGreaterThanOrEqual(1.5);
+    expect(num).toBeLessThanOrEqual(10.5);
+    expect(Number.isInteger(num)).toBe(false);
+  });
 
-    it('should handle min greater than max by swapping them', () => {
-      const min = 10;
-      const max = 1;
-      for (let i = 0; i < 100; i++) {
-        const randomNumber = getRandomInt(min, max);
-        expect(randomNumber).toBeGreaterThanOrEqual(1);
-        expect(randomNumber).toBeLessThanOrEqual(10);
-        expect(Number.isInteger(randomNumber)).toBe(true);
-      }
-    });
+  test('should generate a random floating-point number when floating is true', () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0.7); // Ensure non-integer result
+    const num = random(1, 10, true);
+    expect(num).toBeGreaterThanOrEqual(1);
+    expect(num).toBeLessThanOrEqual(10);
+    expect(Number.isInteger(num)).toBe(false);
+  });
 
-    it('should produce different numbers over multiple calls (basic randomness check)', () => {
-      const min = 1;
-      const max = 100;
-      const results = new Set();
-      for (let i = 0; i < 50; i++) {
-        results.add(getRandomInt(min, max));
-      }
-      // Expect more than one unique number for a reasonable range and number of calls
-      expect(results.size).toBeGreaterThan(1);
-    });
+  test('should handle swapped lower and upper bounds', () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0.3); // Ensure integer result
+    const num = random(10, 1);
+    expect(num).toBeGreaterThanOrEqual(1);
+    expect(num).toBeLessThanOrEqual(10);
+    expect(Number.isInteger(num)).toBe(true);
+  });
+
+  test('should generate a random number between 0 and the given number if only one argument', () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0.8); // Ensure integer result
+    const num = random(5);
+    expect(num).toBeGreaterThanOrEqual(0);
+    expect(num).toBeLessThanOrEqual(5);
+    expect(Number.isInteger(num)).toBe(true);
+  });
+
+  test('should generate a random number between 0 and 1 if no arguments', () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0.12345); // Ensure non-integer result
+    const num = random();
+    expect(num).toBeGreaterThanOrEqual(0);
+    expect(num).toBeLessThanOrEqual(1);
+    expect(Number.isInteger(num)).toBe(false);
   });
 });
