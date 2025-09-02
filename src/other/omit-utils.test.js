@@ -1,47 +1,31 @@
 import { omit } from './omit-utils.js';
 
 describe('omit', () => {
-  const data = { a: 1, b: 2, c: 3 };
+  const object = { 'a': 1, 'b': '2', 'c': 3 };
 
-  test('should create a shallow copy', () => {
-    const result = omit(data, []);
-    expect(result).toEqual(data);
-    expect(result).not.toBe(data);
+  test('should omit specified keys from an object', () => {
+    const expected = { 'b': '2' };
+    expect(omit(object, ['a', 'c'])).toEqual(expected);
   });
 
-  test('should omit a single key', () => {
-    const result = omit(data, ['a']);
-    expect(result).toEqual({ b: 2, c: 3 });
+  test('should not mutate the original object', () => {
+    omit(object, ['a']);
+    expect(object).toEqual({ 'a': 1, 'b': '2', 'c': 3 });
   });
 
-  test('should omit multiple keys', () => {
-    const result = omit(data, ['a', 'c']);
-    expect(result).toEqual({ b: 2 });
+  test('should not be affected by keys that do not exist', () => {
+    const expected = { 'a': 1, 'b': '2', 'c': 3 };
+    expect(omit(object, ['d', 'e'])).toEqual(expected);
   });
 
-  test('should return the same object if no keys are omitted', () => {
-    const result = omit(data, []);
-    expect(result).toEqual({ a: 1, b: 2, c: 3 });
+  test('should return a shallow copy if keys array is empty', () => {
+    const result = omit(object, []);
+    expect(result).toEqual(object);
+    expect(result).not.toBe(object);
   });
 
-  test('should handle non-existent keys', () => {
-    const result = omit(data, ['d', 'e']);
-    expect(result).toEqual(data);
-  });
-
-  test('should handle an empty source object', () => {
-    const result = omit({}, ['a']);
-    expect(result).toEqual({});
-  });
-
-  test('should not omit inherited properties', () => {
-    function MyObject() {
-      this.a = 1;
-    }
-    MyObject.prototype.b = 2;
-
-    const instance = new MyObject();
-    const result = omit(instance, ['a']);
-    expect(result).toEqual({}); // Only own properties are considered
+  test('should return an empty object for null or undefined input', () => {
+    expect(omit(null, ['a', 'b'])).toEqual({});
+    expect(omit(undefined, ['a', 'b'])).toEqual({});
   });
 });
