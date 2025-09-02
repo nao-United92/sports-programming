@@ -1,10 +1,11 @@
 /**
  * Checks if a value is empty.
- * Supports Object, Array, String, Map, Set.
+ * Supports objects, arrays, strings, Maps, and Sets.
+ *
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if the value is empty, else `false`.
  */
-export function isEmpty(value) {
+export const isEmpty = (value) => {
   if (value == null) {
     return true;
   }
@@ -18,4 +19,4 @@ export function isEmpty(value) {
     return Object.keys(value).length === 0;
   }
   return false;
-}
+};
