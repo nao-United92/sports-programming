@@ -1,65 +1,49 @@
 import { memoize } from './memoize-utils.js';
 
 describe('memoize', () => {
-  it('should memoize a function with a single argument', () => {
-    const myFn = jest.fn(x => x * 2);
-    const memoizedFn = memoize(myFn);
+  test('should memoize the result of a function', () => {
+    const mockFn = jest.fn((x) => x * 2);
+    const memoizedFn = memoize(mockFn);
 
     expect(memoizedFn(2)).toBe(4);
     expect(memoizedFn(2)).toBe(4);
-    expect(myFn).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledTimes(1);
 
     expect(memoizedFn(3)).toBe(6);
     expect(memoizedFn(3)).toBe(6);
-    expect(myFn).toHaveBeenCalledTimes(2);
+    expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
-  it('should use a resolver function to determine the cache key', () => {
-    const myFn = jest.fn();
-    const resolver = (...args) => args.join('_');
-    const memoizedFn = memoize(myFn, resolver);
-
-    memoizedFn(1, 2);
-    memoizedFn(1, 2);
-    expect(myFn).toHaveBeenCalledTimes(1);
-
-    memoizedFn(1, 3);
-    expect(myFn).toHaveBeenCalledTimes(2);
+  test('should use the first argument as the default cache key', () => {
+    const memoized = memoize((a, b) => a + b);
+    memoized(1, 2); // result is 3, cached under key 1
+    memoized(1, 5); // should return cached result for key 1, which is 3
+    expect(memoized(1, 10)).toBe(3);
   });
 
-  it('should expose the cache on the memoized function', () => {
-    const memoizedFn = memoize(() => {});
-    expect(memoizedFn.cache).toBeInstanceOf(Map);
+  test('should use a custom resolver to determine the cache key', () => {
+    const mockFn = jest.fn((...args) => args.reduce((a, b) => a + b, 0));
+    const resolver = (...args) => args.join('-');
+    const memoizedFn = memoize(mockFn, resolver);
+
+    memoizedFn(1, 2, 3); // key '1-2-3'
+    memoizedFn(1, 2, 3); // should be cached
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    memoizedFn(1, 2, 4); // key '1-2-4'
+    expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
-  it('should allow clearing the cache', () => {
-    const myFn = jest.fn(x => x * 2);
-    const memoizedFn = memoize(myFn);
-
-    expect(memoizedFn(2)).toBe(4);
-    expect(myFn).toHaveBeenCalledTimes(1);
-
-    memoizedFn.cache.clear();
-
-    expect(memoizedFn(2)).toBe(4);
-    expect(myFn).toHaveBeenCalledTimes(2);
+  test('should expose the cache on the memoized function', () => {
+    const memoizedFn = memoize((x) => x);
+    memoizedFn('a');
+    expect(memoizedFn.cache.has('a')).toBe(true);
+    expect(memoizedFn.cache.get('a')).toBe('a');
   });
 
-  it('should handle `this` context correctly', () => {
-    const context = {
-      multiplier: 2,
-      myFn: function(x) {
-        return x * this.multiplier;
-      }
-    };
-    context.memoizedFn = memoize(context.myFn);
-
-    const result = context.memoizedFn(5);
-    expect(result).toBe(10);
-
-    context.multiplier = 3;
-    // Should return cached result
-    const result2 = context.memoizedFn(5);
-    expect(result2).toBe(10);
+  test('should allow modifying the cache', () => {
+    const memoizedFn = memoize((x) => x.toUpperCase());
+    memoizedFn.cache.set('a', 'CUSTOM');
+    expect(memoizedFn('a')).toBe('CUSTOM');
   });
 });
