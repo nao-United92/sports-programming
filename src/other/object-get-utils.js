@@ -8,10 +8,17 @@
  * @returns {*} Returns the resolved value.
  */
 export const get = (object, path, defaultValue) => {
-  const pathArray = Array.isArray(path) ? path : path.split('.').filter(key => key);
-  const pathArrayFlat = pathArray.flatMap(part => part.split(/\[(.*?)\]/).filter(key => key));
+  // Use a simpler regex to handle dot and bracket notation
+  const pathArray = Array.isArray(path) ? path : path.match(/[^.[\]]+/g);
 
-  const result = pathArrayFlat.reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : undefined), object);
+  if (!pathArray) {
+    return defaultValue;
+  }
 
+  const result = pathArray.reduce((obj, key) => {
+    // Ensure obj is not null/undefined before trying to access a key
+    return obj ? obj[key] : undefined;
+  }, object);
+  
   return result === undefined ? defaultValue : result;
 };
