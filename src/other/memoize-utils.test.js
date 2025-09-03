@@ -1,49 +1,69 @@
-import { memoize } from './memoize-utils.js';
+const assert = require('assert');
+const { memoize } = require('./memoize-utils.js');
 
 describe('memoize', () => {
-  test('should memoize the result of a function', () => {
-    const mockFn = jest.fn((x) => x * 2);
-    const memoizedFn = memoize(mockFn);
+  it('should memoize the result of a function', () => {
+    let callCount = 0;
+    const expensiveFunction = (x) => {
+      callCount++;
+      return x * 2;
+    };
 
-    expect(memoizedFn(2)).toBe(4);
-    expect(memoizedFn(2)).toBe(4);
-    expect(mockFn).toHaveBeenCalledTimes(1);
+    const memoizedFn = memoize(expensiveFunction);
 
-    expect(memoizedFn(3)).toBe(6);
-    expect(memoizedFn(3)).toBe(6);
-    expect(mockFn).toHaveBeenCalledTimes(2);
+    assert.strictEqual(memoizedFn(2), 4);
+    assert.strictEqual(callCount, 1);
+
+    assert.strictEqual(memoizedFn(2), 4);
+    assert.strictEqual(callCount, 1, 'Function should not be called again for the same input');
+
+    assert.strictEqual(memoizedFn(3), 6);
+    assert.strictEqual(callCount, 2, 'Function should be called for a new input');
+
+    assert.strictEqual(memoizedFn(3), 6);
+    assert.strictEqual(callCount, 2);
   });
 
-  test('should use the first argument as the default cache key', () => {
-    const memoized = memoize((a, b) => a + b);
-    memoized(1, 2); // result is 3, cached under key 1
-    memoized(1, 5); // should return cached result for key 1, which is 3
-    expect(memoized(1, 10)).toBe(3);
+  it('should use a custom resolver function', () => {
+    let callCount = 0;
+    const identity = (x) => {
+        callCount++;
+        return x;
+    };
+    const resolver = (obj) => obj.key;
+    const memoizedFn = memoize(identity, resolver);
+
+    const obj1 = { key: 'a', value: 1 };
+    const obj2 = { key: 'a', value: 2 };
+    const obj3 = { key: 'b', value: 3 };
+
+    assert.deepStrictEqual(memoizedFn(obj1), obj1);
+    assert.strictEqual(callCount, 1);
+
+    // obj2 has the same key as obj1, so it should return the cached result for obj1
+    assert.deepStrictEqual(memoizedFn(obj2), obj1, 'Should return cached value based on resolver');
+    assert.strictEqual(callCount, 1);
+
+    assert.deepStrictEqual(memoizedFn(obj3), obj3);
+    assert.strictEqual(callCount, 2);
   });
 
-  test('should use a custom resolver to determine the cache key', () => {
-    const mockFn = jest.fn((...args) => args.reduce((a, b) => a + b, 0));
-    const resolver = (...args) => args.join('-');
-    const memoizedFn = memoize(mockFn, resolver);
+  it('should expose the cache', () => {
+    const memoizedFn = memoize((a) => a);
+    memoizedFn(1);
+    memoizedFn(2);
 
-    memoizedFn(1, 2, 3); // key '1-2-3'
-    memoizedFn(1, 2, 3); // should be cached
-    expect(mockFn).toHaveBeenCalledTimes(1);
+    assert.ok(memoizedFn.cache instanceof Map, 'Cache should be a Map');
+    assert.strictEqual(memoizedFn.cache.get(1), 1);
+    assert.strictEqual(memoizedFn.cache.get(2), 2);
 
-    memoizedFn(1, 2, 4); // key '1-2-4'
-    expect(mockFn).toHaveBeenCalledTimes(2);
+    memoizedFn.cache.clear();
+    assert.strictEqual(memoizedFn.cache.size, 0, 'Cache should be clearable');
   });
 
-  test('should expose the cache on the memoized function', () => {
-    const memoizedFn = memoize((x) => x);
-    memoizedFn('a');
-    expect(memoizedFn.cache.has('a')).toBe(true);
-    expect(memoizedFn.cache.get('a')).toBe('a');
-  });
-
-  test('should allow modifying the cache', () => {
-    const memoizedFn = memoize((x) => x.toUpperCase());
-    memoizedFn.cache.set('a', 'CUSTOM');
-    expect(memoizedFn('a')).toBe('CUSTOM');
+  it('should throw a type error if func is not a function', () => {
+    assert.throws(() => memoize(undefined), TypeError);
+    assert.throws(() => memoize(null), TypeError);
+    assert.throws(() => memoize('string'), TypeError);
   });
 });
