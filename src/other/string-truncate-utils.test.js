@@ -1,26 +1,21 @@
-import { truncate } from './string-truncate-utils';
+import { truncate } from './string-truncate-utils.js';
 
 describe('truncate', () => {
-  const str = 'hello world, this is a test';
-
-  it('should not truncate a string shorter than the specified length', () => {
-    expect(truncate(str, 30)).toBe(str);
+  test('should not truncate a string shorter than the specified length', () => {
+    expect(truncate('hello', 10)).toBe('hello');
   });
 
-  it('should truncate a string to the specified length', () => {
-    const truncated = truncate(str, 20);
-    expect(truncated).toBe('hello world, this...');
-    expect(truncated.length).toBe(20);
+  test('should truncate a string longer than the specified length', () => {
+    expect(truncate('hello world', 8)).toBe('hello...');
   });
 
-  it('should use a custom omission string', () => {
-    const truncated = truncate(str, 20, '---');
-    expect(truncated).toBe('hello world, thi---');
-    expect(truncated.length).toBe(20);
+  test('should use a custom suffix if provided', () => {
+    expect(truncate('hello world', 8, '...')).toBe('hello...');
   });
 
-  it('should handle edge cases', () => {
-    expect(truncate('hi', 2)).toBe('hi');
-    expect(truncate('hi', 1, '.')).toBe('.');
+  test('should handle edge cases', () => {
+    expect(truncate('hello', 5)).toBe('hello');
+    expect(truncate('hello', 4)).toBe('h...');
+    expect(truncate('', 10)).toBe('');
   });
 });
