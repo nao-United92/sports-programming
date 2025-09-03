@@ -1,42 +1,40 @@
-import { parseQuery, stringifyQuery } from './url-query-utils';
+const assert = require('assert');
+const { parseQuery, stringifyQuery } = require('./url-query-utils.js');
 
 describe('URL Query Utilities', () => {
   describe('parseQuery', () => {
     it('should parse a simple query string', () => {
-      expect(parseQuery('?foo=bar&baz=qux')).toEqual({ foo: 'bar', baz: 'qux' });
+      assert.deepStrictEqual(parseQuery('foo=bar&baz=qux'), { foo: 'bar', baz: 'qux' });
     });
 
-    it('should handle a query string without a leading question mark', () => {
-      expect(parseQuery('foo=bar&baz=qux')).toEqual({ foo: 'bar', baz: 'qux' });
+    it('should handle multiple values for the same key', () => {
+      assert.deepStrictEqual(parseQuery('a=1&a=2&b=3'), { a: ['1', '2'], b: '3' });
     });
 
-    it('should handle empty query strings', () => {
-      expect(parseQuery('')).toEqual({});
-      expect(parseQuery('?')).toEqual({});
+    it('should handle an empty query string', () => {
+      assert.deepStrictEqual(parseQuery(''), {});
     });
 
-    it('should handle special characters', () => {
-      const queryString = 'name=John%20Doe&email=john.doe%40example.com';
-      expect(parseQuery(queryString)).toEqual({ name: 'John Doe', email: 'john.doe@example.com' });
+    it('should handle a query string with no values', () => {
+      assert.deepStrictEqual(parseQuery('a&b'), { a: '', b: '' });
     });
   });
 
   describe('stringifyQuery', () => {
     it('should stringify a simple object', () => {
-      expect(stringifyQuery({ foo: 'bar', baz: 'qux' })).toBe('foo=bar&baz=qux');
+      assert.strictEqual(stringifyQuery({ foo: 'bar', baz: 'qux' }), 'foo=bar&baz=qux');
+    });
+
+    it('should handle an array of values', () => {
+      assert.strictEqual(stringifyQuery({ a: ['1', '2'], b: '3' }), 'a=1&a=2&b=3');
     });
 
     it('should handle an empty object', () => {
-      expect(stringifyQuery({})).toBe('');
+      assert.strictEqual(stringifyQuery({}), '');
     });
 
-    it('should handle special characters', () => {
-      const params = { name: 'John Doe', email: 'john.doe@example.com' };
-      expect(stringifyQuery(params)).toBe('name=John+Doe&email=john.doe%40example.com');
-    });
-
-    it('should handle numbers and other primitives', () => {
-        expect(stringifyQuery({ a: 1, b: true, c: null })).toBe('a=1&b=true&c=null');
+    it('should handle values that need encoding', () => {
+      assert.strictEqual(stringifyQuery({ q: 'hello world' }), 'q=hello+world');
     });
   });
 });

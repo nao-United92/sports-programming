@@ -1,28 +1,45 @@
 /**
  * Parses a URL query string into an object.
- * @param {string} queryString The URL query string (e.g., '?foo=bar&baz=qux').
- * @returns {Object} The parsed query parameters as an object.
+ *
+ * @param {string} queryString The URL query string to parse.
+ * @returns {Object} An object representing the query string.
  */
-export const parseQuery = (queryString) => {
-  const params = {};
-  const searchParams = new URLSearchParams(queryString);
-  for (const [key, value] of searchParams.entries()) {
-    params[key] = value;
+const parseQuery = (queryString) => {
+  const params = new URLSearchParams(queryString);
+  const obj = {};
+  for (const [key, value] of params.entries()) {
+    if (obj[key]) {
+      if (Array.isArray(obj[key])) {
+        obj[key].push(value);
+      } else {
+        obj[key] = [obj[key], value];
+      }
+    } else {
+      obj[key] = value;
+    }
   }
-  return params;
+  return obj;
 };
 
 /**
  * Stringifies an object into a URL query string.
- * @param {Object} params The object to stringify.
+ *
+ * @param {Object} obj The object to stringify.
  * @returns {string} The URL query string.
  */
-export const stringifyQuery = (params) => {
-  const searchParams = new URLSearchParams();
-  for (const key in params) {
-    if (Object.prototype.hasOwnProperty.call(params, key)) {
-      searchParams.append(key, params[key]);
+const stringifyQuery = (obj) => {
+  const params = new URLSearchParams();
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (Array.isArray(value)) {
+        value.forEach(v => params.append(key, v));
+      } else {
+        params.append(key, value);
+      }
     }
   }
-  return searchParams.toString();
+  return params.toString();
 };
+
+module.exports = { parseQuery, stringifyQuery };
