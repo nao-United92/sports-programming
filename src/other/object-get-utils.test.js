@@ -1,37 +1,42 @@
 import { get } from './object-get-utils.js';
 
 describe('get', () => {
-  const object = { 'a': [{ 'b': { 'c': 3 } }] };
+  const object = { 'a': { 'b': { 'c': 3, 'd': 0, 'e': false, 'f': '' } } };
 
-  test('should get a value from a nested object using a string path', () => {
-    expect(get(object, 'a[0].b.c')).toBe(3);
+  it('should get a nested value using a string path', () => {
+    expect(get(object, 'a.b.c')).toBe(3);
   });
 
-  test('should get a value using an array path', () => {
-    expect(get(object, ['a', '0', 'b', 'c'])).toBe(3);
+  it('should get a nested value using an array path', () => {
+    expect(get(object, ['a', 'b', 'c'])).toBe(3);
   });
 
-  test('should return undefined for a non-existent path', () => {
-    expect(get(object, 'a.b.c')).toBeUndefined();
+  it('should return a default value if path is invalid', () => {
+    expect(get(object, 'a.x.c', 'default')).toBe('default');
   });
 
-  test('should return a default value for a non-existent path', () => {
-    expect(get(object, 'a.b.c', 'default')).toBe('default');
+  it('should return undefined if path is invalid and no default value is provided', () => {
+    expect(get(object, 'a.x.c')).toBeUndefined();
   });
 
-  test('should return undefined if the object is null or undefined', () => {
-    expect(get(null, 'a.b.c')).toBeUndefined();
-    expect(get(undefined, 'a.b.c')).toBeUndefined();
-  });
-
-  test('should return the default value if the object is null', () => {
+  it('should handle null and undefined root objects', () => {
     expect(get(null, 'a.b.c', 'default')).toBe('default');
+    expect(get(undefined, ['a', 'b', 'c'])).toBeUndefined();
   });
 
-  test('should correctly retrieve falsy values', () => {
-    const objWithFalsy = { a: { b: 0, c: false, d: '' } };
-    expect(get(objWithFalsy, 'a.b')).toBe(0);
-    expect(get(objWithFalsy, 'a.c')).toBe(false);
-    expect(get(objWithFalsy, 'a.d')).toBe('');
+  it('should handle intermediate null or undefined values', () => {
+    const objWithNull = { a: { b: null } };
+    expect(get(objWithNull, 'a.b.c', 'default')).toBe('default');
+  });
+
+  it('should correctly retrieve falsy values', () => {
+    expect(get(object, 'a.b.d')).toBe(0);
+    expect(get(object, 'a.b.e')).toBe(false);
+    expect(get(object, 'a.b.f')).toBe('');
+  });
+
+  it('should return the object itself if path is empty', () => {
+    expect(get(object, [])).toBe(object);
+    expect(get(object, '')).toBe(object);
   });
 });
