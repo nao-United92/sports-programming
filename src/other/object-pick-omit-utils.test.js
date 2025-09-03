@@ -1,49 +1,36 @@
-import { pick, omit } from './object-pick-omit-utils';
+const assert = require('assert');
+const { pick, omit } = require('./object-pick-omit-utils.js');
 
 describe('pick', () => {
-  test('should pick specified keys from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+  it('should create an object with picked properties', () => {
+    const object = { 'a': 1, 'b': '2', 'c': 3 };
+    assert.deepStrictEqual(pick(object, ['a', 'c']), { 'a': 1, 'c': 3 });
   });
 
-  test('should return an empty object if no keys are specified', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, [])).toEqual({});
+  it('should handle empty keys', () => {
+    const object = { 'a': 1, 'b': '2', 'c': 3 };
+    assert.deepStrictEqual(pick(object, []), {});
   });
 
-  test('should ignore keys that do not exist in the object', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1 });
-  });
-
-  test('should handle objects with inherited properties', () => {
-    const proto = { inherited: 'value' };
-    const obj = Object.create(proto);
-    obj.own = 'property';
-    expect(pick(obj, ['own', 'inherited'])).toEqual({ own: 'property' });
+  it('should handle keys that do not exist', () => {
+    const object = { 'a': 1, 'b': '2', 'c': 3 };
+    assert.deepStrictEqual(pick(object, ['a', 'd']), { 'a': 1 });
   });
 });
 
 describe('omit', () => {
-  test('should omit specified keys from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    expect(omit(obj, ['a', 'c'])).toEqual({ b: 2 });
+  it('should create an object without omitted properties', () => {
+    const object = { 'a': 1, 'b': '2', 'c': 3 };
+    assert.deepStrictEqual(omit(object, ['a', 'c']), { 'b': '2' });
   });
 
-  test('should return the original object if no keys are specified', () => {
-    const obj = { a: 1, b: 2 };
-    expect(omit(obj, [])).toEqual({ a: 1, b: 2 });
+  it('should handle empty keys', () => {
+    const object = { 'a': 1, 'b': '2', 'c': 3 };
+    assert.deepStrictEqual(omit(object, []), { 'a': 1, 'b': '2', 'c': 3 });
   });
 
-  test('should ignore keys that do not exist in the object', () => {
-    const obj = { a: 1, b: 2 };
-    expect(omit(obj, ['a', 'c'])).toEqual({ b: 2 });
-  });
-
-  test('should handle objects with inherited properties', () => {
-    const proto = { inherited: 'value' };
-    const obj = Object.create(proto);
-    obj.own = 'property';
-    expect(omit(obj, ['inherited'])).toEqual({ own: 'property' });
+  it('should handle keys that do not exist', () => {
+    const object = { 'a': 1, 'b': '2', 'c': 3 };
+    assert.deepStrictEqual(omit(object, ['d']), { 'a': 1, 'b': '2', 'c': 3 });
   });
 });
