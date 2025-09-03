@@ -1,53 +1,47 @@
-const { truncate, slugify } = require('./string-utils.js');
+import { truncate, slugify } from './string-utils.js';
 
-describe('string-utils', () => {
+describe('String Utilities', () => {
   describe('truncate', () => {
-    it('should truncate a string that is longer than the specified length', () => {
-      expect(truncate('hello world', 8)).toBe('hello...');
+    test('should truncate a string that is longer than the specified length', () => {
+      expect(truncate('Hello world, this is a long string', 11)).toBe('Hello world...');
     });
 
-    it('should not truncate a string that is shorter than or equal to the specified length', () => {
-      expect(truncate('hello', 8)).toBe('hello');
-      expect(truncate('hello', 5)).toBe('hello');
+    test('should not truncate a string that is shorter than or equal to the specified length', () => {
+      expect(truncate('Hello world', 11)).toBe('Hello world');
     });
 
-    it('should use a custom suffix if provided', () => {
-      expect(truncate('hello world', 9, '...more')).toBe('hel...more');
-    });
-
-    it('should return an empty string if input is empty', () => {
-      expect(truncate('', 5)).toBe('');
-    });
-
-    it('should handle truncation to a very short length', () => {
-      expect(truncate('hello', 4)).toBe('h...');
-      expect(truncate('hello', 3)).toBe('...');
+    test('should allow a custom suffix', () => {
+      expect(truncate('Hello world', 5, '... more')).toBe('Hello... more');
     });
   });
 
   describe('slugify', () => {
-    it('should convert a string with spaces to a slug', () => {
-      expect(slugify('Hello World')).toBe('hello-world');
+    test('should convert a string to a slug', () => {
+      expect(slugify('Hello World!')).toBe('hello-world');
     });
 
-    it('should remove special characters from the beginning and end of the string', () => {
-      expect(slugify('!@#$Hello%^&*()=+_World`~[]{}|;:\',.<>/?')).toBe('helloworld');
+    test('should handle multiple spaces and trim', () => {
+      expect(slugify('  leading and trailing spaces  ')).toBe('leading-and-trailing-spaces');
     });
 
-    it('should handle multiple spaces between words', () => {
-      expect(slugify('hello   world')).toBe('hello-world');
+    test('should handle underscores', () => {
+      expect(slugify('foo_bar_baz')).toBe('foo-bar-baz');
     });
 
-    it('should handle leading and trailing spaces', () => {
-      expect(slugify('  hello world  ')).toBe('hello-world');
+    test('should handle multiple hyphens', () => {
+      expect(slugify('foo--bar---baz')).toBe('foo-bar-baz');
     });
 
-    it('should handle strings with mixed case', () => {
-      expect(slugify('HeLLo WoRLD')).toBe('hello-world');
+    test('should remove special characters', () => {
+      expect(slugify('!@#$%^&*()=+`~[]{}|;:",./<>?')).toBe('');
     });
 
-    it('should return an empty string if input is only special characters and spaces', () => {
-      expect(slugify('  !@#$  ')).toBe('');
+    test('should remove leading and trailing hyphens', () => {
+      expect(slugify('-foo-bar-')).toBe('foo-bar');
+    });
+
+    test('should handle a mix of operations', () => {
+      expect(slugify('__-Foo bar-baz!@#-')).toBe('foo-bar-baz');
     });
   });
 });

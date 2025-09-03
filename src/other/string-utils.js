@@ -1,32 +1,30 @@
 
 /**
- * Truncates a string to a specified length, appending a suffix if truncated.
+ * Truncates a string to a specified length and appends a suffix.
  * @param {string} str The string to truncate.
- * @param {number} length The maximum length of the string.
- * @param {string} [suffix='...'] The suffix to append if the string is truncated.
+ * @param {number} num The length to truncate to.
+ * @param {string} [suffix='...'] The suffix to append.
  * @returns {string} The truncated string.
  */
-const truncate = (str, length, suffix = '...') => {
-  if (str.length <= length) {
+export function truncate(str, num, suffix = '...') {
+  if (str.length <= num) {
     return str;
   }
-  return str.slice(0, length - suffix.length) + suffix;
-};
+  return str.slice(0, num) + suffix;
+}
 
 /**
- * Converts a string to a URL-friendly slug.
- * @param {string} str The string to convert.
+ * Converts a string to a slug.
+ * @param {string} str The string to slugify.
  * @returns {string} The slugified string.
  */
-const slugify = (str) => {
+export function slugify(str) {
   return str
-    .trim()
     .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '');
-};
-
-module.exports = {
-  truncate,
-  slugify,
-};
+    .trim()
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
