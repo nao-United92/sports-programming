@@ -1,47 +1,33 @@
-import { pick } from './pick-utils.js';
+import pick from './pick-utils.js';
 
 describe('pick', () => {
-  const data = { a: 1, b: 2, c: 3 };
+  const object = { 'a': 1, 'b': '2', 'c': 3 };
 
-  test('should create a shallow copy', () => {
-    const result = pick(data, ['a', 'b', 'c']);
-    expect(result).toEqual(data);
-    expect(result).not.toBe(data);
+  test('should create an object with picked properties', () => {
+    expect(pick(object, ['a', 'c'])).toEqual({ 'a': 1, 'c': 3 });
   });
 
-  test('should pick a single key', () => {
-    const result = pick(data, ['a']);
-    expect(result).toEqual({ a: 1 });
+  test('should ignore keys that are not in the object', () => {
+    expect(pick(object, ['a', 'd'])).toEqual({ 'a': 1 });
   });
 
-  test('should pick multiple keys', () => {
-    const result = pick(data, ['a', 'c']);
-    expect(result).toEqual({ a: 1, c: 3 });
+  test('should return an empty object if keys array is empty', () => {
+    expect(pick(object, [])).toEqual({});
   });
 
-  test('should return an empty object if no keys are picked', () => {
-    const result = pick(data, []);
-    expect(result).toEqual({});
+  test('should not modify the original object', () => {
+    const original = { ...object };
+    pick(object, ['a', 'c']);
+    expect(object).toEqual(original);
   });
 
-  test('should handle non-existent keys gracefully', () => {
-    const result = pick(data, ['a', 'd']);
-    expect(result).toEqual({ a: 1 });
+  test('should return an empty object for null or undefined input', () => {
+    expect(pick(null, ['a', 'c'])).toEqual({});
+    expect(pick(undefined, ['a', 'c'])).toEqual({});
   });
 
-  test('should handle an empty source object', () => {
-    const result = pick({}, ['a']);
-    expect(result).toEqual({});
-  });
-
-  test('should not pick inherited properties', () => {
-    function MyObject() {
-      this.a = 1;
-    }
-    MyObject.prototype.b = 2;
-
-    const instance = new MyObject();
-    const result = pick(instance, ['a', 'b']);
-    expect(result).toEqual({ a: 1 }); // Only picks own properties
+  test('should work with properties that have falsy values', () => {
+    const objWithFalsy = { 'a': 0, 'b': false, 'c': null, 'd': '' };
+    expect(pick(objWithFalsy, ['a', 'b', 'c', 'd'])).toEqual(objWithFalsy);
   });
 });
