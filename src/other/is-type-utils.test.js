@@ -1,4 +1,4 @@
-import { isNumber, isString, isBoolean, isFunction } from './is-type-utils.js';
+import { isNumber, isString, isBoolean, isFunction, isEmpty } from './is-type-utils.js';
 
 describe('isNumber', () => {
   test('should return true for number primitives', () => {
@@ -70,5 +70,36 @@ describe('isFunction', () => {
     expect(isFunction('function')).toBe(false);
     expect(isFunction({})).toBe(false);
     expect(isFunction(/a/)).toBe(false);
+  });
+});
+
+describe('isEmpty', () => {
+  test('should return true for empty values', () => {
+    expect(isEmpty(null)).toBe(true);
+    expect(isEmpty(undefined)).toBe(true);
+    expect(isEmpty('')).toBe(true);
+    expect(isEmpty([])).toBe(true);
+    expect(isEmpty({})).toBe(true);
+    expect(isEmpty(new Map())).toBe(true);
+    expect(isEmpty(new Set())).toBe(true);
+  });
+
+  test('should return false for non-empty values', () => {
+    expect(isEmpty('a')).toBe(false);
+    expect(isEmpty([1, 2, 3])).toBe(false);
+    expect(isEmpty({ 'a': 1 })).toBe(false);
+    const map = new Map();
+    map.set('a', 1);
+    expect(isEmpty(map)).toBe(false);
+    const set = new Set();
+    set.add(1);
+    expect(isEmpty(set)).toBe(false);
+  });
+
+  test('should return false for other types that are not collections', () => {
+    expect(isEmpty(1)).toBe(false);
+    expect(isEmpty(true)).toBe(false);
+    expect(isEmpty(Symbol(''))).toBe(false);
+    expect(isEmpty(() => {})).toBe(false);
   });
 });
