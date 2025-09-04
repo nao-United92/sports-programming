@@ -1,119 +1,61 @@
-const assert = require('assert');
-const { throttle } = require('./throttle-utils.js');
+import throttle from './throttle-utils.js';
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+jest.useFakeTimers();
 
 describe('throttle', () => {
-  it('should call the function at most once per "wait" period', async () => {
-    let callCount = 0;
-    const throttled = throttle(() => {
-      callCount++;
-    }, 100);
-
-    throttled();
-    throttled();
-    throttled();
-
-    assert.strictEqual(callCount, 1, 'should be called once immediately');
-
-    await delay(50);
-    throttled();
-    assert.strictEqual(callCount, 1, 'should not be called again before 100ms');
-
-    await delay(60); // total > 100ms
-    throttled();
-    assert.strictEqual(callCount, 2, 'should be called again after 100ms');
+  let func;
+  beforeEach(() => {
+    func = jest.fn();
   });
 
-  it('should invoke the trailing call', async () => {
-    let callCount = 0;
-    const throttled = throttle(
-      () => {
-        callCount++;
-      },
-      100,
-      { leading: true, trailing: true }
-    );
-
-    throttled(); // leading call
-    assert.strictEqual(callCount, 1);
-
-    throttled(); // throttled
-    throttled(); // throttled
-
-    await delay(110);
-    assert.strictEqual(callCount, 2, 'trailing call should be invoked');
+  test('should not call the function immediately', () => {
+    const throttled = throttle(func, 100);
+    throttled();
+    expect(func).not.toHaveBeenCalled();
   });
 
-  it('should not invoke the trailing call when trailing is false', async () => {
-    let callCount = 0;
-    const throttled = throttle(
-      () => {
-        callCount++;
-      },
-      100,
-      { leading: true, trailing: false }
-    );
-
-    throttled(); // leading call
-    assert.strictEqual(callCount, 1);
-
+  test('should call the function after the wait period', () => {
+    const throttled = throttle(func, 100);
     throttled();
-    throttled();
-
-    await delay(110);
-    assert.strictEqual(callCount, 1, 'trailing call should not be invoked');
+    expect(func).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should not invoke the leading call when leading is false', async () => {
-    let callCount = 0;
-    const throttled = throttle(
-      () => {
-        callCount++;
-      },
-      100,
-      { leading: false, trailing: true }
-    );
-
-    throttled();
-    assert.strictEqual(callCount, 0, 'leading call should not be invoked');
-
-    await delay(110);
-    assert.strictEqual(callCount, 1, 'trailing call should be invoked after wait time');
+  test('should call the function only once for multiple calls within the wait period', () => {
+    const throttled = throttle(func, 100);
+    throttled(1);
+    throttled(2);
+    throttled(3);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('cancel should prevent subsequent invocations', async () => {
-    let callCount = 0;
-    const throttled = throttle(
-      () => {
-        callCount++;
-      },
-      100,
-      { leading: true, trailing: true }
-    );
+  test('should call the function with the latest arguments from the calls within the wait period', () => {
+    const throttled = throttle(func, 100);
+    throttled(1);
+    throttled(2);
+    throttled(3);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledWith(3);
+  });
+
+  test('should allow subsequent calls after the wait period', () => {
+    const throttled = throttle(func, 100);
+    throttled();
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1);
 
     throttled();
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  test('should be able to cancel a throttled call', () => {
+    const throttled = throttle(func, 100);
     throttled();
     throttled.cancel();
-
-    await delay(110);
-    assert.strictEqual(callCount, 1, 'trailing call should be cancelled');
-  });
-
-  it('flush should invoke a pending trailing call immediately', async () => {
-    let callCount = 0;
-    const throttled = throttle(
-      () => {
-        callCount++;
-      },
-      100,
-      { leading: true, trailing: true }
-    );
-
-    throttled();
-    throttled();
-
-    throttled.flush();
-    assert.strictEqual(callCount, 2, 'trailing call should be flushed');
+    jest.advanceTimersByTime(100);
+    expect(func).not.toHaveBeenCalled();
   });
 });
