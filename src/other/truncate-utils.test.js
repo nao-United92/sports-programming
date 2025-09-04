@@ -1,45 +1,38 @@
-import { truncate } from './truncate-utils.js';
+import truncate from './truncate-utils.js';
 
 describe('truncate', () => {
-  const str = 'hi-diddly-ho there, neighborino';
+  const text = 'hi-diddly-ho there, neighborino';
 
-  test('should truncate a string to a default length of 30', () => {
+  test('should truncate a string with default options', () => {
     const expected = 'hi-diddly-ho there, neighbo...';
-    expect(truncate(str)).toBe(expected);
+    expect(truncate(text)).toBe(expected);
   });
 
   test('should not truncate if string is shorter than or equal to length', () => {
-    expect(truncate(str, { length: str.length })).toBe(str);
-    expect(truncate(str, { length: str.length + 1 })).toBe(str);
-    expect(truncate('short')).toBe('short');
+    expect(truncate(text, { length: text.length })).toBe(text);
+    expect(truncate(text, { length: 50 })).toBe(text);
   });
 
   test('should truncate to a specified length', () => {
-    const expected = 'hi-diddly-ho...';
-    expect(truncate(str, { length: 15 })).toBe(expected);
+    const expected = 'hi-diddly-h...';
+    expect(truncate(text, { length: 14 })).toBe(expected);
   });
 
   test('should use a custom omission string', () => {
-    const expected = 'hi-diddly-ho there, neigh[...]';
-    expect(truncate(str, { omission: '[...]' })).toBe(expected);
+    const expected = 'hi-diddly-ho  [...] ';
+    expect(truncate(text, { length: 20, omission: ' [...] ' })).toBe(expected);
   });
 
-  test('should not have a length greater than `length`', () => {
-    const customOmission = ' [...] ';
-    const length = 20;
-    const result = truncate(str, { length, omission: customOmission });
-    expect(result.length).toBeLessThanOrEqual(length);
+  test('should handle length shorter than omission string', () => {
+    expect(truncate(text, { length: 5, omission: '......' })).toBe('.....');
+    expect(truncate(text, { length: 3, omission: '...' })).toBe('...');
   });
 
-  test('should return an empty string if input is null or undefined', () => {
-    expect(truncate(null)).toBe(null);
-    expect(truncate(undefined)).toBe(undefined);
-  });
-
-  test('should handle omission longer than length', () => {
-    const length = 5;
-    const omission = '.........';
-    const expected = '.....';
-    expect(truncate(str, { length, omission })).toBe(expected);
+  test('should return the original value if it is not a string', () => {
+    expect(truncate(null)).toBeNull();
+    expect(truncate(undefined)).toBeUndefined();
+    const obj = {};
+    expect(truncate(obj)).toBe(obj);
+    expect(truncate(123)).toBe(123);
   });
 });
