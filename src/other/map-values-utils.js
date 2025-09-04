@@ -4,14 +4,19 @@
  * `iteratee`. The iteratee is invoked with three arguments:
  * (value, key, object).
  *
- * @param {Object} obj The object to iterate over.
+ * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Object} Returns the new mapped object.
  */
-export const mapValues = (obj, iteratee) => {
+function mapValues(object, iteratee) {
+  if (object == null) {
+    return {};
+  }
   const result = {};
-  Object.keys(obj).forEach(key => {
-    result[key] = iteratee(obj[key], key, obj);
+  Object.keys(object).forEach(key => {
+    result[key] = iteratee(object[key], key, object);
   });
   return result;
-};
+}
+
+export default mapValues;
