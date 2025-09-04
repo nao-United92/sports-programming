@@ -1,27 +1,41 @@
-import { times } from './times-utils';
+import times from './times-utils.js';
 
 describe('times', () => {
-  it('should call the iteratee n times', () => {
-    const mockIteratee = jest.fn();
-    times(5, mockIteratee);
-    expect(mockIteratee).toHaveBeenCalledTimes(5);
+  test('should invoke iteratee n times', () => {
+    const iteratee = jest.fn();
+    times(3, iteratee);
+    expect(iteratee).toHaveBeenCalledTimes(3);
   });
 
-  it('should return an array of results', () => {
-    const result = times(4, String);
-    expect(result).toEqual(['0', '1', '2', '3']);
+  test('should pass the index to the iteratee', () => {
+    const iteratee = jest.fn();
+    times(3, iteratee);
+    expect(iteratee).toHaveBeenCalledWith(0);
+    expect(iteratee).toHaveBeenCalledWith(1);
+    expect(iteratee).toHaveBeenCalledWith(2);
   });
 
-  it('should pass the index to the iteratee', () => {
-    const indices = [];
-    times(3, (index) => indices.push(index));
-    expect(indices).toEqual([0, 1, 2]);
+  test('should return an array of the results', () => {
+    const result = times(4, (i) => `item-${i}`);
+    expect(result).toEqual(['item-0', 'item-1', 'item-2', 'item-3']);
   });
 
-  it('should return an empty array for n = 0', () => {
-    const mockIteratee = jest.fn();
-    const result = times(0, mockIteratee);
+  test('should return an empty array if n is 0', () => {
+    const iteratee = jest.fn();
+    const result = times(0, iteratee);
     expect(result).toEqual([]);
-    expect(mockIteratee).not.toHaveBeenCalled();
+    expect(iteratee).not.toHaveBeenCalled();
+  });
+
+  test('should return an empty array for negative, null, or non-finite n', () => {
+    expect(times(-1, () => {})).toEqual([]);
+    expect(times(null, () => {})).toEqual([]);
+    expect(times(Infinity, () => {})).toEqual([]);
+    expect(times(NaN, () => {})).toEqual([]);
+  });
+
+  test('should work with a built-in constructor as iteratee', () => {
+    const result = times(3, String);
+    expect(result).toEqual(['0', '1', '2']);
   });
 });
