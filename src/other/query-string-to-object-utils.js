@@ -36,4 +36,30 @@ function queryStringToObject(queryString) {
   }, {});
 }
 
-export default queryStringToObject;
+/**
+ * Converts an object into a query string.
+ *
+ * @param {Object} obj The object to convert.
+ * @returns {string} The resulting query string.
+ */
+function objectToQueryString(obj) {
+  if (obj == null || Object.keys(obj).length === 0) {
+    return '';
+  }
+
+  const pairs = Object.entries(obj).flatMap(([key, value]) => {
+    if (value == null) {
+      return [];
+    }
+    const encodedKey = encodeURIComponent(key);
+    if (Array.isArray(value)) {
+      return value.map(v => `${encodedKey}=${encodeURIComponent(v)}`);
+    }
+    return [`${encodedKey}=${encodeURIComponent(value)}`];
+  });
+
+  return pairs.join('&');
+}
+
+
+export { queryStringToObject, objectToQueryString };

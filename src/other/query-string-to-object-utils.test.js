@@ -1,4 +1,4 @@
-import queryStringToObject from './query-string-to-object-utils.js';
+import { queryStringToObject, objectToQueryString } from './query-string-to-object-utils.js';
 
 describe('queryStringToObject', () => {
   test('should parse a basic query string', () => {
@@ -39,5 +39,32 @@ describe('queryStringToObject', () => {
 
   test('should ignore leading ampersand', () => {
     expect(queryStringToObject('&a=1&b=2')).toEqual({ a: '1', b: '2' });
+  });
+});
+
+describe('objectToQueryString', () => {
+  test('should convert a basic object to a query string', () => {
+    expect(objectToQueryString({ foo: 'bar', baz: 'qux' })).toBe('foo=bar&baz=qux');
+  });
+
+  test('should URI-encode keys and values', () => {
+    expect(objectToQueryString({ 'a b': 'c&d' })).toBe('a%20b=c%26d');
+  });
+
+  test('should handle array values', () => {
+    expect(objectToQueryString({ a: ['1', '2'], b: '3' })).toBe('a=1&a=2&b=3');
+  });
+
+  test('should ignore null and undefined values', () => {
+    expect(objectToQueryString({ a: 1, b: null, c: undefined, d: 4 })).toBe('a=1&d=4');
+  });
+
+  test('should return an empty string for an empty object', () => {
+    expect(objectToQueryString({})).toBe('');
+  });
+
+  test('should return an empty string for null or undefined input', () => {
+    expect(objectToQueryString(null)).toBe('');
+    expect(objectToQueryString(undefined)).toBe('');
   });
 });
