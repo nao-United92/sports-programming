@@ -17,6 +17,24 @@ const htmlEscapes = {
 const reUnescapedHtml = /["&'<>]/g;
 
 /**
+ * A map of HTML-escaped equivalents to their characters.
+ * @type {Object<string, string>}
+ */
+const htmlUnescapes = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'"
+};
+
+/**
+ * Used to match HTML entities.
+ * @type {RegExp}
+ */
+const reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
+
+/**
  * Converts the characters "&", "<", ">", '" ', and "'" in `string` to their
  * corresponding HTML entities.
  *
@@ -30,4 +48,19 @@ function escapeHTML(string) {
   return string.replace(reUnescapedHtml, (char) => htmlEscapes[char]);
 }
 
-export default escapeHTML;
+/**
+ * The inverse of `escapeHTML`. This method converts the HTML entities
+ * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
+ * corresponding characters.
+ *
+ * @param {string} string The string to unescape.
+ * @returns {string} Returns the unescaped string.
+ */
+function unescapeHTML(string) {
+  if (string == null) {
+    return '';
+  }
+  return string.replace(reEscapedHtml, (entity) => htmlUnescapes[entity]);
+}
+
+export { escapeHTML, unescapeHTML };
