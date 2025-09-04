@@ -1,4 +1,4 @@
-import sortedIndex from './sorted-index-utils.js';
+import { sortedIndex, sortedIndexBy } from './sorted-index-utils.js';
 
 describe('sortedIndex', () => {
   test('should return the correct index for a value in a sorted array', () => {
@@ -33,5 +33,31 @@ describe('sortedIndex', () => {
   test('should handle a null or undefined array', () => {
     expect(sortedIndex(null, 5)).toBe(0);
     expect(sortedIndex(undefined, 5)).toBe(0);
+  });
+});
+
+describe('sortedIndexBy', () => {
+  test('should work with an iteratee function on objects', () => {
+    const objects = [{ 'x': 4 }, { 'x': 5 }];
+    const iteratee = o => o.x;
+    expect(sortedIndexBy(objects, { 'x': 4 }, iteratee)).toBe(0);
+    expect(sortedIndexBy(objects, { 'x': 5 }, iteratee)).toBe(1);
+    expect(sortedIndexBy(objects, { 'x': 6 }, iteratee)).toBe(2);
+  });
+
+  test('should return correct index when value is not present', () => {
+    const objects = [{ v: 10 }, { v: 20 }];
+    expect(sortedIndexBy(objects, { v: 15 }, o => o.v)).toBe(1);
+  });
+
+  test('should handle duplicate values correctly', () => {
+    const objects = [{ v: 10 }, { v: 20 }, { v: 20 }, { v: 30 }];
+    expect(sortedIndexBy(objects, { v: 20 }, o => o.v)).toBe(1);
+  });
+
+  test('should handle a null or undefined array', () => {
+    const iteratee = o => o.x;
+    expect(sortedIndexBy(null, { 'x': 4 }, iteratee)).toBe(0);
+    expect(sortedIndexBy(undefined, { 'x': 4 }, iteratee)).toBe(0);
   });
 });
