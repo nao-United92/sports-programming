@@ -1,30 +1,17 @@
-
-/**
- * Truncates a string to a specified length and appends a suffix.
- * @param {string} str The string to truncate.
- * @param {number} num The length to truncate to.
- * @param {string} [suffix='...'] The suffix to append.
- * @returns {string} The truncated string.
- */
-export function truncate(str, num, suffix = '...') {
-  if (str.length <= num) {
-    return str;
+export const slugify = (str) => {
+  if (typeof str !== 'string') {
+    return '';
   }
-  return str.slice(0, num) + suffix;
-}
+  const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+  const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
+  const p = new RegExp(a.split('').join('|'), 'g')
 
-/**
- * Converts a string to a slug.
- * @param {string} str The string to slugify.
- * @returns {string} The slugified string.
- */
-export function slugify(str) {
-  return str
-    .toLowerCase()
-    .trim()
-    .replace(/[\s_]+/g, '-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
+  return str.toString().toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
+    .replace(/&/g, '-and-') // Replace & with 'and'
+    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .replace(/^-+/, '') // Trim - from start of text
+    .replace(/-+$/, '') // Trim - from end of text
 }
