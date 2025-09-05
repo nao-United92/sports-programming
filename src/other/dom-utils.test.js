@@ -1,4 +1,4 @@
-import { hasClass, toggleClass } from './dom-utils.js';
+import { hasClass, toggleClass, toggleVisibility } from './dom-utils.js';
 
 describe('DOM Class Utilities', () => {
   let element;
@@ -41,6 +41,36 @@ describe('DOM Class Utilities', () => {
 
     it('should not fail on null or undefined elements', () => {
       expect(() => toggleClass(null, 'class1')).not.toThrow();
+    });
+  });
+
+  describe('toggleVisibility', () => {
+    let element;
+
+    beforeEach(() => {
+      element = document.createElement('div');
+      element.style.display = ''; // Default display
+    });
+
+    it('should hide an element if it is visible', () => {
+      toggleVisibility(element);
+      expect(element.style.display).toBe('none');
+    });
+
+    it('should show an element if it is hidden', () => {
+      element.style.display = 'none';
+      toggleVisibility(element);
+      expect(element.style.display).toBe('block');
+    });
+
+    it('should use the specified display type when showing', () => {
+      element.style.display = 'none';
+      toggleVisibility(element, 'inline-block');
+      expect(element.style.display).toBe('inline-block');
+    });
+
+    it('should not fail on null or undefined elements', () => {
+      expect(() => toggleVisibility(null)).not.toThrow();
     });
   });
 });

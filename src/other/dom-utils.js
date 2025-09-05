@@ -34,3 +34,17 @@ export function toggleClass(el, className) {
     el.className = classes.join(' ');
   }
 }
+
+/**
+ * Toggles the visibility of a DOM element by changing its display style property.
+ * @param {Element} el The DOM element.
+ * @param {string} [displayType='block'] The display type to use when showing the element.
+ */
+export function toggleVisibility(el, displayType = 'block') {
+  if (!el) return;
+  if (el.style.display === 'none') {
+    el.style.display = displayType;
+  } else {
+    el.style.display = 'none';
+  }
+}
