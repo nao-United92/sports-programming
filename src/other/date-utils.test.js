@@ -1,4 +1,4 @@
-import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth, isWeekday, isDateInRange, daysBetween, endOfMonth, getWeekNumber } from './date-utils.js';
+import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth, isWeekday, isDateInRange, daysBetween, endOfMonth, getWeekNumber, timeAgo } from './date-utils.js';
 
 describe('date-utils', () => {
   describe('formatDate', () => {
@@ -451,4 +451,78 @@ describe('date-utils', () => {
       expect(getWeekNumber(undefined)).toBeNaN();
     });
   });
+
+  describe('timeAgo', () => {
+    const now = new Date();
+
+    test('should return "just now" for times less than 10 seconds ago', () => {
+      const date = new Date(now.getTime() - 5 * 1000);
+      expect(timeAgo(date, now)).toBe('just now');
+    });
+
+    test('should return seconds ago', () => {
+      const date = new Date(now.getTime() - 30 * 1000);
+      expect(timeAgo(date, now)).toBe('30 seconds ago');
+    });
+
+    test('should return a minute ago', () => {
+      const date = new Date(now.getTime() - 60 * 1000);
+      expect(timeAgo(date, now)).toBe('a minute ago');
+    });
+
+    test('should return minutes ago', () => {
+      const date = new Date(now.getTime() - 5 * 60 * 1000);
+      expect(timeAgo(date, now)).toBe('5 minutes ago');
+    });
+
+    test('should return an hour ago', () => {
+      const date = new Date(now.getTime() - 60 * 60 * 1000);
+      expect(timeAgo(date, now)).toBe('an hour ago');
+    });
+
+    test('should return hours ago', () => {
+      const date = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+      expect(timeAgo(date, now)).toBe('3 hours ago');
+    });
+
+    test('should return a day ago', () => {
+      const date = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      expect(timeAgo(date, now)).toBe('a day ago');
+    });
+
+    test('should return days ago', () => {
+      const date = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000);
+      expect(timeAgo(date, now)).toBe('5 days ago');
+    });
+
+    test('should return a month ago', () => {
+      const date = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      expect(timeAgo(date, now)).toBe('a month ago');
+    });
+
+    test('should return months ago', () => {
+      const date = new Date(now.getTime() - 4 * 30 * 24 * 60 * 60 * 1000);
+      expect(timeAgo(date, now)).toBe('4 months ago');
+    });
+
+    test('should return a year ago', () => {
+      const date = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      expect(timeAgo(date, now)).toBe('a year ago');
+    });
+
+    test('should return years ago', () => {
+      const date = new Date(now.getTime() - 2 * 365 * 24 * 60 * 60 * 1000);
+      expect(timeAgo(date, now)).toBe('2 years ago');
+    });
+
+    test('should return "in the future" for a future date', () => {
+      const date = new Date(now.getTime() + 10000);
+      expect(timeAgo(date, now)).toBe('in the future');
+    });
+
+    test('should return an empty string for an invalid date', () => {
+      expect(timeAgo(new Date('invalid'))).toBe('');
+    });
+  });
+});
 });

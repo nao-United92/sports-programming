@@ -301,3 +301,50 @@ export function getWeekNumber(date) {
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
+/**
+ * Formats a date into a relative time string (e.g., "5 minutes ago").
+ * @param {Date} date The date to format.
+ * @param {Date} [now=new Date()] The current date to compare against.
+ * @returns {string} The relative time string.
+ */
+export function timeAgo(date, now = new Date()) {
+  if (!isValidDate(date)) {
+    return '';
+  }
+
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  if (seconds < 0) {
+    return 'in the future'; // Handle future dates
+  }
+
+  let interval = seconds / 31536000; // 60 * 60 * 24 * 365
+  if (interval > 1) {
+    const years = Math.floor(interval);
+    return years === 1 ? 'a year ago' : `${years} years ago`;
+  }
+  interval = seconds / 2592000; // 60 * 60 * 24 * 30
+  if (interval > 1) {
+    const months = Math.floor(interval);
+    return months === 1 ? 'a month ago' : `${months} months ago`;
+  }
+  interval = seconds / 86400; // 60 * 60 * 24
+  if (interval > 1) {
+    const days = Math.floor(interval);
+    return days === 1 ? 'a day ago' : `${days} days ago`;
+  }
+  interval = seconds / 3600; // 60 * 60
+  if (interval > 1) {
+    const hours = Math.floor(interval);
+    return hours === 1 ? 'an hour ago' : `${hours} hours ago`;
+  }
+  interval = seconds / 60;
+  if (interval > 1) {
+    const minutes = Math.floor(interval);
+    return minutes === 1 ? 'a minute ago' : `${minutes} minutes ago`;
+  }
+  if (seconds < 10) {
+    return 'just now';
+  }
+  return `${Math.floor(seconds)} seconds ago`;
+}
+
