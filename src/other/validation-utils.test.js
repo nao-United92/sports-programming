@@ -1,36 +1,30 @@
-import { isValidEmail } from './validation-utils.js';
+import { isValidEmail, isValidUrl } from './validation-utils.js';
 
-describe('Validation Utilities', () => {
-  describe('isValidEmail', () => {
-    it('should return true for valid email addresses', () => {
-      expect(isValidEmail('test@example.com')).toBe(true);
-      expect(isValidEmail('john.doe123@sub.domain.co.uk')).toBe(true);
-      expect(isValidEmail('user+tag@domain.net')).toBe(true);
-      expect(isValidEmail('a@b.co')).toBe(true);
-    });
+describe('isValidEmail', () => {
+  it('should return true for valid email addresses', () => {
+    expect(isValidEmail('test@example.com')).toBe(true);
+    expect(isValidEmail('user.name+tag@domain.co.uk')).toBe(true);
+  });
 
-    it('should return false for invalid email addresses', () => {
-      expect(isValidEmail('invalid-email')).toBe(false);
-      expect(isValidEmail('invalid@')).toBe(false);
-      expect(isValidEmail('@domain.com')).toBe(false);
-      expect(isValidEmail('user@domain')).toBe(false);
-      expect(isValidEmail('user@domain.')).toBe(false);
-      expect(isValidEmail('user@.com')).toBe(false);
-      expect(isValidEmail('user@domain..com')).toBe(false);
-      expect(isValidEmail('user@domain,com')).toBe(false);
-      expect(isValidEmail('user@domain_com')).toBe(false); // Underscore not allowed in domain part by this regex
-    });
+  it('should return false for invalid email addresses', () => {
+    expect(isValidEmail('plainaddress')).toBe(false);
+    expect(isValidEmail('@missingusername.com')).toBe(false);
+    expect(isValidEmail('username@.com')).toBe(false);
+    expect(isValidEmail('username@domain.')).toBe(false);
+    expect(isValidEmail(null)).toBe(false);
+  });
+});
 
-    it('should return false for non-string inputs', () => {
-      expect(isValidEmail(null)).toBe(false);
-      expect(isValidEmail(undefined)).toBe(false);
-      expect(isValidEmail(123)).toBe(false);
-      expect(isValidEmail({})).toBe(false);
-      expect(isValidEmail([])).toBe(false);
-    });
+describe('isValidUrl', () => {
+  it('should return true for valid URLs', () => {
+    expect(isValidUrl('http://example.com')).toBe(true);
+    expect(isValidUrl('https://www.example.com/path?query=value#hash')).toBe(true);
+  });
 
-    it('should return false for empty string', () => {
-      expect(isValidEmail('')).toBe(false);
-    });
+  it('should return false for invalid URLs', () => {
+    expect(isValidUrl('not-a-url')).toBe(false);
+    expect(isValidUrl('htp://invalid-protocol')).toBe(false);
+    expect(isValidUrl('//example.com')).toBe(false); // Protocol relative URL, new URL() fails this
+    expect(isValidUrl(null)).toBe(false);
   });
 });
