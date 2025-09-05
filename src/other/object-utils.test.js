@@ -1,4 +1,4 @@
-import { pick, omit, isEmpty, get } from './object-utils.js';
+import { pick, omit, isEmpty, get, set } from './object-utils.js';
 
 describe('pick', () => {
   it('should pick specified keys from an object', () => {
@@ -107,5 +107,71 @@ describe('get', () => {
   it('should handle null or undefined objects', () => {
     expect(get(null, 'a.b')).toBeUndefined();
     expect(get(undefined, 'a.b', 'default')).toBe('default');
+  });
+});
+
+describe('set', () => {
+  let testObj;
+
+  beforeEach(() => {
+    testObj = {
+      a: {
+        b: {
+          c: 1,
+        },
+        d: [2, 3],
+      },
+      e: null,
+    };
+  });
+
+  it('should set a value on a nested path using a string', () => {
+    set(testObj, 'a.b.c', 100);
+    expect(testObj.a.b.c).toBe(100);
+  });
+
+  it('should set a value on a nested path using an array', () => {
+    set(testObj, ['a', 'b', 'c'], 100);
+    expect(testObj.a.b.c).toBe(100);
+  });
+
+  it('should create nested objects if they do not exist', () => {
+    const obj = {};
+    set(obj, 'x.y.z', 200);
+    expect(obj.x.y.z).toBe(200);
+  });
+
+  it('should overwrite an existing value', () => {
+    const newObj = { a: 1 };
+    set(testObj, 'a.b', newObj);
+    expect(testObj.a.b).toBe(newObj);
+  });
+
+  it('should set a value on an array by index using dot notation', () => {
+      set(testObj, 'a.d.1', 99);
+      expect(testObj.a.d[1]).toBe(99);
+  });
+
+  it('should set a value on an array by index using bracket notation', () => {
+      set(testObj, 'a.d[0]', 88);
+      expect(testObj.a.d[0]).toBe(88);
+  });
+
+  it('should create nested arrays and objects as needed', () => {
+      const obj = {};
+      set(obj, 'a[0].b', 'test');
+      expect(obj.a[0].b).toBe('test');
+  });
+
+  it('should not throw on null or undefined objects and return the object', () => {
+      expect(set(null, 'a.b', 1)).toBe(null);
+      expect(set(undefined, 'a.b', 1)).toBe(undefined);
+  });
+
+  it('should mutate the original object', () => {
+      const original = {};
+      const result = set(original, 'a.b', 1);
+      expect(result).toBe(original);
+      expect(original.a.b).toBe(1);
   });
 });
