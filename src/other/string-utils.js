@@ -1,17 +1,17 @@
-export const slugify = (str) => {
-  if (typeof str !== 'string') {
-    return '';
+/**
+ * Pads the left side of a string with a specified character to a certain length.
+ * @param {string} str The string to pad.
+ * @param {number} length The desired length of the string.
+ * @param {string} [char=' '] The character to pad with.
+ * @returns {string} The padded string.
+ */
+export function padLeft(str, length, char = ' ') {
+  str = String(str);
+  const strLen = str.length;
+  if (strLen >= length) {
+    return str;
   }
-  const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
-  const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
-  const p = new RegExp(a.split('').join('|'), 'g')
-
-  return str.toString().toLowerCase()
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
-    .replace(/&/g, '-and-') // Replace & with 'and'
-    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
-    .replace(/^-+/, '') // Trim - from start of text
-    .replace(/-+$/, '') // Trim - from end of text
+  const padLen = length - strLen;
+  const padding = char.repeat(padLen);
+  return padding.slice(0, padLen) + str;
 }

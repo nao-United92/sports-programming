@@ -1,22 +1,27 @@
-import { slugify } from './string-utils.js';
+import { padLeft } from './string-utils.js';
 
-describe('slugify', () => {
-  it('should convert string to slug', () => {
-    expect(slugify('Hello World')).toBe('hello-world');
+describe('padLeft', () => {
+  it('should pad a string with spaces by default', () => {
+    expect(padLeft('abc', 5)).toBe('  abc');
   });
 
-  it('should handle special characters', () => {
-    expect(slugify('àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż')).toBe('aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz');
+  it('should pad a string with a specified character', () => {
+    expect(padLeft('abc', 5, '0')).toBe('00abc');
   });
 
-  it('should handle spaces and multiple hyphens', () => {
-    expect(slugify('  leading and trailing spaces  ')).toBe('leading-and-trailing-spaces');
-    expect(slugify('multiple---hyphens')).toBe('multiple-hyphens');
+  it('should not pad if the string is already at the desired length', () => {
+    expect(padLeft('abcde', 5)).toBe('abcde');
   });
 
-  it('should handle non-string input', () => {
-    expect(slugify(null)).toBe('');
-    expect(slugify(undefined)).toBe('');
-    expect(slugify(123)).toBe('');
+  it('should not pad if the string is longer than the desired length', () => {
+    expect(padLeft('abcdef', 5)).toBe('abcdef');
+  });
+
+  it('should handle multi-character padding strings', () => {
+    expect(padLeft('a', 5, 'xo')).toBe('xoxoa');
+  });
+
+  it('should handle non-string inputs by converting them to strings', () => {
+    expect(padLeft(123, 5, '0')).toBe('00123');
   });
 });
