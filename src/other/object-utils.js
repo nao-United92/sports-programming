@@ -20,6 +20,19 @@ export function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
 
+/**
+ * Gets the value at a nested path within an object.
+ * @param {object} obj The object to query.
+ * @param {string|string[]} path The path of the property to retrieve.
+ * @param {*} [defaultValue] The value returned for unresolved values.
+ * @returns {*} Returns the resolved value, else the defaultValue.
+ */
+export function get(obj, path, defaultValue = undefined) {
+  const pathArray = Array.isArray(path) ? path : path.replace(/[\[\]]/g, '.').replace(/\.\./g, '.').split('.');
+  const result = pathArray.reduce((acc, key) => (acc && acc[key] != null ? acc[key] : undefined), obj);
+  return result === undefined ? defaultValue : result;
+}
+
 export const omit = (obj, keys) => {
   const result = { ...obj };
   for (const key of keys) {

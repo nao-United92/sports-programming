@@ -1,4 +1,4 @@
-import { pick, omit, isEmpty } from './object-utils.js';
+import { pick, omit, isEmpty, get } from './object-utils.js';
 
 describe('pick', () => {
   it('should pick specified keys from an object', () => {
@@ -58,5 +58,54 @@ describe('isEmpty', () => {
 
   it('should return false for a non-empty array', () => {
     expect(isEmpty([1, 2])).toBe(false);
+  });
+});
+
+describe('get', () => {
+  const testObj = {
+    a: {
+      b: {
+        c: 1,
+      },
+      d: [2, 3],
+    },
+    e: null,
+  };
+
+  it('should get a value from a nested path using a string', () => {
+    expect(get(testObj, 'a.b.c')).toBe(1);
+  });
+
+  it('should get a value from a nested path using an array', () => {
+    expect(get(testObj, ['a', 'b', 'c'])).toBe(1);
+  });
+
+  it('should get an array value', () => {
+    expect(get(testObj, 'a.d')).toEqual([2, 3]);
+  });
+
+  it('should get a value from an array by index using dot notation', () => {
+    expect(get(testObj, 'a.d.0')).toBe(2);
+  });
+
+  it('should get a value from an array by index using bracket notation', () => {
+    expect(get(testObj, 'a.d[1]')).toBe(3);
+  });
+
+  it('should return undefined for a non-existent path', () => {
+    expect(get(testObj, 'a.x.y')).toBeUndefined();
+  });
+
+  it('should return the default value for a non-existent path', () => {
+    expect(get(testObj, 'a.x.y', 'default')).toBe('default');
+  });
+
+  it('should return the default value for a path that ends in a nullish value', () => {
+      expect(get(testObj, 'e.f', 'default')).toBe('default');
+  });
+
+  it('should handle null or undefined objects', () => {
+    expect(get(null, 'a.b')).toBeUndefined();
+    expect(get(undefined, 'a.b', 'default')).toBe('default');
   });
 });
