@@ -1,4 +1,4 @@
-import { padLeft, padRight } from './string-utils.js';
+import { padLeft, padRight, truncate } from './string-utils.js';
 
 describe('padLeft', () => {
   it('should pad a string with spaces by default', () => {
@@ -49,5 +49,27 @@ describe('padRight', () => {
 
   it('should handle non-string inputs by converting them to strings', () => {
     expect(padRight(123, 5, '0')).toBe('12300');
+  });
+});
+
+describe('truncate', () => {
+  it('should truncate a string and add an omission', () => {
+    expect(truncate('hello world', 8)).toBe('hello...');
+  });
+
+  it('should not truncate a string that is shorter than the length', () => {
+    expect(truncate('hello', 8)).toBe('hello');
+  });
+
+  it('should use a custom omission string', () => {
+    expect(truncate('hello world', 8, '--')).toBe('hello --');
+  });
+
+  it('should handle cases where length is smaller than omission length', () => {
+    expect(truncate('hello world', 2, '...')).toBe('..');
+  });
+
+  it('should return the original string if length is equal', () => {
+    expect(truncate('hello', 5)).toBe('hello');
   });
 });

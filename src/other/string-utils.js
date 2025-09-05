@@ -33,3 +33,23 @@ export function padRight(str, length, char = ' ') {
   const padding = char.repeat(padLen);
   return str + padding.slice(0, padLen);
 }
+
+/**
+ * Truncates a string if it's longer than the specified length.
+ * The last characters of the truncated string are replaced with the omission string.
+ * @param {string} str The string to truncate.
+ * @param {number} length The maximum string length.
+ * @param {string} [omission='...'] The string to indicate text is omitted.
+ * @returns {string} The truncated string.
+ */
+export function truncate(str, length, omission = '...') {
+  str = String(str);
+  if (str.length <= length) {
+    return str;
+  }
+  const end = length - omission.length;
+  if (end < 1) {
+    return omission.slice(0, length);
+  }
+  return str.slice(0, end) + omission;
+}
