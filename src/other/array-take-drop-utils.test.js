@@ -1,4 +1,4 @@
-import { take, takeRight, drop, dropRight } from './array-take-drop-utils.js';
+import { take, takeRight, drop, dropRight, first, last } from './array-take-drop-utils.js';
 
 describe('Array Take/Drop Utilities', () => {
   const array = [1, 2, 3, 4, 5];
@@ -64,6 +64,38 @@ describe('Array Take/Drop Utilities', () => {
     });
     it('should return an empty array if n is larger than length', () => {
       expect(dropRight(array, 10)).toEqual([]);
+    });
+  });
+
+  // --- first ---
+  describe('first', () => {
+    it('should return the first element of an array', () => {
+      expect(first([1, 2, 3])).toBe(1);
+    });
+
+    it('should return undefined for an empty array', () => {
+      expect(first([])).toBeUndefined();
+    });
+
+    it('should return undefined for null or undefined input', () => {
+      expect(first(null)).toBeUndefined();
+      expect(first(undefined)).toBeUndefined();
+    });
+  });
+
+  // --- last ---
+  describe('last', () => {
+    it('should return the last element of an array', () => {
+      expect(last([1, 2, 3])).toBe(3);
+    });
+
+    it('should return undefined for an empty array', () => {
+      expect(last([])).toBeUndefined();
+    });
+
+    it('should return undefined for null or undefined input', () => {
+      expect(last(null)).toBeUndefined();
+      expect(last(undefined)).toBeUndefined();
     });
   });
 });
