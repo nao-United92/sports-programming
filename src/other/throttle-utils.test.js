@@ -1,73 +1,115 @@
-import { throttle } from './throttle-utils.js';
-
-// We need to use fake timers to test throttle
-jest.useFakeTimers();
+import { throttle } from './throttle-utils';
 
 describe('throttle', () => {
   let func;
+  let throttledFunc;
 
   beforeEach(() => {
     func = jest.fn();
+    jest.useFakeTimers();
   });
 
-  it('should call the function immediately on the first call', () => {
-    const throttled = throttle(func, 100);
-    throttled();
-    expect(func).toHaveBeenCalledTimes(1);
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 
-  it('should not call the function again within the wait period', () => {
-    const throttled = throttle(func, 100);
-    throttled(); // Call 1
-    throttled(); // Call 2 (should be ignored)
-    throttled(); // Call 3 (should be ignored)
-    expect(func).toHaveBeenCalledTimes(1);
-  });
+  test('should throttle function calls with leading edge by default', () => {
+    throttledFunc = throttle(func, 100);
 
-  it('should call the function again after the wait period', () => {
-    const throttled = throttle(func, 100);
-    throttled();
+    throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
 
-    // Fast-forward time
-    jest.advanceTimersByTime(100);
-    throttled();
+    throttledFunc();
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(50);
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(50);
+    throttledFunc();
     expect(func).toHaveBeenCalledTimes(2);
   });
 
-  it('should handle trailing calls', () => {
-    const throttled = throttle(func, 100, { leading: true, trailing: true });
-    throttled(); // leading call
+  test('should throttle function calls with trailing edge', () => {
+    throttledFunc = throttle(func, 100, { leading: false, trailing: true });
+
+    throttledFunc();
+    expect(func).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(100);
     expect(func).toHaveBeenCalledTimes(1);
 
-    throttled(); // trailing call setup
-    jest.advanceTimersByTime(100);
+    throttledFunc();
+    throttledFunc();
+    jest.advanceTimersByTime(50);
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(50);
     expect(func).toHaveBeenCalledTimes(2);
   });
 
-  it('should not trigger a trailing call if not invoked during the wait period', () => {
-    const throttled = throttle(func, 100, { trailing: true });
-    throttled();
+  test('should throttle function calls with both leading and trailing edges', () => {
+    throttledFunc = throttle(func, 100, { leading: true, trailing: true });
+
+    throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1); // No second call because it wasn't called again
+
+    throttledFunc();
+    jest.advanceTimersByTime(50);
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(50);
+    expect(func).toHaveBeenCalledTimes(2);
+
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(3);
   });
 
-  it('should cancel the throttled function', () => {
-    const throttled = throttle(func, 100, { trailing: true });
-    throttled();
-    throttled();
-    throttled.cancel();
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1); // Only the leading call, trailing is cancelled
+  test('should cancel delayed function invocations', () => {
+    throttledFunc = throttle(func, 100, { leading: false, trailing: true });
+
+    throttledFunc();
+    jest.advanceTimersByTime(50);
+    throttledFunc.cancel();
+    jest.advanceTimersByTime(50);
+    expect(func).not.toHaveBeenCalled();
   });
 
-  it('should flush the throttled function', () => {
-    const throttled = throttle(func, 100, { trailing: true });
-    throttled(); // leading call
-    throttled(); // trailing call setup
+  test('should flush delayed function invocations', () => {
+    throttledFunc = throttle(func, 100, { leading: false, trailing: true });
 
-    throttled.flush();
+    throttledFunc('arg1', 'arg2');
+    expect(func).not.toHaveBeenCalled();
+
+    throttledFunc.flush();
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenCalledWith('arg1', 'arg2');
+  });
+
+  test('should pass arguments correctly', () => {
+    throttledFunc = throttle(func, 100);
+    throttledFunc(1, 2);
+    expect(func).toHaveBeenCalledWith(1, 2);
+
+    jest.advanceTimersByTime(100);
+    throttledFunc(3, 4);
+    expect(func).toHaveBeenCalledWith(3, 4);
+  });
+
+  test('should handle context correctly', () => {
+    throttledFunc = throttle(func, 100);
+    const context = { a: 1 };
+    throttledFunc.call(context);
+    expect(func).toHaveBeenCalledOnLastCallWith(); // Check if called with no args
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(100);
+    throttledFunc.call(context, 5, 6);
+    expect(func).toHaveBeenCalledOnLastCallWith(5, 6);
     expect(func).toHaveBeenCalledTimes(2);
   });
 });

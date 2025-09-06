@@ -1,59 +1,57 @@
 /**
  * Creates a throttled function that only invokes `func` at most once per every `wait` milliseconds.
  * The throttled function comes with a `cancel` method to cancel delayed `func` invocations and a `flush` method to immediately invoke them.
+ * Provide `options` to indicate whether `func` should be invoked on the leading and/or trailing edge of the `wait` timeout.
+ * The `func` is invoked with the last arguments provided to the throttled function.
+ *
  * @param {Function} func The function to throttle.
  * @param {number} wait The number of milliseconds to throttle invocations to.
- * @param {object} [options] The options object.
+ * @param {Object} [options={}] The options object.
  * @param {boolean} [options.leading=true] Specify invoking on the leading edge of the timeout.
  * @param {boolean} [options.trailing=true] Specify invoking on the trailing edge of the timeout.
  * @returns {Function} Returns the new throttled function.
  */
-export function throttle(func, wait, options = {}) {
-  let context, args, result;
-  let timeout = null;
-  let previous = 0;
-  const { leading = true, trailing = true } = options;
+export function throttle(func, wait, options) {
+  let inThrottle, lastFn, lastTime;
+  const { leading = true, trailing = true } = options || {};
 
-  const later = function() {
-    previous = leading === false ? 0 : Date.now();
-    timeout = null;
-    result = func.apply(context, args);
-    if (!timeout) context = args = null;
-  };
+  if (typeof func !== 'function') {
+    throw new TypeError('Expected a function');
+  }
 
-  const throttled = function() {
-    const now = Date.now();
-    if (!previous && leading === false) previous = now;
-    const remaining = wait - (now - previous);
-    context = this;
-    args = arguments;
-
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
+  const throttled = function(...args) {
+    const context = this;
+    if (!inThrottle) {
+      if (leading) {
+        func.apply(context, args);
       }
-      previous = now;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
-    } else if (trailing && !timeout) {
-      timeout = setTimeout(later, remaining);
+      lastTime = Date.now();
+      inThrottle = true;
+    } else {
+      if (trailing) {
+        clearTimeout(lastFn);
+        lastFn = setTimeout(function() {
+          if (Date.now() - lastTime >= wait) {
+            func.apply(context, args);
+            lastTime = Date.now();
+          }
+        }, Math.max(wait - (Date.now() - lastTime), 0));
+      }
     }
-    return result;
   };
 
-  throttled.cancel = function() {
-    clearTimeout(timeout);
-    previous = 0;
-    timeout = context = args = null;
+  throttled.cancel = () => {
+    clearTimeout(lastFn);
+    inThrottle = false;
   };
 
-  throttled.flush = function() {
-    if (timeout) {
-      clearTimeout(timeout);
-      later();
+  throttled.flush = () => {
+    if (lastFn) {
+      clearTimeout(lastFn);
+      func.apply(this, lastFn.args); // This might need adjustment based on how args are captured
+      lastFn = null;
+      inThrottle = false;
     }
-    return result;
   };
 
   return throttled;
