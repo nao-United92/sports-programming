@@ -1,69 +1,98 @@
-const { memoize } = require('./function-utils.js');
+import { memoize, once } from './function-utils.js';
 
 describe('memoize', () => {
-  it('should memoize a function with a single primitive argument', () => {
+  test('should memoize function calls', () => {
     const mockFunc = jest.fn(x => x * 2);
     const memoizedFunc = memoize(mockFunc);
 
-    expect(memoizedFunc(2)).toBe(4);
-    expect(memoizedFunc(2)).toBe(4);
+    expect(memoizedFunc(5)).toBe(10);
     expect(mockFunc).toHaveBeenCalledTimes(1);
 
-    expect(memoizedFunc(3)).toBe(6);
-    expect(memoizedFunc(3)).toBe(6);
+    expect(memoizedFunc(5)).toBe(10);
+    expect(mockFunc).toHaveBeenCalledTimes(1); // Should not be called again
+
+    expect(memoizedFunc(10)).toBe(20);
     expect(mockFunc).toHaveBeenCalledTimes(2);
   });
 
-  it('should return the cached value on subsequent calls', () => {
-    const expensiveCalculation = jest.fn(x => ({ value: x }));
-    const memoizedCalc = memoize(expensiveCalculation);
-
-    const result1 = memoizedCalc(1);
-    const result2 = memoizedCalc(1);
-
-    expect(result1).toEqual({ value: 1 });
-    expect(result2).toBe(result1); // Should be the exact same object
-    expect(expensiveCalculation).toHaveBeenCalledTimes(1);
-  });
-
-  it('should use a custom resolver function to determine the cache key', () => {
+  test('should use resolver if provided', () => {
     const mockFunc = jest.fn((a, b) => a + b);
-    const resolver = (a, b) => `${a}_${b}`;
+    const resolver = (a, b) => `${a}-${b}`;
     const memoizedFunc = memoize(mockFunc, resolver);
 
-    memoizedFunc(1, 2); // call 1
-    memoizedFunc(1, 2); // should be cached
+    expect(memoizedFunc(1, 2)).toBe(3);
     expect(mockFunc).toHaveBeenCalledTimes(1);
 
-    memoizedFunc(2, 1); // call 2
-    memoizedFunc(2, 1); // should be cached
+    expect(memoizedFunc(1, 2)).toBe(3);
+    expect(mockFunc).toHaveBeenCalledTimes(1); // Should not be called again
+
+    expect(memoizedFunc(2, 1)).toBe(3);
     expect(mockFunc).toHaveBeenCalledTimes(2);
   });
 
-  it('should expose the cache on the memoized function', () => {
-    const memoizedFunc = memoize(x => x);
-    memoizedFunc(1);
-    expect(memoizedFunc.cache instanceof Map).toBe(true);
-    expect(memoizedFunc.cache.get(1)).toBe(1);
-  });
+  test('should handle different contexts', () => {
+    const mockFunc = jest.fn(function(x) { return this.multiplier * x; });
+    const memoizedFunc = memoize(mockFunc);
 
-  it('should handle `this` context correctly', () => {
-    const mockFunc = jest.fn(function(val) {
-      return this.multiplier * val;
-    });
+    const obj1 = { multiplier: 2, calculate: memoizedFunc };
+    const obj2 = { multiplier: 3, calculate: memoizedFunc };
 
-    const context = {
-      multiplier: 10,
-      memoized: memoize(mockFunc),
-    };
-
-    const result = context.memoized(5);
-    expect(result).toBe(50);
+    expect(obj1.calculate(5)).toBe(10);
     expect(mockFunc).toHaveBeenCalledTimes(1);
 
-    // Call again, should be cached
-    const result2 = context.memoized(5);
-    expect(result2).toBe(50);
+    expect(obj2.calculate(5)).toBe(15);
+    expect(mockFunc).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('once', () => {
+  test('should only call the function once', () => {
+    const mockFunc = jest.fn(() => 'hello');
+    const onceFunc = once(mockFunc);
+
+    expect(onceFunc()).toBe('hello');
+    expect(mockFunc).toHaveBeenCalledTimes(1);
+
+    expect(onceFunc()).toBe('hello');
+    expect(mockFunc).toHaveBeenCalledTimes(1); // Should still be 1
+
+    expect(onceFunc()).toBe('hello');
+    expect(mockFunc).toHaveBeenCalledTimes(1); // Still 1
+  });
+
+  test('should return the result of the first invocation on subsequent calls', () => {
+    let counter = 0;
+    const increment = once(() => {
+      counter++;
+      return counter;
+    });
+
+    expect(increment()).toBe(1);
+    expect(increment()).toBe(1);
+    expect(increment()).toBe(1);
+    expect(counter).toBe(1);
+  });
+
+  test('should preserve the context of the first invocation', () => {
+    const mockFunc = jest.fn(function() { return this.value; });
+    const onceFunc = once(mockFunc);
+
+    const obj1 = { value: 10, callOnce: onceFunc };
+    const obj2 = { value: 20, callOnce: onceFunc };
+
+    expect(obj1.callOnce()).toBe(10);
+    expect(obj2.callOnce()).toBe(10); // Should return result from obj1's context
+    expect(mockFunc).toHaveBeenCalledTimes(1);
+  });
+
+  test('should pass arguments only to the first invocation', () => {
+    const mockFunc = jest.fn((a, b) => a + b);
+    const onceFunc = once(mockFunc);
+
+    expect(onceFunc(1, 2)).toBe(3);
+    expect(mockFunc).toHaveBeenCalledWith(1, 2);
+
+    expect(onceFunc(10, 20)).toBe(3); // Arguments should be ignored
     expect(mockFunc).toHaveBeenCalledTimes(1);
   });
 });

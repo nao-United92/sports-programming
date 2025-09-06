@@ -6,7 +6,7 @@
  * @param {Function} [resolver] The function to resolve the cache key. Defaults to using the first argument.
  * @returns {Function} Returns the new memoized function.
  */
-const memoize = (func, resolver) => {
+export const memoize = (func, resolver) => {
   const memoized = function(...args) {
     const key = resolver ? resolver.apply(this, args) : args[0];
     const cache = memoized.cache;
@@ -22,6 +22,22 @@ const memoize = (func, resolver) => {
   return memoized;
 };
 
-module.exports = {
-  memoize,
+/**
+ * Creates a function that is restricted to invoking `func` once.
+ * Repeat calls to the function return the value of the first invocation.
+ *
+ * @param {Function} func The function to restrict.
+ * @returns {Function} Returns the new restricted function.
+ */
+export const once = (func) => {
+  let hasBeenCalled = false;
+  let result;
+
+  return function(...args) {
+    if (!hasBeenCalled) {
+      hasBeenCalled = true;
+      result = func.apply(this, args);
+    }
+    return result;
+  };
 };
