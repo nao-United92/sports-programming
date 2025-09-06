@@ -1,4 +1,4 @@
-import { objectToQueryString, queryStringToObject } from './url-utils.js';
+import { objectToQueryString, queryStringToObject, updateUrlQueryParams } from './url-utils.js';
 
 describe('objectToQueryString', () => {
   it('should convert a simple object to a query string', () => {
@@ -57,5 +57,48 @@ describe('queryStringToObject', () => {
     expect(queryStringToObject('')).toEqual({});
     expect(queryStringToObject('?')).toEqual({});
     expect(queryStringToObject(null)).toEqual({});
+  });
+});
+
+describe('updateUrlQueryParams', () => {
+  test('should add new query parameters to a URL without existing ones', () => {
+    const url = 'http://example.com/path';
+    const params = { param1: 'value1', param2: 'value2' };
+    const expected = 'http://example.com/path?param1=value1&param2=value2';
+    expect(updateUrlQueryParams(url, params)).toBe(expected);
+  });
+
+  test('should update existing query parameters', () => {
+    const url = 'http://example.com/path?param1=oldValue&param3=value3';
+    const params = { param1: 'newValue', param2: 'value2' };
+    const expected = 'http://example.com/path?param1=newValue&param3=value3&param2=value2';
+    expect(updateUrlQueryParams(url, params)).toBe(expected);
+  });
+
+  test('should handle empty params object', () => {
+    const url = 'http://example.com/path?param1=value1';
+    const params = {};
+    expect(updateUrlQueryParams(url, params)).toBe(url);
+  });
+
+  test('should handle URL with hash', () => {
+    const url = 'http://example.com/path?param1=value1#hash';
+    const params = { param2: 'value2' };
+    const expected = 'http://example.com/path?param1=value1&param2=value2#hash';
+    expect(updateUrlQueryParams(url, params)).toBe(expected);
+  });
+
+  test('should handle URL with no path', () => {
+    const url = 'http://example.com';
+    const params = { param1: 'value1' };
+    const expected = 'http://example.com/?param1=value1';
+    expect(updateUrlQueryParams(url, params)).toBe(expected);
+  });
+
+  test('should encode parameter values', () => {
+    const url = 'http://example.com';
+    const params = { query: 'a&b=c' };
+    const expected = 'http://example.com/?query=a%26b%3Dc';
+    expect(updateUrlQueryParams(url, params)).toBe(expected);
   });
 });

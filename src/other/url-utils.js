@@ -60,3 +60,19 @@ export function queryStringToObject(queryString) {
 
   return params;
 }
+
+/**
+ * Updates or adds query parameters to a given URL.
+ * @param {string} url The original URL string.
+ * @param {object} params An object containing the parameters to add or update.
+ * @returns {string} The URL with updated query parameters.
+ */
+export function updateUrlQueryParams(url, params) {
+  const urlObj = new URL(url);
+  for (const key in params) {
+    if (Object.prototype.hasOwnProperty.call(params, key)) {
+      urlObj.searchParams.set(key, params[key]);
+    }
+  }
+  return urlObj.toString();
+}
