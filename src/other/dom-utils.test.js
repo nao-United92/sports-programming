@@ -1,4 +1,4 @@
-import { hasClass, toggleClass, toggleVisibility } from './dom-utils.js';
+import { hasClass, toggleClass, toggleVisibility, isInViewport } from './dom-utils.js';
 
 describe('DOM Class Utilities', () => {
   let element;
@@ -71,6 +71,76 @@ describe('DOM Class Utilities', () => {
 
     it('should not fail on null or undefined elements', () => {
       expect(() => toggleVisibility(null)).not.toThrow();
+    });
+  });
+
+  describe('isInViewport', () => {
+    let element;
+
+    beforeEach(() => {
+      element = document.createElement('div');
+      document.body.appendChild(element);
+      // Mock getBoundingClientRect for testing viewport visibility
+      Object.defineProperty(element, 'getBoundingClientRect', {
+        value: () => ({
+          top: 10,
+          left: 10,
+          bottom: 20,
+          right: 20,
+          width: 10,
+          height: 10,
+          x: 10,
+          y: 10,
+          toJSON: () => {},
+        }),
+      });
+
+      // Mock window and document for viewport dimensions
+      Object.defineProperty(window, 'innerHeight', { writable: true, value: 100 });
+      Object.defineProperty(window, 'innerWidth', { writable: true, value: 100 });
+      Object.defineProperty(document.documentElement, 'clientHeight', { writable: true, value: 100 });
+      Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, value: 100 });
+    });
+
+    afterEach(() => {
+      document.body.removeChild(element);
+    });
+
+    test('should return true if element is fully in viewport', () => {
+      expect(isInViewport(element)).toBe(true);
+    });
+
+    test('should return false if element is above viewport', () => {
+      Object.defineProperty(element, 'getBoundingClientRect', {
+        value: () => ({ top: -50, left: 10, bottom: -40, right: 20 }),
+      });
+      expect(isInViewport(element)).toBe(false);
+    });
+
+    test('should return false if element is below viewport', () => {
+      Object.defineProperty(element, 'getBoundingClientRect', {
+        value: () => ({ top: 110, left: 10, bottom: 120, right: 20 }),
+      });
+      expect(isInViewport(element)).toBe(false);
+    });
+
+    test('should return false if element is left of viewport', () => {
+      Object.defineProperty(element, 'getBoundingClientRect', {
+        value: () => ({ top: 10, left: -50, bottom: 20, right: -40 }),
+      });
+      expect(isInViewport(element)).toBe(false);
+    });
+
+    test('should return false if element is right of viewport', () => {
+      Object.defineProperty(element, 'getBoundingClientRect', {
+        value: () => ({ top: 10, left: 110, bottom: 20, right: 120 }),
+      });
+      expect(isInViewport(element)).toBe(false);
+    });
+
+    test('should return false for null or undefined elements', () => {
+      expect(isInViewport(null)).toBe(false);
+      expect(isInViewport(undefined)).toBe(false);
     });
   });
 });
