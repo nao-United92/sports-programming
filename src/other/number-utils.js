@@ -19,3 +19,29 @@ export function randomInt(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+/**
+ * Formats a number with commas as thousands separators.
+ * @param {number} num The number to format.
+ * @returns {string} The formatted number string.
+ */
+export function formatNumberWithCommas(num) {
+  if (typeof num !== 'number') {
+    throw new TypeError('Expected a number');
+  }
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/**
+ * Rounds a number to a specified number of decimal places.
+ * @param {number} num The number to round.
+ * @param {number} decimalPlaces The number of decimal places to round to.
+ * @returns {number} The rounded number.
+ */
+export function roundToDecimalPlaces(num, decimalPlaces) {
+  if (typeof num !== 'number' || typeof decimalPlaces !== 'number') {
+    throw new TypeError('Expected number for both arguments');
+  }
+  const factor = 10 ** decimalPlaces;
+  return Math.round(num * factor) / factor;
+}
