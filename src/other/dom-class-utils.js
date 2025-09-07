@@ -1,13 +1,46 @@
 /**
- * 指定されたDOM要素のクラスを切り替えます。
- * @param {HTMLElement} element - クラスを切り替えるDOM要素。
- * @param {string} className - 切り替えるクラス名。
- * @param {boolean} [force] - trueの場合、クラスを追加します。falseの場合、クラスを削除します。省略された場合、クラスの有無に応じて追加/削除します。
+ * Adds a class to the specified element.
+ * @param {HTMLElement} element The HTML element.
+ * @param {string} className The class name to add.
  */
-export function toggleClass(element, className, force) {
-  if (!(element instanceof HTMLElement)) {
-    console.warn('Invalid element provided to toggleClass.', element);
-    return;
+export const addClass = (element, className) => {
+  if (element && className) {
+    element.classList.add(className);
   }
-  element.classList.toggle(className, force);
-}
+};
+
+/**
+ * Removes a class from the specified element.
+ * @param {HTMLElement} element The HTML element.
+ * @param {string} className The class name to remove.
+ */
+export const removeClass = (element, className) => {
+  if (element && className) {
+    element.classList.remove(className);
+  }
+};
+
+/**
+ * Checks if the specified element has a class.
+ * @param {HTMLElement} element The HTML element.
+ * @param {string} className The class name to check.
+ * @returns {boolean} True if the element has the class, false otherwise.
+ */
+export const hasClass = (element, className) => {
+  if (element && className) {
+    return element.classList.contains(className);
+  }
+  return false;
+};
+
+/**
+ * Toggles a class on the specified element.
+ * @param {HTMLElement} element The HTML element.
+ * @param {string} className The class name to toggle.
+ * @param {boolean} [force] If true, adds the class; if false, removes it.
+ */
+export const toggleClass = (element, className, force) => {
+  if (element && className) {
+    element.classList.toggle(className, force);
+  }
+};

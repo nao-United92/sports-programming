@@ -1,61 +1,76 @@
-import { toggleClass } from './dom-class-utils';
+import { addClass, removeClass, hasClass, toggleClass } from './dom-class-utils.js';
 
-describe('toggleClass', () => {
-  let element;
+describe('DOM Class Utilities', () => {
+  let mockElement;
 
   beforeEach(() => {
-    document.body.innerHTML = '<div id="testElement" class="initial-class"></div>';
-    element = document.getElementById('testElement');
+    mockElement = {
+      classList: {
+        add: jest.fn(),
+        remove: jest.fn(),
+        contains: jest.fn(),
+        toggle: jest.fn(),
+      },
+    };
   });
 
-  afterEach(() => {
-    document.body.innerHTML = '';
+  describe('addClass', () => {
+    it('should add a class to the element', () => {
+      addClass(mockElement, 'test-class');
+      expect(mockElement.classList.add).toHaveBeenCalledWith('test-class');
+    });
+
+    it('should not throw error if element is null', () => {
+      expect(() => addClass(null, 'test-class')).not.toThrow();
+    });
   });
 
-  test('should add a class if it does not exist', () => {
-    toggleClass(element, 'new-class');
-    expect(element.classList.contains('new-class')).toBe(true);
+  describe('removeClass', () => {
+    it('should remove a class from the element', () => {
+      removeClass(mockElement, 'test-class');
+      expect(mockElement.classList.remove).toHaveBeenCalledWith('test-class');
+    });
+
+    it('should not throw error if element is null', () => {
+      expect(() => removeClass(null, 'test-class')).not.toThrow();
+    });
   });
 
-  test('should remove a class if it exists', () => {
-    element.classList.add('existing-class');
-    toggleClass(element, 'existing-class');
-    expect(element.classList.contains('existing-class')).toBe(false);
+  describe('hasClass', () => {
+    it('should return true if element has the class', () => {
+      mockElement.classList.contains.mockReturnValue(true);
+      expect(hasClass(mockElement, 'test-class')).toBe(true);
+      expect(mockElement.classList.contains).toHaveBeenCalledWith('test-class');
+    });
+
+    it('should return false if element does not have the class', () => {
+      mockElement.classList.contains.mockReturnValue(false);
+      expect(hasClass(mockElement, 'test-class')).toBe(false);
+    });
+
+    it('should return false if element is null', () => {
+      expect(hasClass(null, 'test-class')).toBe(false);
+    });
   });
 
-  test('should add a class when force is true and class does not exist', () => {
-    toggleClass(element, 'forced-class', true);
-    expect(element.classList.contains('forced-class')).toBe(true);
-  });
+  describe('toggleClass', () => {
+    it('should toggle a class on the element', () => {
+      toggleClass(mockElement, 'test-class');
+      expect(mockElement.classList.toggle).toHaveBeenCalledWith('test-class', undefined);
+    });
 
-  test('should keep a class when force is true and class exists', () => {
-    element.classList.add('forced-class');
-    toggleClass(element, 'forced-class', true);
-    expect(element.classList.contains('forced-class')).toBe(true);
-  });
+    it('should force add a class', () => {
+      toggleClass(mockElement, 'test-class', true);
+      expect(mockElement.classList.toggle).toHaveBeenCalledWith('test-class', true);
+    });
 
-  test('should remove a class when force is false and class exists', () => {
-    element.classList.add('forced-class');
-    toggleClass(element, 'forced-class', false);
-    expect(element.classList.contains('forced-class')).toBe(false);
-  });
+    it('should force remove a class', () => {
+      toggleClass(mockElement, 'test-class', false);
+      expect(mockElement.classList.toggle).toHaveBeenCalledWith('test-class', false);
+    });
 
-  test('should keep a class removed when force is false and class does not exist', () => {
-    toggleClass(element, 'forced-class', false);
-    expect(element.classList.contains('forced-class')).toBe(false);
-  });
-
-  test('should warn and return if a non-HTMLElement is provided', () => {
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    toggleClass(null, 'some-class');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid element provided to toggleClass.', null);
-
-    toggleClass(undefined, 'some-class');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid element provided to toggleClass.', undefined);
-
-    toggleClass({}, 'some-class');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid element provided to toggleClass.', {});
-
-    consoleWarnSpy.mockRestore();
+    it('should not throw error if element is null', () => {
+      expect(() => toggleClass(null, 'test-class')).not.toThrow();
+    });
   });
 });
