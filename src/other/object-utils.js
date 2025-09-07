@@ -89,3 +89,16 @@ export const keysIn = (obj) => {
   }
   return result;
 };
+
+/**
+ * Creates an array of the own and inherited enumerable property values of `object`.
+ * @param {object} obj The object to query.
+ * @returns {any[]} Returns the array of property values.
+ */
+export const valuesIn = (obj) => {
+  const result = [];
+  for (const key in obj) {
+    result.push(obj[key]);
+  }
+  return result;
+};
