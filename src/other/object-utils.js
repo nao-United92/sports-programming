@@ -102,3 +102,12 @@ export const valuesIn = (obj) => {
   }
   return result;
 };
+
+/**
+ * Creates an array of own enumerable string keyed-value pairs for `object`.
+ * @param {object} obj The object to query.
+ * @returns {Array[]} Returns the key-value pairs.
+ */
+export const toPairs = (obj) => {
+  return Object.entries(obj);
+};

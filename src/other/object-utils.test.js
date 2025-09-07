@@ -1,4 +1,4 @@
-import { mapKeys, mapValues, omit, pick, has, invert, keysIn, valuesIn } from './object-utils.js';
+import { mapKeys, mapValues, omit, pick, has, invert, keysIn, valuesIn, toPairs } from './object-utils.js';
 
 describe('Object Utilities', () => {
   describe('mapKeys', () => {
@@ -186,6 +186,18 @@ describe('Object Utilities', () => {
     it('should handle an empty object', () => {
       const obj = {};
       expect(valuesIn(obj)).toEqual([]);
+    });
+  });
+
+  describe('toPairs', () => {
+    it('should convert an object to an array of key-value pairs', () => {
+      const obj = { a: 1, b: 2 };
+      expect(toPairs(obj)).toEqual([['a', 1], ['b', 2]]);
+    });
+
+    it('should handle an empty object', () => {
+      const obj = {};
+      expect(toPairs(obj)).toEqual([]);
     });
   });
 });
