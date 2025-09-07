@@ -1,4 +1,4 @@
-import { mapKeys, mapValues, omit, pick } from './object-utils.js';
+import { mapKeys, mapValues, omit, pick, has } from './object-utils.js';
 
 describe('Object Utilities', () => {
   describe('mapKeys', () => {
@@ -101,6 +101,32 @@ describe('Object Utilities', () => {
     it('should ignore keys that do not exist in the object', () => {
       const obj = { a: 1, b: 2 };
       expect(pick(obj, ['a', 'c'])).toEqual({ a: 1 });
+    });
+  });
+
+  describe('has', () => {
+    it('should return true if the object has the specified key', () => {
+      const obj = { a: 1 };
+      expect(has(obj, 'a')).toBe(true);
+    });
+
+    it('should return false if the object does not have the specified key', () => {
+      const obj = { a: 1 };
+      expect(has(obj, 'b')).toBe(false);
+    });
+
+    it('should return false for inherited properties', () => {
+      function MyObject() {
+        this.a = 1;
+      }
+      MyObject.prototype.b = 2;
+      const obj = new MyObject();
+      expect(has(obj, 'b')).toBe(false);
+    });
+
+    it('should return false for null or undefined objects', () => {
+      expect(has(null, 'a')).toBe(false);
+      expect(has(undefined, 'a')).toBe(false);
     });
   });
 });

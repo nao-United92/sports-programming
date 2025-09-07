@@ -51,3 +51,13 @@ export const pick = (obj, keys) => {
   });
   return newObj;
 };
+
+/**
+ * Checks if `key` is a direct or inherited property of `object`.
+ * @param {object} obj The object to query.
+ * @param {string} key The key to check.
+ * @returns {boolean} Returns `true` if `key` exists, else `false`.
+ */
+export const has = (obj, key) => {
+  return obj != null && Object.prototype.hasOwnProperty.call(obj, key);
+};
