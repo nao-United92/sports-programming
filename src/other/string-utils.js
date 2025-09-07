@@ -31,3 +31,14 @@ export const truncate = (str, num) => {
   }
   return str.slice(0, num) + '...';
 };
+
+/**
+ * Repeats a string a specified number of times.
+ *
+ * @param {string} str The string to repeat.
+ * @param {number} times The number of times to repeat the string.
+ * @returns {string} The repeated string.
+ */
+export const repeat = (str, times) => {
+  return str.repeat(times);
+};

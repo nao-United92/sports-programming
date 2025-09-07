@@ -1,4 +1,4 @@
-import { reverseString, isPalindrome, truncate } from './string-utils.js';
+import { reverseString, isPalindrome, truncate, repeat } from './string-utils.js';
 
 describe('String Utilities', () => {
   describe('reverseString', () => {
@@ -52,6 +52,20 @@ describe('String Utilities', () => {
 
     it('should handle an empty string', () => {
       expect(truncate('', 5)).toBe('');
+    });
+  });
+
+  describe('repeat', () => {
+    it('should repeat a string a specified number of times', () => {
+      expect(repeat('a', 3)).toBe('aaa');
+    });
+
+    it('should return an empty string if times is 0', () => {
+      expect(repeat('a', 0)).toBe('');
+    });
+
+    it('should handle an empty string', () => {
+      expect(repeat('', 5)).toBe('');
     });
   });
 });
