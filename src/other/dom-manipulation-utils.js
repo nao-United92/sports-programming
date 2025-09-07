@@ -1,94 +1,41 @@
 /**
- * Adds a class to an element.
- * @param {Element} el The element.
- * @param {string} className The class name to add.
+ * Creates a new DOM element with optional attributes and children.
+ * @param {string} tagName The tag name of the element to create (e.g., 'div', 'span').
+ * @param {object} [attributes={}] An object containing attributes to set on the element.
+ * @param {(HTMLElement|string)[]} [children=[]] An array of child elements or strings to append.
+ * @returns {HTMLElement} The newly created DOM element.
  */
-export function addClass(el, className) {
-  if (el.classList) {
-    el.classList.add(className);
-  } else {
-    if (!el.className.split(' ').includes(className)) {
-      el.className += ` ${className}`;
+export const createElement = (tagName, attributes = {}, children = []) => {
+  const element = document.createElement(tagName);
+
+  for (const key in attributes) {
+    if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+      element.setAttribute(key, attributes[key]);
     }
   }
-}
 
-/**
- * Removes a class from an element.
- * @param {Element} el The element.
- * @param {string} className The class name to remove.
- */
-export function removeClass(el, className) {
-  if (el.classList) {
-    el.classList.remove(className);
-  } else {
-    el.className = el.className.replace(new RegExp(`(^|\\b)${className.split(' ').join('|')}(\\b|$)`, 'gi'), ' ');
-  }
-}
-
-/**
- * Toggles a class on an element.
- * @param {Element} el The element.
- * @param {string} className The class name to toggle.
- */
-export function toggleClass(el, className) {
-  if (el.classList) {
-    el.classList.toggle(className);
-  } else {
-    const classes = el.className.split(' ');
-    const existingIndex = classes.indexOf(className);
-
-    if (existingIndex >= 0) {
-      classes.splice(existingIndex, 1);
-    } else {
-      classes.push(className);
+  children.forEach(child => {
+    if (typeof child === 'string') {
+      element.appendChild(document.createTextNode(child));
+    } else if (child instanceof HTMLElement) {
+      element.appendChild(child);
     }
-    el.className = classes.join(' ');
-  }
-}
+  });
+
+  return element;
+};
 
 /**
- * Checks if an element has a specific class.
- * @param {Element} el The element.
- * @param {string} className The class name to check for.
- * @returns {boolean} True if the element has the class, false otherwise.
+ * Appends multiple child elements to a parent element.
+ * @param {HTMLElement} parent The parent element to which children will be appended.
+ * @param {(HTMLElement|string)[]} children An array of child elements or strings to append.
  */
-export function hasClass(el, className) {
-  if (el.classList) {
-    return el.classList.contains(className);
-  } else {
-    return new RegExp(`(^| )${className}( |$)`, 'gi').test(el.className);
-  }
-}
-
-/**
- * Sets a style property on an element.
- * @param {Element} el The element.
- * @param {string} property The CSS property name.
- * @param {string} value The value for the CSS property.
- */
-export function setStyle(el, property, value) {
-  el.style[property] = value;
-}
-
-/**
- * Inserts a new node after a reference node.
- * @param {Node} newNode The node to insert.
- * @param {Node} referenceNode The node after which to insert the new node.
- */
-export function insertAfter(newNode, referenceNode) {
-  if (referenceNode.parentNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-  }
-}
-
-/**
- * Inserts a new node before a reference node.
- * @param {Node} newNode The node to insert.
- * @param {Node} referenceNode The node before which to insert the new node.
- */
-export function insertBefore(newNode, referenceNode) {
-  if (referenceNode.parentNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode);
-  }
-}
+export const appendChildren = (parent, children) => {
+  children.forEach(child => {
+    if (typeof child === 'string') {
+      parent.appendChild(document.createTextNode(child));
+    } else if (child instanceof HTMLElement) {
+      parent.appendChild(child);
+    }
+  });
+};
