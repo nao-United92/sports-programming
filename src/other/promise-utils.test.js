@@ -1,29 +1,46 @@
-import { delay, timeout } from './promise-utils.js';
+import { isPromise, allSettled } from './promise-utils.js';
 
 describe('Promise Utilities', () => {
-  describe('delay', () => {
-    it('should resolve after the specified time', async () => {
-      const startTime = Date.now();
-      await delay(50);
-      const endTime = Date.now();
-      expect(endTime - startTime).toBeGreaterThanOrEqual(48); // Allow for slight inaccuracies
+  describe('isPromise', () => {
+    it('should return true for a Promise', () => {
+      const promise = new Promise(() => {});
+      expect(isPromise(promise)).toBe(true);
+    });
+
+    it('should return true for a thenable object', () => {
+      const thenable = { then: () => {} };
+      expect(isPromise(thenable)).toBe(true);
+    });
+
+    it('should return false for non-Promise values', () => {
+      expect(isPromise(null)).toBe(false);
+      expect(isPromise(undefined)).toBe(false);
+      expect(isPromise(123)).toBe(false);
+      expect(isPromise('string')).toBe(false);
+      expect(isPromise({})).toBe(false);
+      expect(isPromise([])).toBe(false);
+      expect(isPromise(() => {})).toBe(false);
     });
   });
 
-  describe('timeout', () => {
-    it('should resolve if the promise resolves in time', async () => {
-      const fastPromise = Promise.resolve('success');
-      await expect(timeout(fastPromise, 100)).resolves.toBe('success');
+  describe('allSettled', () => {
+    it('should resolve with an array of settled promises', async () => {
+      const promises = [
+        Promise.resolve(1),
+        Promise.reject('Error'),
+        Promise.resolve(3)
+      ];
+      const results = await allSettled(promises);
+      expect(results).toEqual([
+        { status: 'fulfilled', value: 1 },
+        { status: 'rejected', reason: 'Error' },
+        { status: 'fulfilled', value: 3 }
+      ]);
     });
 
-    it('should reject if the promise takes too long', async () => {
-      const slowPromise = delay(200);
-      await expect(timeout(slowPromise, 100)).rejects.toThrow('Promise timed out after 100 ms');
-    });
-
-    it('should reject with the original promise rejection if it rejects first', async () => {
-      const failingPromise = Promise.reject(new Error('Failed'));
-      await expect(timeout(failingPromise, 100)).rejects.toThrow('Failed');
+    it('should handle an empty array of promises', async () => {
+      const results = await allSettled([]);
+      expect(results).toEqual([]);
     });
   });
 });

@@ -1,23 +1,23 @@
 /**
- * Returns a promise that resolves after a given number of milliseconds.
- * @param {number} ms The number of milliseconds to wait.
- * @returns {Promise<void>} A promise that resolves after the specified time.
+ * Checks if a value is a Promise.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a Promise, false otherwise.
  */
-export function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+export const isPromise = (value) => {
+  return value != null && typeof value.then === 'function';
+};
 
 /**
- * Rejects a promise if it doesn't resolve within a given time.
- * @param {Promise<any>} promise The promise to race against a timeout.
- * @param {number} ms The timeout in milliseconds.
- * @returns {Promise<any>} A new promise that resolves or rejects based on the race.
+ * A polyfill for Promise.allSettled.
+ * @param {Array<Promise>} promises An array of promises.
+ * @returns {Promise<Array<{status: string, value?: any, reason?: any}>>} A promise that resolves with an array of objects that each describes the outcome of each promise.
  */
-export function timeout(promise, ms) {
-  const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => {
-      reject(new Error(`Promise timed out after ${ms} ms`));
-    }, ms);
-  });
-  return Promise.race([promise, timeoutPromise]);
-}
+export const allSettled = (promises) => {
+  const wrappedPromises = promises.map(p =>
+    Promise.resolve(p).then(
+      val => ({ status: 'fulfilled', value: val }),
+      err => ({ status: 'rejected', reason: err })
+    )
+  );
+  return Promise.all(wrappedPromises);
+};
