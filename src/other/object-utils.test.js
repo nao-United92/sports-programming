@@ -1,4 +1,4 @@
-import { mapKeys, mapValues, omit, pick, has } from './object-utils.js';
+import { mapKeys, mapValues, omit, pick, has, invert } from './object-utils.js';
 
 describe('Object Utilities', () => {
   describe('mapKeys', () => {
@@ -127,6 +127,23 @@ describe('Object Utilities', () => {
     it('should return false for null or undefined objects', () => {
       expect(has(null, 'a')).toBe(false);
       expect(has(undefined, 'a')).toBe(false);
+    });
+  });
+
+  describe('invert', () => {
+    it('should invert the keys and values of an object', () => {
+      const obj = { a: 1, b: 2 };
+      expect(invert(obj)).toEqual({ '1': 'a', '2': 'b' });
+    });
+
+    it('should handle an empty object', () => {
+      const obj = {};
+      expect(invert(obj)).toEqual({});
+    });
+
+    it('should handle duplicate values by overwriting', () => {
+      const obj = { a: 1, b: 1, c: 2 };
+      expect(invert(obj)).toEqual({ '1': 'b', '2': 'c' });
     });
   });
 });
