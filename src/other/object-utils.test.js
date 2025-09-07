@@ -1,4 +1,4 @@
-import { mapKeys, mapValues } from './object-utils.js';
+import { mapKeys, mapValues, omit } from './object-utils.js';
 
 describe('Object Utilities', () => {
   describe('mapKeys', () => {
@@ -38,6 +38,35 @@ describe('Object Utilities', () => {
       const obj = { a: 1, b: 2 };
       const fn = (value, key, o) => key + o[key];
       expect(mapValues(obj, fn)).toEqual({ a: 'a1', b: 'b2' });
+    });
+  });
+
+  describe('omit', () => {
+    it('should omit specified keys from an object', () => {
+      const obj = { a: 1, b: 2, c: 3 };
+      expect(omit(obj, ['a', 'c'])).toEqual({ b: 2 });
+    });
+
+    it('should return a new object', () => {
+      const obj = { a: 1, b: 2 };
+      const result = omit(obj, ['a']);
+      expect(result).not.toBe(obj);
+    });
+
+    it('should not modify the original object', () => {
+      const obj = { a: 1, b: 2 };
+      omit(obj, ['a']);
+      expect(obj).toEqual({ a: 1, b: 2 });
+    });
+
+    it('should handle an empty keys array', () => {
+      const obj = { a: 1, b: 2 };
+      expect(omit(obj, [])).toEqual({ a: 1, b: 2 });
+    });
+
+    it('should handle an empty object', () => {
+      const obj = {};
+      expect(omit(obj, ['a'])).toEqual({});
     });
   });
 });
