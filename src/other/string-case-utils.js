@@ -1,31 +1,17 @@
 /**
- * Converts a string to snake_case.
- * @param {string} str The string to convert.
- * @returns {string} The snake_cased string.
+ * Checks if a string is all uppercase.
+ * @param {string} str The string to check.
+ * @returns {boolean} True if the string is all uppercase, false otherwise.
  */
-export function toSnakeCase(str) {
-  if (typeof str !== 'string' || !str) {
-    return '';
-  }
-  const match = str.match(/[A-Z]/);
-  if (!match) {
-    return str;
-  }
-  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
-}
+export const isUpperCase = (str) => {
+  return str === str.toUpperCase();
+};
 
 /**
- * Converts a string to kebab-case.
- * @param {string} str The string to convert.
- * @returns {string} The kebab-cased string.
+ * Checks if a string is all lowercase.
+ * @param {string} str The string to check.
+ * @returns {boolean} True if the string is all lowercase, false otherwise.
  */
-export function toKebabCase(str) {
-  if (typeof str !== 'string' || !str) {
-    return '';
-  }
-  const match = str.match(/[A-Z]/);
-  if (!match) {
-    return str;
-  }
-  return str.replace(/([A-Z])/g, '-$1').toLowerCase();
-}
+export const isLowerCase = (str) => {
+  return str === str.toLowerCase();
+};

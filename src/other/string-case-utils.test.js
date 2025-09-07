@@ -1,39 +1,37 @@
-import { toSnakeCase, toKebabCase } from './string-case-utils.js';
+import { isUpperCase, isLowerCase } from './string-case-utils.js';
 
 describe('String Case Utilities', () => {
-  describe('toSnakeCase', () => {
-    test('should convert camelCase to snake_case', () => {
-      expect(toSnakeCase('helloWorld')).toBe('hello_world');
+  describe('isUpperCase', () => {
+    it('should return true for uppercase strings', () => {
+      expect(isUpperCase('HELLO')).toBe(true);
+      expect(isUpperCase('HELLO WORLD')).toBe(true);
     });
 
-    test('should convert PascalCase to snake_case', () => {
-      expect(toSnakeCase('HelloWorld')).toBe('_hello_world');
+    it('should return false for lowercase or mixed case strings', () => {
+      expect(isUpperCase('hello')).toBe(false);
+      expect(isUpperCase('Hello')).toBe(false);
     });
 
-    test('should handle an empty string', () => {
-      expect(toSnakeCase('')).toBe('');
-    });
-
-    test('should handle already snake_cased string', () => {
-      expect(toSnakeCase('hello_world')).toBe('hello_world');
+    it('should return true for non-alphabetic strings', () => {
+      expect(isUpperCase('123')).toBe(true);
+      expect(isUpperCase('!@#')).toBe(true);
     });
   });
 
-  describe('toKebabCase', () => {
-    test('should convert camelCase to kebab-case', () => {
-      expect(toKebabCase('helloWorld')).toBe('hello-world');
+  describe('isLowerCase', () => {
+    it('should return true for lowercase strings', () => {
+      expect(isLowerCase('hello')).toBe(true);
+      expect(isLowerCase('hello world')).toBe(true);
     });
 
-    test('should convert PascalCase to kebab-case', () => {
-      expect(toKebabCase('HelloWorld')).toBe('-hello-world');
+    it('should return false for uppercase or mixed case strings', () => {
+      expect(isLowerCase('HELLO')).toBe(false);
+      expect(isLowerCase('Hello')).toBe(false);
     });
 
-    test('should handle an empty string', () => {
-      expect(toKebabCase('')).toBe('');
-    });
-
-    test('should handle already kebab-cased string', () => {
-      expect(toKebabCase('hello-world')).toBe('hello-world');
+    it('should return true for non-alphabetic strings', () => {
+      expect(isLowerCase('123')).toBe(true);
+      expect(isLowerCase('!@#')).toBe(true);
     });
   });
 });
