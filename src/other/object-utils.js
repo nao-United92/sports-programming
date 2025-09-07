@@ -76,3 +76,16 @@ export const invert = (obj) => {
   }
   return newObj;
 };
+
+/**
+ * Creates an array of the own and inherited enumerable property names of `object`.
+ * @param {object} obj The object to query.
+ * @returns {string[]} Returns the array of property names.
+ */
+export const keysIn = (obj) => {
+  const result = [];
+  for (const key in obj) {
+    result.push(key);
+  }
+  return result;
+};

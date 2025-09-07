@@ -1,4 +1,4 @@
-import { mapKeys, mapValues, omit, pick, has, invert } from './object-utils.js';
+import { mapKeys, mapValues, omit, pick, has, invert, keysIn } from './object-utils.js';
 
 describe('Object Utilities', () => {
   describe('mapKeys', () => {
@@ -144,6 +144,27 @@ describe('Object Utilities', () => {
     it('should handle duplicate values by overwriting', () => {
       const obj = { a: 1, b: 1, c: 2 };
       expect(invert(obj)).toEqual({ '1': 'b', '2': 'c' });
+    });
+  });
+
+  describe('keysIn', () => {
+    it('should return an array of own and inherited keys', () => {
+      function MyObject() {
+        this.a = 1;
+      }
+      MyObject.prototype.b = 2;
+      const obj = new MyObject();
+      expect(keysIn(obj)).toEqual(['a', 'b']);
+    });
+
+    it('should handle an object with no inherited properties', () => {
+      const obj = { a: 1, b: 2 };
+      expect(keysIn(obj)).toEqual(['a', 'b']);
+    });
+
+    it('should handle an empty object', () => {
+      const obj = {};
+      expect(keysIn(obj)).toEqual([]);
     });
   });
 });
