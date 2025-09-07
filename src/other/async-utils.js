@@ -119,3 +119,24 @@ export function allSettled(promises) {
   );
   return Promise.all(wrappedPromises);
 }
+
+/**
+ * Runs async functions in a pool of a specified concurrency.
+ * @param {number} poolLimit The concurrency limit.
+ * @param {Array<Function>} tasks An array of async functions to run.
+ * @returns {Promise<Array>} A promise that resolves with an array of results from the async functions.
+ */
+export async function asyncPool(poolLimit, tasks) {
+  const results = [];
+  const executing = [];
+  for (const task of tasks) {
+    const p = Promise.resolve().then(() => task());
+    results.push(p);
+    const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+    executing.push(e);
+    if (executing.length >= poolLimit) {
+      await Promise.race(executing);
+    }
+  }
+  return Promise.all(results);
+}

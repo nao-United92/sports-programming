@@ -106,3 +106,38 @@ describe('allSettled', () => {
     ]);
   });
 });
+
+describe('asyncPool', () => {
+  jest.useFakeTimers();
+
+  test('should run tasks with limited concurrency', async () => {
+    const results = [];
+    const tasks = [
+      () => delay(100).then(() => results.push(1)),
+      () => delay(100).then(() => results.push(2)),
+      () => delay(100).then(() => results.push(3)),
+      () => delay(100).then(() => results.push(4)),
+      () => delay(100).then(() => results.push(5)),
+    ];
+
+    const poolPromise = asyncPool(2, tasks);
+
+    // Initially, only 2 tasks should be running
+    expect(results).toEqual([]);
+    jest.advanceTimersByTime(100);
+    await Promise.resolve(); // Allow promises to resolve
+    expect(results).toEqual([1, 2]);
+
+    // Next 2 tasks should run
+    jest.advanceTimersByTime(100);
+    await Promise.resolve();
+    expect(results).toEqual([1, 2, 3, 4]);
+
+    // Final task should run
+    jest.advanceTimersByTime(100);
+    await Promise.resolve();
+    expect(results).toEqual([1, 2, 3, 4, 5]);
+
+    await poolPromise;
+  });
+});
