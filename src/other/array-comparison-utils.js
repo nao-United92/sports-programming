@@ -1,13 +1,10 @@
 /**
- * Performs a shallow comparison between two arrays to determine if they have the same elements in the same order.
+ * Checks if two arrays are equal (contain the same elements in the same order).
  * @param {Array} arr1 The first array.
  * @param {Array} arr2 The second array.
- * @returns {boolean} True if the arrays are shallowly equal, false otherwise.
+ * @returns {boolean} True if the arrays are equal, false otherwise.
  */
-function isEqualArray(arr1, arr2) {
-  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
-    return false;
-  }
+export const isEqual = (arr1, arr2) => {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -17,98 +14,14 @@ function isEqualArray(arr1, arr2) {
     }
   }
   return true;
-}
+};
 
 /**
- * Performs a deep comparison between two arrays to determine if they have the same elements in the same order.
- * This function can handle nested arrays and objects.
- * @param {Array} arr1 The first array.
- * @param {Array} arr2 The second array.
- * @returns {boolean} True if the arrays are deeply equal, false otherwise.
+ * Checks if one array is a subset of another (all elements of the first array are present in the second).
+ * @param {Array} subset The potential subset array.
+ * @param {Array} superset The potential superset array.
+ * @returns {boolean} True if the first array is a subset of the second, false otherwise.
  */
-function isEqualArrayDeep(arr1, arr2) {
-  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
-    return false;
-  }
-  if (arr1.length !== arr2.length) {
-    return false;
-  }
-
-  for (let i = 0; i < arr1.length; i++) {
-    const val1 = arr1[i];
-    const val2 = arr2[i];
-
-    if (Array.isArray(val1) && Array.isArray(val2)) {
-      if (!isEqualArrayDeep(val1, val2)) {
-        return false;
-      }
-    } else if (typeof val1 === 'object' && val1 !== null && typeof val2 === 'object' && val2 !== null) {
-      // Simple object deep comparison for now, can be expanded if needed
-      const keys1 = Object.keys(val1);
-      const keys2 = Object.keys(val2);
-
-      if (keys1.length !== keys2.length) {
-        return false;
-      }
-
-      for (const key of keys1) {
-        if (!keys2.includes(key) || !isEqualArrayDeep([val1[key]], [val2[key]])) { // Recursively compare nested objects
-          return false;
-        }
-      }
-    } else if (val1 !== val2) {
-      return false;
-    }
-  }
-  return true;
-}
-
-const isEqual = isEqualArray;
-
-/**
- * Checks if one array is a subset of another.
- * @param {Array} arr1 The potential subset array.
- * @param {Array} arr2 The superset array.
- * @returns {boolean} True if arr1 is a subset of arr2, false otherwise.
- */
-function isSubset(arr1, arr2) {
-  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
-    return false;
-  }
-  return arr1.every(val => arr2.includes(val));
-}
-
-/**
- * Creates an array of values in `array` that are not in `other` by comparing
- * them using the results of running each element through `iteratee`.
- * The iteratee is invoked with one argument: (value).
- *
- * @param {Array} array The array to inspect.
- * @param {Array} other The array to exclude values from.
- * @param {Function|string} iteratee The iteratee invoked per element.
- * @returns {Array} Returns the new difference array.
- */
-function differenceBy(array, other, iteratee) {
-  if (!Array.isArray(array)) {
-    return []; // array が配列でない場合は空の配列を返す
-  }
-
-  // other が配列でない場合は空の配列として扱う
-  const validOther = Array.isArray(other) ? other : [];
-
-  const getIterateeValue = typeof iteratee === 'function'
-    ? iteratee
-    : (item) => (item && typeof item === 'object' ? item[iteratee] : item);
-
-  const otherMapped = new Set(validOther.map(getIterateeValue));
-
-  return array.filter(item => !otherMapped.has(getIterateeValue(item)));
-}
-
-module.exports = {
-  isEqualArray,
-  isEqualArrayDeep,
-  isEqual,
-  isSubset,
-  differenceBy
+export const isSubset = (subset, superset) => {
+  return subset.every(val => superset.includes(val));
 };

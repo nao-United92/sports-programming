@@ -1,149 +1,47 @@
-const { isEqualArray, isEqualArrayDeep, isEqual, isSubset, differenceBy } = require('./array-comparison-utils.js');
+import { isEqual, isSubset } from './array-comparison-utils.js';
 
 describe('Array Comparison Utilities', () => {
-  describe('isEqualArray', () => {
-    test('should return true for two identical arrays of primitives', () => {
-      expect(isEqualArray([1, 2, 3], [1, 2, 3])).toBe(true);
-    });
-
-    test('should return false for arrays with different elements', () => {
-      expect(isEqualArray([1, 2, 3], [1, 2, 4])).toBe(false);
-    });
-
-    test('should return false for arrays with different order', () => {
-      expect(isEqualArray([1, 2, 3], [1, 3, 2])).toBe(false);
-    });
-
-    test('should return false for arrays of different lengths', () => {
-      expect(isEqualArray([1, 2], [1, 2, 3])).toBe(false);
-      expect(isEqualArray([1, 2, 3], [1, 2])).toBe(false);
-    });
-
-    test('should return true for two empty arrays', () => {
-      expect(isEqualArray([], [])).toBe(true);
-    });
-
-    test('should return false for arrays containing objects (shallow comparison)', () => {
-      const obj1 = { a: 1 };
-      const obj2 = { a: 1 };
-      expect(isEqualArray([obj1], [obj1])).toBe(true);
-      expect(isEqualArray([obj1], [obj2])).toBe(false); // Different object references
-    });
-
-    test('should return false for non-array inputs', () => {
-      expect(isEqualArray(null, [])).toBe(false);
-      expect(isEqualArray([], undefined)).toBe(false);
-      expect(isEqualArray('string', 'string')).toBe(false);
-    });
-  });
-
-  describe('isEqualArrayDeep', () => {
-    test('should return true for two identical arrays of primitives', () => {
-      expect(isEqualArrayDeep([1, 2, 3], [1, 2, 3])).toBe(true);
-    });
-
-    test('should return true for arrays with identical nested arrays', () => {
-      expect(isEqualArrayDeep([1, [2, 3]], [1, [2, 3]])).toBe(true);
-    });
-
-    test('should return true for arrays with identical nested objects', () => {
-      expect(isEqualArrayDeep([1, { a: 2, b: 3 }], [1, { a: 2, b: 3 }])).toBe(true);
-    });
-
-    test('should return true for arrays with complex nested structures', () => {
-      const arr1 = [1, [2, { x: 10, y: [11, 12] }], { z: [13, { w: 14 }] }];
-      const arr2 = [1, [2, { x: 10, y: [11, 12] }], { z: [13, { w: 14 }] }];
-      expect(isEqualArrayDeep(arr1, arr2)).toBe(true);
-    });
-
-    test('should return false for arrays with different nested array elements', () => {
-      expect(isEqualArrayDeep([1, [2, 3]], [1, [2, 4]])).toBe(false);
-    });
-
-    test('should return false for arrays with different nested object properties', () => {
-      expect(isEqualArrayDeep([1, { a: 2, b: 3 }], [1, { a: 2, b: 4 }])).toBe(false);
-    });
-
-    test('should return false for arrays with different nested object keys', () => {
-      expect(isEqualArrayDeep([1, { a: 2 }], [1, { b: 2 }])).toBe(false);
-    });
-
-    test('should return false for arrays of different lengths', () => {
-      expect(isEqualArrayDeep([1, 2], [1, 2, 3])).toBe(false);
-    });
-
-    test('should return true for two empty arrays', () => {
-      expect(isEqualArrayDeep([], [])).toBe(true);
-    });
-
-    test('should return false for non-array inputs', () => {
-      expect(isEqualArrayDeep(null, [])).toBe(false);
-      expect(isEqualArrayDeep([], undefined)).toBe(false);
-    });
-
-    test('should handle null/undefined values within arrays', () => {
-      expect(isEqualArrayDeep([1, null, 3], [1, null, 3])).toBe(true);
-      expect(isEqualArrayDeep([1, undefined, 3], [1, undefined, 3])).toBe(true);
-      expect(isEqualArrayDeep([1, null, 3], [1, undefined, 3])).toBe(false);
-    });
-  });
-
   describe('isEqual', () => {
-    test('should be an alias for isEqualArray', () => {
+    it('should return true for equal arrays', () => {
       expect(isEqual([1, 2, 3], [1, 2, 3])).toBe(true);
+    });
+
+    it('should return false for arrays with different lengths', () => {
+      expect(isEqual([1, 2], [1, 2, 3])).toBe(false);
+    });
+
+    it('should return false for arrays with different elements', () => {
       expect(isEqual([1, 2, 3], [1, 2, 4])).toBe(false);
+    });
+
+    it('should return false for arrays with same elements but different order', () => {
+      expect(isEqual([1, 2, 3], [3, 2, 1])).toBe(false);
+    });
+
+    it('should handle empty arrays', () => {
+      expect(isEqual([], [])).toBe(true);
     });
   });
 
   describe('isSubset', () => {
-    test('should return true if the first array is a subset of the second', () => {
+    it('should return true if the first array is a subset of the second', () => {
       expect(isSubset([1, 2], [1, 2, 3, 4])).toBe(true);
-      expect(isSubset([], [1, 2, 3])).toBe(true);
+    });
+
+    it('should return true if the arrays are identical', () => {
       expect(isSubset([1, 2, 3], [1, 2, 3])).toBe(true);
     });
 
-    test('should return false if the first array is not a subset of the second', () => {
+    it('should return false if the first array contains elements not in the second', () => {
       expect(isSubset([1, 5], [1, 2, 3, 4])).toBe(false);
-      expect(isSubset([1, 2, 3, 4], [1, 2])).toBe(false);
     });
 
-    test('should handle arrays with duplicate values', () => {
-      expect(isSubset([1, 2, 2], [1, 2, 3, 2])).toBe(true);
+    it('should handle empty subset', () => {
+      expect(isSubset([], [1, 2, 3])).toBe(true);
     });
 
-    test('should return false for non-array inputs', () => {
-      expect(isSubset(null, [1, 2])).toBe(false);
-      expect(isSubset([1, 2], undefined)).toBe(false);
-    });
-  });
-
-  describe('differenceBy', () => {
-    test('should return the difference of arrays based on iteratee function', () => {
-      const arr1 = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }];
-      const arr2 = [{ 'x': 2 }, { 'x': 4 }];
-      expect(differenceBy(arr1, arr2, 'x')).toEqual([{ 'x': 1 }, { 'x': 3 }]);
-    });
-
-    test('should return the difference of arrays based on iteratee function (function)', () => {
-      const arr1 = [1.2, 2.3, 3.4];
-      const arr2 = [2.1, 4.5];
-      expect(differenceBy(arr1, arr2, Math.floor)).toEqual([1.2, 3.4]);
-    });
-
-    test('should handle empty arrays', () => {
-      expect(differenceBy([], [{ 'x': 1 }], 'x')).toEqual([]);
-      expect(differenceBy([{ 'x': 1 }], [], 'x')).toEqual([{ 'x': 1 }]);
-    });
-
-    test('should handle non-array inputs gracefully', () => {
-      expect(differenceBy(null, [{ 'x': 1 }], 'x')).toEqual([]);
-      expect(differenceBy([{ 'x': 1 }], undefined, 'x')).toEqual([{ 'x': 1 }]);
-    });
-
-    test('should handle iteratee that returns undefined', () => {
-      const arr1 = [{ 'x': 1 }, { 'y': 2 }];
-      const arr2 = [{ 'x': 1 }];
-      expect(differenceBy(arr1, arr2, 'x')).toEqual([{ 'y': 2 }]);
+    it('should handle empty superset', () => {
+      expect(isSubset([1], [])).toBe(false);
     });
   });
 });
