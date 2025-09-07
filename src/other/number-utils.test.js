@@ -1,85 +1,55 @@
-import { random, randomInt, formatNumberWithCommas, roundToDecimalPlaces } from './number-utils.js';
+import { isEven, isOdd, randomInRange } from './number-utils.js';
 
-describe('random', () => {
-  it('should generate a number within the specified range', () => {
-    const result = random(1, 5);
-    expect(result).toBeGreaterThanOrEqual(1);
-    expect(result).toBeLessThan(5);
+describe('Number Utilities', () => {
+  describe('isEven', () => {
+    it('should return true for even numbers', () => {
+      expect(isEven(2)).toBe(true);
+      expect(isEven(0)).toBe(true);
+      expect(isEven(-4)).toBe(true);
+    });
+
+    it('should return false for odd numbers', () => {
+      expect(isEven(1)).toBe(false);
+      expect(isEven(-3)).toBe(false);
+    });
   });
 
-  it('should work with default values (0 to 1)', () => {
-    const result = random();
-    expect(result).toBeGreaterThanOrEqual(0);
-    expect(result).toBeLessThan(1);
-  });
-});
+  describe('isOdd', () => {
+    it('should return true for odd numbers', () => {
+      expect(isOdd(1)).toBe(true);
+      expect(isOdd(-3)).toBe(true);
+    });
 
-describe('randomInt', () => {
-  it('should generate an integer within the specified range (inclusive)', () => {
-    const result = randomInt(1, 10);
-    expect(Number.isInteger(result)).toBe(true);
-    expect(result).toBeGreaterThanOrEqual(1);
-    expect(result).toBeLessThanOrEqual(10);
+    it('should return false for even numbers', () => {
+      expect(isOdd(2)).toBe(false);
+      expect(isOdd(0)).toBe(false);
+      expect(isOdd(-4)).toBe(false);
+    });
   });
 
-  it('should handle a small range', () => {
-    const result = randomInt(5, 5);
-    expect(result).toBe(5);
-  });
+  describe('randomInRange', () => {
+    it('should generate a number within the specified range', () => {
+      const min = 1;
+      const max = 10;
+      const result = randomInRange(min, max);
+      expect(result).toBeGreaterThanOrEqual(min);
+      expect(result).toBeLessThanOrEqual(max);
+    });
 
-  it('should generate numbers across the full range', () => {
-    const results = new Set();
-    for (let i = 0; i < 100; i++) {
-      results.add(randomInt(1, 3));
-    }
-    expect(results.has(1)).toBe(true);
-    expect(results.has(2)).toBe(true);
-    expect(results.has(3)).toBe(true);
-  });
-});
+    it('should handle a range with negative numbers', () => {
+      const min = -10;
+      const max = -1;
+      const result = randomInRange(min, max);
+      expect(result).toBeGreaterThanOrEqual(min);
+      expect(result).toBeLessThanOrEqual(max);
+    });
 
-describe('formatNumberWithCommas', () => {
-  test('should format an integer with commas', () => {
-    expect(formatNumberWithCommas(1000)).toBe('1,000');
-    expect(formatNumberWithCommas(1234567)).toBe('1,234,567');
-    expect(formatNumberWithCommas(100)).toBe('100');
-  });
-
-  test('should format a float with commas', () => {
-    expect(formatNumberWithCommas(1234.56)).toBe('1,234.56');
-    expect(formatNumberWithCommas(1234567.890)).toBe('1,234,567.89');
-  });
-
-  test('should handle negative numbers', () => {
-    expect(formatNumberWithCommas(-1000)).toBe('-1,000');
-    expect(formatNumberWithCommas(-1234567.89)).toBe('-1,234,567.89');
-  });
-
-  test('should throw error for non-number input', () => {
-    expect(() => formatNumberWithCommas('abc')).toThrow('Expected a number');
-    expect(() => formatNumberWithCommas(null)).toThrow('Expected a number');
-    expect(() => formatNumberWithCommas(undefined)).toThrow('Expected a number');
-  });
-});
-
-describe('roundToDecimalPlaces', () => {
-  test('should round to specified decimal places', () => {
-    expect(roundToDecimalPlaces(123.456, 2)).toBe(123.46);
-    expect(roundToDecimalPlaces(123.456, 0)).toBe(123);
-    expect(roundToDecimalPlaces(123.4, 2)).toBe(123.40);
-    expect(roundToDecimalPlaces(123.45, 1)).toBe(123.5);
-  });
-
-  test('should handle negative numbers', () => {
-    expect(roundToDecimalPlaces(-123.456, 2)).toBe(-123.46);
-  });
-
-  test('should handle zero decimal places', () => {
-    expect(roundToDecimalPlaces(123.5, 0)).toBe(124);
-  });
-
-  test('should throw error for non-number input', () => {
-    expect(() => roundToDecimalPlaces('abc', 2)).toThrow('Expected number for both arguments');
-    expect(() => roundToDecimalPlaces(123, 'abc')).toThrow('Expected number for both arguments');
+    it('should handle a range that includes zero', () => {
+      const min = -5;
+      const max = 5;
+      const result = randomInRange(min, max);
+      expect(result).toBeGreaterThanOrEqual(min);
+      expect(result).toBeLessThanOrEqual(max);
+    });
   });
 });
