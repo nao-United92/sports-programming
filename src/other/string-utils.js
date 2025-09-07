@@ -1,55 +1,33 @@
 /**
- * Pads the left side of a string with a specified character to a certain length.
- * @param {string} str The string to pad.
- * @param {number} length The desired length of the string.
- * @param {string} [char=' '] The character to pad with.
- * @returns {string} The padded string.
+ * reverses a string.
+ *
+ * @param {string} str The string to reverse.
+ * @returns {string} The reversed string.
  */
-export function padLeft(str, length, char = ' ') {
-  str = String(str);
-  const strLen = str.length;
-  if (strLen >= length) {
-    return str;
-  }
-  const padLen = length - strLen;
-  const padding = char.repeat(padLen);
-  return padding.slice(0, padLen) + str;
-}
+export const reverseString = (str) => str.split('').reverse().join('');
 
 /**
- * Pads the right side of a string with a specified character to a certain length.
- * @param {string} str The string to pad.
- * @param {number} length The desired length of the string.
- * @param {string} [char=' '] The character to pad with.
- * @returns {string} The padded string.
+ * Checks if a string is a palindrome.
+ *
+ * @param {string} str The string to check.
+ * @returns {boolean} True if the string is a palindrome, false otherwise.
  */
-export function padRight(str, length, char = ' ') {
-  str = String(str);
-  const strLen = str.length;
-  if (strLen >= length) {
-    return str;
-  }
-  const padLen = length - strLen;
-  const padding = char.repeat(padLen);
-  return str + padding.slice(0, padLen);
-}
+export const isPalindrome = (str) => {
+  const cleanedStr = str.toLowerCase().replace(/[\W_]/g, '');
+  const reversedStr = reverseString(cleanedStr);
+  return cleanedStr === reversedStr;
+};
 
 /**
- * Truncates a string if it's longer than the specified length.
- * The last characters of the truncated string are replaced with the omission string.
+ * Truncates a string to a specified length.
+ *
  * @param {string} str The string to truncate.
- * @param {number} length The maximum string length.
- * @param {string} [omission='...'] The string to indicate text is omitted.
+ * @param {number} num The length to truncate the string to.
  * @returns {string} The truncated string.
  */
-export function truncate(str, length, omission = '...') {
-  str = String(str);
-  if (str.length <= length) {
+export const truncate = (str, num) => {
+  if (str.length <= num) {
     return str;
   }
-  const end = length - omission.length;
-  if (end < 1) {
-    return omission.slice(0, length);
-  }
-  return str.slice(0, end) + omission;
-}
+  return str.slice(0, num) + '...';
+};
