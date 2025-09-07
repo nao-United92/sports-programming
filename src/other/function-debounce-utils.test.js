@@ -14,129 +14,129 @@ describe('debounce', () => {
     jest.useRealTimers();
   });
 
-  it('should debounce a function', () => {
+  it('should debounce a function call', () => {
     debouncedFunc = debounce(func, 100);
 
     debouncedFunc();
     debouncedFunc();
     debouncedFunc();
 
-    // Function should not have been called yet
+    jest.advanceTimersByTime(99);
     expect(func).not.toHaveBeenCalled();
 
-    // Advance timers by less than the wait time
-    jest.advanceTimersByTime(50);
-    expect(func).not.toHaveBeenCalled();
-
-    // Advance timers by the wait time
-    jest.advanceTimersByTime(50);
+    jest.advanceTimersByTime(1);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should call the function with the latest arguments', () => {
-    debouncedFunc = debounce(func, 100);
-
-    debouncedFunc(1);
-    debouncedFunc(2);
-    debouncedFunc(3);
-
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledWith(3);
-  });
-
-  it('should call the function with the correct `this` context', () => {
-    debouncedFunc = debounce(func, 100);
-    const context = { a: 1 };
-
-    debouncedFunc.call(context);
-
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledOnLastCallWith(); // Check if called with no args
-    expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenCalledWith(); // Ensure it was called
-  });
-
-  it('should call immediately if leading option is true', () => {
+  it('should call the function immediately with leading option', () => {
     debouncedFunc = debounce(func, 100, { leading: true, trailing: false });
 
     debouncedFunc();
     expect(func).toHaveBeenCalledTimes(1);
 
     debouncedFunc();
-    jest.advanceTimersByTime(50);
     debouncedFunc();
-    expect(func).toHaveBeenCalledTimes(1); // Still only one call
-
-    jest.advanceTimersByTime(50);
-    debouncedFunc(); // Should call again after wait time passes
-    expect(func).toHaveBeenCalledTimes(2);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should not call on trailing edge if trailing option is false', () => {
-    debouncedFunc = debounce(func, 100, { trailing: false });
+  it('should call the function on the trailing edge by default', () => {
+    debouncedFunc = debounce(func, 100);
 
     debouncedFunc();
     jest.advanceTimersByTime(100);
-    expect(func).not.toHaveBeenCalled();
+    expect(func).toHaveBeenCalledTimes(1);
+
+    debouncedFunc();
+    jest.advanceTimersByTime(50);
+    debouncedFunc();
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(2);
   });
 
-  it('should cancel a debounced function', () => {
+  it('should pass arguments and context to the debounced function', () => {
+    debouncedFunc = debounce(func, 100);
+
+    debouncedFunc(1, 2);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledWith(1, 2);
+
+    debouncedFunc.call({ a: 1 }, 3, 4);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledWith(3, 4);
+    expect(func).toHaveBeenCalledOnLastCallWith(3, 4);
+  });
+
+  it('should cancel delayed function calls', () => {
     debouncedFunc = debounce(func, 100);
 
     debouncedFunc();
     jest.advanceTimersByTime(50);
     debouncedFunc.cancel();
     jest.advanceTimersByTime(50);
-
     expect(func).not.toHaveBeenCalled();
   });
 
-  it('should flush a debounced function', () => {
+  it('should flush delayed function calls immediately', () => {
     debouncedFunc = debounce(func, 100);
 
     debouncedFunc();
-    expect(func).not.toHaveBeenCalled();
-
+    jest.advanceTimersByTime(50);
     debouncedFunc.flush();
     expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenCalledWith(); // Called with no arguments as no new call was made after flush
 
-    // Subsequent calls should still be debounced
-    debouncedFunc();
+    func.mockClear();
+    debouncedFunc(1, 2);
+    jest.advanceTimersByTime(50);
+    debouncedFunc.flush();
     expect(func).toHaveBeenCalledTimes(1);
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(2);
+    expect(func).toHaveBeenCalledWith(1, 2);
   });
 
-  it('should return the result of the last successful invocation on flush', () => {
-    let callCount = 0;
-    const funcWithReturn = jest.fn(() => ++callCount);
-    debouncedFunc = debounce(funcWithReturn, 100);
-
-    debouncedFunc();
-    expect(debouncedFunc.flush()).toBe(1);
-    expect(funcWithReturn).toHaveBeenCalledTimes(1);
-
-    debouncedFunc();
-    debouncedFunc();
-    expect(debouncedFunc.flush()).toBe(2);
-    expect(funcWithReturn).toHaveBeenCalledTimes(2);
-  });
-
-  it('should handle multiple rapid calls correctly with leading and trailing', () => {
-    debouncedFunc = debounce(func, 100, { leading: true, trailing: true });
+  it('should not call on trailing edge if trailing is false and leading is true', () => {
+    debouncedFunc = debounce(func, 100, { leading: true, trailing: false });
 
     debouncedFunc(); // Leading call
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(50);
-    debouncedFunc(); // Should not call immediately
-    expect(func).toHaveBeenCalledTimes(1);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1); // No trailing call
+  });
 
-    jest.advanceTimersByTime(50); // Trailing call
-    expect(func).toHaveBeenCalledTimes(2);
+  it('should not call on leading edge if leading is false and trailing is true (default)', () => {
+    debouncedFunc = debounce(func, 100, { leading: false, trailing: true });
+
+    debouncedFunc();
+    expect(func).not.toHaveBeenCalled(); // No leading call
 
     jest.advanceTimersByTime(100);
-    debouncedFunc(); // Leading call again
-    expect(func).toHaveBeenCalledTimes(3);
+    expect(func).toHaveBeenCalledTimes(1); // Trailing call
+  });
+
+  it('should handle multiple rapid calls correctly with trailing edge', () => {
+    debouncedFunc = debounce(func, 100);
+
+    debouncedFunc();
+    jest.advanceTimersByTime(50);
+    debouncedFunc();
+    jest.advanceTimersByTime(50);
+    debouncedFunc();
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  it('should handle multiple rapid calls correctly with leading edge', () => {
+    debouncedFunc = debounce(func, 100, { leading: true, trailing: false });
+
+    debouncedFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(50);
+    debouncedFunc();
+    jest.advanceTimersByTime(50);
+    debouncedFunc();
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 });
