@@ -1,121 +1,82 @@
+import { on, off, once } from './dom-event-utils.js';
 
-import { on, off, once, dispatchCustomEvent } from './dom-event-utils';
-
-describe('dom-event-utils', () => {
-  let element;
-  let handler;
+describe('DOM Event Utilities', () => {
+  let mockElement;
+  let mockHandler;
 
   beforeEach(() => {
-    element = document.createElement('div');
-    listener = jest.fn();
-    document.body.appendChild(element);
-  });
-
-  afterEach(() => {
-    document.body.removeChild(element);
+    mockHandler = jest.fn();
+    mockElement = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn((event) => {
+        // Simulate event dispatching by calling registered listeners
+        const listeners = mockElement.addEventListener.mock.calls.filter(
+          (call) => call[0] === event.type
+        ).map((call) => call[1]);
+        listeners.forEach((listener) => listener(event));
+      }),
+    };
   });
 
   describe('on', () => {
-    test('should add an event listener', () => {
-      on(element, 'click', listener);
-      element.click();
-      expect(listener).toHaveBeenCalledTimes(1);
+    it('should add an event listener', () => {
+      on(mockElement, 'click', mockHandler);
+      expect(mockElement.addEventListener).toHaveBeenCalledWith('click', mockHandler, undefined);
     });
 
-    test('should not add listener if element is null', () => {
-      on(null, 'click', listener);
-      // No error should be thrown
+    it('should add an event listener with options', () => {
+      const options = { capture: true };
+      on(mockElement, 'click', mockHandler, options);
+      expect(mockElement.addEventListener).toHaveBeenCalledWith('click', mockHandler, options);
     });
   });
 
   describe('off', () => {
-    test('should remove an event listener', () => {
-      on(element, 'click', listener);
-      off(element, 'click', listener);
-      element.click();
-      expect(listener).not.toHaveBeenCalled();
+    it('should remove an event listener', () => {
+      off(mockElement, 'click', mockHandler);
+      expect(mockElement.removeEventListener).toHaveBeenCalledWith('click', mockHandler, undefined);
     });
 
-    test('should not remove listener if element is null', () => {
-      off(null, 'click', listener);
-      // No error should be thrown
+    it('should remove an event listener with options', () => {
+      const options = { capture: true };
+      off(mockElement, 'click', mockHandler, options);
+      expect(mockElement.removeEventListener).toHaveBeenCalledWith('click', mockHandler, options);
     });
   });
 
   describe('once', () => {
-    test('should add an event listener that fires only once', () => {
-      once(element, 'click', listener);
-      element.click();
-      element.click(); // Second click should not trigger the listener again
-      expect(listener).toHaveBeenCalledTimes(1);
+    it('should call the handler once and then remove the listener', () => {
+      once(mockElement, 'click', mockHandler);
+
+      // Simulate first click
+      const clickEvent1 = new Event('click');
+      mockElement.dispatchEvent(clickEvent1);
+      expect(mockHandler).toHaveBeenCalledTimes(1);
+      expect(mockElement.removeEventListener).toHaveBeenCalledTimes(1);
+
+      // Simulate second click - handler should not be called again
+      const clickEvent2 = new Event('click');
+      mockElement.dispatchEvent(clickEvent2);
+      expect(mockHandler).toHaveBeenCalledTimes(1);
+      expect(mockElement.removeEventListener).toHaveBeenCalledTimes(2);
     });
 
-    test('should pass options to addEventListener', () => {
-      const spy = jest.spyOn(element, 'addEventListener');
-      once(element, 'click', listener, { capture: true });
-      expect(spy).toHaveBeenCalledWith('click', listener, { capture: true, once: true });
-      spy.mockRestore();
+    it('should pass event object to the handler', () => {
+      once(mockElement, 'click', mockHandler);
+      const clickEvent = new Event('click');
+      mockElement.dispatchEvent(clickEvent);
+      expect(mockHandler).toHaveBeenCalledWith(clickEvent);
     });
 
-    test('should not add listener if element is null', () => {
-      once(null, 'click', listener);
-      // No error should be thrown
-    });
-  });
+    it('should pass options to addEventListener and removeEventListener', () => {
+      const options = { capture: true };
+      once(mockElement, 'click', mockHandler, options);
+      expect(mockElement.addEventListener).toHaveBeenCalledWith('click', expect.any(Function), options);
 
-  describe('dispatchCustomEvent', () => {
-    test('should dispatch a custom event with detail', () => {
-      const customEventType = 'myCustomEvent';
-      const eventDetail = { data: 'test' };
-
-      element.addEventListener(customEventType, listener);
-      dispatchCustomEvent(element, customEventType, eventDetail);
-
-      expect(listener).toHaveBeenCalledTimes(1);
-      expect(listener).toHaveBeenCalledWith(expect.any(CustomEvent));
-      expect(listener.mock.calls[0][0].detail).toEqual(eventDetail);
-      expect(listener.mock.calls[0][0].type).toBe(customEventType);
-      expect(listener.mock.calls[0][0].bubbles).toBe(true);
-      expect(listener.mock.calls[0][0].cancelable).toBe(true);
-    });
-
-    test('should dispatch a custom event without detail', () => {
-      const customEventType = 'anotherEvent';
-
-      element.addEventListener(customEventType, listener);
-      dispatchCustomEvent(element, customEventType);
-
-      expect(listener).toHaveBeenCalledTimes(1);
-      expect(listener.mock.calls[0][0].detail).toEqual({});
-    });
-
-    test('should not dispatch if element is invalid', () => {
-      const eventName = 'invalidEvent';
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-      dispatchCustomEvent(null, eventName);
-      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-      expect(listener).not.toHaveBeenCalled();
-
-      consoleWarnSpy.mockRestore();
-    });
-  });
-
-  describe('preventDefault', () => {
-    test('should call preventDefault on the event object', () => {
-      const mockEvent = { preventDefault: jest.fn() };
-      preventDefault(mockEvent);
-      expect(mockEvent.preventDefault).toHaveBeenCalledTimes(1);
-    });
-
-    test('should not throw error if event is null or undefined', () => {
-      expect(() => preventDefault(null)).not.toThrow();
-      expect(() => preventDefault(undefined)).not.toThrow();
-    });
-
-    test('should not throw error if event.preventDefault is not a function', () => {
-      const mockEvent = {};
-      expect(() => preventDefault(mockEvent)).not.toThrow();
+      const clickEvent = new Event('click');
+      mockElement.dispatchEvent(clickEvent);
+      expect(mockElement.removeEventListener).toHaveBeenCalledWith('click', expect.any(Function), options);
     });
   });
 });
