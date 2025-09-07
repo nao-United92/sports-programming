@@ -1,4 +1,4 @@
-import { mapKeys, mapValues, omit } from './object-utils.js';
+import { mapKeys, mapValues, omit, pick } from './object-utils.js';
 
 describe('Object Utilities', () => {
   describe('mapKeys', () => {
@@ -67,6 +67,40 @@ describe('Object Utilities', () => {
     it('should handle an empty object', () => {
       const obj = {};
       expect(omit(obj, ['a'])).toEqual({});
+    });
+  });
+
+  describe('pick', () => {
+    it('should pick specified keys from an object', () => {
+      const obj = { a: 1, b: 2, c: 3 };
+      expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+    });
+
+    it('should return a new object', () => {
+      const obj = { a: 1, b: 2 };
+      const result = pick(obj, ['a']);
+      expect(result).not.toBe(obj);
+    });
+
+    it('should not modify the original object', () => {
+      const obj = { a: 1, b: 2 };
+      pick(obj, ['a']);
+      expect(obj).toEqual({ a: 1, b: 2 });
+    });
+
+    it('should handle an empty keys array', () => {
+      const obj = { a: 1, b: 2 };
+      expect(pick(obj, [])).toEqual({});
+    });
+
+    it('should handle an empty object', () => {
+      const obj = {};
+      expect(pick(obj, ['a'])).toEqual({});
+    });
+
+    it('should ignore keys that do not exist in the object', () => {
+      const obj = { a: 1, b: 2 };
+      expect(pick(obj, ['a', 'c'])).toEqual({ a: 1 });
     });
   });
 });

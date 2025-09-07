@@ -35,3 +35,19 @@ export const omit = (obj, keys) => {
   });
   return newObj;
 };
+
+/**
+ * Creates an object composed of the picked object properties.
+ * @param {object} obj The source object.
+ * @param {string[]} keys The property paths to pick.
+ * @returns {object} Returns the new object.
+ */
+export const pick = (obj, keys) => {
+  const newObj = {};
+  keys.forEach(key => {
+    if (key in obj) {
+      newObj[key] = obj[key];
+    }
+  });
+  return newObj;
+};
