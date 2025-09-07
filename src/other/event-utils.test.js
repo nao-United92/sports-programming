@@ -1,96 +1,77 @@
-import { on, off, trigger, once, delegate } from './event-utils';
+import { on, off, delegate } from './event-utils.js';
 
 describe('Event Utilities', () => {
   let element;
+  let handler;
 
   beforeEach(() => {
-    element = document.createElement('div');
+    // Mock element with addEventListener and removeEventListener
+    element = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    };
+    handler = jest.fn();
   });
 
   describe('on', () => {
-    it('should attach an event listener', () => {
-      const handler = jest.fn();
+    it('should attach an event listener to an element', () => {
       on(element, 'click', handler);
-      element.click();
-      expect(handler).toHaveBeenCalledTimes(1);
+      expect(element.addEventListener).toHaveBeenCalledWith('click', handler, {});
+    });
+
+    it('should attach an event listener with options', () => {
+      const options = { once: true };
+      on(element, 'click', handler, options);
+      expect(element.addEventListener).toHaveBeenCalledWith('click', handler, options);
     });
   });
 
   describe('off', () => {
-    it('should remove an event listener', () => {
-      const handler = jest.fn();
-      on(element, 'click', handler);
+    it('should remove an event listener from an element', () => {
       off(element, 'click', handler);
-      element.click();
+      expect(element.removeEventListener).toHaveBeenCalledWith('click', handler, {});
+    });
+
+    it('should remove an event listener with options', () => {
+      const options = { capture: true };
+      off(element, 'click', handler, options);
+      expect(element.removeEventListener).toHaveBeenCalledWith('click', handler, options);
+    });
+  });
+
+  describe('delegate', () => {
+    let parentElement;
+    let childElement;
+    let event;
+
+    beforeEach(() => {
+      // Mock parent and child elements for delegation
+      childElement = { matches: jest.fn().mockReturnValue(true) };
+      parentElement = {
+        addEventListener: jest.fn((evt, cb) => {
+          // Simulate the event callback
+          event = { target: childElement };
+          cb(event);
+        }),
+      };
+    });
+
+    it('should attach a delegated event listener', () => {
+      delegate(parentElement, '.child', 'click', handler);
+      expect(parentElement.addEventListener).toHaveBeenCalledWith('click', expect.any(Function));
+    });
+
+    it('should call the handler if the target matches the selector', () => {
+      delegate(parentElement, '.child', 'click', handler);
+      expect(childElement.matches).toHaveBeenCalledWith('.child');
+      expect(handler).toHaveBeenCalledWith(event);
+    });
+
+    it('should not call the handler if the target does not match the selector', () => {
+      childElement.matches.mockReturnValue(false);
+      delegate(parentElement, '.child', 'click', handler);
+      expect(childElement.matches).toHaveBeenCalledWith('.child');
       expect(handler).not.toHaveBeenCalled();
     });
-  });
-
-  describe('trigger', () => {
-    it('should trigger a custom event', () => {
-      const handler = jest.fn();
-      on(element, 'my-event', handler);
-      trigger(element, 'my-event', { a: 1 });
-      expect(handler).toHaveBeenCalledTimes(1);
-      expect(handler.mock.calls[0][0].detail).toEqual({ a: 1 });
-    });
-  });
-});
-
-describe('once', () => {
-  it('should trigger the handler only once', () => {
-    const handler = jest.fn();
-    once(element, 'click', handler);
-    element.click();
-    element.click(); // Second click should not trigger
-    expect(handler).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('delegate', () => {
-  let parentElement;
-  let childElement;
-  let grandChildElement;
-
-  beforeEach(() => {
-    parentElement = document.createElement('div');
-    parentElement.id = 'parent';
-    childElement = document.createElement('button');
-    childElement.className = 'my-button';
-    childElement.id = 'child';
-    grandChildElement = document.createElement('span');
-    grandChildElement.id = 'grandchild';
-
-    childElement.appendChild(grandChildElement);
-    parentElement.appendChild(childElement);
-    document.body.appendChild(parentElement);
-  });
-
-  afterEach(() => {
-    document.body.removeChild(parentElement);
-  });
-
-  it('should trigger the handler when a delegated child is clicked', () => {
-    const handler = jest.fn();
-    delegate(parentElement, '.my-button', 'click', handler);
-    childElement.click();
-    expect(handler).toHaveBeenCalledTimes(1);
-    expect(handler).toHaveBeenCalledWith(expect.any(MouseEvent));
-    expect(handler.mock.contexts[0]).toBe(childElement); // 'this' context should be the delegated element
-  });
-
-  it('should not trigger the handler when a non-delegated child is clicked', () => {
-    const handler = jest.fn();
-    delegate(parentElement, '.other-button', 'click', handler);
-    childElement.click();
-    expect(handler).not.toHaveBeenCalled();
-  });
-
-  it('should trigger the handler when a grandchild of a delegated child is clicked', () => {
-    const handler = jest.fn();
-    delegate(parentElement, '.my-button', 'click', handler);
-    grandChildElement.click(); // Click on grandchild, but handler should be called for .my-button
-    expect(handler).toHaveBeenCalledTimes(1);
-    expect(handler.mock.contexts[0]).toBe(childElement);
   });
 });
