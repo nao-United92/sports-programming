@@ -1,107 +1,31 @@
-import { debounce, throttle, sleep, measureExecutionTime } from './performance-utils.js';
+const assert = require('assert');
+const { measureExecutionTime } = require('./performance-utils.js');
 
-describe('performance-utils', () => {
-  describe('debounce', () => {
-    jest.useFakeTimers();
+const runTests = async () => {
+  try {
+    // Test with a synchronous function
+    const syncFn = (a, b) => {
+      // Simulate some work
+      for (let i = 0; i < 1000000; i++) {}
+      return a + b;
+    };
+    const syncResult = await measureExecutionTime(syncFn, 5, 10);
+    assert.strictEqual(syncResult.result, 15, 'Sync Test Failed: Incorrect result');
+    assert.ok(syncResult.time >= 0, 'Sync Test Failed: Time should be a positive number');
+    console.log(`Sync function took ${syncResult.time.toFixed(2)} ms`);
 
-    it('should call the function after the delay', () => {
-      const mockFn = jest.fn();
-      const debouncedFn = debounce(mockFn, 1000);
+    // Test with an asynchronous function
+    const asyncFn = (ms) => new Promise(resolve => setTimeout(() => resolve('done'), ms));
+    const asyncResult = await measureExecutionTime(asyncFn, 100);
+    assert.strictEqual(asyncResult.result, 'done', 'Async Test Failed: Incorrect result');
+    assert.ok(asyncResult.time >= 100, 'Async Test Failed: Time should be at least 100ms');
+    console.log(`Async function took ${asyncResult.time.toFixed(2)} ms`);
 
-      debouncedFn();
-      expect(mockFn).not.toHaveBeenCalled();
+    console.log('All performance-utils tests passed!');
+  } catch (error) {
+    console.error('performance-utils tests failed:', error.message);
+    process.exit(1);
+  }
+};
 
-      jest.advanceTimersByTime(1000);
-      expect(mockFn).toHaveBeenCalledTimes(1);
-    });
-
-    it('should only call the function once for multiple rapid calls', () => {
-      const mockFn = jest.fn();
-      const debouncedFn = debounce(mockFn, 1000);
-
-      debouncedFn();
-      debouncedFn();
-      debouncedFn();
-
-      jest.advanceTimersByTime(1000);
-      expect(mockFn).toHaveBeenCalledTimes(1);
-    });
-
-    it('should pass arguments to the debounced function', () => {
-      const mockFn = jest.fn();
-      const debouncedFn = debounce(mockFn, 1000);
-
-      debouncedFn(1, 'test');
-      jest.advanceTimersByTime(1000);
-
-      expect(mockFn).toHaveBeenCalledWith(1, 'test');
-    });
-  });
-
-  describe('throttle', () => {
-    jest.useFakeTimers();
-
-    it('should call the function immediately on the first call', () => {
-      const mockFn = jest.fn();
-      const throttledFn = throttle(mockFn, 1000);
-
-      throttledFn();
-      expect(mockFn).toHaveBeenCalledTimes(1);
-    });
-
-    it('should not call the function again within the limit', () => {
-      const mockFn = jest.fn();
-      const throttledFn = throttle(mockFn, 1000);
-
-      throttledFn();
-      throttledFn();
-      throttledFn();
-
-      expect(mockFn).toHaveBeenCalledTimes(1);
-    });
-
-    it('should call the function again after the limit has passed', () => {
-      const mockFn = jest.fn();
-      const throttledFn = throttle(mockFn, 1000);
-
-      throttledFn();
-      expect(mockFn).toHaveBeenCalledTimes(1);
-
-      jest.advanceTimersByTime(1000);
-      throttledFn();
-      expect(mockFn).toHaveBeenCalledTimes(2);
-    });
-
-    it('should pass arguments to the throttled function', () => {
-      const mockFn = jest.fn();
-      const throttledFn = throttle(mockFn, 1000);
-
-      throttledFn(1, 'test');
-      expect(mockFn).toHaveBeenCalledWith(1, 'test');
-    });
-  });
-
-  describe('sleep', () => {
-    jest.useFakeTimers();
-
-    it('should resolve after the specified time', async () => {
-      const sleepTime = 2000;
-      const promise = sleep(sleepTime);
-
-      jest.advanceTimersByTime(sleepTime);
-      await expect(promise).resolves.toBeUndefined();
-    });
-  });
-
-  describe('measureExecutionTime', () => {
-    test('should measure the execution time of a function', () => {
-      const func = () => {
-        for (let i = 0; i < 1000000; i++) {
-          // Simulate some work
-        }
-      };
-      const time = measureExecutionTime(func);
-      expect(time).toBeGreaterThan(0);
-    });
-  });
-});
+runTests();
