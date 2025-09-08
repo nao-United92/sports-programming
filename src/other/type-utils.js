@@ -1,19 +1,38 @@
-export const isObject = (value) => value !== null && typeof value === 'object';
+const is = (type, val) => ![, null].includes(val) && val.constructor === type;
 
-export const isFunction = (value) => typeof value === 'function';
+const isObject = (val) => val !== null && typeof val === 'object' && !Array.isArray(val);
 
-export const isString = (value) => typeof value === 'string';
+const isArray = (val) => Array.isArray(val);
 
-export const isNumber = (value) => typeof value === 'number';
+const isFunction = (val) => typeof val === 'function';
 
-export const isBoolean = (value) => typeof value === 'boolean';
+const isString = (val) => typeof val === 'string';
 
-export const isUndefined = (value) => typeof value === 'undefined';
+const isNumber = (val) => typeof val === 'number' && !isNaN(val);
 
-export const isNull = (value) => value === null;
+const isBoolean = (val) => typeof val === 'boolean';
 
-export const isArray = (value) => Array.isArray(value);
+const isDate = (val) => val instanceof Date;
 
-export const isDate = (value) => value instanceof Date;
+const isRegExp = (val) => val instanceof RegExp;
 
-export const isRegExp = (value) => value instanceof RegExp;
+const isSymbol = (val) => typeof val === 'symbol';
+
+const isNull = (val) => val === null;
+
+const isUndefined = (val) => typeof val === 'undefined';
+
+module.exports = {
+  is,
+  isObject,
+  isArray,
+  isFunction,
+  isString,
+  isNumber,
+  isBoolean,
+  isDate,
+  isRegExp,
+  isSymbol,
+  isNull,
+  isUndefined,
+};
