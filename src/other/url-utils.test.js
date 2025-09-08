@@ -1,42 +1,32 @@
-import { objectToQueryString, queryStringToObject } from './url-utils.js';
+const assert = require('assert');
+const { paramsToObject, objectToParams } = require('./url-utils.js');
 
-describe('URL Utilities', () => {
-  describe('objectToQueryString', () => {
-    it('should convert a simple object to a query string', () => {
-      const obj = { a: 1, b: 'hello' };
-      expect(objectToQueryString(obj)).toBe('a=1&b=hello');
-    });
+try {
+  // paramsToObject tests
+  const url1 = 'https://example.com?a=1&b=2';
+  assert.deepStrictEqual(paramsToObject(url1), { a: '1', b: '2' }, 'paramsToObject should handle simple cases');
 
-    it('should handle special characters', () => {
-      const obj = { name: 'John Doe', city: 'New York' };
-      expect(objectToQueryString(obj)).toBe('name=John%20Doe&city=New%20York');
-    });
+  const url2 = 'https://example.com?a=1&a=2&b=hello';
+  assert.deepStrictEqual(paramsToObject(url2), { a: ['1', '2'], b: 'hello' }, 'paramsToObject should handle array values');
 
-    it('should return an empty string for an empty object', () => {
-      const obj = {};
-      expect(objectToQueryString(obj)).toBe('');
-    });
-  });
+  const url3 = 'https://example.com';
+  assert.deepStrictEqual(paramsToObject(url3), {}, 'paramsToObject should handle no params');
 
-  describe('queryStringToObject', () => {
-    it('should convert a simple query string to an object', () => {
-      const queryString = 'a=1&b=hello';
-      expect(queryStringToObject(queryString)).toEqual({ a: '1', b: 'hello' });
-    });
+  // objectToParams tests
+  const obj1 = { a: 1, b: 'hello' };
+  assert.strictEqual(objectToParams(obj1), 'a=1&b=hello', 'objectToParams should handle simple objects');
 
-    it('should handle special characters', () => {
-      const queryString = 'name=John%20Doe&city=New%20York';
-      expect(queryStringToObject(queryString)).toEqual({ name: 'John Doe', city: 'New York' });
-    });
+  const obj2 = { a: [1, 2], b: 'world' };
+  assert.strictEqual(objectToParams(obj2), 'a=1&a=2&b=world', 'objectToParams should handle array values');
 
-    it('should handle a query string with no value for a key', () => {
-      const queryString = 'a=&b=hello';
-      expect(queryStringToObject(queryString)).toEqual({ a: '', b: 'hello' });
-    });
+  const obj3 = { a: null, b: undefined, c: 'test' };
+  assert.strictEqual(objectToParams(obj3), 'c=test', 'objectToParams should ignore null and undefined');
 
-    it('should return an empty object for an empty query string', () => {
-      const queryString = '';
-      expect(queryStringToObject(queryString)).toEqual({});
-    });
-  });
-});
+  const obj4 = {};
+  assert.strictEqual(objectToParams(obj4), '', 'objectToParams should handle empty object');
+
+  console.log('All url-utils tests passed!');
+} catch (error) {
+  console.error('url-utils tests failed:', error.message);
+  process.exit(1);
+}

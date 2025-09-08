@@ -1,24 +1,44 @@
 /**
- * Converts an object to a URL query string.
- * @param {object} params The object to convert.
- * @returns {string} The URL query string.
+ * Converts a URL's query string into an object.
+ * Requires a full URL to be passed.
+ * @param {string} url The URL to parse.
+ * @returns {Object} An object representing the query parameters.
  */
-export const objectToQueryString = (params) => {
-  return Object.keys(params)
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-    .join('&');
-};
-
-/**
- * Converts a URL query string to an object.
- * @param {string} queryString The URL query string to convert.
- * @returns {object} The resulting object.
- */
-export const queryStringToObject = (queryString) => {
-  const params = new URLSearchParams(queryString);
+const paramsToObject = (url) => {
+  const params = new URL(url).searchParams;
   const obj = {};
   for (const [key, value] of params.entries()) {
-    obj[key] = value;
+    if (obj[key]) {
+      if (Array.isArray(obj[key])) {
+        obj[key].push(value);
+      } else {
+        obj[key] = [obj[key], value];
+      }
+    } else {
+      obj[key] = value;
+    }
   }
   return obj;
 };
+
+/**
+ * Converts an object to a URL query string.
+ * @param {Object} obj The object to convert.
+ * @returns {string} The URL query string.
+ */
+const objectToParams = (obj) => {
+  const params = new URLSearchParams();
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (Array.isArray(value)) {
+        value.forEach(v => params.append(key, v));
+      } else if (value !== undefined && value !== null) {
+        params.append(key, value);
+      }
+    }
+  }
+  return params.toString();
+};
+
+module.exports = { paramsToObject, objectToParams };
