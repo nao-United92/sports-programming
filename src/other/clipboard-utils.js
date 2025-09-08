@@ -1,140 +1,43 @@
-
 /**
- * Copies the given text to the clipboard.
- * Requires the user to have interacted with the page (e.g., a click event) for security reasons.
- * @param {string} text The text to copy to the clipboard.
- * @returns {Promise<void>} A Promise that resolves if the text was successfully copied, or rejects otherwise.
+ * Copies a string to the clipboard.
+ * Uses the modern Clipboard API if available, with a fallback to the legacy execCommand method.
+ * @param {string} str The string to copy.
+ * @returns {Promise<void>} A promise that resolves when the copy operation is complete, or rejects if it fails.
  */
-export async function copyToClipboard(text) {
-  if (!navigator.clipboard) {
-    // Fallback for older browsers or non-secure contexts
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed'; // Avoid scrolling to bottom
-    textarea.style.opacity = 0; // Hide element
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
+const copyToClipboard = (str) => {
+  if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(str);
+  }
+
+  return new Promise((resolve, reject) => {
+    const el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    const selected =
+      document.getSelection().rangeCount > 0
+        ? document.getSelection().getRangeAt(0)
+        : false;
     try {
-      document.execCommand('copy');
-      textarea.remove();
-      return Promise.resolve();
+        el.select();
+        const success = document.execCommand('copy');
+        if (success) {
+            resolve();
+        } else {
+            reject(new Error('Copy command was unsuccessful'));
+        }
     } catch (err) {
-      textarea.remove();
-      return Promise.reject(new Error('Failed to copy text to clipboard using execCommand.'));
+        reject(err);
+    } finally {
+        document.body.removeChild(el);
+        if (selected) {
+            document.getSelection().removeAllRanges();
+            document.getSelection().addRange(selected);
+        }
     }
-  }
-  try {
-    await navigator.clipboard.writeText(text);
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(new Error('Failed to copy text to clipboard using Clipboard API.'));
-  }
-}
+  });
+};
 
-/**
- * Reads text from the clipboard.
- * Requires user permission and a secure context (HTTPS).
- * @returns {Promise<string>} A Promise that resolves with the text from the clipboard.
- */
-export async function readTextFromClipboard() {
-  if (!navigator.clipboard || !navigator.clipboard.readText) {
-    return Promise.reject(new Error('Clipboard API readText not supported.'));
-  }
-  try {
-    const text = await navigator.clipboard.readText();
-    return Promise.resolve(text);
-  } catch (err) {
-    return Promise.reject(new Error('Failed to read text from clipboard.' + err.message));
-  }
-}
-
-/**
- * Writes text to the clipboard.
- * Requires user permission and a secure context (HTTPS).
- * @param {string} text The text to write to the clipboard.
- * @returns {Promise<void>} A Promise that resolves when the text is written.
- */
-export async function writeTextToClipboard(text) {
-  if (!navigator.clipboard || !navigator.clipboard.writeText) {
-    return Promise.reject(new Error('Clipboard API writeText not supported.'));
-  }
-  try {
-    await navigator.clipboard.writeText(text);
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(new Error('Failed to write text to clipboard.' + err.message));
-  }
-}
-
-/**
- * Copies the given text to the clipboard.
- * @param {string} text The text to copy to the clipboard.
- * @returns {Promise<void>} A Promise that resolves if the text was successfully copied, or rejects otherwise.
- */
-export async function copyTextToClipboard(text) {
-  if (!navigator.clipboard) {
-    // Fallback for older browsers or non-secure contexts
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed'; // Avoid scrolling to bottom
-    textarea.style.opacity = 0; // Hide element
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-    try {
-      document.execCommand('copy');
-      textarea.remove();
-      return Promise.resolve();
-    } catch (err) {
-      textarea.remove();
-      return Promise.reject(new Error('Failed to copy text to clipboard using execCommand.'));
-    }
-  }
-  try {
-    await navigator.clipboard.writeText(text);
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(new Error('Failed to copy text to clipboard using Clipboard API.'));
-  }
-}
-
-/**
- * Checks if the Clipboard API is supported.
- * @returns {boolean} True if the Clipboard API is supported, false otherwise.
- */
-export function isClipboardSupported() {
-  return !!navigator.clipboard;
-}
-
-/**
- * Copies text to the clipboard and provides user feedback.
- * @param {string} text The text to copy.
- * @param {function} onSuccess Callback function on success.
- * @param {function} onError Callback function on error.
- */
-export async function copyToClipboardWithFeedback(text, onSuccess, onError) {
-  try {
-    await copyToClipboard(text);
-    if (onSuccess) onSuccess();
-  } catch (error) {
-    if (onError) onError(error);
-  }
-}
-
-/**
- * Copies an image to the clipboard.
- * @param {Blob} imageBlob The image blob to copy.
- * @returns {Promise<void>} A promise that resolves if the image is copied successfully.
- */
-export async function copyImageToClipboard(imageBlob) {
-  if (!navigator.clipboard || !navigator.clipboard.write) {
-    return Promise.reject(new Error('Clipboard API write method not supported.'));
-  }
-  try {
-    const clipboardItem = new ClipboardItem({ [imageBlob.type]: imageBlob });
-    await navigator.clipboard.write([clipboardItem]);
-  } catch (error) {
-    return Promise.reject(new Error('Failed to copy image to clipboard: ' + error.message));
-  }
-}
+module.exports = { copyToClipboard };
