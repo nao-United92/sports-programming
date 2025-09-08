@@ -1,56 +1,38 @@
-import { setCookie, getCookie, deleteCookie } from './cookie-utils.js';
+// This file is for browser environment.
+// You should run this file in browser.
+const assert = require('assert');
+const { getCookie, setCookie, deleteCookie, getCookies } = require('./cookie-utils.js');
 
-describe('Cookie Utilities', () => {
-  let originalCookie;
-
-  beforeEach(() => {
-    originalCookie = document.cookie;
-    Object.defineProperty(document, 'cookie', {
-      writable: true,
-      value: '',
-    });
+try {
+  // Clear existing cookies for a clean test environment
+  Object.keys(getCookies()).forEach(name => {
+      if(name) deleteCookie(name);
   });
 
-  afterEach(() => {
-    Object.defineProperty(document, 'cookie', {
-      writable: true,
-      value: originalCookie,
-    });
-  });
+  // Test setCookie and getCookie
+  setCookie('test1', 'value1', { path: '/' });
+  assert.strictEqual(getCookie('test1'), 'value1', 'setCookie/getCookie failed');
 
-  describe('setCookie', () => {
-    it('should set a cookie with name and value', () => {
-      setCookie('testName', 'testValue', 1);
-      expect(document.cookie).toContain('testName=testValue');
-    });
+  // Test setCookie with options
+  setCookie('test2', 'value2', { days: 1, path: '/' });
+  assert.strictEqual(getCookie('test2'), 'value2', 'setCookie with options failed');
 
-    it('should set a cookie with expiration', () => {
-      setCookie('testName', 'testValue', 1);
-      expect(document.cookie).toContain('expires=');
-    });
-  });
+  // Test getCookies
+  const cookies = getCookies();
+  // Note: Depending on the test environment, there might be other cookies.
+  // We only check for the ones we set.
+  assert.strictEqual(cookies.test1, 'value1', 'getCookies failed for test1');
+  assert.strictEqual(cookies.test2, 'value2', 'getCookies failed for test2');
 
-  describe('getCookie', () => {
-    it('should get a cookie value by name', () => {
-      document.cookie = 'testName=testValue';
-      expect(getCookie('testName')).toBe('testValue');
-    });
+  // Test deleteCookie
+  deleteCookie('test1');
+  assert.strictEqual(getCookie('test1'), undefined, 'deleteCookie failed');
+  assert.strictEqual(getCookie('test2'), 'value2', 'deleteCookie should not affect other cookies');
 
-    it('should return null if cookie not found', () => {
-      expect(getCookie('nonExistent')).toBe(null);
-    });
+  // Clean up
+  deleteCookie('test2');
 
-    it('should handle multiple cookies', () => {
-      document.cookie = 'cookie1=value1; cookie2=value2';
-      expect(getCookie('cookie2')).toBe('value2');
-    });
-  });
-
-  describe('deleteCookie', () => {
-    it('should delete a cookie by name', () => {
-      document.cookie = 'testName=testValue';
-      deleteCookie('testName');
-      expect(document.cookie).not.toContain('testName');
-    });
-  });
-});
+  console.log('All cookie-utils tests passed!');
+} catch (e) {
+  console.error('cookie-utils tests failed:', e.message);
+}

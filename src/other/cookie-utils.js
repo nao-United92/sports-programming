@@ -1,39 +1,49 @@
 /**
+ * Parses the cookies and returns them as an object.
+ * @returns {Object} An object with all the cookies.
+ */
+const getCookies = () =>
+  document.cookie.split(';').reduce((cookies, cookie) => {
+    if (!cookie) return cookies;
+    const [name, value] = cookie.split('=').map(c => c.trim());
+    cookies[decodeURIComponent(name)] = decodeURIComponent(value);
+    return cookies;
+  }, {});
+
+/**
+ * Gets the value of a specific cookie.
+ * @param {string} name The name of the cookie.
+ * @returns {string|undefined} The value of the cookie or undefined if not found.
+ */
+const getCookie = (name) => getCookies()[name];
+
+/**
  * Sets a cookie.
  * @param {string} name The name of the cookie.
  * @param {string} value The value of the cookie.
- * @param {number} days The number of days until the cookie expires.
+ * @param {Object} [options] Options for the cookie.
+ * @param {number} [options.days] The number of days until the cookie expires.
+ * @param {string} [options.path] The path for the cookie.
  */
-export const setCookie = (name, value, days) => {
-  let expires = '';
-  if (days) {
+const setCookie = (name, value, options = {}) => {
+  let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+  if (options.days) {
     const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = '; expires=' + date.toUTCString();
+    date.setTime(date.getTime() + (options.days * 24 * 60 * 60 * 1000));
+    cookieString += `; expires=${date.toUTCString()}`;
   }
-  document.cookie = name + '=' + (value || '') + expires + '; path=/';
-};
-
-/**
- * Gets the value of a cookie.
- * @param {string} name The name of the cookie.
- * @returns {string|null} The value of the cookie, or null if not found.
- */
-export const getCookie = (name) => {
-  const nameEQ = name + '=';
-  const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  if (options.path) {
+    cookieString += `; path=${options.path}`;
   }
-  return null;
+  document.cookie = cookieString;
 };
 
 /**
  * Deletes a cookie.
  * @param {string} name The name of the cookie to delete.
  */
-export const deleteCookie = (name) => {
-  document.cookie = name + '=; Max-Age=-99999999;';
+const deleteCookie = (name) => {
+  document.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
 };
+
+module.exports = { getCookies, getCookie, setCookie, deleteCookie };
