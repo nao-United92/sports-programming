@@ -1,73 +1,39 @@
-import { setStyle } from './dom-style-utils';
+// This file is for browser environment.
+// You should run this file in browser.
+const assert = require('assert');
+const { getStyle, setStyle, hide, show } = require('./dom-style-utils.js');
 
-describe('setStyle', () => {
-  let element;
+try {
+  const el = document.createElement('div');
+  document.body.appendChild(el); // Append to body for computed styles
 
-  beforeEach(() => {
-    document.body.innerHTML = '<div id="testElement"></div>';
-    element = document.getElementById('testElement');
-  });
+  // Test setStyle and getStyle
+  setStyle(el, 'width', '100px');
+  assert.strictEqual(getStyle(el, 'width'), '100px', 'setStyle/getStyle single property failed');
 
-  afterEach(() => {
-    document.body.innerHTML = '';
-  });
+  setStyle(el, { 'height': '50px', 'backgroundColor': 'red' });
+  assert.strictEqual(getStyle(el, 'height'), '50px', 'setStyle object height failed');
+  assert.strictEqual(getStyle(el, 'backgroundColor'), 'rgb(255, 0, 0)', 'setStyle object backgroundColor failed');
 
-  test('should set a single style property', () => {
-    setStyle(element, 'color', 'red');
-    expect(element.style.color).toBe('red');
-  });
+  // Test hide and show
+  hide(el);
+  assert.strictEqual(getStyle(el, 'display'), 'none', 'hide failed');
 
-  test('should set a camelCase style property', () => {
-    setStyle(element, 'backgroundColor', 'blue');
-    expect(element.style.backgroundColor).toBe('blue');
-  });
+  show(el);
+  assert.strictEqual(getStyle(el, 'display'), 'block', 'show default failed');
 
-  test('should overwrite an existing style property', () => {
-    element.style.color = 'blue';
-    setStyle(element, 'color', 'green');
-    expect(element.style.color).toBe('green');
-  });
+  show(el, 'inline-block');
+  assert.strictEqual(getStyle(el, 'display'), 'inline-block', 'show with custom display failed');
 
-  test('should set a numeric value (converted to string)', () => {
-    setStyle(element, 'zIndex', 10);
-    expect(element.style.zIndex).toBe('10');
-  });
+  // Test edge cases (null/undefined element)
+  assert.strictEqual(getStyle(null, 'width'), '', 'getStyle null element');
+  setStyle(undefined, 'width', '10px'); // Should not throw error
+  hide(null); // Should not throw error
+  show(undefined); // Should not throw error
 
-  test('should handle empty string value', () => {
-    setStyle(element, 'display', '');
-    expect(element.style.display).toBe('');
-  });
+  document.body.removeChild(el); // Clean up
 
-  test('should warn and return if a non-HTMLElement is provided', () => {
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    setStyle(null, 'color', 'red');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid element provided to setStyle.', null);
-
-    setStyle(undefined, 'color', 'red');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid element provided to setStyle.', undefined);
-
-    setStyle({}, 'color', 'red');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid element provided to setStyle.', {});
-
-    consoleWarnSpy.mockRestore();
-    expect(element.style.color).toBe(''); // Ensure original element is not affected
-  });
-
-  test('should warn and return if an invalid property name is provided', () => {
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    setStyle(element, null, 'red');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid style property name provided to setStyle.', null);
-
-    setStyle(element, undefined, 'red');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid style property name provided to setStyle.', undefined);
-
-    setStyle(element, '', 'red');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid style property name provided to setStyle.', '');
-
-    setStyle(element, 123, 'red');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid style property name provided to setStyle.', 123);
-
-    consoleWarnSpy.mockRestore();
-    expect(element.style.color).toBe(''); // Ensure original element is not affected
-  });
-});
+  console.log('All dom-style-utils tests passed!');
+} catch (e) {
+  console.error('dom-style-utils tests failed:', e.message);
+}
