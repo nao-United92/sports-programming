@@ -1,25 +1,22 @@
-export const intersectionBy = (array, other, iteratee) => {
-  const iteratedOther = new Set(other.map(iteratee));
-  return array.filter(item => iteratedOther.has(iteratee(item)));
+const differenceBy = (a, b, fn) => {
+  const s = new Set(b.map(fn));
+  return a.filter(x => !s.has(fn(x)));
 };
 
-export const unionBy = (...arraysAndIteratee) => {
-  const iteratee = arraysAndIteratee.pop();
-  const allItems = [].concat(...arraysAndIteratee);
-  const seen = new Set();
-  const result = [];
-
-  for (const item of allItems) {
-    const computed = iteratee(item);
-    if (!seen.has(computed)) {
-      seen.add(computed);
-      result.push(item);
-    }
-  }
-  return result;
+const intersectionBy = (a, b, fn) => {
+  const s = new Set(b.map(fn));
+  return a.filter(x => s.has(fn(x)));
 };
 
-export const differenceBy = (array, other, iteratee) => {
-  const iteratedOther = new Set(other.map(iteratee));
-  return array.filter(item => !iteratedOther.has(iteratee(item)));
+const unionBy = (a, b, fn) => {
+  const s = new Set(a.map(fn));
+  return a.concat(b.filter(x => !s.has(fn(x))));
 };
+
+const symmetricDifferenceBy = (a, b, fn) => {
+  const sA = new Set(a.map(fn));
+  const sB = new Set(b.map(fn));
+  return [...a.filter(x => !sB.has(fn(x))), ...b.filter(x => !sA.has(fn(x)))];
+};
+
+module.exports = { differenceBy, intersectionBy, unionBy, symmetricDifferenceBy };
