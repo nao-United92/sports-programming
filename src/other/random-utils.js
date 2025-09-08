@@ -1,37 +1,24 @@
 /**
- * Produces a random number between the inclusive `lower` and `upper` bounds.
- * If only one argument is provided a number between `0` and the given number is returned.
- * If `floating` is `true`, or if `lower` or `upper` are floats, a floating-point number is returned.
- *
- * @param {number} [lower=0] The lower bound.
- * @param {number} [upper=1] The upper bound.
- * @param {boolean} [floating] Specify returning a floating-point number.
- * @returns {number} Returns the random number.
+ * Generates a random integer within a given range (inclusive).
+ * @param {number} min The minimum value.
+ * @param {number} max The maximum value.
+ * @returns {number} A random integer between min and max.
  */
-export const random = (lower = 0, upper = 1, floating) => {
-  // Handle random() case: returns a float between 0 and 1
-  if (arguments.length === 0) {
-    const randVal = Math.random();
-    console.log('Math.random() in random():', randVal); // Added comment to force re-evaluation
-    return randVal;
-  }
+const randomInteger = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-  // Handle random(upper) case
-  if (arguments.length === 1) {
-    upper = lower;
-    lower = 0;
+/**
+ * Generates a random string of a given length from a specified set of characters.
+ * @param {number} length The length of the string.
+ * @param {string} [chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'] The characters to use.
+ * @returns {string} The random string.
+ */
+const randomString = (length, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') => {
+  let result = '';
+  const charactersLength = chars.length;
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * charactersLength));
   }
-
-  if (lower > upper) {
-    [lower, upper] = [upper, lower];
-  }
-
-  // Determine if floating point is required
-  const isFloating = floating || (lower % 1 !== 0) || (upper % 1 !== 0);
-
-  if (isFloating) {
-    return lower + (Math.random() * (upper - lower));
-  } else {
-    return Math.floor(lower + (Math.random() * (upper - lower + 1)));
-  }
+  return result;
 };
+
+module.exports = { randomInteger, randomString };
