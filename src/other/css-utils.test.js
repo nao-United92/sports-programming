@@ -1,53 +1,26 @@
-import { getStyle, setStyle, hideElement, showElement } from './css-utils.js';
+// This file is for browser environment.
+// You should run this file in browser.
+const assert = require('assert');
+const { hasClass, addClass, removeClass, toggleClass } = require('./css-utils.js');
 
-describe('CSS Utilities', () => {
-  let element;
+try {
+  const el = document.createElement('div');
+  
+  // Test addClass and hasClass
+  addClass(el, 'test-class');
+  assert.ok(hasClass(el, 'test-class'), 'addClass/hasClass failed');
 
-  beforeEach(() => {
-    element = document.createElement('div');
-    document.body.appendChild(element);
-  });
+  // Test removeClass
+  removeClass(el, 'test-class');
+  assert.ok(!hasClass(el, 'test-class'), 'removeClass failed');
 
-  afterEach(() => {
-    document.body.removeChild(element);
-  });
+  // Test toggleClass
+  toggleClass(el, 'toggle-class');
+  assert.ok(hasClass(el, 'toggle-class'), 'toggleClass (add) failed');
+  toggleClass(el, 'toggle-class');
+  assert.ok(!hasClass(el, 'toggle-class'), 'toggleClass (remove) failed');
 
-  describe('getStyle', () => {
-    it('should return the computed style of an element', () => {
-      element.style.width = '100px';
-      expect(getStyle(element, 'width')).toBe('100px');
-    });
-
-    it('should return empty string for non-existent property', () => {
-      expect(getStyle(element, 'non-existent-property')).toBe('');
-    });
-  });
-
-  describe('setStyle', () => {
-    it('should set a CSS property of an element', () => {
-      setStyle(element, 'height', '50px');
-      expect(element.style.height).toBe('50px');
-    });
-  });
-
-  describe('hideElement', () => {
-    it('should hide an element', () => {
-      hideElement(element);
-      expect(element.style.display).toBe('none');
-    });
-  });
-
-  describe('showElement', () => {
-    it('should show an element with default display', () => {
-      element.style.display = 'none';
-      showElement(element);
-      expect(element.style.display).toBe('block');
-    });
-
-    it('should show an element with specified display', () => {
-      element.style.display = 'none';
-      showElement(element, 'flex');
-      expect(element.style.display).toBe('flex');
-    });
-  });
-});
+  console.log('All css-utils tests passed!');
+} catch (e) {
+  console.error('css-utils tests failed:', e.message);
+}

@@ -1,48 +1,22 @@
-/**
- * Gets the computed style of an element.
- * @param {HTMLElement} element The element to get the style from.
- * @param {string} property The CSS property to get.
- * @returns {string} The computed style value.
- */
-export function getStyle(element, property) {
-  if (!element || !property) {
-    return '';
-  }
-  return window.getComputedStyle(element).getPropertyValue(property);
-}
+const hasClass = (el, className) => el.classList.contains(className);
+const addClass = (el, className) => el.classList.add(className);
+const removeClass = (el, className) => el.classList.remove(className);
+
+const toggleClass = (el, className) => el.classList.toggle(className);
 
 /**
- * Sets a CSS property of an element.
- * @param {HTMLElement} element The element to set the style on.
- * @param {string} property The CSS property to set.
- * @param {string} value The value to set the property to.
+ * Checks if an element is in the viewport.
+ * @param {Element} el The element to check.
+ * @param {boolean} [partiallyVisible=false] If true, the function will return true if any part of the element is visible.
+ * @returns {boolean} True if the element is in the viewport, false otherwise.
  */
-export function setStyle(element, property, value) {
-  if (!element || !property) {
-    return;
-  }
-  element.style[property] = value;
-}
+const isElementInViewport = (el, partiallyVisible = false) => {
+  const { top, left, bottom, right } = el.getBoundingClientRect();
+  const { innerHeight, innerWidth } = window;
+  return partiallyVisible
+    ? ((top > 0 && top < innerHeight) || (bottom > 0 && bottom < innerHeight)) &&
+        ((left > 0 && left < innerWidth) || (right > 0 && right < innerWidth))
+    : top >= 0 && left >= 0 && bottom <= innerHeight && right <= innerWidth;
+};
 
-/**
- * Hides an element by setting its display to 'none'.
- * @param {HTMLElement} element The element to hide.
- */
-export function hideElement(element) {
-  if (!element) {
-    return;
-  }
-  element.style.display = 'none';
-}
-
-/**
- * Shows an element by setting its display to its default value (or a specified value).
- * @param {HTMLElement} element The element to show.
- * @param {string} [display='block'] The display value to set (e.g., 'block', 'flex', 'grid').
- */
-export function showElement(element, display = 'block') {
-  if (!element) {
-    return;
-  }
-  element.style.display = display;
-}
+module.exports = { hasClass, addClass, removeClass, toggleClass, isElementInViewport };
