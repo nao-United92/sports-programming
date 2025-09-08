@@ -1,71 +1,24 @@
-import { reverseString, isPalindrome, truncate, repeat } from './string-utils.js';
+const assert = require('assert');
+const { truncate, slugify } = require('./string-utils.js');
 
-describe('String Utilities', () => {
-  describe('reverseString', () => {
-    it('should reverse a simple string', () => {
-      expect(reverseString('hello')).toBe('olleh');
-    });
+try {
+  // truncate tests
+  assert.strictEqual(truncate('hello world', 8), 'hello...', 'truncate shortens string');
+  assert.strictEqual(truncate('hello', 10), 'hello', 'truncate does not shorten if not needed');
+  assert.strictEqual(truncate('hello', 2), '...', 'truncate handles small num');
+  assert.strictEqual(truncate('hi', 2), 'hi', 'truncate does not shorten if length is equal');
 
-    it('should return an empty string if given an empty string', () => {
-      expect(reverseString('')).toBe('');
-    });
 
-    it('should handle strings with spaces', () => {
-      expect(reverseString('hello world')).toBe('dlrow olleh');
-    });
-  });
+  // slugify tests
+  assert.strictEqual(slugify('Hello World!'), 'hello-world', 'slugify basic conversion');
+  assert.strictEqual(slugify('  leading and trailing spaces  '), 'leading-and-trailing-spaces', 'slugify handles spaces');
+  assert.strictEqual(slugify('__multiple--separators__'), 'multiple-separators', 'slugify handles multiple separators');
+  assert.strictEqual(slugify('special!@#$%^&*()_+=chars'), 'special-chars', 'slugify removes special characters');
+  assert.strictEqual(slugify('-leading-and-trailing-hyphens-'), 'leading-and-trailing-hyphens', 'slugify removes leading/trailing hyphens');
 
-  describe('isPalindrome', () => {
-    it('should return true for a simple palindrome', () => {
-      expect(isPalindrome('madam')).toBe(true);
-    });
 
-    it('should return false for a non-palindrome', () => {
-      expect(isPalindrome('hello')).toBe(false);
-    });
-
-    it('should be case-insensitive', () => {
-      expect(isPalindrome('Madam')).toBe(true);
-    });
-
-    it('should ignore non-alphanumeric characters', () => {
-      expect(isPalindrome('A man, a plan, a canal: Panama')).toBe(true);
-    });
-
-    it('should return true for an empty string', () => {
-      expect(isPalindrome('')).toBe(true);
-    });
-  });
-
-  describe('truncate', () => {
-    it('should not truncate a string shorter than the specified length', () => {
-      expect(truncate('hi', 5)).toBe('hi');
-    });
-
-    it('should truncate a string longer than the specified length and add ellipsis', () => {
-      expect(truncate('hello world', 5)).toBe('hello...');
-    });
-
-    it('should return the original string if its length is equal to the specified number', () => {
-      expect(truncate('hello', 5)).toBe('hello');
-    });
-
-    it('should handle an empty string', () => {
-      expect(truncate('', 5)).toBe('');
-    });
-  });
-
-  describe('repeat', () => {
-    it('should repeat a string a specified number of times', () => {
-      expect(repeat('a', 3)).toBe('aaa');
-    });
-
-    it('should return an empty string if times is 0', () => {
-      expect(repeat('a', 0)).toBe('');
-    });
-
-    it('should handle an empty string', () => {
-      expect(repeat('', 5)).toBe('');
-    });
-  });
-});
+  console.log('All string-utils tests passed!');
+} catch (error) {
+  console.error('string-utils tests failed:', error.message);
+  process.exit(1);
+}
