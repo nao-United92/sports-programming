@@ -1,41 +1,36 @@
+const assert = require('assert');
 const { promiseWithTimeout } = require('./promise-timeout-utils.js');
 
-jest.useFakeTimers();
+const runTests = async () => {
+  try {
+    // Test case 1: Promise resolves before timeout
+    const fastPromise = new Promise(resolve => setTimeout(() => resolve('fast'), 50));
+    const result1 = await promiseWithTimeout(fastPromise, 100);
+    assert.strictEqual(result1, 'fast', 'Test 1 Failed: Should resolve before timeout');
 
-describe('promiseWithTimeout', () => {
-  it('should resolve with the promise value if it resolves before the timeout', async () => {
-    const slowPromise = new Promise(resolve => setTimeout(() => resolve('Success'), 50));
-    const promise = promiseWithTimeout(slowPromise, 100);
+    // Test case 2: Promise rejects before timeout
+    try {
+      const rejectingPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('rejected')), 50));
+      await promiseWithTimeout(rejectingPromise, 100);
+      assert.fail('Test 2 Failed: Should have rejected');
+    } catch (error) {
+      assert.strictEqual(error.message, 'rejected', 'Test 2 Failed: Incorrect rejection error');
+    }
 
-    jest.advanceTimersByTime(50);
+    // Test case 3: Promise times out
+    try {
+      const slowPromise = new Promise(resolve => setTimeout(() => resolve('slow'), 200));
+      await promiseWithTimeout(slowPromise, 100);
+      assert.fail('Test 3 Failed: Should have timed out');
+    } catch (error) {
+      assert.strictEqual(error.message, 'Promise timed out after 100 ms', 'Test 3 Failed: Incorrect timeout error');
+    }
 
-    await expect(promise).resolves.toBe('Success');
-  });
+    console.log('All promise-timeout-utils tests passed!');
+  } catch (error) {
+    console.error('promise-timeout-utils tests failed:', error.message);
+    process.exit(1);
+  }
+};
 
-  it('should reject with the promise error if it rejects before the timeout', async () => {
-    const slowPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Failure')), 50));
-    const promise = promiseWithTimeout(slowPromise, 100);
-
-    jest.advanceTimersByTime(50);
-
-    await expect(promise).rejects.toThrow('Failure');
-  });
-
-  it('should reject with a timeout error if the promise takes too long to resolve', async () => {
-    const verySlowPromise = new Promise(resolve => setTimeout(() => resolve('Success'), 200));
-    const promise = promiseWithTimeout(verySlowPromise, 100);
-
-    jest.advanceTimersByTime(100);
-
-    await expect(promise).rejects.toThrow('Promise timed out');
-  });
-
-  it('should use a custom error message for the timeout', async () => {
-    const verySlowPromise = new Promise(resolve => setTimeout(() => resolve('Success'), 200));
-    const promise = promiseWithTimeout(verySlowPromise, 100, 'Request took too long to complete');
-
-    jest.advanceTimersByTime(100);
-
-    await expect(promise).rejects.toThrow('Request took too long to complete');
-  });
-});
+runTests();

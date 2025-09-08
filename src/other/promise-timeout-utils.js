@@ -1,25 +1,20 @@
 /**
- * Races a promise against a timeout. If the promise does not resolve or reject
- * within the given time, the returned promise will reject with a timeout error.
- *
- * @param {Promise<T>} promise The promise to race against the timeout.
+ * Adds a timeout to a promise.
+ * @param {Promise} promise The promise to add a timeout to.
  * @param {number} ms The timeout in milliseconds.
- * @param {string} [errorMessage='Promise timed out'] The error message for the timeout.
- * @returns {Promise<T>} A new promise that resolves/rejects with the input promise, or rejects on timeout.
- * @template T
+ * @returns {Promise} A new promise that will reject with a timeout error if the original promise does not resolve or reject within the given time.
  */
-export const promiseWithTimeout = (promise, ms, errorMessage = 'Promise timed out') => {
-  // Create a promise that rejects in `ms` milliseconds
-  const timeout = new Promise((_, reject) => {
-    const id = setTimeout(() => {
-      clearTimeout(id);
-      reject(new Error(errorMessage));
+const promiseWithTimeout = (promise, ms) => {
+  let timeoutId = null;
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`Promise timed out after ${ms} ms`));
     }, ms);
   });
 
-  // Race the input promise against the timeout
-  return Promise.race([
-    promise,
-    timeout
-  ]);
+  return Promise.race([promise, timeoutPromise]).finally(() => {
+    clearTimeout(timeoutId);
+  });
 };
+
+module.exports = { promiseWithTimeout };
