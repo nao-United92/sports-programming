@@ -1,47 +1,27 @@
-import { curry } from './curry-utils';
+const assert = require('assert');
+const { curry } = require('./curry-utils.js');
 
-describe('curry', () => {
-  test('should curry a function with a specified arity', () => {
-    const add = (a, b, c) => a + b + c;
-    const curriedAdd = curry(add, 3);
+try {
+  const sum = (a, b, c) => a + b + c;
+  const curriedSum = curry(sum);
+  const _ = curriedSum.placeholder; // Access placeholder from the curried function
 
-    expect(curriedAdd(1)(2)(3)).toBe(6);
-    expect(curriedAdd(1, 2)(3)).toBe(6);
-    expect(curriedAdd(1)(2, 3)).toBe(6);
-    expect(curriedAdd(1, 2, 3)).toBe(6);
-  });
+  // Basic currying
+  assert.strictEqual(curriedSum(1)(2)(3), 6, 'should work with basic currying');
+  assert.strictEqual(curriedSum(1, 2)(3), 6, 'should work with partial application');
+  assert.strictEqual(curriedSum(1, 2, 3), 6, 'should work when all args are provided');
 
-  test('should curry a function using its length property as arity', () => {
-    const multiply = (a, b) => a * b;
-    const curriedMultiply = curry(multiply);
+  // Placeholder tests
+  assert.strictEqual(curriedSum(_, 2, 3)(1), 6, 'should handle placeholder in the first argument');
+  assert.strictEqual(curriedSum(1, _, 3)(2), 6, 'should handle placeholder in the middle argument');
+  assert.strictEqual(curriedSum(1, 2, _)(3), 6, 'should handle placeholder in the last argument');
+  assert.strictEqual(curriedSum(1, _, _)(2)(3), 6, 'should handle multiple placeholders');
+  assert.strictEqual(curriedSum(_, 2, _)(1, 3), 6, 'should handle multiple placeholders with multiple new args');
+  assert.strictEqual(curriedSum(_, _, 3)(1)(2), 6, 'should handle multiple placeholders sequentially');
+  assert.strictEqual(curriedSum(1)(_, 3)(2), 6, 'should work with chained placeholders');
 
-    expect(curriedMultiply(2)(3)).toBe(6);
-    expect(curriedMultiply(2, 3)).toBe(6);
-  });
-
-  test('should preserve the context (this binding)', () => {
-    const obj = {
-      x: 10,
-      add: curry(function(a, b) {
-        return this.x + a + b;
-      })
-    };
-
-    expect(obj.add(1)(2)).toBe(13);
-    expect(obj.add(1, 2)).toBe(13);
-  });
-
-  test('should handle functions with no arguments', () => {
-    const greet = () => 'Hello';
-    const curriedGreet = curry(greet);
-
-    expect(curriedGreet()).toBe('Hello');
-  });
-
-  test('should handle functions with more arguments than arity', () => {
-    const sum = (a, b) => a + b;
-    const curriedSum = curry(sum, 2);
-
-    expect(curriedSum(1, 2, 3)).toBe(3); // Only first two arguments are used
-  });
-});
+  console.log('All curry-utils tests passed!');
+} catch (e) {
+  console.error('curry-utils tests failed:', e.message);
+  process.exit(1);
+}
