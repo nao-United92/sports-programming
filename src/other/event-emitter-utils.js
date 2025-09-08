@@ -3,45 +3,37 @@ class EventEmitter {
     this.events = {};
   }
 
-  /**
-   * Registers an event listener.
-   * @param {string} eventName The name of the event.
-   * @param {Function} listener The callback function to execute when the event is emitted.
-   */
   on(eventName, listener) {
     if (!this.events[eventName]) {
       this.events[eventName] = [];
     }
     this.events[eventName].push(listener);
+    return () => this.off(eventName, listener); // Return an unsubscribe function
   }
 
-  /**
-   * Removes an event listener.
-   * @param {string} eventName The name of the event.
-   * @param {Function} listener The callback function to remove.
-   */
   off(eventName, listener) {
     if (!this.events[eventName]) {
       return;
     }
-    this.events[eventName] = this.events[eventName].filter(
-      (l) => l !== listener
-    );
+    this.events[eventName] = this.events[eventName].filter(l => l !== listener);
   }
 
-  /**
-   * Emits an event, calling all registered listeners for that event.
-   * @param {string} eventName The name of the event to emit.
-   * @param {...any} args Arguments to pass to the event listeners.
-   */
   emit(eventName, ...args) {
     if (!this.events[eventName]) {
       return;
     }
-    this.events[eventName].forEach((listener) => {
+    // Create a copy of the listeners array in case a listener modifies the array while iterating
+    const listeners = [...this.events[eventName]];
+    listeners.forEach(listener => listener(...args));
+  }
+
+  once(eventName, listener) {
+    const onceListener = (...args) => {
       listener(...args);
-    });
+      this.off(eventName, onceListener);
+    };
+    return this.on(eventName, onceListener);
   }
 }
 
-export default EventEmitter;
+module.exports = { EventEmitter };
