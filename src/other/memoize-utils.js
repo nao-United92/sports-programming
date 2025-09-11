@@ -8,7 +8,7 @@
  * @param {Function} [resolver] The function to resolve the cache key.
  * @returns {Function} Returns the new memoized function.
  */
-function memoize(func, resolver) {
+export const memoize = (func, resolver) => {
   const memoized = function(...args) {
     const key = resolver ? resolver.apply(this, args) : args[0];
     const cache = memoized.cache;
@@ -22,6 +22,4 @@ function memoize(func, resolver) {
   };
   memoized.cache = new Map();
   return memoized;
-}
-
-export default memoize;
+};
