@@ -5,7 +5,10 @@
  * @param {string[]} keys The property keys to pick.
  * @returns {Object} Returns the new object.
  */
-const pick = (object, keys) => {
+export const pick = (object, keys) => {
+  if (object == null) {
+    return {};
+  }
   return keys.reduce((obj, key) => {
     if (object && Object.prototype.hasOwnProperty.call(object, key)) {
       obj[key] = object[key];
@@ -21,12 +24,13 @@ const pick = (object, keys) => {
  * @param {string[]} keys The property keys to omit.
  * @returns {Object} Returns the new object.
  */
-const omit = (object, keys) => {
+export const omit = (object, keys) => {
+  if (object == null) {
+    return {};
+  }
   const newObject = { ...object };
   keys.forEach(key => {
     delete newObject[key];
   });
   return newObject;
 };
-
-module.exports = { pick, omit };
