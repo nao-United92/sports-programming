@@ -1,20 +1,26 @@
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
 /**
- * Checks if a value is empty.
+ * Checks if `value` is an empty object, collection, map, or set.
  *
- * A value is considered empty if it's:
- * - null or undefined
- * - an empty string, array, Map, or Set
- * - an object with no own enumerable string-keyed properties
+ * Objects are considered empty if they have no own enumerable string-keyed
+ * properties.
+ *
+ * Array-like values such as `arguments` objects, arrays, and strings are
+ * considered empty if they have a `length` of `0`. Similarly, maps and sets
+ * are considered empty if they have a `size` of `0`.
  *
  * @param {*} value The value to check.
- * @returns {boolean} Returns true if the value is empty, else false.
+ * @returns {boolean} Returns `true` if `value` is empty, else `false`.
  */
 export const isEmpty = (value) => {
   if (value == null) {
     return true;
   }
 
-  if (Array.isArray(value) || typeof value === 'string') {
+  const isArrayLike = value != null && typeof value.length == 'number' && value.length >= 0;
+
+  if (isArrayLike) {
     return value.length === 0;
   }
 
@@ -22,14 +28,15 @@ export const isEmpty = (value) => {
     return value.size === 0;
   }
 
-  // Check for objects created with `Object.create(null)`
-  if (value.constructor === undefined && Object.keys(value).length === 0) {
+  if (typeof value === 'object') {
+    for (const key in value) {
+      if (hasOwnProperty.call(value, key)) {
+        return false;
+      }
+    }
     return true;
   }
 
-  if (typeof value === 'object' && value.constructor === Object) {
-    return Object.keys(value).length === 0;
-  }
-
-  return false;
+  // For other primitives like numbers, booleans
+  return true;
 };
