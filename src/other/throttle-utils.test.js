@@ -1,52 +1,82 @@
-const assert = require('assert');
-const { throttle } = require('./throttle-utils.js');
+import { throttle } from './throttle-utils';
 
-const testThrottle = () => {
-  return new Promise((resolve, reject) => {
-    try {
-      let callCount = 0;
-      const throttled = throttle(() => {
-        callCount++;
-      }, 100);
+jest.useFakeTimers();
 
-      // Call 1: Should be executed immediately
-      throttled();
-      assert.strictEqual(callCount, 1, 'Test 1 Failed: Should be called immediately');
+describe('throttle', () => {
+  let func;
 
-      // Call 2 & 3: Should be ignored
-      throttled();
-      throttled();
-      assert.strictEqual(callCount, 1, 'Test 2 Failed: Should be ignored');
-
-      // After 150ms
-      setTimeout(() => {
-        // Call 4: Should be executed
-        throttled();
-        assert.strictEqual(callCount, 2, 'Test 3 Failed: Should be called after wait time');
-
-        // Call 5: Should be ignored
-        throttled();
-        assert.strictEqual(callCount, 2, 'Test 4 Failed: Should be ignored');
-      }, 150);
-
-      // After 300ms
-      setTimeout(() => {
-        // Call 6: Should be executed
-        throttled();
-        assert.strictEqual(callCount, 3, 'Test 5 Failed: Should be called after wait time again');
-        resolve();
-      }, 300);
-    } catch (error) {
-      reject(error);
-    }
+  beforeEach(() => {
+    func = jest.fn();
   });
-};
 
-testThrottle()
-  .then(() => {
-    console.log('All throttle-utils tests passed!');
-  })
-  .catch((error) => {
-    console.error('throttle-utils tests failed:', error.message);
-    process.exit(1);
+  it('should call the function immediately on the first call', () => {
+    const throttled = throttle(func, 100);
+    throttled();
+    expect(func).toHaveBeenCalledTimes(1);
   });
+
+  it('should not call the function again within the wait period', () => {
+    const throttled = throttle(func, 100);
+    throttled(); // called
+    throttled(); // ignored
+    throttled(); // ignored
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call the function again after the wait period has passed', () => {
+    const throttled = throttle(func, 100);
+    throttled();
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(100);
+    throttled();
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  it('should schedule a trailing call if called during the throttle period', () => {
+    const throttled = throttle(func, 100);
+    throttled(1); // called immediately
+    expect(func).toHaveBeenCalledWith(1);
+    expect(func).toHaveBeenCalledTimes(1);
+
+    throttled(2); // ignored for now
+    throttled(3); // ignored for now, arguments updated
+
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(100); // trailing call should fire
+    expect(func).toHaveBeenCalledWith(3);
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not have a trailing call if not called during the throttle period', () => {
+    const throttled = throttle(func, 100);
+    throttled(1);
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1); // No trailing call
+  });
+
+  it('should use the latest arguments for the trailing call', () => {
+    const throttled = throttle(func, 100);
+    throttled('first');
+    throttled('second');
+    throttled('third');
+
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(2);
+    expect(func).toHaveBeenLastCalledWith('third');
+  });
+
+  it('cancel should prevent a pending trailing call', () => {
+    const throttled = throttle(func, 100);
+    throttled(1); // called
+    throttled(2); // scheduled for trailing call
+
+    throttled.cancel();
+    jest.advanceTimersByTime(100);
+
+    expect(func).toHaveBeenCalledTimes(1); // trailing call was cancelled
+  });
+});
