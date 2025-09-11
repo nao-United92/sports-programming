@@ -1,32 +1,51 @@
-const assert = require('assert');
-const { randomInteger, randomString } = require('./random-utils.js');
+import { random } from './random-utils';
 
-try {
-  // Test randomInteger
-  const min = 5;
-  const max = 10;
-  for (let i = 0; i < 100; i++) {
-    const num = randomInteger(min, max);
-    assert.ok(num >= min && num <= max, 'randomInteger should be within the range');
-    assert.strictEqual(Number.isInteger(num), true, 'randomInteger should produce an integer');
-  }
+describe('random', () => {
+  const ITERATIONS = 100;
 
-  // Test randomString
-  const length = 12;
-  const str = randomString(length);
-  assert.strictEqual(typeof str, 'string', 'randomString should produce a string');
-  assert.strictEqual(str.length, length, 'randomString should have the correct length');
-  assert.ok(/^[A-Za-z0-9]+$/.test(str), 'randomString should contain only default alphanumeric characters');
+  it('should return an integer within the specified range', () => {
+    for (let i = 0; i < ITERATIONS; i++) {
+      const result = random(0, 10);
+      expect(Number.isInteger(result)).toBe(true);
+      expect(result).toBeGreaterThanOrEqual(0);
+      expect(result).toBeLessThanOrEqual(10);
+    }
+  });
 
-  // Test randomString with custom characters
-  const customChars = 'abc';
-  const customStr = randomString(5, customChars);
-  assert.strictEqual(customStr.length, 5, 'randomString with custom chars should have correct length');
-  assert.ok(/^[abc]+$/.test(customStr), 'randomString should only use custom characters');
+  it('should return a floating-point number when floating is true', () => {
+    let hasFloat = false;
+    for (let i = 0; i < ITERATIONS; i++) {
+      const result = random(0, 10, true);
+      if (!Number.isInteger(result)) {
+        hasFloat = true;
+      }
+      expect(result).toBeGreaterThanOrEqual(0);
+      expect(result).toBeLessThanOrEqual(10);
+    }
+    // It's statistically very likely that at least one float was generated.
+    expect(hasFloat).toBe(true);
+  });
 
+  it('should handle swapped lower and upper bounds', () => {
+    for (let i = 0; i < ITERATIONS; i++) {
+      const result = random(10, 0);
+      expect(Number.isInteger(result)).toBe(true);
+      expect(result).toBeGreaterThanOrEqual(0);
+      expect(result).toBeLessThanOrEqual(10);
+    }
+  });
 
-  console.log('All random-utils tests passed!');
-} catch (error) {
-  console.error('random-utils tests failed:', error.message);
-  process.exit(1);
-}
+  it('should handle negative ranges', () => {
+    for (let i = 0; i < ITERATIONS; i++) {
+      const result = random(-10, -5);
+      expect(Number.isInteger(result)).toBe(true);
+      expect(result).toBeGreaterThanOrEqual(-10);
+      expect(result).toBeLessThanOrEqual(-5);
+    }
+  });
+
+  it('should handle a range of a single number', () => {
+    const result = random(5, 5);
+    expect(result).toBe(5);
+  });
+});
