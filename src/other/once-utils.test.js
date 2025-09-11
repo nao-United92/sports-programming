@@ -1,77 +1,57 @@
-import { once } from './once-utils.js';
-
-// Mocking a simple spy function since jest.fn() is not available in this context.
-const createSpy = () => {
-  let callCount = 0;
-  const calls = [];
-  const spy = (...args) => {
-    callCount++;
-    calls.push({ context: this, args });
-  };
-
-  spy.getCallCount = () => callCount;
-  spy.getCall = (index) => calls[index];
-
-  return spy;
-};
+import { once } from './once-utils';
 
 describe('once', () => {
-  it('should invoke the original function only once', () => {
-    const spy = createSpy();
-    const onceFn = once(spy);
+  it('should only invoke the function once', () => {
+    const func = jest.fn();
+    const initialize = once(func);
 
-    onceFn();
-    onceFn();
-    onceFn();
+    initialize();
+    initialize();
+    initialize();
 
-    expect(spy.getCallCount()).toBe(1);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should return the value of the first invocation on subsequent calls', () => {
-    let count = 0;
-    const increment = () => ++count;
-    const onceIncrement = once(increment);
+  it('should return the same value every time', () => {
+    let counter = 0;
+    const func = () => ++counter;
+    const onceFunc = once(func);
 
-    const firstResult = onceIncrement();
-    const secondResult = onceIncrement();
-    const thirdResult = onceIncrement();
+    const firstResult = onceFunc();
+    const secondResult = onceFunc();
 
     expect(firstResult).toBe(1);
     expect(secondResult).toBe(1);
-    expect(thirdResult).toBe(1);
   });
 
-  it('should pass arguments to the original function', () => {
-    const spy = createSpy();
-    const onceFn = once(spy);
+  it('should pass arguments to the original function on the first call', () => {
+    const func = jest.fn((a, b) => a + b);
+    const onceFunc = once(func);
 
-    onceFn(1, 'a', true);
+    const result = onceFunc(3, 4);
 
-    expect(spy.getCall(0).args).toEqual([1, 'a', true]);
+    expect(result).toBe(7);
+    expect(func).toHaveBeenCalledWith(3, 4);
+
+    // Subsequent calls should not invoke the function again
+    onceFunc(5, 6);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
   it('should maintain the `this` context', () => {
-    const spy = createSpy();
-    const onceFn = once(spy);
-    const context = { onceFn };
+    const func = jest.fn(function() {
+      return this.value;
+    });
 
-    context.onceFn(123);
+    const context = { value: 'test', onceFunc: once(func) };
+    const result = context.onceFunc();
 
-    // Check if the context (`this`) of the call was correct
-    expect(spy.getCall(0).context).toBe(context);
-    // Check if arguments were still passed correctly
-    expect(spy.getCall(0).args).toEqual([123]);
-  });
+    expect(result).toBe('test');
+    expect(func).toHaveBeenCalledTimes(1);
 
-  it('should work with functions that do not return a value', () => {
-    const spy = createSpy();
-    const onceFn = once(spy);
-
-    const result1 = onceFn();
-    const result2 = onceFn();
-
-    expect(spy.getCallCount()).toBe(1);
-    expect(result1).toBeUndefined();
-    expect(result2).toBeUndefined();
+    // Change context value and see that the result is still the original
+    context.value = 'new-test';
+    const secondResult = context.onceFunc();
+    expect(secondResult).toBe('test');
   });
 });
