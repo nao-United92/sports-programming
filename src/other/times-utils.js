@@ -3,19 +3,18 @@
  * each invocation. The iteratee is invoked with one argument: (index).
  *
  * @param {number} n The number of times to invoke `iteratee`.
- * @param {Function} iteratee The function invoked per iteration.
+ * @param {Function} [iteratee=index => index] The function invoked per iteration.
  * @returns {Array} Returns the array of results.
  */
-function times(n, iteratee) {
-  if (n < 1 || n == null || !Number.isFinite(n)) {
+export const times = (n, iteratee) => {
+  if (n < 1) {
     return [];
   }
-  let index = -1;
   const result = new Array(n);
-  while (++index < n) {
-    result[index] = iteratee(index);
+  const func = typeof iteratee === 'function' ? iteratee : index => index;
+
+  for (let i = 0; i < n; i++) {
+    result[i] = func(i);
   }
   return result;
-}
-
-export default times;
+};
