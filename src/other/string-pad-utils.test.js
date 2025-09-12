@@ -1,25 +1,63 @@
-import { pad } from './string-pad-utils.js';
+import { padLeft, padRight } from './string-pad-utils';
 
-describe('pad', () => {
-  test('should not pad a string that is already long enough', () => {
-    expect(pad('hello', 5)).toBe('hello');
-    expect(pad('hello world', 10)).toBe('hello world');
+describe('padLeft', () => {
+  it('should pad a string on the left with spaces by default', () => {
+    expect(padLeft('abc', 5)).toBe('  abc');
+    expect(padLeft('abc', 3)).toBe('abc');
   });
 
-  test('should pad a string to the specified length', () => {
-    expect(pad('hello', 10)).toBe('  hello   ');
+  it('should pad a string with specified characters', () => {
+    expect(padLeft('abc', 5, '_')).toBe('__abc');
+    expect(padLeft('abc', 7, '*- ')).toBe('*- *abc');
   });
 
-  test('should pad with a custom character', () => {
-    expect(pad('hello', 10, '_')).toBe('__hello___');
+  it('should truncate padding characters if they exceed length', () => {
+    expect(padLeft('abc', 4, 'xyz')).toBe('xabc');
   });
 
-  test('should handle odd and even padding correctly', () => {
-    expect(pad('cat', 5)).toBe(' cat ');
-    expect(pad('dog', 6)).toBe(' dog  ');
+  it('should return the original string if length is less than or equal to string length', () => {
+    expect(padLeft('abc', 2)).toBe('abc');
+    expect(padLeft('abc', 3)).toBe('abc');
   });
 
-  test('should handle empty string', () => {
-    expect(pad('', 5, '*')).toBe('*****');
+  it('should handle null or undefined string input', () => {
+    expect(padLeft(null, 5)).toBe('     ');
+    expect(padLeft(undefined, 5, 'x')).toBe('xxxxx');
+  });
+
+  it('should handle empty string input', () => {
+    expect(padLeft('', 3)).toBe('   ');
+    expect(padLeft('', 3, 'x')).toBe('xxx');
+  });
+});
+
+describe('padRight', () => {
+  it('should pad a string on the right with spaces by default', () => {
+    expect(padRight('abc', 5)).toBe('abc  ');
+    expect(padRight('abc', 3)).toBe('abc');
+  });
+
+  it('should pad a string with specified characters', () => {
+    expect(padRight('abc', 5, '_')).toBe('abc__');
+    expect(padRight('abc', 7, '*- ')).toBe('abc*- *'); // Corrected test case
+  });
+
+  it('should truncate padding characters if they exceed length', () => {
+    expect(padRight('abc', 4, 'xyz')).toBe('abcx');
+  });
+
+  it('should return the original string if length is less than or equal to string length', () => {
+    expect(padRight('abc', 2)).toBe('abc');
+    expect(padRight('abc', 3)).toBe('abc');
+  });
+
+  it('should handle null or undefined string input', () => {
+    expect(padRight(null, 5)).toBe('     ');
+    expect(padRight(undefined, 5, 'x')).toBe('xxxxx');
+  });
+
+  it('should handle empty string input', () => {
+    expect(padRight('', 3)).toBe('   ');
+    expect(padRight('', 3, 'x')).toBe('xxx');
   });
 });
