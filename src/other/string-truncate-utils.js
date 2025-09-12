@@ -1,14 +1,28 @@
 /**
- * Truncates a string to a specified length, appending a suffix if truncated.
+ * Truncates `string` if it's longer than the given maximum string `length`.
+ * The last characters of the truncated string are replaced with the `omission`
+ * string which defaults to "...".
  *
- * @param {string} str The string to truncate.
- * @param {number} length The maximum length of the string.
- * @param {string} [suffix='...'] The suffix to append if the string is truncated.
- * @returns {string} The truncated string.
+ * @param {string} [string=''] The string to truncate.
+ * @param {Object} [options={}] The options object.
+ * @param {number} [options.length=30] The maximum string length.
+ * @param {string} [options.omission='...'] The string to indicate text is omitted.
+ * @returns {string} Returns the truncated string.
  */
-export const truncate = (str, length, suffix = '...') => {
+export const truncate = (string, options) => {
+  const str = string == null ? '' : String(string);
+  const {
+    length = 30,
+    omission = '...'
+  } = options || {};
+
   if (str.length <= length) {
     return str;
   }
-  return str.slice(0, length - suffix.length) + suffix;
+
+  if (length <= omission.length) {
+    return omission.slice(0, length);
+  }
+
+  return str.slice(0, length - omission.length) + omission;
 };
