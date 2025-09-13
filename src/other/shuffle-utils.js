@@ -1,23 +1,28 @@
 /**
- * Creates an array of shuffled values, using a version of the
- * [Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
+ * Shuffles an array in place.
  *
  * @param {Array} array The array to shuffle.
- * @returns {Array} Returns the new shuffled array.
+ * @returns {Array} Returns the shuffled array.
  */
-export const shuffle = (array) => {
-  const length = array == null ? 0 : array.length;
-  if (!length) {
+export function shuffle(array) {
+  if (!Array.isArray(array)) {
     return [];
   }
-  let index = -1;
-  const lastIndex = length - 1;
-  const result = [...array];
-  while (++index < length) {
-    const rand = index + Math.floor(Math.random() * (lastIndex - index + 1));
-    const value = result[rand];
-    result[rand] = result[index];
-    result[index] = value;
+  let currentIndex = array.length;
+  let randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex !== 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
-  return result;
-};
+
+  return array;
+}
