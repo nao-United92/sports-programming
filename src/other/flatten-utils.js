@@ -1,15 +1,12 @@
-export const flatten = (array) => {
+/**
+ * Flattens a nested array into a single-level array.
+ *
+ * @param {Array} array The array to flatten.
+ * @returns {Array} Returns the new flattened array.
+ */
+export function flatten(array) {
   if (!Array.isArray(array)) {
     return [];
   }
-  return array.reduce((acc, val) => acc.concat(val), []);
-};
-
-export const flattenDepth = (array, depth = 1) => {
-  if (!Array.isArray(array)) {
-    return [];
-  }
-  return depth > 0
-    ? array.reduce((acc, val) => acc.concat(Array.isArray(val) ? flattenDepth(val, depth - 1) : val), [])
-    : array.slice();
-};
+  return array.reduce((acc, val) => Array.isArray(val) ? acc.concat(flatten(val)) : acc.concat(val), []);
+}
