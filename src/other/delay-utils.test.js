@@ -1,32 +1,29 @@
 import { delay } from './delay-utils.js';
 
 describe('delay', () => {
-  jest.useFakeTimers();
-
-  it('should delay the execution of a function', () => {
-    const func = jest.fn();
-    delay(func, 1000);
-
-    expect(func).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(1000);
-
-    expect(func).toHaveBeenCalledTimes(1);
+  beforeAll(() => {
+    jest.useFakeTimers();
   });
 
-  it('should pass arguments to the delayed function', () => {
-    const func = jest.fn();
-    delay(func, 1000, 1, 'test');
-
-    jest.advanceTimersByTime(1000);
-
-    expect(func).toHaveBeenCalledWith(1, 'test');
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
-  it('should return a timer id', () => {
-    const func = () => {};
-    const timerId = delay(func, 1000);
-    expect(typeof timerId).toBe('number');
-    clearTimeout(timerId);
+  it('should resolve after the specified duration', async () => {
+    const delayPromise = delay(1000);
+
+    jest.advanceTimersByTime(999);
+    const promiseStateBefore = await Promise.race([delayPromise, Promise.resolve('pending')]);
+    expect(promiseStateBefore).toBe('pending');
+
+    jest.advanceTimersByTime(1);
+    const promiseStateAfter = await Promise.race([delayPromise.then(() => 'resolved'), Promise.resolve('pending')]);
+    expect(promiseStateAfter).toBe('resolved');
+  });
+
+  it('should resolve immediately if the duration is 0', async () => {
+    const delayPromise = delay(0);
+    const promiseState = await Promise.race([delayPromise.then(() => 'resolved'), Promise.resolve('pending')]);
+    expect(promiseState).toBe('resolved');
   });
 });

@@ -1,11 +1,9 @@
 /**
- * Delays the execution of `func` after `wait` milliseconds.
+ * Delays the execution of a function by the specified duration.
  *
- * @param {Function} func The function to delay.
- * @param {number} wait The number of milliseconds to delay execution.
- * @param {...*} [args] The arguments to invoke `func` with.
- * @returns {number} Returns the timer id.
+ * @param {number} ms The number of milliseconds to delay execution.
+ * @returns {Promise<void>} A promise that resolves after the specified duration.
  */
-export const delay = (func, wait, ...args) => {
-  return setTimeout(() => func.apply(null, args), wait);
-};
+export function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
