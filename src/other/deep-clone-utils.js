@@ -5,36 +5,31 @@
  * @returns {*} Returns the deep cloned value.
  */
 export function deepClone(value) {
-  const memo = new WeakMap();
-
-  function clone(obj) {
-    if (obj === null || typeof obj !== 'object') {
-      return obj;
-    }
-
-    if (memo.has(obj)) {
-      return memo.get(obj);
-    }
-
-    if (obj instanceof Date) {
-      return new Date(obj.getTime());
-    }
-
-    if (obj instanceof RegExp) {
-      return new RegExp(obj.source, obj.flags);
-    }
-
-    const newObj = Array.isArray(obj) ? [] : {};
-    memo.set(obj, newObj);
-
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        newObj[key] = clone(obj[key]);
-      }
-    }
-
-    return newObj;
+  if (value === null || typeof value !== 'object') {
+    return value;
   }
 
-  return clone(value);
+  if (value instanceof Date) {
+    return new Date(value.getTime());
+  }
+
+  if (value instanceof RegExp) {
+    return new RegExp(value);
+  }
+
+  if (Array.isArray(value)) {
+    const newArray = [];
+    for (let i = 0; i < value.length; i++) {
+      newArray[i] = deepClone(value[i]);
+    }
+    return newArray;
+  }
+
+  const newObject = {};
+  for (const key in value) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      newObject[key] = deepClone(value[key]);
+    }
+  }
+  return newObject;
 }
