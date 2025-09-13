@@ -9,18 +9,18 @@ describe('sample', () => {
 
   it('should return undefined for an empty array', () => {
     const array = [];
-    const result = sample(array);
-    expect(result).toBeUndefined();
+    expect(sample(array)).toBeUndefined();
   });
 
-  it('should return undefined for a null or undefined array', () => {
+  it('should return undefined for non-array input', () => {
     expect(sample(null)).toBeUndefined();
     expect(sample(undefined)).toBeUndefined();
+    expect(sample({})).toBeUndefined();
+    expect(sample(123)).toBeUndefined();
   });
 
   it('should work with an array of one element', () => {
-    const array = ['a'];
-    const result = sample(array);
-    expect(result).toBe('a');
+    const array = [1];
+    expect(sample(array)).toBe(1);
   });
 });
