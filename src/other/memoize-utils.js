@@ -1,14 +1,14 @@
 /**
- * Creates a function that memoizes the result of `func`. If `resolver` is
- * provided, it determines the cache key for storing the result based on the
- * arguments provided to the memoized function. By default, the first argument
- * provided to the memoized function is used as the map cache key.
+ * Creates a memoized version of a function. The result of the function is cached for a given set of arguments.
  *
- * @param {Function} func The function to have its output memoized.
+ * @param {Function} func The function to memoize.
  * @param {Function} [resolver] The function to resolve the cache key.
  * @returns {Function} Returns the new memoized function.
  */
-export const memoize = (func, resolver) => {
+export function memoize(func, resolver) {
+  if (typeof func !== 'function' || (resolver != null && typeof resolver !== 'function')) {
+    throw new TypeError('Expected a function');
+  }
   const memoized = function(...args) {
     const key = resolver ? resolver.apply(this, args) : args[0];
     const cache = memoized.cache;
@@ -17,9 +17,9 @@ export const memoize = (func, resolver) => {
       return cache.get(key);
     }
     const result = func.apply(this, args);
-    cache.set(key, result);
+    memoized.cache.set(key, result);
     return result;
   };
   memoized.cache = new Map();
   return memoized;
-};
+}
