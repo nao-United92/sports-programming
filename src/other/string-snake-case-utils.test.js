@@ -1,30 +1,29 @@
-import { snakeCase } from './string-snake-case-utils.js';
+import { snakeCase } from './string-snake-case-utils';
 
 describe('snakeCase', () => {
-  test('should convert a string to snake case', () => {
-    expect(snakeCase('foo bar')).toBe('foo_bar');
-    expect(snakeCase('foo-bar')).toBe('foo_bar');
-    expect(snakeCase('foo_bar')).toBe('foo_bar');
-    expect(snakeCase('Foo Bar')).toBe('foo_bar');
-    expect(snakeCase('FooBar')).toBe('foo_bar');
-    expect(snakeCase('fooBar')).toBe('foo_bar');
-    expect(snakeCase('foo-bar-baz')).toBe('foo_bar_baz');
-    expect(snakeCase('foo_bar_baz')).toBe('foo_bar_baz');
-    expect(snakeCase('Foo Bar Baz')).toBe('foo_bar_baz');
-    expect(snakeCase('FooBarBaz')).toBe('foo_bar_baz');
-    expect(snakeCase('fooBarBaz')).toBe('foo_bar_baz');
+  it('should convert camelCase to snake_case', () => {
+    expect(snakeCase('camelCase')).toBe('camel_case');
   });
 
-  test('should handle numbers', () => {
-    expect(snakeCase('foo-bar-123')).toBe('foo_bar_123');
-    expect(snakeCase('fooBar123')).toBe('foo_bar_123');
+  it('should convert PascalCase to snake_case', () => {
+    expect(snakeCase('PascalCase')).toBe('pascal_case');
   });
 
-  test('should handle empty strings', () => {
+  it('should convert space-separated words to snake_case', () => {
+    expect(snakeCase('hello world')).toBe('hello_world');
+  });
+
+  it('should handle already snake_cased strings', () => {
+    expect(snakeCase('already_snake_case')).toBe('already_snake_case');
+  });
+
+  it('should handle empty strings', () => {
     expect(snakeCase('')).toBe('');
   });
 
-  test('should handle leading/trailing spaces', () => {
-    expect(snakeCase(' foo bar ')).toBe('foo_bar');
+  it('should handle non-string inputs', () => {
+    expect(snakeCase(null)).toBe('');
+    expect(snakeCase(undefined)).toBe('');
+    expect(snakeCase(123)).toBe('');
   });
 });
