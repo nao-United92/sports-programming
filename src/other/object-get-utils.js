@@ -7,7 +7,7 @@
  * @param {*} [defaultValue] The value returned for `undefined` resolved values.
  * @returns {*} Returns the resolved value.
  */
-export const get = (object, path, defaultValue) => {
+const get = (object, path, defaultValue) => {
   const pathArray = Array.isArray(path)
     ? path
     : path.replace(/[\[\]']+/g, '.').split('.').filter(Boolean);
@@ -20,4 +20,8 @@ export const get = (object, path, defaultValue) => {
     }
   }
   return result;
+};
+
+module.exports = {
+  get
 };
