@@ -1,4 +1,4 @@
-import { get } from './object-get-utils';
+const { get } = require('./object-get-utils');
 
 describe('get', () => {
   const object = { 'a': [{ 'b': { 'c': 3 } }, { d: 4 }] };
