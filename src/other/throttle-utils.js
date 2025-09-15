@@ -1,79 +1,85 @@
 /**
- * Creates a throttled function that only invokes `func` at most once per every `wait` milliseconds.
- * The throttled function comes with a `cancel` method to cancel delayed `func` invocations and a
- * `flush` method to immediately invoke them.
+ * Creates a throttled function that only invokes `func` at most once per
+ * every `wait` milliseconds. The throttled function comes with a `cancel`
+ * method to cancel delayed `func` invocations and a `flush` method to
+ * immediately invoke them. Provide `options` to indicate whether `func`
+ * should be invoked on the leading and/or trailing edge of the `wait`
+ * timeout. The `func` is invoked with the last arguments provided to the
+ * throttled function. Subsequent calls to the throttled function return the
+ * result of the last `func` invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is
+ * invoked on the trailing edge of the timeout only if the throttled function
+ * is invoked more than once during the `wait` timeout.
+ *
+ * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+ * until the next tick, similar to `setTimeout` with a timeout of `0`.
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `debounce` and `throttle`.
  *
  * @param {Function} func The function to throttle.
- * @param {number} wait The number of milliseconds to throttle invocations to.
+ * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
  * @param {Object} [options={}] The options object.
- * @param {boolean} [options.leading=true] Specify invoking on the leading edge of the timeout.
- * @param {boolean} [options.trailing=true] Specify invoking on the trailing edge of the timeout.
+ * @param {boolean} [options.leading=true]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
  * @returns {Function} Returns the new throttled function.
  */
-export function throttle(func, wait, options = {}) {
-  let timeout;
-  let result;
-  let lastArgs;
-  let lastThis;
+function throttle(func, wait, options) {
+  let context, args, result;
+  let timeout = null;
   let previous = 0;
+  if (!options) options = {};
 
-  const { leading = true, trailing = true } = options;
+  const later = function() {
+    previous = options.leading === false ? 0 : Date.now();
+    timeout = null;
+    result = func.apply(context, args);
+    if (!timeout) context = args = null;
+  };
 
-  if (typeof func !== 'function') {
-    throw new TypeError('Expected a function');
-  }
-  wait = +wait || 0;
-
-  function throttled(...args) {
+  const throttled = function() {
     const now = Date.now();
-    if (!previous && leading === false) {
-      previous = now;
-    }
+    if (!previous && options.leading === false) previous = now;
     const remaining = wait - (now - previous);
-    lastArgs = args;
-    lastThis = this;
-
+    context = this;
+    args = arguments;
     if (remaining <= 0 || remaining > wait) {
       if (timeout) {
         clearTimeout(timeout);
         timeout = null;
       }
       previous = now;
-      result = func.apply(lastThis, lastArgs);
-      if (!timeout) {
-        lastArgs = lastThis = null;
-      }
-    } else if (!timeout && trailing !== false) {
-      timeout = setTimeout(() => {
-        previous = leading === false ? 0 : Date.now();
-        timeout = null;
-        result = func.apply(lastThis, lastArgs);
-        if (!timeout) {
-          lastArgs = lastThis = null;
-        }
-      }, remaining);
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
     }
     return result;
-  }
-
-  throttled.cancel = () => {
-    clearTimeout(timeout);
-    previous = 0;
-    timeout = lastArgs = lastThis = null;
   };
 
-  throttled.flush = () => {
+  throttled.cancel = function() {
+    clearTimeout(timeout);
+    previous = 0;
+    timeout = context = args = null;
+  };
+
+  throttled.flush = function() {
     if (timeout) {
       clearTimeout(timeout);
       timeout = null;
-      previous = Date.now();
-      result = func.apply(lastThis, lastArgs);
-      if (!timeout) {
-        lastArgs = lastThis = null;
-      }
+      previous = options.leading === false ? 0 : Date.now();
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
     }
     return result;
   };
 
   return throttled;
 }
+
+module.exports = {
+  throttle
+};
