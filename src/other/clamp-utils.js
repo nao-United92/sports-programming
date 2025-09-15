@@ -6,6 +6,19 @@
  * @param {number} upper The upper bound.
  * @returns {number} Returns the clamped number.
  */
-export const clamp = (number, lower, upper) => {
-  return Math.max(lower, Math.min(number, upper));
+function clamp(number, lower, upper) {
+  number = +number;
+  lower = +lower;
+  upper = +upper;
+  lower = lower === lower ? lower : 0;
+  upper = upper === upper ? upper : 0;
+  if (number === number) {
+    number = number <= upper ? number : upper;
+    number = number >= lower ? number : lower;
+  }
+  return number;
+}
+
+module.exports = {
+  clamp
 };
