@@ -1,85 +1,102 @@
 /**
- * Creates a throttled function that only invokes `func` at most once per
- * every `wait` milliseconds. The throttled function comes with a `cancel`
- * method to cancel delayed `func` invocations and a `flush` method to
- * immediately invoke them. Provide `options` to indicate whether `func`
- * should be invoked on the leading and/or trailing edge of the `wait`
- * timeout. The `func` is invoked with the last arguments provided to the
- * throttled function. Subsequent calls to the throttled function return the
- * result of the last `func` invocation.
- *
- * **Note:** If `leading` and `trailing` options are `true`, `func` is
- * invoked on the trailing edge of the timeout only if the throttled function
- * is invoked more than once during the `wait` timeout.
- *
- * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
- * until the next tick, similar to `setTimeout` with a timeout of `0`.
- *
- * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
- * for details over the differences between `debounce` and `throttle`.
+ * Creates a throttled function that only invokes `func` at most once per every `wait` milliseconds.
+ * The throttled function comes with a `cancel` method to cancel delayed `func` invocations and a
+ * `flush` method to immediately invoke them.
  *
  * @param {Function} func The function to throttle.
- * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
+ * @param {number} wait The number of milliseconds to throttle invocations to.
  * @param {Object} [options={}] The options object.
- * @param {boolean} [options.leading=true]
- *  Specify invoking on the leading edge of the timeout.
- * @param {boolean} [options.trailing=true]
- *  Specify invoking on the trailing edge of the timeout.
+ * @param {boolean} [options.leading=false] Specify invoking on the leading edge of the timeout.
+ * @param {boolean} [options.trailing=true] Specify invoking on the trailing edge of the timeout.
  * @returns {Function} Returns the new throttled function.
  */
-function throttle(func, wait, options) {
-  let context, args, result;
-  let timeout = null;
+export function throttle(func, wait, options = {}) {
+  let timeoutId = null;
+  let lastArgs = null;
+  let lastThis = null;
+  let result;
   let previous = 0;
-  if (!options) options = {};
+  const { leading = false, trailing = true } = options;
 
-  const later = function() {
-    previous = options.leading === false ? 0 : Date.now();
-    timeout = null;
-    result = func.apply(context, args);
-    if (!timeout) context = args = null;
-  };
+  if (typeof func !== 'function') {
+    throw new TypeError('Expected a function');
+  }
 
-  const throttled = function() {
+  wait = +wait || 0;
+
+  function throttled(...args) {
     const now = Date.now();
-    if (!previous && options.leading === false) previous = now;
+    if (!previous && leading === false) {
+      previous = now;
+    }
+
     const remaining = wait - (now - previous);
-    context = this;
-    args = arguments;
+    lastArgs = args;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    lastThis = this;
+
     if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
       }
       previous = now;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
-    } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(later, remaining);
+      result = func.apply(lastThis, lastArgs);
+      if (!timeoutId) {
+        lastArgs = null;
+        lastThis = null;
+      }
+    } else if (!timeoutId && trailing !== false) {
+      timeoutId = setTimeout(later, remaining);
     }
+
     return result;
-  };
+  }
+
+  function later() {
+    const now = Date.now();
+    const last = now - previous;
+
+    if (last < wait && last >= 0) {
+      timeoutId = setTimeout(later, wait - last);
+    } else {
+      timeoutId = null;
+      if (trailing !== false) {
+        previous = leading === false ? 0 : Date.now();
+        result = func.apply(lastThis, lastArgs);
+        if (!timeoutId) {
+          lastArgs = null;
+          lastThis = null;
+        }
+      }
+    }
+  }
 
   throttled.cancel = function() {
-    clearTimeout(timeout);
+    clearTimeout(timeoutId);
     previous = 0;
-    timeout = context = args = null;
+    timeoutId = null;
+    lastArgs = null;
+    lastThis = null;
   };
 
   throttled.flush = function() {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-      previous = options.leading === false ? 0 : Date.now();
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
+    if (!timeoutId) {
+      return result;
     }
+
+    clearTimeout(timeoutId);
+    timeoutId = null;
+    previous = leading === false ? 0 : Date.now();
+    result = func.apply(lastThis, lastArgs);
+
+    if (!timeoutId) {
+        lastArgs = null;
+        lastThis = null;
+    }
+
     return result;
   };
 
   return throttled;
 }
-
-module.exports = {
-  throttle
-};
