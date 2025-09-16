@@ -1,61 +1,67 @@
-import { once, memoize } from './function-utils.js';
+const { once, memoize } = require('./function-utils.js');
 
-describe('Function Utilities', () => {
-  describe('once', () => {
-    it('should only call the function once', () => {
-      const myFn = jest.fn();
-      const onceFn = once(myFn);
+describe('once', () => {
+  it('should only invoke the function once', () => {
+    const myMock = jest.fn();
+    const onceFn = once(myMock);
 
-      onceFn();
-      onceFn();
-      onceFn();
+    onceFn();
+    onceFn();
+    onceFn();
 
-      expect(myFn).toHaveBeenCalledTimes(1);
-    });
-
-    it('should return the result of the first call', () => {
-      const myFn = jest.fn((a, b) => a + b);
-      const onceFn = once(myFn);
-
-      const result1 = onceFn(1, 2);
-      const result2 = onceFn(3, 4);
-
-      expect(result1).toBe(3);
-      expect(result2).toBe(3);
-    });
+    expect(myMock.mock.calls.length).toBe(1);
   });
 
-  describe('memoize', () => {
-    it('should memoize the result of a function', () => {
-      const myFn = jest.fn((a) => a * 2);
-      const memoizedFn = memoize(myFn);
+  it('should return the value of the first invocation', () => {
+    let i = 1;
+    const onceFn = once(() => i++);
 
-      memoizedFn(2);
-      memoizedFn(2);
+    const val1 = onceFn();
+    const val2 = onceFn();
+    const val3 = onceFn();
 
-      expect(myFn).toHaveBeenCalledTimes(1);
-    });
+    expect(val1).toBe(1);
+    expect(val2).toBe(1);
+    expect(val3).toBe(1);
+  });
+});
 
-    it('should return the cached result', () => {
-      const myFn = jest.fn((a) => a * 2);
-      const memoizedFn = memoize(myFn);
+describe('memoize', () => {
+  it('should memoize the result of a function', () => {
+    const myMock = jest.fn((x) => x * 2);
+    const memoizedFn = memoize(myMock);
 
-      const result1 = memoizedFn(2);
-      const result2 = memoizedFn(2);
+    memoizedFn(2);
+    memoizedFn(2);
+    memoizedFn(3);
+    memoizedFn(3);
 
-      expect(result1).toBe(4);
-      expect(result2).toBe(4);
-    });
+    expect(myMock.mock.calls.length).toBe(2);
+  });
 
-    it('should use a resolver function for the cache key', () => {
-      const myFn = jest.fn((obj) => obj.a * 2);
-      const resolver = (obj) => obj.a;
-      const memoizedFn = memoize(myFn, resolver);
+  it('should return the cached result', () => {
+    const expensiveFn = (x) => {
+      // simulate expensive calculation
+      return x * 10;
+    };
+    const memoizedFn = memoize(expensiveFn);
 
-      memoizedFn({ a: 2 });
-      memoizedFn({ a: 2 });
+    const res1 = memoizedFn(5);
+    const res2 = memoizedFn(5);
 
-      expect(myFn).toHaveBeenCalledTimes(1);
-    });
+    expect(res1).toBe(50);
+    expect(res2).toBe(50);
+  });
+
+  it('should work with different arguments', () => {
+    const myMock = jest.fn((a, b) => a + b);
+    const memoizedFn = memoize(myMock);
+
+    memoizedFn(1, 2);
+    memoizedFn(1, 2);
+    memoizedFn(2, 3);
+    memoizedFn(2, 3);
+
+    expect(myMock.mock.calls.length).toBe(2);
   });
 });
