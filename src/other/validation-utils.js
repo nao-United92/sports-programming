@@ -1,21 +1,21 @@
 /**
  * Checks if a string is a valid email address.
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is a valid email, false otherwise.
+ * @param {string} email The email address to check.
+ * @returns {boolean} Returns `true` if the email address is valid, else `false`.
  */
-export const isEmail = (str) => {
-  const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return emailRegex.test(String(str).toLowerCase());
+const isEmail = (email) => {
+  const re = /^(([^<>()[\\]\\.,;:\s@\"]+(\.[^<>()[\\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
 };
 
 /**
  * Checks if a string is a valid URL.
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is a valid URL, false otherwise.
+ * @param {string} url The URL to check.
+ * @returns {boolean} Returns `true` if the URL is valid, else `false`.
  */
-export const isURL = (str) => {
+const isURL = (url) => {
   try {
-    new URL(str);
+    new URL(url);
     return true;
   } catch (e) {
     return false;
@@ -23,11 +23,13 @@ export const isURL = (str) => {
 };
 
 /**
- * Checks if a value is a number.
- * @param {*} value The value to check.
- * @returns {boolean} True if the value is a number, false otherwise.
+ * Checks if a string is a valid phone number.
+ * @param {string} phoneNumber The phone number to check.
+ * @returns {boolean} Returns `true` if the phone number is valid, else `false`.
  */
-export const isNumber = (value) => {
-  return typeof value === 'number' && isFinite(value);
+const isPhoneNumber = (phoneNumber) => {
+  const re = /^\+?[1-9]\d{1,14}$/;
+  return re.test(phoneNumber);
 };
 
+module.exports = { isEmail, isURL, isPhoneNumber };
