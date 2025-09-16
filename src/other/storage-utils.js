@@ -1,79 +1,88 @@
 /**
- * Sets an item in localStorage.
- * @param {string} key The key of the item.
- * @param {*} value The value to store. Will be stringified if not a string.
+ * Sets a value in localStorage.
+ * @param {string} key The key to set.
+ * @param {*} value The value to set.
  */
-export const setLocalStorageItem = (key, value) => {
+const setLocalStorage = (key, value) => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
-    console.error('Error setting localStorage item:', e);
+    console.error('Error setting localStorage', e);
   }
 };
 
 /**
- * Gets an item from localStorage.
- * @param {string} key The key of the item.
- * @returns {*} The parsed value, or null if not found or an error occurs.
+ * Gets a value from localStorage.
+ * @param {string} key The key to get.
+ * @returns {*} Returns the value from localStorage.
  */
-export const getLocalStorageItem = (key) => {
+const getLocalStorage = (key) => {
   try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : null;
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
   } catch (e) {
-    console.error('Error getting localStorage item:', e);
+    console.error('Error getting localStorage', e);
     return null;
   }
 };
 
 /**
- * Removes an item from localStorage.
- * @param {string} key The key of the item to remove.
+ * Removes a value from localStorage.
+ * @param {string} key The key to remove.
  */
-export const removeLocalStorageItem = (key) => {
+const removeLocalStorage = (key) => {
   try {
     localStorage.removeItem(key);
   } catch (e) {
-    console.error('Error removing localStorage item:', e);
+    console.error('Error removing localStorage', e);
   }
 };
 
 /**
- * Sets an item in sessionStorage.
- * @param {string} key The key of the item.
- * @param {*} value The value to store. Will be stringified if not a string.
+ * Sets a value in sessionStorage.
+ * @param {string} key The key to set.
+ * @param {*} value The value to set.
  */
-export const setSessionStorageItem = (key, value) => {
+const setSessionStorage = (key, value) => {
   try {
     sessionStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
-    console.error('Error setting sessionStorage item:', e);
+    console.error('Error setting sessionStorage', e);
   }
 };
 
 /**
- * Gets an item from sessionStorage.
- * @param {string} key The key of the item.
- * @returns {*} The parsed value, or null if not found or an error occurs.
+ * Gets a value from sessionStorage.
+ * @param {string} key The key to get.
+ * @returns {*} Returns the value from sessionStorage.
  */
-export const getSessionStorageItem = (key) => {
+const getSessionStorage = (key) => {
   try {
-    const item = sessionStorage.getItem(key);
-    return item ? JSON.parse(item) : null;
+    const value = sessionStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
   } catch (e) {
-    console.error('Error getting sessionStorage item:', e);
+    console.error('Error getting sessionStorage', e);
     return null;
   }
 };
 
 /**
- * Removes an item from sessionStorage.
- * @param {string} key The key of the item to remove.
+ * Removes a value from sessionStorage.
+ * @param {string} key The key to remove.
  */
-export const removeSessionStorageItem = (key) => {
+const removeSessionStorage = (key) => {
   try {
     sessionStorage.removeItem(key);
   } catch (e) {
-    console.error('Error removing sessionStorage item:', e);
+    console.error('Error removing sessionStorage', e);
   }
+};
+
+module.exports = {
+  setLocalStorage,
+  getLocalStorage,
+  removeLocalStorage,
+  setSessionStorage,
+  getSessionStorage,
+  removeSessionStorage,
 };

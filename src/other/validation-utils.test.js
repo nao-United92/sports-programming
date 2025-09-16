@@ -1,48 +1,39 @@
-import { isEmail, isURL, isNumber } from './validation-utils.js';
+const { isEmail, isURL, isPhoneNumber } = require('./validation-utils.js');
 
-describe('Validation Utilities', () => {
-  describe('isEmail', () => {
-    it('should return true for valid email addresses', () => {
-      expect(isEmail('test@example.com')).toBe(true);
-      expect(isEmail('test.name@example.co.uk')).toBe(true);
-    });
-
-    it('should return false for invalid email addresses', () => {
-      expect(isEmail('test@example')).toBe(false);
-      expect(isEmail('test.example.com')).toBe(false);
-      expect(isEmail('@example.com')).toBe(false);
-    });
+describe('isEmail', () => {
+  it('should return true for a valid email address', () => {
+    expect(isEmail('test@example.com')).toBe(true);
+    expect(isEmail('test.name@example.co.uk')).toBe(true);
   });
 
-  describe('isURL', () => {
-    it('should return true for valid URLs', () => {
-      expect(isURL('http://example.com')).toBe(true);
-      expect(isURL('https://www.example.com/path?query=value')).toBe(true);
-    });
+  it('should return false for an invalid email address', () => {
+    expect(isEmail('test')).toBe(false);
+    expect(isEmail('test@example')).toBe(false);
+    expect(isEmail('@example.com')).toBe(false);
+  });
+});
 
-    it('should return false for invalid URLs', () => {
-      expect(isURL('example.com')).toBe(false);
-      expect(isURL('ftp://example.com')).toBe(true); // URL constructor supports ftp
-      expect(isURL('not a url')).toBe(false);
-    });
+describe('isURL', () => {
+  it('should return true for a valid URL', () => {
+    expect(isURL('https://www.example.com')).toBe(true);
+    expect(isURL('http://example.com/path?query=1')).toBe(true);
   });
 
-  describe('isNumber', () => {
-    it('should return true for numbers', () => {
-      expect(isNumber(123)).toBe(true);
-      expect(isNumber(-123.45)).toBe(true);
-      expect(isNumber(0)).toBe(true);
-    });
+  it('should return false for an invalid URL', () => {
+    expect(isURL('invalid-url')).toBe(false);
+    expect(isURL('example.com')).toBe(false);
+  });
+});
 
-    it('should return false for non-numbers', () => {
-      expect(isNumber('123')).toBe(false);
-      expect(isNumber(null)).toBe(false);
-      expect(isNumber(undefined)).toBe(false);
-      expect(isNumber(NaN)).toBe(false);
-      expect(isNumber(Infinity)).toBe(false);
-      expect(isNumber(-Infinity)).toBe(false);
-      expect(isNumber({})).toBe(false);
-      expect(isNumber([])).toBe(false);
-    });
+describe('isPhoneNumber', () => {
+  it('should return true for a valid phone number', () => {
+    expect(isPhoneNumber('+15551234567')).toBe(true);
+    expect(isPhoneNumber('5551234567')).toBe(true);
+  });
+
+  it('should return false for an invalid phone number', () => {
+    expect(isPhoneNumber('123')).toBe(false);
+    expect(isPhoneNumber('abc')).toBe(false);
+    expect(isPhoneNumber('+1 (555) 123-4567')).toBe(false);
   });
 });

@@ -1,21 +1,23 @@
 /**
- * Navigates to the previous page in the session history.
+ * Goes back in history.
  */
-export const back = () => {
-  window.history.back();
+const back = () => {
+  history.back();
 };
 
 /**
- * Navigates to the next page in the session history.
+ * Goes forward in history.
  */
-export const forward = () => {
-  window.history.forward();
+const forward = () => {
+  history.forward();
 };
 
 /**
- * Navigates to a specific page in the session history.
- * @param {number} delta The relative position to navigate to.
+ * Goes to a specific point in history.
+ * @param {number} delta The position in history to move to.
  */
-export const go = (delta) => {
-  window.history.go(delta);
+const go = (delta) => {
+  history.go(delta);
 };
+
+module.exports = { back, forward, go };
