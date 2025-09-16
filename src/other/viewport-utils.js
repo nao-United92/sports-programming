@@ -1,22 +1,33 @@
+/**
+ * Gets the scroll top position of the viewport.
+ * @returns {number} Returns the scroll top position.
+ */
+const getScrollTop = () => {
+  return window.pageYOffset || document.documentElement.scrollTop;
+};
 
 /**
- * 要素がビューポート内に表示されているかを確認します。
- * @param {Element} el - 確認する要素。
- * @param {boolean} partiallyVisible - 部分的に表示されている場合もtrueとするか。
- * @returns {boolean} - 要素がビューポート内に表示されている場合はtrue、そうでない場合はfalse。
+ * Gets the scroll left position of the viewport.
+ * @returns {number} Returns the scroll left position.
  */
-export function isElementInViewport(el, partiallyVisible = false) {
-  const { top, left, bottom, right } = el.getBoundingClientRect();
-  const { innerWidth, innerHeight } = window;
-  if (partiallyVisible) {
-    return (
-      ((top > 0 && top < innerHeight) ||
-        (bottom > 0 && bottom < innerHeight) ||
-        (top < 0 && bottom > innerHeight)) &&
-      ((left > 0 && left < innerWidth) ||
-        (right > 0 && right < innerWidth) ||
-        (left < 0 && right > innerWidth))
-    );
-  }
-  return top >= 0 && left >= 0 && bottom <= innerHeight && right <= innerWidth;
-}
+const getScrollLeft = () => {
+  return window.pageXOffset || document.documentElement.scrollLeft;
+};
+
+/**
+ * Gets the height of the viewport.
+ * @returns {number} Returns the height of the viewport.
+ */
+const getViewportHeight = () => {
+  return window.innerHeight || document.documentElement.clientHeight;
+};
+
+/**
+ * Gets the width of the viewport.
+ * @returns {number} Returns the width of the viewport.
+ */
+const getViewportWidth = () => {
+  return window.innerWidth || document.documentElement.clientWidth;
+};
+
+module.exports = { getScrollTop, getScrollLeft, getViewportHeight, getViewportWidth };
