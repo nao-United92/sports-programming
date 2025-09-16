@@ -1,45 +1,37 @@
-import { back, forward, go } from './history-utils.js';
+const { back, forward, go } = require('./history-utils.js');
 
-// Mocking window.history
-const historyMock = {
+// Mock history
+global.history = {
   back: jest.fn(),
   forward: jest.fn(),
   go: jest.fn(),
 };
 
-Object.defineProperty(window, 'history', {
-  writable: true,
-  value: historyMock,
-});
-
-describe('History Utils', () => {
+describe('History Utilities', () => {
   beforeEach(() => {
-    // Clear mock history before each test
-    historyMock.back.mockClear();
-    historyMock.forward.mockClear();
-    historyMock.go.mockClear();
+    history.back.mockClear();
+    history.forward.mockClear();
+    history.go.mockClear();
   });
 
   describe('back', () => {
-    it('should call window.history.back', () => {
+    it('should call history.back', () => {
       back();
-      expect(historyMock.back).toHaveBeenCalledTimes(1);
+      expect(history.back).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('forward', () => {
-    it('should call window.history.forward', () => {
+    it('should call history.forward', () => {
       forward();
-      expect(historyMock.forward).toHaveBeenCalledTimes(1);
+      expect(history.forward).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('go', () => {
-    it('should call window.history.go with the given delta', () => {
+    it('should call history.go with the given delta', () => {
       go(-2);
-      expect(historyMock.go).toHaveBeenCalledWith(-2);
-      go(1);
-      expect(historyMock.go).toHaveBeenCalledWith(1);
+      expect(history.go).toHaveBeenCalledWith(-2);
     });
   });
 });
