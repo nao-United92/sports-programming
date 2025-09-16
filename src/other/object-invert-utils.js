@@ -1,18 +1,16 @@
 /**
- * Creates an object composed of the inverted keys and values of object.
- *
- * @param {Object} object The source object.
+ * Creates an object with keys and values inverted.
+ * @param {Object} obj The source object.
  * @returns {Object} Returns the new inverted object.
  */
-export function invert(object) {
-  const result = {};
-  if (object == null) {
-    return result;
-  }
-  for (const key in object) {
-    if (Object.prototype.hasOwnProperty.call(object, key)) {
-      result[object[key]] = key;
+const invert = (obj) => {
+  const newObj = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      newObj[obj[key]] = key;
     }
   }
-  return result;
-}
+  return newObj;
+};
+
+module.exports = { invert };
