@@ -1,73 +1,36 @@
-/**
- * @jest-environment jsdom
- */
-import { isElementInViewport } from './viewport-utils';
+const { getScrollTop, getScrollLeft, getViewportHeight, getViewportWidth } = require('./viewport-utils.js');
 
-describe('isElementInViewport', () => {
-  let element;
+// Mock window and document
+global.window = {
+  pageYOffset: 100,
+  pageXOffset: 50,
+  innerHeight: 768,
+  innerWidth: 1024,
+};
 
-  beforeEach(() => {
-    element = document.createElement('div');
-    document.body.appendChild(element);
+global.document = {
+  documentElement: {
+    scrollTop: 100,
+    scrollLeft: 50,
+    clientHeight: 768,
+    clientWidth: 1024,
+  },
+};
+
+describe('Viewport Utilities', () => {
+  it('should get the scroll top position', () => {
+    expect(getScrollTop()).toBe(100);
   });
 
-  afterEach(() => {
-    document.body.removeChild(element);
+  it('should get the scroll left position', () => {
+    expect(getScrollLeft()).toBe(50);
   });
 
-  test('完全に表示されている要素', () => {
-    Object.defineProperty(element, 'getBoundingClientRect', {
-      value: () => ({
-        top: 50,
-        left: 50,
-        bottom: 150,
-        right: 150,
-      }),
-    });
-    window.innerWidth = 200;
-    window.innerHeight = 200;
-    expect(isElementInViewport(element)).toBe(true);
+  it('should get the viewport height', () => {
+    expect(getViewportHeight()).toBe(768);
   });
 
-  test('部分的に表示されている要素（partiallyVisible = true）', () => {
-    Object.defineProperty(element, 'getBoundingClientRect', {
-      value: () => ({
-        top: -50,
-        left: 50,
-        bottom: 50,
-        right: 150,
-      }),
-    });
-    window.innerWidth = 200;
-    window.innerHeight = 200;
-    expect(isElementInViewport(element, true)).toBe(true);
-  });
-
-  test('部分的に表示されている要素（partiallyVisible = false）', () => {
-    Object.defineProperty(element, 'getBoundingClientRect', {
-      value: () => ({
-        top: -50,
-        left: 50,
-        bottom: 50,
-        right: 150,
-      }),
-    });
-    window.innerWidth = 200;
-    window.innerHeight = 200;
-    expect(isElementInViewport(element, false)).toBe(false);
-  });
-
-  test('表示されていない要素', () => {
-    Object.defineProperty(element, 'getBoundingClientRect', {
-      value: () => ({
-        top: 250,
-        left: 250,
-        bottom: 350,
-        right: 350,
-      }),
-    });
-    window.innerWidth = 200;
-    window.innerHeight = 200;
-    expect(isElementInViewport(element)).toBe(false);
+  it('should get the viewport width', () => {
+    expect(getViewportWidth()).toBe(1024);
   });
 });

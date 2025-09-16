@@ -1,102 +1,74 @@
-/**
- * Creates a throttled function that only invokes `func` at most once per every `wait` milliseconds.
- * The throttled function comes with a `cancel` method to cancel delayed `func` invocations and a
- * `flush` method to immediately invoke them.
- *
- * @param {Function} func The function to throttle.
- * @param {number} wait The number of milliseconds to throttle invocations to.
- * @param {Object} [options={}] The options object.
- * @param {boolean} [options.leading=false] Specify invoking on the leading edge of the timeout.
- * @param {boolean} [options.trailing=true] Specify invoking on the trailing edge of the timeout.
- * @returns {Function} Returns the new throttled function.
- */
-export function throttle(func, wait, options = {}) {
+function throttle(func, delay, options = {}) { // Add options parameter
   let timeoutId = null;
   let lastArgs = null;
   let lastThis = null;
-  let result;
-  let previous = 0;
-  const { leading = false, trailing = true } = options;
+  let lastResult = null;
+  let lastCallTime = 0; // This is the time of the last successful invocation
+
+  const leading = options.leading === undefined ? true : !!options.leading;
+  const trailing = options.trailing === undefined ? true : !!options.trailing;
 
   if (typeof func !== 'function') {
     throw new TypeError('Expected a function');
   }
 
-  wait = +wait || 0;
+  function invokeFunc(time) {
+    lastResult = func.apply(lastThis, lastArgs);
+    lastCallTime = time; // Update lastCallTime to the time of invocation
+  }
+
+  function timerExpired() {
+    const now = Date.now();
+    if (trailing && lastArgs) { // If trailing is enabled and there are pending arguments
+      invokeFunc(now);
+      lastArgs = lastThis = undefined; // Clear args after trailing invocation
+    }
+    timeoutId = undefined; // Clear the timeout ID
+  }
 
   function throttled(...args) {
     const now = Date.now();
-    if (!previous && leading === false) {
-      previous = now;
-    }
-
-    const remaining = wait - (now - previous);
     lastArgs = args;
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     lastThis = this;
 
-    if (remaining <= 0 || remaining > wait) {
+    // If it's the very first call and leading is true
+    if (!lastCallTime && leading) {
+      invokeFunc(now);
+    }
+
+    const timeSinceLastExecution = now - lastCallTime;
+    const shouldExecute = timeSinceLastExecution >= delay;
+
+    if (shouldExecute) { // This handles subsequent executions after delay
       if (timeoutId) {
         clearTimeout(timeoutId);
         timeoutId = null;
       }
-      previous = now;
-      result = func.apply(lastThis, lastArgs);
-      if (!timeoutId) {
-        lastArgs = null;
-        lastThis = null;
-      }
-    } else if (!timeoutId && trailing !== false) {
-      timeoutId = setTimeout(later, remaining);
+      invokeFunc(now);
+    } else if (!timeoutId && trailing) { // If within the delay period and no trailing call is scheduled
+      timeoutId = setTimeout(timerExpired, delay - timeSinceLastExecution);
     }
 
-    return result;
+    return lastResult;
   }
 
-  function later() {
-    const now = Date.now();
-    const last = now - previous;
-
-    if (last < wait && last >= 0) {
-      timeoutId = setTimeout(later, wait - last);
-    } else {
-      timeoutId = null;
-      if (trailing !== false) {
-        previous = leading === false ? 0 : Date.now();
-        result = func.apply(lastThis, lastArgs);
-        if (!timeoutId) {
-          lastArgs = null;
-          lastThis = null;
-        }
-      }
-    }
-  }
-
-  throttled.cancel = function() {
+  throttled.cancel = () => {
     clearTimeout(timeoutId);
-    previous = 0;
     timeoutId = null;
+    lastCallTime = 0;
     lastArgs = null;
     lastThis = null;
   };
 
-  throttled.flush = function() {
-    if (!timeoutId) {
-      return result;
+  throttled.flush = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timerExpired(); // Execute the pending trailing call immediately
     }
-
-    clearTimeout(timeoutId);
-    timeoutId = null;
-    previous = leading === false ? 0 : Date.now();
-    result = func.apply(lastThis, lastArgs);
-
-    if (!timeoutId) {
-        lastArgs = null;
-        lastThis = null;
-    }
-
-    return result;
+    return lastResult;
   };
 
   return throttled;
 }
+
+export { throttle };
