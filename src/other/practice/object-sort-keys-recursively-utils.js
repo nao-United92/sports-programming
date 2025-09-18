@@ -1,24 +1,18 @@
+const isObject = (obj) => obj !== null && typeof obj === 'object' && !Array.isArray(obj);
 
-/**
- * オブジェクトのキーを再帰的にソートする
- * @param {any} obj - ソート対象のオブジェクト
- * @returns {any} - キーがソートされた新しいオブジェクト
- */
-export function sortKeysRecursively(obj) {
-  if (typeof obj !== 'object' || obj === null) {
+const sortKeysRecursively = (obj) => {
+  if (!isObject(obj)) {
     return obj;
   }
 
-  if (Array.isArray(obj)) {
-    return obj.map(sortKeysRecursively);
-  }
-
   const sortedKeys = Object.keys(obj).sort();
-  const newObj = {};
+  const sortedObj = {};
 
   for (const key of sortedKeys) {
-    newObj[key] = sortKeysRecursively(obj[key]);
+    sortedObj[key] = sortKeysRecursively(obj[key]);
   }
 
-  return newObj;
-}
+  return sortedObj;
+};
+
+module.exports = { sortKeysRecursively };

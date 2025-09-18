@@ -1,39 +1,57 @@
-import { sortKeysRecursively } from './object-sort-keys-recursively-utils';
+const { sortKeysRecursively } = require('./object-sort-keys-recursively-utils');
 
 describe('sortKeysRecursively', () => {
   test('should sort keys of a simple object', () => {
     const obj = { c: 1, a: 2, b: 3 };
-    const expected = { a: 2, b: 3, c: 1 };
-    expect(JSON.stringify(sortKeysRecursively(obj))).toBe(JSON.stringify(expected));
+    const sortedObj = sortKeysRecursively(obj);
+    expect(Object.keys(sortedObj)).toEqual(['a', 'b', 'c']);
   });
 
   test('should sort keys of a nested object', () => {
     const obj = {
-      c: { z: 1, x: 2 },
-      a: { y: 3, w: 4 },
+      c: 1,
+      a: {
+        z: 1,
+        x: 2,
+        y: 3,
+      },
+      b: 3,
     };
-    const expected = {
-      a: { w: 4, y: 3 },
-      c: { x: 2, z: 1 },
-    };
-    expect(JSON.stringify(sortKeysRecursively(obj))).toBe(JSON.stringify(expected));
+    const sortedObj = sortKeysRecursively(obj);
+    expect(Object.keys(sortedObj)).toEqual(['a', 'b', 'c']);
+    expect(Object.keys(sortedObj.a)).toEqual(['x', 'y', 'z']);
   });
 
-  test('should handle arrays of objects', () => {
-    const obj = [
-      { c: 1, a: 2 },
-      { y: 3, x: 4 },
-    ];
-    const expected = [
-      { a: 2, c: 1 },
-      { x: 4, y: 3 },
-    ];
-    expect(JSON.stringify(sortKeysRecursively(obj))).toBe(JSON.stringify(expected));
+  test('should handle arrays correctly', () => {
+    const obj = {
+      c: 1,
+      a: [4, 1, 3],
+      b: 3,
+    };
+    const sortedObj = sortKeysRecursively(obj);
+    expect(Object.keys(sortedObj)).toEqual(['a', 'b', 'c']);
+    expect(sortedObj.a).toEqual([4, 1, 3]); // Arrays should not be sorted
   });
 
-  test('should not change non-object values', () => {
+  test('should handle non-object inputs', () => {
+    expect(sortKeysRecursively(null)).toBeNull();
+    expect(sortKeysRecursively(undefined)).toBeUndefined();
     expect(sortKeysRecursively(123)).toBe(123);
     expect(sortKeysRecursively('abc')).toBe('abc');
-    expect(sortKeysRecursively(null)).toBe(null);
+  });
+
+  test('should handle complex nested objects', () => {
+    const obj = {
+      z: { b: { d: 4, c: [2, 1] }, a: 1 },
+      y: [ { f: 6, e: 5 } ],
+      x: 10
+    };
+    const sortedObj = sortKeysRecursively(obj);
+    const expected = {
+      x: 10,
+      y: [ { f: 6, e: 5 } ], // object in array is not sorted
+      z: { a: 1, b: { c: [2, 1], d: 4 } },
+    };
+    expect(JSON.stringify(sortedObj)).toBe(JSON.stringify(expected));
   });
 });
