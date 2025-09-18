@@ -1,4 +1,4 @@
-import { flatten, compact, removeIf } from './array-manipulation-utils.js';
+import { flatten, compact, removeIf, partition } from './array-manipulation-utils.js';
 
 describe('Array Manipulation Utilities', () => {
   describe('flatten', () => {
@@ -86,6 +86,47 @@ describe('Array Manipulation Utilities', () => {
       expect(removeIf(null, isEven)).toEqual([]);
       expect(removeIf(undefined, isEven)).toEqual([]);
       expect(removeIf(123, isEven)).toEqual([]);
+    });
+  });
+
+  describe('partition', () => {
+    it('should partition an array into two groups based on a predicate', () => {
+      const arr = [1, 2, 3, 4, 5];
+      const isEven = (n) => n % 2 === 0;
+      const [evens, odds] = partition(arr, isEven);
+      expect(evens).toEqual([2, 4]);
+      expect(odds).toEqual([1, 3, 5]);
+    });
+
+    it('should handle an empty array', () => {
+      const arr = [];
+      const isEven = (n) => n % 2 === 0;
+      const [evens, odds] = partition(arr, isEven);
+      expect(evens).toEqual([]);
+      expect(odds).toEqual([]);
+    });
+
+    it('should handle all elements satisfying the predicate', () => {
+      const arr = [2, 4, 6];
+      const isEven = (n) => n % 2 === 0;
+      const [evens, odds] = partition(arr, isEven);
+      expect(evens).toEqual([2, 4, 6]);
+      expect(odds).toEqual([]);
+    });
+
+    it('should handle no elements satisfying the predicate', () => {
+      const arr = [1, 3, 5];
+      const isEven = (n) => n % 2 === 0;
+      const [evens, odds] = partition(arr, isEven);
+      expect(evens).toEqual([]);
+      expect(odds).toEqual([1, 3, 5]);
+    });
+
+    it('should return empty arrays for non-array input', () => {
+      const isEven = (n) => n % 2 === 0;
+      const [evens, odds] = partition(null, isEven);
+      expect(evens).toEqual([]);
+      expect(odds).toEqual([]);
     });
   });
 });
