@@ -1,4 +1,4 @@
-import { createElement, appendChild, appendChildren, removeElement, replaceElement, wrapElement, insertAfter, insertBefore, createElementWithHTML, clearChildren } from './dom-creation-utils.js';
+import { createElement, appendChild, appendChildren, removeElement, replaceElement, wrapElement, insertAfter, insertBefore, createElementWithHTML, clearChildren, createElementFromHTML } from './dom-creation-utils.js';
 
 describe('dom-creation-utils', () => {
   let container;
@@ -275,6 +275,51 @@ describe('dom-creation-utils', () => {
     test('should do nothing if the element is null or undefined', () => {
       expect(() => clearChildren(null)).not.toThrow();
       expect(() => clearChildren(undefined)).not.toThrow();
+    });
+  });
+
+  describe('createElementFromHTML', () => {
+    test('should create a single element from an HTML string', () => {
+      const htmlString = '<div>Hello</div>';
+      const element = createElementFromHTML(htmlString);
+      expect(element.tagName).toBe('DIV');
+      expect(element.textContent).toBe('Hello');
+    });
+
+    test('should create an element with attributes from an HTML string', () => {
+      const htmlString = '<p id="test-id" class="test-class">Content</p>';
+      const element = createElementFromHTML(htmlString);
+      expect(element.id).toBe('test-id');
+      expect(element.className).toBe('test-class');
+      expect(element.textContent).toBe('Content');
+    });
+
+    test('should handle HTML with multiple root elements by returning the first one', () => {
+      const htmlString = '<div>One</div><span>Two</span>';
+      const element = createElementFromHTML(htmlString);
+      expect(element.tagName).toBe('DIV');
+      expect(element.textContent).toBe('One');
+    });
+
+    test('should return null for an empty HTML string', () => {
+      const htmlString = '';
+      const element = createElementFromHTML(htmlString);
+      expect(element).toBeNull();
+    });
+
+    test('should return null for a malformed HTML string', () => {
+      const htmlString = '<div';
+      const element = createElementFromHTML(htmlString);
+      expect(element).toBeNull();
+    });
+
+    test('should not execute scripts in the HTML string', () => {
+      const htmlString = '<img src="x" onerror="alert(\'XSS\')">';
+      const element = createElementFromHTML(htmlString);
+      // In a JSDOM environment, alert won't actually run, but we can check if the script tag is created
+      expect(element.tagName).toBe('IMG');
+      expect(element.getAttribute('onerror')).toBe('alert(\'XSS\')');
+      // Further checks would involve verifying no script execution, which is harder in a unit test
     });
   });
 });

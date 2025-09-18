@@ -148,3 +148,14 @@ export function clearChildren(element) {
     }
   }
 }
+
+/**
+ * Creates a DOM element from an HTML string.
+ * @param {string} htmlString The HTML string.
+ * @returns {Node}
+ */
+export function createElementFromHTML(htmlString) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, 'text/html');
+  return doc.body.firstChild;
+}
