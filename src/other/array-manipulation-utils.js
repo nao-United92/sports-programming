@@ -60,3 +60,28 @@ export function removeIf(array, predicate) {
   // If mutation of the original array is desired, a different approach would be needed.
   return removed;
 }
+
+/**
+ * Partitions an array into two groups based on a predicate function.
+ * @param {Array} array The array to partition.
+ * @param {Function} predicate The function invoked per iteration to determine into which group each element belongs.
+ * @returns {Array<Array>} Returns a two-element array, where the first element is an array of elements for which predicate returned truthy, and the second element is an array of elements for which predicate returned falsey.
+ */
+export function partition(array, predicate) {
+  if (!Array.isArray(array)) {
+    return [[], []];
+  }
+
+  const truthy = [];
+  const falsey = [];
+
+  for (const item of array) {
+    if (predicate(item)) {
+      truthy.push(item);
+    } else {
+      falsey.push(item);
+    }
+  }
+
+  return [truthy, falsey];
+}

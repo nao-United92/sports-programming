@@ -53,3 +53,14 @@ export function isEven(num) {
 export function isOdd(num) {
   return typeof num === 'number' && num % 2 !== 0;
 }
+
+/**
+ * Linearly interpolates between two numbers.
+ * @param {number} a The start value.
+ * @param {number} b The end value.
+ * @param {number} t The interpolation amount (0.0 to 1.0).
+ * @returns {number} The interpolated value.
+ */
+export function lerp(a, b, t) {
+  return a + (b - a) * t;
+}

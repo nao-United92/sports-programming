@@ -1,5 +1,5 @@
 
-import { clamp, roundToDecimal, randomInt, isEven, isOdd } from './number-advanced-utils';
+import { clamp, roundToDecimal, randomInt, isEven, isOdd, lerp } from './number-advanced-utils';
 
 describe('clamp', () => {
   test('should clamp value within range', () => {
@@ -85,5 +85,32 @@ describe('isOdd', () => {
     expect(isOdd('1')).toBe(false);
     expect(isOdd(null)).toBe(false);
     expect(isOdd(undefined)).toBe(false);
+  });
+});
+
+describe('lerp', () => {
+  test('should interpolate correctly at t=0', () => {
+    expect(lerp(0, 10, 0)).toBe(0);
+  });
+
+  test('should interpolate correctly at t=1', () => {
+    expect(lerp(0, 10, 1)).toBe(10);
+  });
+
+  test('should interpolate correctly at t=0.5', () => {
+    expect(lerp(0, 10, 0.5)).toBe(5);
+  });
+
+  test('should interpolate correctly with negative numbers', () => {
+    expect(lerp(-10, 10, 0.5)).toBe(0);
+  });
+
+  test('should interpolate correctly with fractional numbers', () => {
+    expect(lerp(0.1, 0.9, 0.5)).toBe(0.5);
+  });
+
+  test('should extrapolate correctly outside 0-1 range', () => {
+    expect(lerp(0, 10, 2)).toBe(20);
+    expect(lerp(0, 10, -1)).toBe(-10);
   });
 });

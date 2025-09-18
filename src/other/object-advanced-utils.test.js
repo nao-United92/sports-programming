@@ -1,4 +1,4 @@
-import { deepMerge, isEmptyObject } from './object-advanced-utils';
+import { deepMerge, isEmptyObject, deepEqualWithIntersection } from './object-advanced-utils';
 
 describe('deepMerge', () => {
   test('should merge simple objects', () => {
@@ -82,5 +82,63 @@ describe('isEmptyObject', () => {
     expect(isEmptyObject('string')).toBe(false);
     expect(isEmptyObject(true)).toBe(false);
     expect(isEmptyObject(undefined)).toBe(false);
+  });
+});
+
+describe('deepEqualWithIntersection', () => {
+  test('should return true for identical objects with intersecting keys', () => {
+    const obj1 = { a: 1, b: 2, c: 3 };
+    const obj2 = { a: 1, b: 2, c: 3 };
+    expect(deepEqualWithIntersection(obj1, obj2)).toBe(true);
+  });
+
+  test('should return true if intersecting keys are equal, even with extra keys', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { a: 1, b: 2, c: 3 };
+    expect(deepEqualWithIntersection(obj1, obj2)).toBe(true);
+  });
+
+  test('should return false if intersecting keys are not equal', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { a: 1, b: 99, c: 3 };
+    expect(deepEqualWithIntersection(obj1, obj2)).toBe(false);
+  });
+
+  test('should handle nested objects', () => {
+    const obj1 = { a: 1, b: { c: 2, d: 3 } };
+    const obj2 = { a: 1, b: { c: 2, d: 3, e: 4 } };
+    expect(deepEqualWithIntersection(obj1, obj2)).toBe(true);
+
+    const obj3 = { a: 1, b: { c: 2, d: 3 } };
+    const obj4 = { a: 1, b: { c: 99, d: 3 } };
+    expect(deepEqualWithIntersection(obj3, obj4)).toBe(false);
+  });
+
+  test('should handle arrays within objects', () => {
+    const obj1 = { a: [1, 2], b: 3 };
+    const obj2 = { a: [1, 2], b: 3, c: 4 };
+    expect(deepEqualWithIntersection(obj1, obj2)).toBe(true);
+
+    const obj3 = { a: [1, 2], b: 3 };
+    const obj4 = { a: [1, 99], b: 3 };
+    expect(deepEqualWithIntersection(obj3, obj4)).toBe(false);
+  });
+
+  test('should return true for empty objects', () => {
+    expect(deepEqualWithIntersection({}, {})).toBe(true);
+  });
+
+  test('should return false for non-object types', () => {
+    expect(deepEqualWithIntersection(1, 1)).toBe(true);
+    expect(deepEqualWithIntersection(1, 2)).toBe(false);
+    expect(deepEqualWithIntersection('a', 'a')).toBe(true);
+    expect(deepEqualWithIntersection('a', 'b')).toBe(false);
+    expect(deepEqualWithIntersection(true, true)).toBe(true);
+    expect(deepEqualWithIntersection(true, false)).toBe(false);
+  });
+
+  test('should return false if one is object and other is not', () => {
+    expect(deepEqualWithIntersection({ a: 1 }, 1)).toBe(false);
+    expect(deepEqualWithIntersection(1, { a: 1 })).toBe(false);
   });
 });

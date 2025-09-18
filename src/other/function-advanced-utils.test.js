@@ -1,4 +1,4 @@
-import { once, after } from './function-advanced-utils.js';
+import { once, after, times } from './function-advanced-utils.js';
 
 describe('once', () => {
   test('should only invoke the function once', () => {
@@ -38,5 +38,40 @@ describe('after', () => {
 
     afterFn();
     expect(mockFn).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('times', () => {
+  test('should invoke the iteratee n times', () => {
+    const mockIteratee = jest.fn((i) => i * 2);
+    const result = times(5, mockIteratee);
+
+    expect(mockIteratee).toHaveBeenCalledTimes(5);
+    expect(result).toEqual([0, 2, 4, 6, 8]);
+  });
+
+  test('should return an empty array if n is 0', () => {
+    const mockIteratee = jest.fn();
+    const result = times(0, mockIteratee);
+
+    expect(mockIteratee).not.toHaveBeenCalled();
+    expect(result).toEqual([]);
+  });
+
+  test('should handle negative n by returning an empty array', () => {
+    const mockIteratee = jest.fn();
+    const result = times(-5, mockIteratee);
+
+    expect(mockIteratee).not.toHaveBeenCalled();
+    expect(result).toEqual([]);
+  });
+
+  test('should pass the index to the iteratee', () => {
+    const mockIteratee = jest.fn((i) => `Item ${i}`);
+    times(3, mockIteratee);
+
+    expect(mockIteratee).toHaveBeenCalledWith(0);
+    expect(mockIteratee).toHaveBeenCalledWith(1);
+    expect(mockIteratee).toHaveBeenCalledWith(2);
   });
 });

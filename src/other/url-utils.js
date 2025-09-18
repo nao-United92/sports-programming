@@ -21,4 +21,16 @@ const isAbsoluteURL = (url) => {
   return /^[a-z][a-z0-9+.-]*:/.test(url);
 };
 
-module.exports = { getURLParameters, isAbsoluteURL };
+/**
+ * Combines a base URL and a relative URL.
+ * @param {string} baseURL The base URL.
+ * @param {string} relativeURL The relative URL.
+ * @returns {string} The combined URL.
+ */
+const combineURLs = (baseURL, relativeURL) => {
+  return relativeURL
+    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+    : baseURL;
+};
+
+module.exports = { getURLParameters, isAbsoluteURL, combineURLs };

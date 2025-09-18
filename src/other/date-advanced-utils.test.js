@@ -1,4 +1,4 @@
-import { getWeekOfMonth, isLastDayOfMonth } from './date-advanced-utils.js';
+import { getWeekOfMonth, isLastDayOfMonth, calculateBusinessDays } from './date-advanced-utils.js';
 
 describe('getWeekOfMonth', () => {
   test('should return the correct week of the month', () => {
@@ -25,5 +25,30 @@ describe('isLastDayOfMonth', () => {
 
   test('should return false for invalid dates', () => {
     expect(isLastDayOfMonth(new Date('invalid date'))).toBe(false);
+  });
+});
+
+describe('calculateBusinessDays', () => {
+  test('should return 5 business days for a full week', () => {
+    const startDate = new Date('2024-07-22'); // Monday
+    const endDate = new Date('2024-07-26'); // Friday
+    expect(calculateBusinessDays(startDate, endDate)).toBe(5);
+  });
+
+  test('should return 0 for a weekend', () => {
+    const startDate = new Date('2024-07-27'); // Saturday
+    const endDate = new Date('2024-07-28'); // Sunday
+    expect(calculateBusinessDays(startDate, endDate)).toBe(0);
+  });
+
+  test('should handle date range that spans across a weekend', () => {
+    const startDate = new Date('2024-07-25'); // Thursday
+    const endDate = new Date('2024-07-29'); // Monday
+    expect(calculateBusinessDays(startDate, endDate)).toBe(3);
+  });
+
+  test('should return 0 for invalid dates', () => {
+    expect(calculateBusinessDays(new Date('invalid date'), new Date())).toBe(0);
+    expect(calculateBusinessDays(new Date(), new Date('invalid date'))).toBe(0);
   });
 });

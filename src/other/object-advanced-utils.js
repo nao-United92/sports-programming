@@ -47,3 +47,44 @@ export function isEmptyObject(obj) {
   }
   return Object.keys(obj).length === 0;
 }
+
+/**
+ * Performs a deep comparison between two objects, but only for keys that exist in both objects.
+ * This function is useful for comparing partial objects or ensuring specific properties match.
+ *
+ * @param {Object} obj1 The first object to compare.
+ * @param {Object} obj2 The second object to compare.
+ * @returns {boolean} True if the intersecting properties are deeply equal, false otherwise.
+ */
+export function deepEqualWithIntersection(obj1, obj2) {
+  if (obj1 === obj2) return true;
+
+  if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
+    return false;
+  }
+
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  for (const key of keys1) {
+    if (keys2.includes(key)) {
+      // Only compare if key exists in both objects
+      if (!deepEqualWithIntersection(obj1[key], obj2[key])) {
+        return false;
+      }
+    }
+  }
+
+  // Also check keys in obj2 that might not be in obj1 but are in the intersection
+  for (const key of keys2) {
+    if (keys1.includes(key)) {
+      // This case is already covered by the first loop, but ensures symmetry
+      // No need to re-compare, just ensure no extra keys in obj2 are missed if they were not in obj1
+    } else {
+      // If a key exists in obj2 but not in obj1, it's not part of the intersection for comparison
+      // So we don't return false here, as we only care about the intersection
+    }
+  }
+
+  return true;
+}

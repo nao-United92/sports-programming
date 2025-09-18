@@ -1,4 +1,4 @@
-const { getURLParameters, isAbsoluteURL } = require('./url-utils.js');
+const { getURLParameters, isAbsoluteURL, combineURLs } = require('./url-utils.js');
 
 describe('getURLParameters', () => {
   it('should get the parameters of a URL', () => {
@@ -23,5 +23,27 @@ describe('isAbsoluteURL', () => {
   it('should return false for a relative URL', () => {
     expect(isAbsoluteURL('/path/to/file')).toBe(false);
     expect(isAbsoluteURL('path/to/file')).toBe(false);
+  });
+});
+
+describe('combineURLs', () => {
+  it('should combine a base URL and a relative URL', () => {
+    expect(combineURLs('https://www.google.com', '/search')).toBe('https://www.google.com/search');
+  });
+
+  it('should handle trailing slashes in the base URL', () => {
+    expect(combineURLs('https://www.google.com/', '/search')).toBe('https://www.google.com/search');
+  });
+
+  it('should handle leading slashes in the relative URL', () => {
+    expect(combineURLs('https://www.google.com', 'search')).toBe('https://www.google.com/search');
+  });
+
+  it('should handle both trailing and leading slashes', () => {
+    expect(combineURLs('https://www.google.com/', 'search')).toBe('https://www.google.com/search');
+  });
+
+  it('should return the base URL if the relative URL is not provided', () => {
+    expect(combineURLs('https://www.google.com')).toBe('https://www.google.com');
   });
 });
