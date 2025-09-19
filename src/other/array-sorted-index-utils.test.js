@@ -1,4 +1,4 @@
-import { sortedIndex } from './array-sorted-index-utils.js';
+import { sortedIndex, sortedLastIndex } from './array-sorted-index-utils.js';
 
 describe('sortedIndex', () => {
   test('should return the correct index for a value in the middle', () => {
@@ -28,5 +28,31 @@ describe('sortedIndex', () => {
 
   test('should work with string arrays', () => {
     expect(sortedIndex(['a', 'c', 'e'], 'b')).toBe(1);
+  });
+});
+
+describe('sortedLastIndex', () => {
+  test('should return the correct index for a value in the middle', () => {
+    expect(sortedLastIndex([10, 20, 30, 40, 50], 35)).toBe(3);
+  });
+
+  test('should return the correct index for a value smaller than all elements', () => {
+    expect(sortedLastIndex([10, 20, 30], 5)).toBe(0);
+  });
+
+  test('should return the array length for a value larger than all elements', () => {
+    expect(sortedLastIndex([10, 20, 30], 35)).toBe(3);
+  });
+
+  test('should return the highest index of an existing value', () => {
+    expect(sortedLastIndex([10, 20, 30, 30, 40], 30)).toBe(4); // Should be after the last 30
+  });
+
+  test('should return 0 for an empty array', () => {
+    expect(sortedLastIndex([], 5)).toBe(0);
+  });
+
+  test('should work with string arrays', () => {
+    expect(sortedLastIndex(['a', 'c', 'e'], 'c')).toBe(2);
   });
 });
