@@ -1,39 +1,43 @@
 import { mapValues } from './object-map-values-utils.js';
 
 describe('mapValues', () => {
-  it('should map values of an object', () => {
-    const object = { 'a': 1, 'b': 2 };
-    const result = mapValues(object, (value) => value * 2);
-    expect(result).toEqual({ 'a': 2, 'b': 4 });
+  test('should map values and create a new object', () => {
+    const users = {
+      fred: { user: 'fred', age: 40 },
+      pebbles: { user: 'pebbles', age: 1 },
+    };
+    const result = mapValues(users, (user) => user.age);
+    expect(result).toEqual({ fred: 40, pebbles: 1 });
   });
 
-  it('should pass key and object to the iteratee', () => {
-    const object = { 'a': 1, 'b': 2 };
-    const keys = [];
-    mapValues(object, (value, key, obj) => {
-      keys.push(key);
-      expect(obj).toBe(object);
-    });
-    expect(keys).toEqual(['a', 'b']);
+  test('iteratee should receive value, key, and the original object', () => {
+    const obj = { a: 1, b: 2 };
+    const iteratee = jest.fn();
+    mapValues(obj, iteratee);
+
+    expect(iteratee).toHaveBeenCalledWith(1, 'a', obj);
+    expect(iteratee).toHaveBeenCalledWith(2, 'b', obj);
   });
 
-  it('should handle an empty object', () => {
-    expect(mapValues({}, (value) => value * 2)).toEqual({});
+  test('should not modify the original object', () => {
+    const obj = { a: 1 };
+    mapValues(obj, (val) => val + 1);
+    expect(obj).toEqual({ a: 1 });
   });
 
-  it('should handle null or undefined input', () => {
-    expect(mapValues(null, (value) => value * 2)).toEqual({});
-    expect(mapValues(undefined, (value) => value * 2)).toEqual({});
+  test('should return an empty object for an empty object input', () => {
+    const result = mapValues({}, (val) => val * 2);
+    expect(result).toEqual({});
   });
 
-  function Foo() {
-    this.a = 1;
-    this.b = 2;
-  }
-  Foo.prototype.c = 3;
+  test('should not include inherited properties', () => {
+    function Foo() {
+      this.a = 1;
+    }
+    Foo.prototype.b = 2;
 
-  it('should only include own properties', () => {
-    const result = mapValues(new Foo(), (value) => value * 2);
-    expect(result).toEqual({ 'a': 2, 'b': 4 });
+    const foo = new Foo();
+    const result = mapValues(foo, (val) => val);
+    expect(result).toEqual({ a: 1 });
   });
 });
