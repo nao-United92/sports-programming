@@ -90,3 +90,22 @@ export const dropWhile = (array, predicate) => {
   }
   return array.slice(i);
 };
+
+/**
+ * Creates a slice of `array` with elements taken from the end.
+ * Elements are taken until `predicate` returns falsey.
+ *
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the slice of `array`.
+ */
+export const takeRightWhile = (array, predicate) => {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  let i = array.length;
+  while (i-- > 0 && predicate(array[i], i, array)) {
+    // keep going
+  }
+  return array.slice(i + 1);
+};

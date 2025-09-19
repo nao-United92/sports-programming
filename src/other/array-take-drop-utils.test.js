@@ -1,4 +1,4 @@
-import { take, takeRight, drop, dropRight, first, last, takeWhile, dropWhile } from './array-take-drop-utils.js';
+import { take, takeRight, drop, dropRight, first, last, takeWhile, dropWhile, takeRightWhile } from './array-take-drop-utils.js';
 
 describe('Array Take/Drop Utilities', () => {
   const array = [1, 2, 3, 4, 5];
@@ -166,6 +166,42 @@ describe('Array Take/Drop Utilities', () => {
 
     it('should handle an empty array', () => {
       const result = dropWhile([], () => true);
+      expect(result).toEqual([]);
+    });
+  });
+
+  // --- takeRightWhile ---
+  describe('takeRightWhile', () => {
+    const users = [
+      { 'user': 'barney',  'active': false },
+      { 'user': 'fred',    'active': true },
+      { 'user': 'pebbles', 'active': true }
+    ];
+
+    it('should take elements from the right while the predicate is true', () => {
+      const result = takeRightWhile(users, (user) => user.active);
+      expect(result).toEqual([
+        { 'user': 'fred',    'active': true },
+        { 'user': 'pebbles', 'active': true }
+      ]);
+    });
+
+    it('should return an empty array if the last element is falsey', () => {
+      const usersWithFalseyLast = [
+        { 'user': 'barney',  'active': true },
+        { 'user': 'fred',    'active': false }
+      ];
+      const result = takeRightWhile(usersWithFalseyLast, (user) => user.active);
+      expect(result).toEqual([]);
+    });
+
+    it('should return the whole array if the predicate is always true', () => {
+      const result = takeRightWhile(users, () => true);
+      expect(result).toEqual(users);
+    });
+
+    it('should handle an empty array', () => {
+      const result = takeRightWhile([], () => true);
       expect(result).toEqual([]);
     });
   });
