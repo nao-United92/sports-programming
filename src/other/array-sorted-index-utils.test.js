@@ -1,4 +1,4 @@
-import { sortedIndex, sortedLastIndex } from './array-sorted-index-utils.js';
+import { sortedIndex, sortedLastIndex, sortedIndexBy } from './array-sorted-index-utils.js';
 
 describe('sortedIndex', () => {
   test('should return the correct index for a value in the middle', () => {
@@ -54,5 +54,28 @@ describe('sortedLastIndex', () => {
 
   test('should work with string arrays', () => {
     expect(sortedLastIndex(['a', 'c', 'e'], 'c')).toBe(2);
+  });
+});
+
+describe('sortedIndexBy', () => {
+  const objects = [{ 'x': 4 }, { 'x': 5 }];
+
+  test('should return the correct index based on iteratee function', () => {
+    expect(sortedIndexBy(objects, { 'x': 4 }, (o) => o.x)).toBe(0);
+    expect(sortedIndexBy(objects, { 'x': 6 }, (o) => o.x)).toBe(2);
+  });
+
+  test('should return the correct index for a value in the middle', () => {
+    const array = [{ 'x': 10 }, { 'x': 20 }, { 'x': 30 }, { 'x': 40 }, { 'x': 50 }];
+    expect(sortedIndexBy(array, { 'x': 35 }, (o) => o.x)).toBe(3);
+  });
+
+  test('should handle empty array', () => {
+    expect(sortedIndexBy([], { 'x': 5 }, (o) => o.x)).toBe(0);
+  });
+
+  test('should handle duplicate values correctly', () => {
+    const array = [{ 'x': 10 }, { 'x': 20 }, { 'x': 30 }, { 'x': 30 }, { 'x': 40 }];
+    expect(sortedIndexBy(array, { 'x': 30 }, (o) => o.x)).toBe(2);
   });
 });
