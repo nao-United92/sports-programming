@@ -71,3 +71,22 @@ export const takeWhile = (array, predicate) => {
   }
   return array.slice(0, i);
 };
+
+/**
+ * Creates a slice of `array` excluding elements dropped from the beginning.
+ * Elements are dropped until `predicate` returns falsey.
+ *
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the slice of `array`.
+ */
+export const dropWhile = (array, predicate) => {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  let i = 0;
+  while (i < array.length && predicate(array[i], i, array)) {
+    i++;
+  }
+  return array.slice(i);
+};
