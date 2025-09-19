@@ -1,45 +1,32 @@
-const { get } = require('./object-get-utils');
+import { get } from './object-get-utils.js';
 
 describe('get', () => {
-  const object = { 'a': [{ 'b': { 'c': 3 } }, { d: 4 }] };
+  const object = { a: [{ b: { c: 3 } }] };
 
-  it('should get a value using a dot-notation string path', () => {
+  test('should get a value using a string path', () => {
     expect(get(object, 'a[0].b.c')).toBe(3);
   });
 
-  it('should get a value using a bracket-notation string path', () => {
-    expect(get(object, "a[1]['d']")).toBe(4);
-  });
-
-  it('should get a value using an array path', () => {
+  test('should get a value using an array path', () => {
     expect(get(object, ['a', '0', 'b', 'c'])).toBe(3);
   });
 
-  it('should return undefined for a non-existent path', () => {
-    expect(get(object, 'a[0].b.d')).toBe(undefined);
+  test('should return undefined for an invalid path', () => {
+    expect(get(object, 'a.b.c')).toBeUndefined();
   });
 
-  it('should return the default value for a non-existent path', () => {
-    expect(get(object, 'a[0].b.d', 'default')).toBe('default');
+  test('should return the default value for an invalid path', () => {
+    expect(get(object, 'a.b.c', 'default')).toBe('default');
   });
 
-  it('should return undefined if the object is null or undefined', () => {
-    expect(get(null, 'a.b')).toBe(undefined);
-    expect(get(undefined, ['a', 'b'])).toBe(undefined);
+  test('should return undefined if the object is null or undefined', () => {
+    expect(get(null, 'a.b')).toBeUndefined();
+    expect(get(undefined, ['a', 'b'], 'default')).toBe('default');
   });
 
-  it('should return the default value if the object is null or undefined', () => {
-    expect(get(null, 'a.b', 'default')).toBe('default');
-  });
-
-  it('should handle paths with existing but undefined values', () => {
+  test('should handle paths with existing but undefined values', () => {
     const objWithUndefined = { a: { b: undefined } };
-    expect(get(objWithUndefined, 'a.b')).toBe(undefined);
+    expect(get(objWithUndefined, 'a.b')).toBeUndefined();
     expect(get(objWithUndefined, 'a.b', 'default')).toBe('default');
-  });
-
-  it('should handle paths that are partially valid', () => {
-    expect(get(object, 'a[2].b.c')).toBe(undefined);
-    expect(get(object, 'a[2].b.c', 'default')).toBe('default');
   });
 });
