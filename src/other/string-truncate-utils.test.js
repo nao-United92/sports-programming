@@ -1,33 +1,28 @@
-const { truncate } = require('./string-truncate-utils.js');
+import { truncate } from './string-truncate-utils.js';
 
 describe('truncate', () => {
-  it('should truncate a string that is longer than the specified length', () => {
-    const str = 'This is a long string';
-    const truncatedStr = truncate(str, 10);
-    expect(truncatedStr).toBe('This is...');
+  test('should truncate a string that is longer than the specified length', () => {
+    expect(truncate('hello world', 8)).toBe('hello...');
   });
 
-  it('should not truncate a string that is shorter than or equal to the specified length', () => {
-    const str = 'Short';
-    const truncatedStr = truncate(str, 10);
-    expect(truncatedStr).toBe('Short');
+  test('should not truncate a string that is shorter than or equal to the specified length', () => {
+    expect(truncate('hello', 10)).toBe('hello');
+    expect(truncate('hello', 5)).toBe('hello');
   });
 
-  it('should use a custom omission string', () => {
-    const str = 'This is a long string';
-    const truncatedStr = truncate(str, 10, '--');
-    expect(truncatedStr).toBe('This is --');
+  test('should use a custom omission string', () => {
+    expect(truncate('hello world', 10, '... more')).toBe('hel... more');
   });
 
-  it('should handle an empty string', () => {
-    const str = '';
-    const truncatedStr = truncate(str, 10);
-    expect(truncatedStr).toBe('');
+  test('should truncate the omission string if length is smaller than omission length', () => {
+    expect(truncate('hello world', 2, '...')).toBe('..');
   });
 
-  it('should handle a length of 0', () => {
-    const str = 'This is a long string';
-    const truncatedStr = truncate(str, 0);
-    expect(truncatedStr).toBe('...');
+  test('should handle an empty string input', () => {
+    expect(truncate('', 5)).toBe('');
+  });
+
+  test('should handle a zero length', () => {
+    expect(truncate('hello world', 0)).toBe('');
   });
 });

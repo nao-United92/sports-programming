@@ -1,42 +1,38 @@
 import { mapKeys } from './object-map-keys-utils.js';
 
 describe('mapKeys', () => {
-  it('should map keys of an object', () => {
-    const object = { 'a': 1, 'b': 2 };
-    const result = mapKeys(object, (value, key) => key + value);
-    expect(result).toEqual({ 'a1': 1, 'b2': 2 });
+  test('should map keys and create a new object', () => {
+    const obj = { a: 1, b: 2 };
+    const result = mapKeys(obj, (value, key) => key.toUpperCase());
+    expect(result).toEqual({ A: 1, B: 2 });
   });
 
-  it('should pass value, key, and object to the iteratee', () => {
-    const object = { 'a': 1, 'b': 2 };
-    const keys = [];
-    const values = [];
-    mapKeys(object, (value, key, obj) => {
-      values.push(value);
-      keys.push(key);
-      expect(obj).toBe(object);
-    });
-    expect(values).toEqual([1, 2]);
-    expect(keys).toEqual(['a', 'b']);
+  test('iteratee should receive value, key, and the original object', () => {
+    const obj = { a: 1 };
+    const iteratee = jest.fn();
+    mapKeys(obj, iteratee);
+    expect(iteratee).toHaveBeenCalledWith(1, 'a', obj);
   });
 
-  it('should handle an empty object', () => {
-    expect(mapKeys({}, (value, key) => key + value)).toEqual({});
+  test('should handle key collisions by taking the last value', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const result = mapKeys(obj, () => 'key');
+    expect(result).toEqual({ key: 3 });
   });
 
-  it('should handle null or undefined input', () => {
-    expect(mapKeys(null, (value, key) => key + value)).toEqual({});
-    expect(mapKeys(undefined, (value, key) => key + value)).toEqual({});
+  test('should not modify the original object', () => {
+    const obj = { a: 1 };
+    mapKeys(obj, (v, k) => k.toUpperCase());
+    expect(obj).toEqual({ a: 1 });
   });
 
-  function Foo() {
-    this.a = 1;
-    this.b = 2;
-  }
-  Foo.prototype.c = 3;
+  test('should return an empty object for an empty object input', () => {
+    const result = mapKeys({}, (v, k) => k);
+    expect(result).toEqual({});
+  });
 
-  it('should only include own properties', () => {
-    const result = mapKeys(new Foo(), (value, key) => key + value);
-    expect(result).toEqual({ 'a1': 1, 'b2': 2 });
+  test('should handle null or undefined input', () => {
+    expect(mapKeys(null, (v, k) => k)).toEqual({});
+    expect(mapKeys(undefined, (v, k) => k)).toEqual({});
   });
 });

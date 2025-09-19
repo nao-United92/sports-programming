@@ -52,3 +52,79 @@ export function last(array) {
   const length = array == null ? 0 : array.length;
   return length ? array[length - 1] : undefined;
 }
+
+/**
+ * Creates a slice of `array` with elements taken from the beginning.
+ * Elements are taken until `predicate` returns falsey.
+ *
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the slice of `array`.
+ */
+export const takeWhile = (array, predicate) => {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  let i = 0;
+  while (i < array.length && predicate(array[i], i, array)) {
+    i++;
+  }
+  return array.slice(0, i);
+};
+
+/**
+ * Creates a slice of `array` excluding elements dropped from the beginning.
+ * Elements are dropped until `predicate` returns falsey.
+ *
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the slice of `array`.
+ */
+export const dropWhile = (array, predicate) => {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  let i = 0;
+  while (i < array.length && predicate(array[i], i, array)) {
+    i++;
+  }
+  return array.slice(i);
+};
+
+/**
+ * Creates a slice of `array` with elements taken from the end.
+ * Elements are taken until `predicate` returns falsey.
+ *
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the slice of `array`.
+ */
+export const takeRightWhile = (array, predicate) => {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  let i = array.length;
+  while (i-- > 0 && predicate(array[i], i, array)) {
+    // keep going
+  }
+  return array.slice(i + 1);
+};
+
+/**
+ * Creates a slice of `array` excluding elements dropped from the end.
+ * Elements are dropped until `predicate` returns falsey.
+ *
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the slice of `array`.
+ */
+export const dropRightWhile = (array, predicate) => {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  let i = array.length;
+  while (i-- > 0 && predicate(array[i], i, array)) {
+    // keep going
+  }
+  return array.slice(0, i + 1);
+};

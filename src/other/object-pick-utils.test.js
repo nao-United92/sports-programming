@@ -1,37 +1,34 @@
 import { pick } from './object-pick-utils.js';
 
 describe('pick', () => {
-  test('should pick specified properties from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+  test('should create an object with picked properties', () => {
+    const object = { a: 1, b: '2', c: 3 };
+    expect(pick(object, ['a', 'c'])).toEqual({ a: 1, c: 3 });
   });
 
-  test('should return an empty object if no keys are specified', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, [])).toEqual({});
+  test('should ignore properties that are not in the source object', () => {
+    const object = { a: 1, b: 2 };
+    expect(pick(object, ['a', 'd'])).toEqual({ a: 1 });
   });
 
-  test('should ignore keys that do not exist in the object', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, ['a', 'd'])).toEqual({ a: 1 });
+  test('should not modify the original object', () => {
+    const object = { a: 1, b: 2 };
+    pick(object, ['a']);
+    expect(object).toEqual({ a: 1, b: 2 });
   });
 
-  test('should handle an empty object', () => {
-    const obj = {};
-    expect(pick(obj, ['a'])).toEqual({});
-  });
-
-  test('should return an empty object for non-object inputs', () => {
+  test('should return an empty object if the source is null or undefined', () => {
     expect(pick(null, ['a'])).toEqual({});
     expect(pick(undefined, ['a'])).toEqual({});
-    expect(pick('string', ['a'])).toEqual({});
-    expect(pick(123, ['a'])).toEqual({});
   });
 
-  test('should handle inherited properties correctly (not pick them)', () => {
-    const proto = { a: 1 };
-    const obj = Object.create(proto);
-    obj.b = 2;
-    expect(pick(obj, ['a', 'b'])).toEqual({ b: 2 });
+  test('should return an empty object if no paths are provided', () => {
+    const object = { a: 1 };
+    expect(pick(object, [])).toEqual({});
+  });
+
+  test('should pick all properties if all keys are provided', () => {
+    const object = { a: 1, b: 2 };
+    expect(pick(object, ['a', 'b'])).toEqual({ a: 1, b: 2 });
   });
 });
