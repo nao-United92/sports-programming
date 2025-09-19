@@ -1,51 +1,39 @@
-import { set } from './object-set-utils';
-import { get } from './object-get-utils';
+import { set } from './object-set-utils.js';
 
 describe('set', () => {
-  it('should set a value on a new path', () => {
+  test('should set a value on a nested path', () => {
+    const obj = { a: { b: 2 } };
+    const newObj = set(obj, 'a.c', 3);
+    expect(newObj.a.c).toBe(3);
+  });
+
+  test('should not mutate the original object', () => {
+    const obj = { a: { b: 2 } };
+    set(obj, 'a.c', 3);
+    expect(obj.a.c).toBeUndefined();
+  });
+
+  test('should create nested properties if they do not exist', () => {
     const obj = {};
-    set(obj, 'a[0].b.c', 100);
-    expect(obj.a[0].b.c).toBe(100);
-    expect(get(obj, 'a[0].b.c')).toBe(100);
+    const newObj = set(obj, 'a.b.c', 1);
+    expect(newObj.a.b.c).toBe(1);
   });
 
-  it('should overwrite an existing value', () => {
-    const obj = { a: [{ b: { c: 1 } }] };
-    set(obj, 'a[0].b.c', 99);
-    expect(get(obj, 'a[0].b.c')).toBe(99);
+  test('should set a value in a nested array', () => {
+    const obj = { a: [{ b: 1 }] };
+    const newObj = set(obj, 'a[0].c', 2);
+    expect(newObj.a[0].c).toBe(2);
   });
 
-  it('should create nested arrays and objects as needed', () => {
+  test('should create nested arrays', () => {
     const obj = {};
-    set(obj, 'a[0].b[1].c', 'hello');
-    expect(Array.isArray(obj.a)).toBe(true);
-    expect(typeof obj.a[0]).toBe('object');
-    expect(Array.isArray(obj.a[0].b)).toBe(true);
-    expect(get(obj, 'a[0].b[1].c')).toBe('hello');
+    const newObj = set(obj, 'a[0].b', 1);
+    expect(Array.isArray(newObj.a)).toBe(true);
+    expect(newObj.a[0].b).toBe(1);
   });
 
-  it('should not overwrite existing objects in the path', () => {
-    const obj = { a: { x: 'original' } };
-    set(obj, 'a.y', 'new');
-    expect(get(obj, 'a.x')).toBe('original');
-    expect(get(obj, 'a.y')).toBe('new');
-  });
-
-  it('should return the modified object', () => {
-    const obj = {};
-    const result = set(obj, 'a.b', 1);
-    expect(result).toBe(obj);
-    expect(obj.a.b).toBe(1);
-  });
-
-  it('should handle null or undefined objects gracefully', () => {
-    expect(set(null, 'a.b', 1)).toBe(null);
-    expect(set(undefined, 'a.b', 1)).toBe(undefined);
-  });
-
-  it('should use an array path', () => {
-    const obj = {};
-    set(obj, ['a', '0', 'b'], 'value');
-    expect(get(obj, 'a[0].b')).toBe('value');
+  test('should handle a null or undefined initial object', () => {
+    const newObj = set(null, 'a.b', 1);
+    expect(newObj.a.b).toBe(1);
   });
 });

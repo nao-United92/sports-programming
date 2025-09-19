@@ -1,37 +1,38 @@
+const isObject = (value) => value !== null && typeof value === 'object';
+
+// This is a simplified version. A robust implementation would handle brackets and quotes.
+const stringToPath = (string) => {
+  return string.replace(/\[(\d+)\]/g, '.$1').split('.');
+}
+
 /**
- * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
- * it's created. Arrays are created for missing index properties while objects
- * are created for all other missing properties.
+ * Sets the value at `path` of `object`. If a portion of `path` doesn't exist, it's created.
+ * Arrays are created for missing index properties while objects are created for all other missing properties.
+ * This function returns a new object and does not mutate the original.
  *
- * @param {Object} object The object to modify.
+ * @param {object} object The object to modify.
  * @param {Array|string} path The path of the property to set.
  * @param {*} value The value to set.
- * @returns {Object} Returns `object`.
+ * @returns {object} Returns the new object with the updated value.
  */
-export const set = (object, path, value) => {
-  if (object == null) {
-    return object;
-  }
+const set = (object, path, value) => {
+  const pathArray = Array.isArray(path) ? path : stringToPath(path);
+  const newObject = JSON.parse(JSON.stringify(object || {}));
 
-  const pathArray = Array.isArray(path)
-    ? path
-    : path.replace(/[\[\]']+/g, '.').split('.').filter(Boolean);
-
-  let current = object;
-  for (let i = 0; i < pathArray.length; i++) {
+  let current = newObject;
+  for (let i = 0; i < pathArray.length - 1; i++) {
     const key = pathArray[i];
-    const isLast = i === pathArray.length - 1;
+    const nextKey = pathArray[i + 1];
+    const isNextKeyIndex = /^\d+$/.test(nextKey);
 
-    if (isLast) {
-      current[key] = value;
-    } else {
-      if (current[key] === undefined || current[key] === null) {
-        const nextKey = pathArray[i + 1];
-        const isNextKeyIndex = !isNaN(parseInt(nextKey, 10));
-        current[key] = isNextKeyIndex ? [] : {};
-      }
-      current = current[key];
+    if (!isObject(current[key])) {
+      current[key] = isNextKeyIndex ? [] : {};
     }
+    current = current[key];
   }
-  return object;
+
+  current[pathArray[pathArray.length - 1]] = value;
+  return newObject;
 };
+
+export { set };
