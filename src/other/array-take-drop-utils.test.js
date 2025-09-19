@@ -1,4 +1,4 @@
-import { take, takeRight, drop, dropRight, first, last } from './array-take-drop-utils.js';
+import { take, takeRight, drop, dropRight, first, last, takeWhile } from './array-take-drop-utils.js';
 
 describe('Array Take/Drop Utilities', () => {
   const array = [1, 2, 3, 4, 5];
@@ -96,6 +96,43 @@ describe('Array Take/Drop Utilities', () => {
     it('should return undefined for null or undefined input', () => {
       expect(last(null)).toBeUndefined();
       expect(last(undefined)).toBeUndefined();
+    });
+  });
+
+  // --- takeWhile ---
+  describe('takeWhile', () => {
+    const users = [
+      { 'user': 'barney',  'active': true },
+      { 'user': 'fred',    'active': true },
+      { 'user': 'pebbles', 'active': false }
+    ];
+
+    it('should take elements while the predicate is true', () => {
+      const result = takeWhile(users, (user) => user.active);
+      expect(result).toEqual([
+        { 'user': 'barney',  'active': true },
+        { 'user': 'fred',    'active': true }
+      ]);
+    });
+
+    it('should return an empty array if the first element is falsey', () => {
+      const users = [
+        { 'user': 'pebbles', 'active': false },
+        { 'user': 'barney',  'active': true },
+        { 'user': 'fred',    'active': true }
+      ];
+      const result = takeWhile(users, (user) => user.active);
+      expect(result).toEqual([]);
+    });
+
+    it('should return the whole array if the predicate is always true', () => {
+      const result = takeWhile(users, () => true);
+      expect(result).toEqual(users);
+    });
+
+    it('should handle an empty array', () => {
+      const result = takeWhile([], () => true);
+      expect(result).toEqual([]);
     });
   });
 });

@@ -52,3 +52,22 @@ export function last(array) {
   const length = array == null ? 0 : array.length;
   return length ? array[length - 1] : undefined;
 }
+
+/**
+ * Creates a slice of `array` with elements taken from the beginning.
+ * Elements are taken until `predicate` returns falsey.
+ *
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the slice of `array`.
+ */
+export const takeWhile = (array, predicate) => {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  let i = 0;
+  while (i < array.length && predicate(array[i], i, array)) {
+    i++;
+  }
+  return array.slice(0, i);
+};
