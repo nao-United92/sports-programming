@@ -2,15 +2,22 @@
  * Converts a string to camelCase.
  *
  * @param {string} str The string to convert.
- * @returns {string} Returns the camelCased string.
+ * @returns {string} The camelCased string.
  */
-const camelCase = (str) => {
-  if (typeof str !== 'string') {
+const toCamelCase = (str) => {
+  if (str == null) {
     return '';
   }
-  return str
-    .replace(/[-_\s]+(.)?/g, (match, chr) => (chr ? chr.toUpperCase() : ''))
-    .replace(/^(.)/, (match) => match.toLowerCase());
+  if (!/[-_\s]/.test(str)) {
+    if (str.toUpperCase() === str) {
+        return str.toLowerCase();
+    }
+    return str.charAt(0).toLowerCase() + str.slice(1);
+  }
+  const s = str
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '');
+  return s.charAt(0).toLowerCase() + s.slice(1);
 };
 
-export { camelCase };
+export { toCamelCase };
