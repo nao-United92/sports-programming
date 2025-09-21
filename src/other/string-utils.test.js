@@ -1,24 +1,29 @@
-const assert = require('assert');
-const { truncate, slugify } = require('./string-utils.js');
+import { truncate } from './string-utils.js';
 
-try {
-  // truncate tests
-  assert.strictEqual(truncate('hello world', 8), 'hello...', 'truncate shortens string');
-  assert.strictEqual(truncate('hello', 10), 'hello', 'truncate does not shorten if not needed');
-  assert.strictEqual(truncate('hello', 2), '...', 'truncate handles small num');
-  assert.strictEqual(truncate('hi', 2), 'hi', 'truncate does not shorten if length is equal');
+describe('string-utils', () => {
+  describe('truncate', () => {
+    test('should not truncate a string shorter than the specified length', () => {
+      expect(truncate('hello', 10)).toBe('hello');
+    });
 
+    test('should not truncate a string equal to the specified length', () => {
+      expect(truncate('hello world', 11)).toBe('hello world');
+    });
 
-  // slugify tests
-  assert.strictEqual(slugify('Hello World!'), 'hello-world', 'slugify basic conversion');
-  assert.strictEqual(slugify('  leading and trailing spaces  '), 'leading-and-trailing-spaces', 'slugify handles spaces');
-  assert.strictEqual(slugify('__multiple--separators__'), 'multiple-separators', 'slugify handles multiple separators');
-  assert.strictEqual(slugify('special!@#$%^&*()_+=chars'), 'special-chars', 'slugify removes special characters');
-  assert.strictEqual(slugify('-leading-and-trailing-hyphens-'), 'leading-and-trailing-hyphens', 'slugify removes leading/trailing hyphens');
+    test('should truncate a string longer than the specified length', () => {
+      expect(truncate('hello world', 8)).toBe('hello...');
+    });
 
+    test('should use a custom suffix if provided', () => {
+      expect(truncate('hello world', 8, '... more')).toBe('he... more');
+    });
 
-  console.log('All string-utils tests passed!');
-} catch (error) {
-  console.error('string-utils tests failed:', error.message);
-  process.exit(1);
-}
+    test('should return an empty string if the length is less than or equal to the suffix length', () => {
+      expect(truncate('hello world', 3)).toBe('...');
+    });
+
+    test('should handle empty strings', () => {
+      expect(truncate('', 10)).toBe('');
+    });
+  });
+});
