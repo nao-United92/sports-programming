@@ -1,4 +1,4 @@
-const { isEmpty } = require('./collection-utils.js');
+import { isEmpty } from './collection-utils.js';
 
 describe('isEmpty', () => {
   test('should return true for null and undefined', () => {
@@ -31,10 +31,29 @@ describe('isEmpty', () => {
     expect(isEmpty({ a: 1 })).toBe(false);
   });
 
+  test('should return true for empty Map', () => {
+    expect(isEmpty(new Map())).toBe(true);
+  });
+
+  test('should return false for non-empty Map', () => {
+    expect(isEmpty(new Map([['a', 1]]))).toBe(false);
+  });
+
+  test('should return true for empty Set', () => {
+    expect(isEmpty(new Set())).toBe(true);
+  });
+
+  test('should return false for non-empty Set', () => {
+    expect(isEmpty(new Set([1, 2]))).toBe(false);
+  });
+
+  test('should return true for NaN', () => {
+    expect(isEmpty(NaN)).toBe(true);
+  });
+
   test('should return false for numbers', () => {
     expect(isEmpty(0)).toBe(false);
     expect(isEmpty(123)).toBe(false);
-    expect(isEmpty(NaN)).toBe(false);
   });
 
   test('should return false for booleans', () => {

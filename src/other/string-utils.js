@@ -1,26 +1,14 @@
 /**
- * Truncates a string to a specified length.
+ * Truncates a string to a specified length, appending a custom suffix.
+ *
  * @param {string} str The string to truncate.
- * @param {number} num The length to truncate to.
+ * @param {number} length The maximum length of the string.
+ * @param {string} [suffix='...'] The suffix to append if the string is truncated.
  * @returns {string} The truncated string.
  */
-const truncate = (str, num) => {
-  if (str.length <= num) return str;
-  return str.slice(0, num - 3 < 0 ? 0 : num - 3) + '...';
+export function truncate(str, length, suffix = '...') {
+  if (str.length <= length) {
+    return str;
+  }
+  return str.slice(0, length - suffix.length) + suffix;
 }
-
-/**
- * Converts a string into a URL-friendly slug.
- * @param {string} str The string to slugify.
- * @returns {string} The slugified string.
- */
-const slugify = (str) => {
-  return str
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
-
-module.exports = { truncate, slugify };

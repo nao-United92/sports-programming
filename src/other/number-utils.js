@@ -32,4 +32,16 @@ const random = (lower, upper, floating = false) => {
   return lower + Math.floor(Math.random() * (upper - lower + 1));
 };
 
-module.exports = { inRange, random };
+/**
+ * Formats a number with commas as thousands separators.
+ * @param {number} num The number to format.
+ * @returns {string} The formatted number string.
+ */
+const formatNumberWithCommas = (num) => {
+  if (typeof num !== 'number' || isNaN(num)) {
+    return String(num);
+  }
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
+export { inRange, random, formatNumberWithCommas };

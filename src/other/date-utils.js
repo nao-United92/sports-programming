@@ -1,4 +1,3 @@
-
 /**
  * Checks if two Date objects represent the same day (ignoring time).
  * @param {Date} date1 The first Date object.
@@ -348,3 +347,17 @@ export function timeAgo(date, now = new Date()) {
   return `${Math.floor(seconds)} seconds ago`;
 }
 
+/**
+ * Calculates the age from a birth date.
+ * @param {Date} birthDate The birth date.
+ * @param {Date} [asOfDate=new Date()] The date to calculate the age as of. Defaults to current date.
+ * @returns {number} The age in years. Returns NaN if birthDate is invalid.
+ */
+export function getAge(birthDate, asOfDate = new Date()) {
+  if (!(birthDate instanceof Date) || isNaN(birthDate)) {
+    return NaN;
+  }
+  const ageDifMs = asOfDate.getTime() - birthDate.getTime();
+  const ageDate = new Date(ageDifMs); // miliseconds from epoch
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
