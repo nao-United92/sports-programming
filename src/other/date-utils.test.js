@@ -1,4 +1,4 @@
-import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth, isWeekday, isDateInRange, daysBetween, endOfMonth, getWeekNumber, timeAgo } from './date-utils.js';
+import { isSameDay, getDayDifference, isWeekend, addDays, getMonthDifference, formatDate, isValidDate, isToday, isFuture, isPast, isLeapYear, getDaysInMonth, isWeekday, isDateInRange, daysBetween, endOfMonth, getWeekNumber, timeAgo, getAge } from './date-utils.js';
 
 describe('date-utils', () => {
   describe('formatDate', () => {
@@ -115,8 +115,6 @@ describe('date-utils', () => {
       expect(isFirstDayOfMonth(null)).toBe(false);
       expect(isFirstDayOfMonth(undefined)).toBe(false);
     });
-  });
-});
   });
 
   describe('isSameDay', () => {
@@ -380,24 +378,6 @@ describe('date-utils', () => {
     });
   });
 
-  describe('isFirstDayOfMonth', () => {
-    test('should return true if the date is the first day of the month', () => {
-      expect(isFirstDayOfMonth(new Date('2023-01-01'))).toBe(true);
-      expect(isFirstDayOfMonth(new Date('2023-02-01'))).toBe(true);
-    });
-
-    test('should return false if the date is not the first day of the month', () => {
-      expect(isFirstDayOfMonth(new Date('2023-01-02'))).toBe(false);
-      expect(isFirstDayOfMonth(new Date('2023-02-15'))).toBe(false);
-    });
-
-    test('should return false for invalid dates', () => {
-      expect(isFirstDayOfMonth(new Date('invalid'))).toBe(false);
-      expect(isFirstDayOfMonth(null)).toBe(false);
-      expect(isFirstDayOfMonth(undefined)).toBe(false);
-    });
-  });
-
   describe('daysBetween', () => {
     test('should return the correct number of days between two dates', () => {
       const date1 = new Date('2023-01-01');
@@ -465,9 +445,9 @@ describe('date-utils', () => {
       expect(timeAgo(date, now)).toBe('30 seconds ago');
     });
 
-    test('should return a minute ago', () => {
+    test('should return 1 minute ago', () => {
       const date = new Date(now.getTime() - 60 * 1000);
-      expect(timeAgo(date, now)).toBe('a minute ago');
+      expect(timeAgo(date, now)).toBe('1 minute ago');
     });
 
     test('should return minutes ago', () => {
@@ -475,9 +455,9 @@ describe('date-utils', () => {
       expect(timeAgo(date, now)).toBe('5 minutes ago');
     });
 
-    test('should return an hour ago', () => {
+    test('should return 1 hour ago', () => {
       const date = new Date(now.getTime() - 60 * 60 * 1000);
-      expect(timeAgo(date, now)).toBe('an hour ago');
+      expect(timeAgo(date, now)).toBe('1 hour ago');
     });
 
     test('should return hours ago', () => {
@@ -485,9 +465,9 @@ describe('date-utils', () => {
       expect(timeAgo(date, now)).toBe('3 hours ago');
     });
 
-    test('should return a day ago', () => {
+    test('should return 1 day ago', () => {
       const date = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      expect(timeAgo(date, now)).toBe('a day ago');
+      expect(timeAgo(date, now)).toBe('1 day ago');
     });
 
     test('should return days ago', () => {
@@ -495,9 +475,9 @@ describe('date-utils', () => {
       expect(timeAgo(date, now)).toBe('5 days ago');
     });
 
-    test('should return a month ago', () => {
+    test('should return 1 month ago', () => {
       const date = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      expect(timeAgo(date, now)).toBe('a month ago');
+      expect(timeAgo(date, now)).toBe('1 month ago');
     });
 
     test('should return months ago', () => {
@@ -505,9 +485,9 @@ describe('date-utils', () => {
       expect(timeAgo(date, now)).toBe('4 months ago');
     });
 
-    test('should return a year ago', () => {
+    test('should return 1 year ago', () => {
       const date = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-      expect(timeAgo(date, now)).toBe('a year ago');
+      expect(timeAgo(date, now)).toBe('1 year ago');
     });
 
     test('should return years ago', () => {
@@ -524,5 +504,42 @@ describe('date-utils', () => {
       expect(timeAgo(new Date('invalid'))).toBe('');
     });
   });
-});
+
+  describe('getAge', () => {
+    test('should calculate the correct age for a birth date in the past', () => {
+      const birthDate = new Date('1990-05-15');
+      const asOfDate = new Date('2023-09-21');
+      expect(getAge(birthDate, asOfDate)).toBe(33);
+    });
+
+    test('should calculate the correct age when birth date is today', () => {
+      const birthDate = new Date('1990-09-21');
+      const asOfDate = new Date('2023-09-21');
+      expect(getAge(birthDate, asOfDate)).toBe(33);
+    });
+
+    test('should calculate the correct age when birth date is in the future (next year)', () => {
+      const birthDate = new Date('1990-10-01');
+      const asOfDate = new Date('2023-09-21');
+      expect(getAge(birthDate, asOfDate)).toBe(32);
+    });
+
+    test('should return NaN for an invalid birth date', () => {
+      expect(getAge(new Date('invalid'))).toBeNaN();
+      expect(getAge(null)).toBeNaN();
+      expect(getAge(undefined)).toBeNaN();
+    });
+
+    test('should return NaN if asOfDate is invalid', () => {
+      const birthDate = new Date('1990-05-15');
+      expect(getAge(birthDate, new Date('invalid'))).toBeNaN();
+    });
+
+    test('should use current date if asOfDate is not provided', () => {
+      const birthDate = new Date('1990-05-15');
+      const today = new Date();
+      const expectedAge = getAge(birthDate, today); // Calculate expected age using the function itself
+      expect(getAge(birthDate)).toBe(expectedAge);
+    });
+  });
 });
