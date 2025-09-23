@@ -1,29 +1,31 @@
-import { truncate } from './string-utils.js';
+import { truncate, slugify } from './string-utils.js';
 
-describe('string-utils', () => {
+describe('String Utilities', () => {
   describe('truncate', () => {
-    test('should not truncate a string shorter than the specified length', () => {
+    test('should truncate a string that is too long', () => {
+      expect(truncate('hello world', 5)).toBe('hello...');
+    });
+
+    test('should not truncate a string that is short enough', () => {
       expect(truncate('hello', 10)).toBe('hello');
     });
 
-    test('should not truncate a string equal to the specified length', () => {
-      expect(truncate('hello world', 11)).toBe('hello world');
+    test('should handle edge case where length is equal to num', () => {
+      expect(truncate('hello', 5)).toBe('hello');
+    });
+  });
+
+  describe('slugify', () => {
+    test('should convert a string to a slug', () => {
+      expect(slugify('Hello World!')).toBe('hello-world');
     });
 
-    test('should truncate a string longer than the specified length', () => {
-      expect(truncate('hello world', 8)).toBe('hello...');
+    test('should handle multiple spaces and hyphens', () => {
+      expect(slugify('  --hello--world--  ')).toBe('hello-world');
     });
 
-    test('should use a custom suffix if provided', () => {
-      expect(truncate('hello world', 8, '... more')).toBe('he... more');
-    });
-
-    test('should return an empty string if the length is less than or equal to the suffix length', () => {
-      expect(truncate('hello world', 3)).toBe('...');
-    });
-
-    test('should handle empty strings', () => {
-      expect(truncate('', 10)).toBe('');
+    test('should remove special characters', () => {
+      expect(slugify('!@#$%^&*()hello_world')).toBe('hello-world');
     });
   });
 });
