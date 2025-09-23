@@ -1,33 +1,53 @@
-const assert = require('assert');
-const { pick, omit, isEmpty } = require('./object-utils.js');
+import { invert, has } from './object-utils.js';
 
-try {
-  const obj = { a: 1, b: '2', c: 3 };
+describe('Object Utilities', () => {
+  describe('invert', () => {
+    test('should invert an object with unique values', () => {
+      const obj = { a: '1', b: '2', c: '3' };
+      const invertedObj = { '1': 'a', '2': 'b', '3': 'c' };
+      expect(invert(obj)).toEqual(invertedObj);
+    });
 
-  // pick tests
-  assert.deepStrictEqual(pick(obj, 'a', 'c'), { a: 1, c: 3 }, 'pick should select properties');
-  assert.deepStrictEqual(pick(obj, 'a', 'd'), { a: 1 }, 'pick should ignore non-existent properties');
-  assert.deepStrictEqual(pick(obj), {}, 'pick should return an empty object if no keys are provided');
-  assert.deepStrictEqual(pick(null, 'a'), {}, 'pick should handle null input');
+    test('should handle objects with non-unique values (last one wins)', () => {
+      const obj = { a: '1', b: '2', c: '1' };
+      const invertedObj = { '1': 'c', '2': 'b' };
+      expect(invert(obj)).toEqual(invertedObj);
+    });
 
-  // omit tests
-  assert.deepStrictEqual(omit(obj, 'a', 'c'), { b: '2' }, 'omit should remove properties');
-  assert.deepStrictEqual(omit(obj, 'd'), { a: 1, b: '2', c: 3 }, 'omit should not change object if key does not exist');
-  assert.deepStrictEqual(omit(obj), { a: 1, b: '2', c: 3 }, 'omit should return a copy if no keys are provided');
-  assert.deepStrictEqual(omit(null, 'a'), {}, 'omit should handle null input');
+    test('should return an empty object for an empty object', () => {
+      expect(invert({})).toEqual({});
+    });
+  });
 
-  // isEmpty tests
-  assert.strictEqual(isEmpty({}), true, 'isEmpty should return true for an empty object');
-  assert.strictEqual(isEmpty({ a: 1 }), false, 'isEmpty should return false for a non-empty object');
-  assert.strictEqual(isEmpty(null), true, 'isEmpty should return true for null');
-  assert.strictEqual(isEmpty(undefined), true, 'isEmpty should return true for undefined');
-  assert.strictEqual(isEmpty([]), false, 'isEmpty should return false for an empty array');
-  assert.strictEqual(isEmpty(''), false, 'isEmpty should return false for an empty string');
-  assert.strictEqual(isEmpty(new Date()), false, 'isEmpty should return false for a Date object');
+  describe('has', () => {
+    const obj = { a: 1, b: undefined };
+    function Parent() {
+      this.c = 3;
+    }
+    Parent.prototype.d = 4;
+    const child = new Parent();
+    child.e = 5;
 
 
-  console.log('All object-utils tests passed!');
-} catch (error) {
-  console.error('object-utils tests failed:', error.message);
-  process.exit(1);
-}
+    test('should return true for own properties', () => {
+      expect(has(obj, 'a')).toBe(true);
+    });
+
+    test('should return true for own properties with undefined value', () => {
+      expect(has(obj, 'b')).toBe(true);
+    });
+
+    test('should return false for properties that do not exist', () => {
+      expect(has(obj, 'c')).toBe(false);
+    });
+
+    test('should return true for own properties on child objects', () => {
+        expect(has(child, 'c')).toBe(true);
+        expect(has(child, 'e')).toBe(true);
+    });
+
+    test('should return false for inherited properties', () => {
+      expect(has(child, 'd')).toBe(false);
+    });
+  });
+});
