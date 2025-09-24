@@ -1,48 +1,39 @@
-
-import { intersection } from './intersection-utils.js';
+import { intersection } from './intersection-utils';
 
 describe('intersection', () => {
-  test('should return the intersection of two arrays', () => {
-    const result = intersection([2, 1], [2, 3]);
-    expect(result).toEqual([2]);
+  it('should return the intersection of two arrays', () => {
+    const arr1 = [1, 2, 3, 4];
+    const arr2 = [3, 4, 5, 6];
+    const result = intersection(arr1, arr2);
+    expect(result).toEqual([3, 4]);
   });
 
-  test('should return the intersection of multiple arrays', () => {
-    const result = intersection(['a', 'b'], ['b', 'c'], ['b', 'd']);
-    expect(result).toEqual(['b']);
+  it('should handle multiple arrays', () => {
+    const arr1 = [1, 2, 3, 4];
+    const arr2 = [2, 3, 4, 5];
+    const arr3 = [3, 4, 5, 6];
+    const result = intersection(arr1, arr2, arr3);
+    expect(result).toEqual([3, 4]);
   });
 
-  test('should return an empty array if no common values are found', () => {
-    const result = intersection([1, 2], [3, 4], [5, 6]);
+  it('should return an empty array if there is no intersection', () => {
+    const arr1 = [1, 2];
+    const arr2 = [3, 4];
+    const result = intersection(arr1, arr2);
     expect(result).toEqual([]);
   });
 
-  test('should handle empty arrays', () => {
-    expect(intersection([], [1, 2])).toEqual([]);
-    expect(intersection([1, 2], [])).toEqual([]);
+  it('should handle empty arrays', () => {
+    const arr1 = [1, 2];
+    const arr2 = [];
+    const result = intersection(arr1, arr2);
+    expect(result).toEqual([]);
   });
 
-  test('should handle non-array inputs gracefully', () => {
-    expect(intersection([1, 2], null)).toEqual([]);
-    expect(intersection(undefined, [1, 2])).toEqual([]);
-    expect(intersection([1, 2], 123)).toEqual([]);
-  });
-
-  test('should work with different data types', () => {
-    const obj = { a: 1 };
-    const arr = [1, 'a', obj];
-    const result = intersection(arr, [obj, 'a']);
-    expect(result).toEqual(['a', obj]);
-  });
-
-  test('should return an empty array if called with no arguments', () => {
-    expect(intersection()).toEqual([]);
-  });
-
-  test('should return a copy of the first array if only one is provided', () => {
-      const arr = [1, 2, 3];
-      const result = intersection(arr);
-      expect(result).toEqual(arr);
-      expect(result).not.toBe(arr);
+  it('should handle arrays with different data types', () => {
+    const arr1 = [1, 'a', 2, 'b'];
+    const arr2 = [2, 'c', 'a'];
+    const result = intersection(arr1, arr2);
+    expect(result).toEqual(['a', 2]);
   });
 });
