@@ -1,8 +1,18 @@
+/**
+ * Checks if a value is a non-array object.
+ * @param {*} item The value to check.
+ * @returns {boolean} True if the value is a non-array object, false otherwise.
+ */
 const isObject = (item) => {
-  return (item && typeof item === 'object' && !Array.isArray(item));
-}
+  return item && typeof item === 'object' && !Array.isArray(item);
+};
 
-export const deepMerge = (target, ...sources) => {
+/**
+ * Deeply merges two or more objects.
+ * @param {...Object} sources The objects to merge.
+ * @returns {Object} The merged object.
+ */
+const deepMerge = (target, ...sources) => {
   if (!sources.length) {
     return target;
   }
@@ -23,3 +33,5 @@ export const deepMerge = (target, ...sources) => {
 
   return deepMerge(target, ...sources);
 };
+
+module.exports = { deepMerge };
