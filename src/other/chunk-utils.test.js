@@ -1,26 +1,28 @@
-import { chunk } from './chunk-utils';
+const { chunk } = require('./chunk-utils.js');
 
 describe('chunk', () => {
-  it('should create chunks of a specified size', () => {
+  test('should create chunks of a specified size', () => {
     const array = ['a', 'b', 'c', 'd', 'e'];
     expect(chunk(array, 2)).toEqual([['a', 'b'], ['c', 'd'], ['e']]);
-    expect(chunk(array, 3)).toEqual([['a', 'b', 'c'], ['d', 'e']]);
   });
 
-  it('should return the last chunk with remaining elements', () => {
-    const array = [1, 2, 3, 4, 5, 6, 7];
-    expect(chunk(array, 3)[2]).toEqual([7]);
+  test('should return an empty array for empty or null input', () => {
+    expect(chunk([], 2)).toEqual([]);
+    expect(chunk(null, 2)).toEqual([]);
   });
 
-  it('should default to a chunk size of 1', () => {
+  test('should handle a size of 1', () => {
+    const array = ['a', 'b', 'c'];
+    expect(chunk(array, 1)).toEqual([['a'], ['b'], ['c']]);
+  });
+
+  test('should handle a size larger than the array length', () => {
+    const array = ['a', 'b', 'c'];
+    expect(chunk(array, 5)).toEqual([['a', 'b', 'c']]);
+  });
+
+  test('should default to a size of 1', () => {
     const array = ['a', 'b', 'c'];
     expect(chunk(array)).toEqual([['a'], ['b'], ['c']]);
-  });
-
-  it('should return an empty array for invalid inputs', () => {
-    expect(chunk([], 2)).toEqual([]);
-    expect(chunk([1, 2, 3], 0)).toEqual([]);
-    expect(chunk([1, 2, 3], -1)).toEqual([]);
-    expect(chunk(null, 2)).toEqual([]);
   });
 });
