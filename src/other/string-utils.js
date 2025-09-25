@@ -1,14 +1,17 @@
-export const truncate = (str, num) => {
-  if (str.length <= num) {
+/**
+ * Truncates a string to a specified length, appending a suffix.
+ *
+ * @param {string} str The string to truncate.
+ * @param {number} length The maximum length of the string.
+ * @param {string} [suffix='...'] The suffix to append if the string is truncated.
+ * @returns {string} The truncated string.
+ */
+export const truncate = (str, length, suffix = '...') => {
+  if (typeof str !== 'string' || str.length === 0) {
+    return '';
+  }
+  if (str.length <= length) {
     return str;
   }
-  return str.slice(0, num) + '...';
+  return str.slice(0, length - suffix.length) + suffix;
 };
-
-export const slugify = str =>
-  str
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
