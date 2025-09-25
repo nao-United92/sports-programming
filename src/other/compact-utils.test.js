@@ -1,21 +1,29 @@
-import { compact } from './compact-utils';
+const { compact } = require('./compact-utils.js');
 
 describe('compact', () => {
-  test('should remove all falsy values from an array', () => {
-    const array = [0, 1, false, 2, '', 3, null, 4, undefined, 5, NaN];
-    const compacted = compact(array);
-    expect(compacted).toEqual([1, 2, 3, 4, 5]);
+  test('should remove falsey values from an array', () => {
+    const array = [0, 1, false, 2, '', 3, null, 'a', undefined, NaN];
+    expect(compact(array)).toEqual([1, 2, 3, 'a']);
   });
 
-  test('should return an empty array if the input array is empty', () => {
-    const array = [];
-    const compacted = compact(array);
-    expect(compacted).toEqual([]);
-  });
-
-  test('should return an empty array if all values are falsy', () => {
+  test('should return an empty array for an array with only falsey values', () => {
     const array = [0, false, '', null, undefined, NaN];
-    const compacted = compact(array);
-    expect(compacted).toEqual([]);
+    expect(compact(array)).toEqual([]);
+  });
+
+  test('should return the same array if no falsey values are present', () => {
+    const array = [1, 2, 3, 'a'];
+    expect(compact(array)).toEqual([1, 2, 3, 'a']);
+  });
+
+  test('should handle an empty array', () => {
+    const array = [];
+    expect(compact(array)).toEqual([]);
+  });
+
+  test('should not modify the original array', () => {
+    const array = [0, 1, false, 2];
+    compact(array);
+    expect(array).toEqual([0, 1, false, 2]);
   });
 });
