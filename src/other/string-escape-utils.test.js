@@ -1,22 +1,27 @@
+const { escape } = require('./string-escape-utils.js');
 
-import { escapeHTML, unescapeHTML } from './string-escape-utils.js';
-
-describe('escapeHTML', () => {
+describe('escape', () => {
   test('should escape HTML special characters', () => {
-    expect(escapeHTML('<script>alert("xss")</script>')).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
+    expect(escape('fred, bar, & baz')).toBe('fred, bar, &amp; baz');
+    expect(escape('<')).toBe('&lt;');
+    expect(escape('>')).toBe('&gt;');
+    expect(escape('"')).toBe('&quot;');
+    expect(escape(''')).toBe('&#39;');
+    expect(escape('`')).toBe('&#96;');
+    expect(escape('<div>"hello" & 'world`</div>')).toBe('&lt;div&gt;&quot;hello&quot; &amp; &#39;world&#96;&lt;/div&gt;');
   });
 
-  test('should handle strings with no special characters', () => {
-    expect(escapeHTML('hello world')).toBe('hello world');
-  });
-});
-
-describe('unescapeHTML', () => {
-  test('should unescape HTML special characters', () => {
-    expect(unescapeHTML('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;')).toBe('<script>alert("xss")</script>');
+  test('should handle empty string', () => {
+    expect(escape('')).toBe('');
   });
 
-  test('should handle strings with no special characters', () => {
-    expect(unescapeHTML('hello world')).toBe('hello world');
+  test('should handle string with no special characters', () => {
+    expect(escape('hello world')).toBe('hello world');
+  });
+
+  test('should handle non-string input', () => {
+    expect(escape(null)).toBe('');
+    expect(escape(undefined)).toBe('');
+    expect(escape(123)).toBe('');
   });
 });
