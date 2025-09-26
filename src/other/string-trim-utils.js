@@ -5,11 +5,15 @@
  * @param {string} [chars] The characters to trim.
  * @returns {string} Returns the trimmed string.
  */
-export const trim = (string, chars) => {
-  const str = string == null ? '' : String(string);
+function trim(string, chars) {
+  if (typeof string !== 'string' || string.length === 0) {
+    return '';
+  }
   if (chars === undefined) {
-    return str.trim();
+    return string.trim();
   }
   const pattern = new RegExp(`^[${chars}]+|[${chars}]+$`, 'g');
-  return str.replace(pattern, '');
-};
+  return string.replace(pattern, '');
+}
+
+module.exports = { trim };
