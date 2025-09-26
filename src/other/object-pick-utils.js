@@ -1,21 +1,21 @@
 /**
- * Creates an object composed of the picked object properties.
+ * Creates a shallow copy of `object` composed of the `paths` properties.
  *
- * @param {object} object The source object.
- * @param {string[]} paths The property paths to pick.
- * @returns {object} Returns the new object.
+ * @param {Object} object The source object.
+ * @param {Array|string} paths The property keys to pick.
+ * @returns {Object} Returns the new object.
  */
-const pick = (object, paths) => {
+function pick(object, paths) {
   const result = {};
-  if (object == null) {
-    return result;
-  }
-  for (const key of paths) {
+  const pathArray = Array.isArray(paths) ? paths : [paths];
+
+  for (const key of pathArray) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
       result[key] = object[key];
     }
   }
-  return result;
-};
 
-export { pick };
+  return result;
+}
+
+module.exports = { pick };
