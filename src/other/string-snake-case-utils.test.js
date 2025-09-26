@@ -1,27 +1,23 @@
-import { snakeCase } from './string-snake-case-utils';
+const { snakeCase } = require('./string-snake-case-utils.js');
 
 describe('snakeCase', () => {
-  it('should convert camelCase to snake_case', () => {
-    expect(snakeCase('camelCase')).toBe('camel_case');
+  test('should convert a string to snake case', () => {
+    expect(snakeCase('Foo Bar')).toBe('foo_bar');
+    expect(snakeCase('fooBar')).toBe('foo_bar');
+    expect(snakeCase('__FOO_BAR__')).toBe('foo_bar');
+    expect(snakeCase('foo-bar')).toBe('foo_bar');
   });
 
-  it('should convert PascalCase to snake_case', () => {
-    expect(snakeCase('PascalCase')).toBe('pascal_case');
-  });
-
-  it('should convert space-separated words to snake_case', () => {
-    expect(snakeCase('hello world')).toBe('hello_world');
-  });
-
-  it('should handle already snake_cased strings', () => {
-    expect(snakeCase('already_snake_case')).toBe('already_snake_case');
-  });
-
-  it('should handle empty strings', () => {
+  test('should handle empty string', () => {
     expect(snakeCase('')).toBe('');
   });
 
-  it('should handle non-string inputs', () => {
+  test('should handle single word string', () => {
+    expect(snakeCase('foo')).toBe('foo');
+    expect(snakeCase('Foo')).toBe('foo');
+  });
+
+  test('should handle non-string input', () => {
     expect(snakeCase(null)).toBe('');
     expect(snakeCase(undefined)).toBe('');
     expect(snakeCase(123)).toBe('');

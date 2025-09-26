@@ -1,23 +1,14 @@
 /**
- * Converts a string to camelCase.
+ * Converts `string` to camel case.
  *
- * @param {string} str The string to convert.
- * @returns {string} The camelCased string.
+ * @param {string} [string=''] The string to convert.
+ * @returns {string} Returns the camel cased string.
  */
-const toCamelCase = (str) => {
-  if (str == null) {
+function camelCase(string) {
+  if (typeof string !== 'string' || string.length === 0) {
     return '';
   }
-  if (!/[-_\s]/.test(str)) {
-    if (str.toUpperCase() === str) {
-        return str.toLowerCase();
-    }
-    return str.charAt(0).toLowerCase() + str.slice(1);
-  }
-  const s = str
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '');
-  return s.charAt(0).toLowerCase() + s.slice(1);
-};
+  return string.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
+}
 
-export { toCamelCase };
+module.exports = { camelCase };

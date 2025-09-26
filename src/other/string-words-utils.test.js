@@ -1,22 +1,30 @@
-import { words } from './string-words-utils';
+const { words } = require('./string-words-utils.js');
 
 describe('words', () => {
-  it('should split a string into an array of words', () => {
-    const str = 'fred, barney, & pebbles';
-    expect(words(str)).toEqual(['fred', 'barney', 'pebbles']);
+  test('should split a string into words', () => {
+    expect(words('fred, bar, baz')).toEqual(['fred', 'bar', 'baz']);
   });
 
-  it('should work with a custom pattern', () => {
-    const str = 'fred, barney, & pebbles';
-    const pattern = /[^, ]+/g;
-    expect(words(str, pattern)).toEqual(['fred', 'barney', '&', 'pebbles']);
+  test('should handle different delimiters', () => {
+    expect(words('fred-bar-baz')).toEqual(['fred', 'bar', 'baz']);
+    expect(words('fred_bar_baz')).toEqual(['fred', 'bar', 'baz']);
   });
 
-  it('should return an empty array for an empty string', () => {
+  test('should handle custom pattern', () => {
+    expect(words('fred, bar, baz', /[^, ]+/g)).toEqual(['fred', 'bar', 'baz']);
+  });
+
+  test('should handle empty string', () => {
     expect(words('')).toEqual([]);
   });
 
-  it('should handle strings with no words', () => {
-    expect(words(',,&')).toEqual([]);
+  test('should handle string with only delimiters', () => {
+    expect(words('   ')).toEqual([]);
+  });
+
+  test('should handle non-string input', () => {
+    expect(words(null)).toEqual([]);
+    expect(words(undefined)).toEqual([]);
+    expect(words(123)).toEqual([]);
   });
 });

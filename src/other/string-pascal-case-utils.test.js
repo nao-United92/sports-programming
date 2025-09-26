@@ -1,27 +1,25 @@
-import { pascalCase } from './string-pascal-case-utils';
+const { pascalCase } = require('./string-pascal-case-utils.js');
 
 describe('pascalCase', () => {
-  it('should convert snake_case to PascalCase', () => {
-    expect(pascalCase('snake_case_string')).toBe('SnakeCaseString');
+  test('should convert a string to PascalCase', () => {
+    expect(pascalCase('Foo Bar')).toBe('FooBar');
+    expect(pascalCase('--foo-bar--')).toBe('FooBar');
+    expect(pascalCase('__FOO_BAR__')).toBe('FooBar');
+    expect(pascalCase('fooBar')).toBe('FooBar');
+    expect(pascalCase('foo bar')).toBe('FooBar');
+    expect(pascalCase('foo-bar')).toBe('FooBar');
   });
 
-  it('should convert kebab-case to PascalCase', () => {
-    expect(pascalCase('kebab-case-string')).toBe('KebabCaseString');
-  });
-
-  it('should convert space-separated words to PascalCase', () => {
-    expect(pascalCase('hello world example')).toBe('HelloWorldExample');
-  });
-
-  it('should handle already PascalCased strings', () => {
-    expect(pascalCase('AlreadyPascalCased')).toBe('AlreadyPascalCased');
-  });
-
-  it('should handle empty strings', () => {
+  test('should handle empty string', () => {
     expect(pascalCase('')).toBe('');
   });
 
-  it('should handle non-string inputs', () => {
+  test('should handle single word string', () => {
+    expect(pascalCase('foo')).toBe('Foo');
+    expect(pascalCase('Foo')).toBe('Foo');
+  });
+
+  test('should handle non-string input', () => {
     expect(pascalCase(null)).toBe('');
     expect(pascalCase(undefined)).toBe('');
     expect(pascalCase(123)).toBe('');

@@ -1,37 +1,28 @@
 /**
- * Checks if a value is a non-array object.
- * @param {*} item The value to check.
- * @returns {boolean} True if the value is a non-array object, false otherwise.
- */
-const isObject = (item) => {
-  return item && typeof item === 'object' && !Array.isArray(item);
-};
-
-/**
- * Deeply merges two or more objects.
- * @param {...Object} sources The objects to merge.
+ * Performs a deep merge of objects and returns a new object.
+ * Does not modify the original objects.
+ *
+ * @param {...Object} objects The objects to merge.
  * @returns {Object} The merged object.
  */
-const deepMerge = (target, ...sources) => {
-  if (!sources.length) {
-    return target;
-  }
-  const source = sources.shift();
+function deepMerge(...objects) {
+  const result = {};
 
-  if (isObject(target) && isObject(source)) {
-    for (const key in source) {
-      if (isObject(source[key])) {
-        if (!target[key]) {
-          Object.assign(target, { [key]: {} });
+  for (const source of objects) {
+    if (source) {
+      for (const key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
+            result[key] = deepMerge(result[key], source[key]);
+          } else {
+            result[key] = source[key];
+          }
         }
-        deepMerge(target[key], source[key]);
-      } else {
-        Object.assign(target, { [key]: source[key] });
       }
     }
   }
 
-  return deepMerge(target, ...sources);
-};
+  return result;
+}
 
 module.exports = { deepMerge };

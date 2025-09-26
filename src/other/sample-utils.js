@@ -4,10 +4,9 @@
  * @param {Array} array The array to sample.
  * @returns {*} Returns the random element.
  */
-export function sample(array) {
-  if (!Array.isArray(array) || array.length === 0) {
-    return undefined;
-  }
-  const index = Math.floor(Math.random() * array.length);
-  return array[index];
+function sample(array) {
+  const length = array == null ? 0 : array.length;
+  return length ? array[Math.floor(Math.random() * length)] : undefined;
 }
+
+module.exports = { sample };

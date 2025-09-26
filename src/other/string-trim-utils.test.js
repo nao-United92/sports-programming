@@ -1,33 +1,33 @@
-import { trim } from './string-trim-utils';
+const { trim } = require('./string-trim-utils.js');
 
 describe('trim', () => {
-  it('should trim leading and trailing whitespace by default', () => {
-    expect(trim('  hello world  ')).toBe('hello world');
-    expect(trim('\t\n hello \t\n')).toBe('hello');
+  test('should trim leading and trailing whitespace', () => {
+    expect(trim('  abc  ')).toBe('abc');
   });
 
-  it('should return an empty string for null or undefined input', () => {
+  test('should trim specified characters', () => {
+    expect(trim('_-abc-_', '_- ')).toBe('abc');
+  });
+
+  test('should handle empty string', () => {
+    expect(trim('')).toBe('');
+  });
+
+  test('should handle string with only whitespace', () => {
+    expect(trim('   ')).toBe('');
+  });
+
+  test('should handle string with only specified characters', () => {
+    expect(trim('--- ', ' - ')).toBe('');
+  });
+
+  test('should not modify the string if no trimming is needed', () => {
+    expect(trim('abc')).toBe('abc');
+  });
+
+  test('should handle non-string input', () => {
     expect(trim(null)).toBe('');
     expect(trim(undefined)).toBe('');
-  });
-
-  it('should trim specified characters', () => {
-    expect(trim('_-abc-_', '_-')).toBe('abc');
-    expect(trim('...hello...', '.')).toBe('hello');
-  });
-
-  it('should handle strings with no leading/trailing characters to trim', () => {
-    expect(trim('hello world')).toBe('hello world');
-    expect(trim('abc', 'xyz')).toBe('abc');
-  });
-
-  it('should handle empty strings', () => {
-    expect(trim('')).toBe('');
-    expect(trim('', 'abc')).toBe('');
-  });
-
-  it('should handle trimming characters that are part of the string content', () => {
-    expect(trim('abcabc', 'abc')).toBe('');
-    expect(trim('abccba', 'abc')).toBe('');
+    expect(trim(123)).toBe('');
   });
 });

@@ -1,37 +1,24 @@
-const isObject = (value) => {
-  const type = typeof value;
-  return value != null && (type === 'object' || type === 'function');
-};
-
-// This is a simplified version. A robust implementation would handle brackets and quotes.
-const stringToPath = (string) => {
-  return string.replace(/\[(.*?)\]/g, '.$1').split('.');
-}
-
 /**
- * Gets the value at `path` of `object`. If the resolved value is
- * `undefined`, the `defaultValue` is returned in its place.
+ * Gets the value at `path` of `object`.
+ * If the resolved value is `undefined`, the `defaultValue` is returned in its place.
  *
- * @param {object} object The object to query.
- * @param {Array|string} path The path of the property to retrieve.
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
  * @param {*} [defaultValue] The value returned for `undefined` resolved values.
  * @returns {*} Returns the resolved value.
  */
-const get = (object, path, defaultValue) => {
-  const pathArray = Array.isArray(path) ? path : stringToPath(path);
-
-  let index = 0;
-  let length = pathArray.length;
+function get(object, path, defaultValue) {
+  const pathArray = Array.isArray(path) ? path : path.split('.');
   let current = object;
 
-  while (current != null && index < length) {
-    current = current[pathArray[index++]];
+  for (let i = 0; i < pathArray.length; i++) {
+    if (current === null || typeof current !== 'object') {
+      return defaultValue;
+    }
+    current = current[pathArray[i]];
   }
 
-  if (index && index === length && current !== undefined) {
-    return current;
-  }
-  return defaultValue;
-};
+  return current === undefined ? defaultValue : current;
+}
 
-export { get };
+module.exports = { get };
