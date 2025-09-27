@@ -19,3 +19,22 @@ export const clamp = (value, min, max) => {
 export const lerp = (start, end, amount) => {
   return start + (end - start) * amount;
 };
+
+/**
+ * Calculates the sum of the given numbers.
+ * @param {...number} nums The numbers to sum.
+ * @returns {number} The sum of the numbers.
+ */
+export const sum = (...nums) => nums.reduce((acc, num) => acc + num, 0);
+
+/**
+ * Calculates the average of the given numbers.
+ * @param {...number} nums The numbers to average.
+ * @returns {number} The average of the numbers.
+ */
+export const average = (...nums) => {
+  if (nums.length === 0) {
+    return 0;
+  }
+  return sum(...nums) / nums.length;
+};
