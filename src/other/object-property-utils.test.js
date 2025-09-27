@@ -1,4 +1,4 @@
-const { pick, omit } = require('./object-property-utils.js');
+const { pick, omit, has } = require('./object-property-utils.js');
 
 describe('pick', () => {
   it('should create an object with picked properties', () => {
@@ -33,5 +33,22 @@ describe('omit', () => {
   it('should not change the object if keys to omit do not exist', () => {
     const obj = { a: 1, b: 2 };
     expect(omit(obj, ['c', 'd'])).toEqual({ a: 1, b: 2 });
+  });
+});
+
+describe('has', () => {
+  it('should return true if an object has the specified property', () => {
+    const obj = { a: 1 };
+    expect(has(obj, 'a')).toBe(true);
+  });
+
+  it('should return false if an object does not have the specified property', () => {
+    const obj = { a: 1 };
+    expect(has(obj, 'b')).toBe(false);
+  });
+
+  it('should return false for null or undefined objects', () => {
+    expect(has(null, 'a')).toBe(false);
+    expect(has(undefined, 'a')).toBe(false);
   });
 });

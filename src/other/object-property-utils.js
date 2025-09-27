@@ -32,3 +32,13 @@ export const omit = (obj, keys) => {
   });
   return newObj;
 };
+
+/**
+ * Checks if an object has a specified property.
+ * @param {Object} obj The object to check.
+ * @param {string} key The property to check for.
+ * @returns {boolean} True if the object has the property, false otherwise.
+ */
+export const has = (obj, key) => {
+  return obj != null && Object.prototype.hasOwnProperty.call(obj, key);
+};
