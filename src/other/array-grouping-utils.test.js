@@ -1,4 +1,4 @@
-import { groupBy, partition } from './array-grouping-utils';
+import { groupBy, partition, countBy } from './array-grouping-utils';
 
 describe('groupBy', () => {
   it('should group an array of objects by a given key', () => {
@@ -43,5 +43,23 @@ describe('partition', () => {
     const [numbers, others] = partition(mixed, (x) => typeof x === 'number');
     expect(numbers).toEqual([1, 2]);
     expect(others).toEqual(['a', true, 'b', false]);
+  });
+});
+
+describe('countBy', () => {
+  it('should count occurrences based on a key', () => {
+    const people = [
+      { name: 'Alice', age: 21 },
+      { name: 'Bob', age: 25 },
+      { name: 'Charlie', age: 21 },
+    ];
+    const counts = countBy(people, 'age');
+    expect(counts).toEqual({ 21: 2, 25: 1 });
+  });
+
+  it('should count occurrences based on a function', () => {
+    const numbers = [1.3, 2.1, 2.4];
+    const counts = countBy(numbers, Math.floor);
+    expect(counts).toEqual({ 1: 1, 2: 2 });
   });
 });

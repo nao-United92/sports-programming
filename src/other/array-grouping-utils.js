@@ -18,3 +18,11 @@ export const partition = (arr, predicate) => {
     [[], []]
   );
 };
+
+export const countBy = (arr, criterion) => {
+  return arr.reduce((acc, item) => {
+    const key = typeof criterion === 'function' ? criterion(item) : item[criterion];
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+};
