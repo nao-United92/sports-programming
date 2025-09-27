@@ -32,6 +32,11 @@ try {
   // Clean up
   deleteCookie('test2');
 
+  // Test parseCookie
+  const cookieString = 'test3=value3;test4=value4';
+  const parsed = parseCookie(cookieString);
+  assert.deepStrictEqual(parsed, { test3: 'value3', test4: 'value4' }, 'parseCookie failed');
+
   console.log('All cookie-utils tests passed!');
 } catch (e) {
   console.error('cookie-utils tests failed:', e.message);
