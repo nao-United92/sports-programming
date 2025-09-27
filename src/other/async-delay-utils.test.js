@@ -42,17 +42,16 @@ describe('delay', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  test('should pass through any arguments if provided (though not used by delay)', async () => {
-    const mockFn = jest.fn((arg) => arg);
+  test('should pass through any arguments if provided', async () => {
     const delayTime = 500;
     const testArg = 'hello';
 
-    const promise = delay(delayTime).then(() => mockFn(testArg));
+    const promise = delay(delayTime, testArg);
 
     jest.advanceTimersByTime(delayTime);
+
     const result = await promise;
 
-    expect(mockFn).toHaveBeenCalledWith(testArg);
     expect(result).toBe(testArg);
   });
 });

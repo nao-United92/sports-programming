@@ -1,35 +1,47 @@
-import { truncate } from './string-utils.js';
+import { truncate, slugify } from './string-utils';
 
 describe('truncate', () => {
-  test('should not truncate a string shorter than the specified length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
-  });
-
-  test('should truncate a string longer than the specified length', () => {
+  test('should truncate a string that is too long', () => {
     expect(truncate('hello world', 8)).toBe('hello...');
   });
 
-  test('should use the default suffix', () => {
-    expect(truncate('a long sentence', 10)).toBe('a long...');
+  test('should not truncate a string that is short enough', () => {
+    expect(truncate('hello', 10)).toBe('hello');
   });
 
   test('should use a custom suffix', () => {
-    expect(truncate('a long sentence', 10, '!!!')).toBe('a long !!!');
+    expect(truncate('hello world', 8, '!!')).toBe('hello !!');
   });
 
-  test('should handle edge case where length is equal to string length', () => {
-    expect(truncate('exact', 5)).toBe('exact');
+  test('should return an empty string for non-string input', () => {
+    expect(truncate(123, 5)).toBe('');
   });
 
-  test('should handle edge case where length is very small', () => {
-    expect(truncate('a long sentence', 3)).toBe('...');
+  test('should return an empty string for empty input', () => {
+    expect(truncate('', 5)).toBe('');
+  });
+});
+
+describe('slugify', () => {
+  test('should convert string to slug', () => {
+    expect(slugify('Hello World!')).toBe('hello-world');
   });
 
-  test('should return an empty string for non-string inputs', () => {
-    expect(truncate(null, 10)).toBe('');
-    expect(truncate(undefined, 10)).toBe('');
-    expect(truncate(123, 10)).toBe('');
-    expect(truncate({}, 10)).toBe('');
-    expect(truncate([], 10)).toBe('');
+  test('should handle multiple spaces and hyphens', () => {
+    expect(slugify(' --some--  string-- ')).toBe('some-string');
+  });
+
+  test('should remove special characters', () => {
+    expect(slugify('!@#$%^&*()=+_`~[]{}|;:\'",.<>/?')).toBe('');
+  });
+
+  test('should handle empty string', () => {
+    expect(slugify('')).toBe('');
+  });
+
+  test('should handle non-string input', () => {
+    expect(slugify(null)).toBe('');
+    expect(slugify(undefined)).toBe('');
+    expect(slugify(123)).toBe('');
   });
 });

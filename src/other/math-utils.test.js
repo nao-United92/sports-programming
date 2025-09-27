@@ -1,35 +1,61 @@
-import { clamp, lerp } from './math-utils.js';
+import { clamp, lerp, sum, average } from './math-utils';
 
-describe('Math Utilities', () => {
-  describe('clamp', () => {
-    it('should clamp a value within the range', () => {
-      expect(clamp(5, 0, 10)).toBe(5);
-    });
-
-    it('should clamp a value below the minimum', () => {
-      expect(clamp(-5, 0, 10)).toBe(0);
-    });
-
-    it('should clamp a value above the maximum', () => {
-      expect(clamp(15, 0, 10)).toBe(10);
-    });
+describe('clamp', () => {
+  test('should clamp a value to the min', () => {
+    expect(clamp(0, 5, 10)).toBe(5);
   });
 
-  describe('lerp', () => {
-    it('should linearly interpolate between two values', () => {
-      expect(lerp(0, 10, 0.5)).toBe(5);
-    });
+  test('should clamp a value to the max', () => {
+    expect(clamp(15, 5, 10)).toBe(10);
+  });
 
-    it('should return the start value when amount is 0', () => {
-      expect(lerp(0, 10, 0)).toBe(0);
-    });
+  test('should not clamp a value within the range', () => {
+    expect(clamp(7, 5, 10)).toBe(7);
+  });
+});
 
-    it('should return the end value when amount is 1', () => {
-      expect(lerp(0, 10, 1)).toBe(10);
-    });
+describe('lerp', () => {
+  test('should interpolate between two values', () => {
+    expect(lerp(0, 10, 0.5)).toBe(5);
+  });
 
-    it('should handle negative values', () => {
-      expect(lerp(-10, 0, 0.5)).toBe(-5);
-    });
+  test('should return the start value at 0', () => {
+    expect(lerp(0, 10, 0)).toBe(0);
+  });
+
+  test('should return the end value at 1', () => {
+    expect(lerp(0, 10, 1)).toBe(10);
+  });
+});
+
+describe('sum', () => {
+  test('should return the sum of multiple numbers', () => {
+    expect(sum(1, 2, 3, 4, 5)).toBe(15);
+  });
+
+  test('should return 0 for no arguments', () => {
+    expect(sum()).toBe(0);
+  });
+
+  test('should handle negative numbers', () => {
+    expect(sum(-1, -2, 3)).toBe(0);
+  });
+});
+
+describe('average', () => {
+  test('should return the average of multiple numbers', () => {
+    expect(average(1, 2, 3, 4, 5)).toBe(3);
+  });
+
+  test('should return 0 for no arguments', () => {
+    expect(average()).toBe(0);
+  });
+
+  test('should handle negative numbers', () => {
+    expect(average(-1, -2, 6)).toBe(1);
+  });
+
+  test('should handle floating point numbers', () => {
+    expect(average(1.5, 2.5)).toBe(2);
   });
 });

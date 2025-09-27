@@ -21,6 +21,10 @@ try {
   assert.strictEqual(hexToHsl('#00ff7f'), 'hsl(150, 100%, 50%)', 'hexToHsl spring green');
   assert.strictEqual(hexToHsl('ffffff'), 'hsl(0, 0%, 100%)', 'hexToHsl white no hash');
 
+  // hslToRgb
+  assert.strictEqual(hslToRgb(150, 100, 50), 'rgb(0, 255, 128)', 'hslToRgb spring green');
+  assert.strictEqual(hslToRgb(0, 0, 100), 'rgb(255, 255, 255)', 'hslToRgb white');
+
   console.log('All color-utils tests passed!');
 } catch (e) {
   console.error('color-utils tests failed:', e.message);
