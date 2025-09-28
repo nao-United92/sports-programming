@@ -1,35 +1,47 @@
-const { pick, omit } = require('./object-pick-omit-utils.js');
+import { pick, omit } from './object-pick-omit-utils.js';
 
-describe('pick', () => {
-  test('should pick specified properties from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+describe('object-pick-omit-utils', () => {
+  describe('pick', () => {
+    const obj = { a: 1, b: '2', c: true };
+
+    it('should return an object with only the specified keys', () => {
+      expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: true });
+    });
+
+    it('should return an empty object if no keys are specified', () => {
+      expect(pick(obj, [])).toEqual({});
+    });
+
+    it('should ignore keys that do not exist in the source object', () => {
+      expect(pick(obj, ['a', 'd'])).toEqual({ a: 1 });
+    });
+
+    it('should return an empty object for null or non-object inputs', () => {
+      expect(pick(null, ['a'])).toEqual({});
+      expect(pick(undefined, ['a'])).toEqual({});
+      expect(pick(123, ['a'])).toEqual({});
+    });
   });
 
-  test('should ignore keys that do not exist', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, ['a', 'd'])).toEqual({ a: 1 });
-  });
+  describe('omit', () => {
+    const obj = { a: 1, b: '2', c: true };
 
-  test('should return an empty object if no keys are picked', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, [])).toEqual({});
-  });
-});
+    it('should return an object without the specified keys', () => {
+      expect(omit(obj, ['b'])).toEqual({ a: 1, c: true });
+    });
 
-describe('omit', () => {
-  test('should omit specified properties from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    expect(omit(obj, ['a', 'c'])).toEqual({ b: 2 });
-  });
+    it('should return the original object if no keys are specified', () => {
+      expect(omit(obj, [])).toEqual(obj);
+    });
 
-  test('should ignore keys that do not exist', () => {
-    const obj = { a: 1, b: 2 };
-    expect(omit(obj, ['c', 'd'])).toEqual({ a: 1, b: 2 });
-  });
+    it('should ignore keys that do not exist in the source object', () => {
+      expect(omit(obj, ['d', 'e'])).toEqual(obj);
+    });
 
-  test('should return the original object if no keys are omitted', () => {
-    const obj = { a: 1, b: 2 };
-    expect(omit(obj, [])).toEqual({ a: 1, b: 2 });
+    it('should return an empty object for null or non-object inputs', () => {
+      expect(omit(null, ['a'])).toEqual({});
+      expect(omit(undefined, ['a'])).toEqual({});
+      expect(omit(123, ['a'])).toEqual({});
+    });
   });
 });
