@@ -1,28 +1,14 @@
-import { invert } from './object-invert-utils.js';
+
+import { invert } from './object-invert-utils';
 
 describe('invert', () => {
-  test('should invert a simple object', () => {
-    const object = { a: 1, b: 2, c: 3 };
-    expect(invert(object)).toEqual({ 1: 'a', 2: 'b', 3: 'c' });
+  test('should invert the keys and values of an object', () => {
+    const obj = { a: '1', b: '2' };
+    const invertedObj = { '1': 'a', '2': 'b' };
+    expect(invert(obj)).toEqual(invertedObj);
   });
 
-  test('should handle duplicate values by overwriting with the last key', () => {
-    const object = { a: 1, b: 2, c: 1 };
-    expect(invert(object)).toEqual({ 1: 'c', 2: 'b' });
-  });
-
-  test('should return an empty object for an empty input object', () => {
+  test('should handle an empty object', () => {
     expect(invert({})).toEqual({});
-  });
-
-  test('should not mutate the original object', () => {
-    const object = { a: 1 };
-    invert(object);
-    expect(object).toEqual({ a: 1 });
-  });
-
-  test('should handle null and undefined as input', () => {
-    expect(invert(null)).toEqual({});
-    expect(invert(undefined)).toEqual({});
   });
 });

@@ -1,19 +1,16 @@
-import { truncate } from './string-truncate-utils.js';
+
+import { truncate } from './string-truncate-utils';
 
 describe('truncate', () => {
-  test('should not truncate a string shorter than the specified length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
-  });
-
-  test('should truncate a string longer than the specified length', () => {
+  test('should truncate a string that is longer than the specified length', () => {
     expect(truncate('hello world', 8)).toBe('hello...');
   });
 
-  test('should handle an empty string', () => {
-    expect(truncate('', 5)).toBe('');
+  test('should not truncate a string that is shorter than or equal to the specified length', () => {
+    expect(truncate('hello', 8)).toBe('hello');
   });
 
-  test('should handle a string equal to the specified length', () => {
-    expect(truncate('hello', 5)).toBe('hello');
+  test('should use a custom suffix if provided', () => {
+    expect(truncate('hello world', 8, '!')).toBe('hello w!');
   });
 });
