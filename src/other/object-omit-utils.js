@@ -1,21 +1,17 @@
+
 /**
- * Creates a shallow copy of `object` excluding the `paths` properties.
+ * Creates an object composed of the own enumerable property paths of object that are not omitted.
  *
  * @param {Object} object The source object.
- * @param {Array|string} paths The property keys to omit.
+ * @param {string[]} paths The property paths to omit.
  * @returns {Object} Returns the new object.
  */
-function omit(object, paths) {
-  const result = {};
-  const pathArray = Array.isArray(paths) ? paths : [paths];
-
-  for (const key in object) {
-    if (Object.prototype.hasOwnProperty.call(object, key) && !pathArray.includes(key)) {
-      result[key] = object[key];
+export function omit(object, paths) {
+  const newObj = { ...object };
+  paths.forEach(path => {
+    if (path in newObj) {
+      delete newObj[path];
     }
-  }
-
-  return result;
+  });
+  return newObj;
 }
-
-module.exports = { omit };
