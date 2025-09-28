@@ -1,45 +1,75 @@
 /**
- * Parses a URL query string into an object.
- *
- * @param {string} queryString The URL query string to parse.
- * @returns {Object} An object representing the query string.
+ * Converts an object to a URL query string.
+ * @param {object} params The object to convert.
+ * @returns {string} The resulting query string.
  */
-const parseQuery = (queryString) => {
-  const params = new URLSearchParams(queryString);
-  const obj = {};
-  for (const [key, value] of params.entries()) {
-    if (obj[key]) {
-      if (Array.isArray(obj[key])) {
-        obj[key].push(value);
-      } else {
-        obj[key] = [obj[key], value];
-      }
-    } else {
-      obj[key] = value;
-    }
+export const objectToQueryString = (params) => {
+  if (!params || typeof params !== 'object') {
+    return '';
   }
-  return obj;
+  return Object.keys(params)
+    .map(key => {
+      const value = params[key];
+      if (value === undefined) {
+        return '';
+      }
+      if (value === null) {
+        return encodeURIComponent(key);
+      }
+      if (Array.isArray(value)) {
+        return value
+          .map(v => `${encodeURIComponent(key)}[]=${encodeURIComponent(v)}`)
+          .join('&');
+      }
+      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    })
+    .filter(p => p.length > 0)
+    .join('&');
 };
 
 /**
- * Stringifies an object into a URL query string.
- *
- * @param {Object} obj The object to stringify.
- * @returns {string} The URL query string.
+ * Converts a URL query string to an object.
+ * @param {string} queryString The query string to convert.
+ * @returns {object} The resulting object.
  */
-const stringifyQuery = (obj) => {
-  const params = new URLSearchParams();
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const value = obj[key];
-      if (Array.isArray(value)) {
-        value.forEach(v => params.append(key, v));
-      } else {
-        params.append(key, value);
-      }
+export const queryStringToObject = (queryString) => {
+    const params = {};
+    if (!queryString || typeof queryString !== 'string') {
+        return params;
     }
-  }
-  return params.toString();
-};
 
-module.exports = { parseQuery, stringifyQuery };
+    const searchStr = queryString.startsWith('?') ? queryString.substring(1) : queryString;
+    if (!searchStr) {
+        return params;
+    }
+
+    searchStr.split('&').forEach(part => {
+        const [key, value] = part.split('=');
+        if (!key) return;
+
+        const decodedKey = decodeURIComponent(key);
+        const decodedValue = value !== undefined ? decodeURIComponent(value.replace(/\+/g, ' ')) : null;
+
+        if (decodedKey.endsWith('[]')) {
+            const cleanKey = decodedKey.slice(0, -2);
+            if (!params[cleanKey]) {
+                params[cleanKey] = [];
+            }
+            if (decodedValue !== null) {
+                params[cleanKey].push(decodedValue);
+            }
+        } else {
+            if (params[decodedKey]) {
+                if (!Array.isArray(params[decodedKey])) {
+                    params[decodedKey] = [params[decodedKey]];
+                }
+                if (decodedValue !== null) {
+                    params[decodedKey].push(decodedValue);
+                }
+            } else {
+                params[decodedKey] = decodedValue;
+            }
+        }
+    });
+    return params;
+};
