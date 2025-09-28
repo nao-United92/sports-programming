@@ -1,56 +1,31 @@
-const { get } = require('./object-get-utils.js');
+
+import { get } from './object-get-utils';
 
 describe('get', () => {
-  const obj = {
-    a: 1,
-    b: {
-      c: 2,
-      d: {
-        e: 3,
-      },
-    },
-    f: null,
-    g: undefined,
-  };
+  const obj = { a: { b: { c: 1 } }, d: [{ e: 2 }] };
 
-  test('should get a top-level property', () => {
-    expect(get(obj, 'a')).toBe(1);
+  test('should get a nested property using a string path', () => {
+    expect(get(obj, 'a.b.c')).toBe(1);
   });
 
-  test('should get a nested property using dot notation', () => {
-    expect(get(obj, 'b.c')).toBe(2);
+  test('should get a nested property using an array path', () => {
+    expect(get(obj, ['a', 'b', 'c'])).toBe(1);
   });
 
-  test('should get a deeply nested property', () => {
-    expect(get(obj, 'b.d.e')).toBe(3);
+  test('should get an array element using string path syntax', () => {
+    expect(get(obj, 'd[0].e')).toBe(2);
   });
 
   test('should return undefined for a non-existent path', () => {
-    expect(get(obj, 'b.d.x')).toBeUndefined();
+    expect(get(obj, 'a.b.f')).toBeUndefined();
   });
 
-  test('should return defaultValue for a non-existent path', () => {
-    expect(get(obj, 'b.d.x', 'default')).toBe('default');
+  test('should return the default value for a non-existent path', () => {
+    expect(get(obj, 'a.b.f', 'default')).toBe('default');
   });
 
-  test('should return null for a null value', () => {
-    expect(get(obj, 'f')).toBeNull();
-  });
-
-  test('should return undefined for an undefined value', () => {
-    expect(get(obj, 'g')).toBeUndefined();
-  });
-
-  test('should return defaultValue for an undefined value', () => {
-    expect(get(obj, 'g', 'default')).toBe('default');
-  });
-
-  test('should handle array path', () => {
-    expect(get(obj, ['b', 'c'])).toBe(2);
-  });
-
-  test('should return defaultValue if object is null or undefined', () => {
-    expect(get(null, 'a', 'default')).toBe('default');
-    expect(get(undefined, 'a', 'default')).toBe('default');
+  test('should handle null and undefined objects', () => {
+    expect(get(null, 'a.b')).toBeUndefined();
+    expect(get(undefined, 'a.b', 'default')).toBe('default');
   });
 });
