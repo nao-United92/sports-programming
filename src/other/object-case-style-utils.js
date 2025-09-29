@@ -1,24 +1,35 @@
-import { camelCase, snakeCase } from './case-style-utils';
-import { isArray, isObject } from './type-check-utils';
-
-const createKeyConverter = (converter) => {
-  const convert = (obj) => {
-    if (!isObject(obj)) {
-      return obj;
-    }
-
-    if (isArray(obj)) {
-      return obj.map(convert);
-    }
-
-    return Object.keys(obj).reduce((result, key) => {
-      const newKey = converter(key);
-      result[newKey] = convert(obj[key]);
-      return result;
-    }, {});
-  };
-  return convert;
+const toCamel = (s) => {
+  return s.replace(/([-_][a-z])/ig, ($1) => {
+    return $1.toUpperCase()
+      .replace('-', '')
+      .replace('_', '');
+  });
 };
 
-export const camelCaseKeys = createKeyConverter(camelCase);
-export const snakeCaseKeys = createKeyConverter(snakeCase);
+const toSnake = (str) => {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/([A-Z])/g, '_$1')
+    .toLowerCase()
+    .replace(/^_/, '');
+};
+
+const isObject = (obj) => obj !== null && typeof obj === 'object' && !Array.isArray(obj);
+
+const convertKeys = (obj, converter) => {
+  if (isObject(obj)) {
+    const newObj = {};
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        newObj[converter(key)] = convertKeys(obj[key], converter);
+      }
+    }
+    return newObj;
+  } else if (Array.isArray(obj)) {
+    return obj.map(item => convertKeys(item, converter));
+  }
+  return obj;
+};
+
+export const keysToCamel = (obj) => convertKeys(obj, toCamel);
+export const keysToSnake = (obj) => convertKeys(obj, toSnake);
