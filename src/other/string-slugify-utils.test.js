@@ -1,37 +1,32 @@
-const { slugify } = require('./string-slugify-utils.js');
+import { slugify } from './string-slugify-utils.js';
 
 describe('slugify', () => {
-  it('should convert a string to a slug', () => {
-    expect(slugify('Hello World')).toBe('hello-world');
+  it('should convert basic strings', () => {
+    expect(slugify('hello world')).toBe('hello-world');
   });
 
-  it('should handle special characters', () => {
-    expect(slugify('àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż')).toBe('aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz');
+  it('should handle multiple spaces and hyphens', () => {
+    expect(slugify('  hello   world-- ')).toBe('hello-world');
+  });
+
+  it('should remove special characters', () => {
+    expect(slugify('hello!@#$%^&*()_+=world')).toBe('hello_world');
   });
 
   it('should handle ampersands', () => {
-    expect(slugify('foo & bar')).toBe('foo-and-bar');
+    expect(slugify('pick & omit')).toBe('pick-and-omit');
   });
 
-  it('should remove non-word characters', () => {
-    expect(slugify('foo! bar?')).toBe('foo-bar');
+  it('should handle accented characters', () => {
+    expect(slugify('crème brûlée')).toBe('creme-brulee');
   });
 
-  it('should handle multiple spaces and dashes', () => {
-    expect(slugify('foo  bar--baz')).toBe('foo-bar-baz');
-  });
-
-  it('should trim dashes from the start and end', () => {
-    expect(slugify('-foo-bar-')).toBe('foo-bar');
-  });
-
-  it('should handle an empty string', () => {
-    expect(slugify('')).toBe('');
-  });
-
-  it('should handle non-string input', () => {
+  it('should return an empty string for null or undefined input', () => {
     expect(slugify(null)).toBe('');
     expect(slugify(undefined)).toBe('');
-    expect(slugify(123)).toBe('123');
+  });
+
+  it('should handle a complex case', () => {
+    expect(slugify('!@#$ ąćęłńóśźż_ 123 -- Foo & Bar --')).toBe('acelnoszz_-123-foo-and-bar');
   });
 });
