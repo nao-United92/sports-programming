@@ -6,33 +6,32 @@
  * @returns {Object} Returns the new object.
  */
 export const pick = (obj, keys) => {
-  if (obj === null || typeof obj !== 'object') {
+  if (obj === null || obj === undefined) {
     return {};
   }
-  return keys.reduce((acc, key) => {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      acc[key] = obj[key];
+  const result = {};
+  for (const key of keys) {
+    if (key in obj) {
+      result[key] = obj[key];
     }
-    return acc;
-  }, {});
+  }
+  return result;
 };
 
 /**
- * Creates an object with properties from the source object that are not omitted.
+ * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
  *
  * @param {Object} obj The source object.
  * @param {string[]} keys The property paths to omit.
  * @returns {Object} Returns the new object.
  */
 export const omit = (obj, keys) => {
-  if (obj === null || typeof obj !== 'object') {
+  if (obj === null || obj === undefined) {
     return {};
   }
-  const keySet = new Set(keys);
-  return Object.keys(obj)
-    .filter(key => !keySet.has(key))
-    .reduce((acc, key) => {
-      acc[key] = obj[key];
-      return acc;
-    }, {});
+  const result = { ...obj };
+  for (const key of keys) {
+    delete result[key];
+  }
+  return result;
 };
