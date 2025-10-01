@@ -1,17 +1,19 @@
-
 /**
- * Creates an object composed of the own enumerable property paths of object that are not omitted.
+ * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
  *
  * @param {Object} object The source object.
- * @param {string[]} paths The property paths to omit.
+ * @param {string[]} keys The property paths to omit.
  * @returns {Object} Returns the new object.
  */
-export function omit(object, paths) {
-  const newObj = { ...object };
-  paths.forEach(path => {
-    if (path in newObj) {
-      delete newObj[path];
+export const omit = (object, keys) => {
+  if (object == null) {
+    return {};
+  }
+  const keySet = new Set(keys);
+  return Object.keys(object).reduce((result, key) => {
+    if (!keySet.has(key)) {
+      result[key] = object[key];
     }
-  });
-  return newObj;
-}
+    return result;
+  }, {});
+};

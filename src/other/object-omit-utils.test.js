@@ -1,23 +1,33 @@
-
-import { omit } from './object-omit-utils';
+import { omit } from './object-omit-utils.js';
 
 describe('omit', () => {
-  const obj = { a: 1, b: '2', c: 3 };
+  const object = { 'a': 1, 'b': '2', 'c': 3 };
 
-  test('should create an object without the omitted properties', () => {
-    expect(omit(obj, ['a', 'c'])).toEqual({ b: '2' });
+  it('should create an object with omitted properties', () => {
+    expect(omit(object, ['a', 'c'])).toEqual({ 'b': '2' });
   });
 
-  test('should not modify the original object', () => {
-    omit(obj, ['a']);
-    expect(obj).toEqual({ a: 1, b: '2', c: 3 });
+  it('should not mutate the original object', () => {
+    omit(object, ['a']);
+    expect(object).toEqual({ 'a': 1, 'b': '2', 'c': 3 });
   });
 
-  test('should return an identical object if no properties are omitted', () => {
-    expect(omit(obj, [])).toEqual(obj);
+  it('should ignore keys that do not exist in the source object', () => {
+    expect(omit(object, ['d', 'e'])).toEqual(object);
   });
 
-  test('should handle paths that do not exist on the object', () => {
-    expect(omit(obj, ['d', 'e'])).toEqual(obj);
+  it('should return an empty object if the source object is null or undefined', () => {
+    expect(omit(null, ['a', 'b'])).toEqual({});
+    expect(omit(undefined, ['a', 'b'])).toEqual({});
+  });
+
+  it('should return a shallow copy of the object if no keys are provided', () => {
+    const result = omit(object, []);
+    expect(result).toEqual(object);
+    expect(result).not.toBe(object);
+  });
+
+  it('should handle an empty source object', () => {
+    expect(omit({}, ['a'])).toEqual({});
   });
 });
