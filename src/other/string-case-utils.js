@@ -1,17 +1,29 @@
 /**
- * Checks if a string is all uppercase.
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is all uppercase, false otherwise.
+ * Converts a string to camelCase.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} Returns the camelCased string.
  */
-export const isUpperCase = (str) => {
-  return str === str.toUpperCase();
+export const toCamelCase = (str) => {
+  if (typeof str !== 'string' || !str) {
+    return '';
+  }
+  return str.replace(/([-_][a-z])/ig, ($1) => {
+    return $1.toUpperCase()
+      .replace('-', '')
+      .replace('_', '');
+  });
 };
 
 /**
- * Checks if a string is all lowercase.
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is all lowercase, false otherwise.
+ * Converts a string to snake_case.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} Returns the snake_cased string.
  */
-export const isLowerCase = (str) => {
-  return str === str.toLowerCase();
+export const toSnakeCase = (str) => {
+  if (typeof str !== 'string' || !str) {
+    return '';
+  }
+  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 };
