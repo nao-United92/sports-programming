@@ -1,4 +1,4 @@
-import { mapObject, filterObject, isEmpty, pick } from './collection-object-utils.js';
+import { mapObject, filterObject, isEmpty, pick, omit } from './collection-object-utils.js';
 
 describe('Collection Object Utilities', () => {
   const data = { a: 1, b: 2, c: 3 };
@@ -102,6 +102,41 @@ describe('Collection Object Utilities', () => {
     it('should pick properties even if their value is null or undefined', () => {
       const testObj = { a: 1, b: null, c: undefined };
       expect(pick(testObj, ['a', 'b', 'c'])).toEqual({ a: 1, b: null, c: undefined });
+    });
+  });
+
+  describe('omit', () => {
+    const obj = { a: 1, b: 2, c: 3, d: { e: 4 } };
+
+    it('should omit a single property', () => {
+      expect(omit(obj, ['a'])).toEqual({ b: 2, c: 3, d: { e: 4 } });
+    });
+
+    it('should omit multiple properties', () => {
+      expect(omit(obj, ['a', 'c'])).toEqual({ b: 2, d: { e: 4 } });
+    });
+
+    it('should ignore non-existent properties', () => {
+      expect(omit(obj, ['x'])).toEqual(obj);
+    });
+
+    it('should return the original object if no properties are omitted', () => {
+      expect(omit(obj, [])).toEqual(obj);
+    });
+
+    it('should return an empty object for an empty input object', () => {
+      expect(omit({}, ['a'])).toEqual({});
+    });
+
+    it('should return an empty object for non-object input', () => {
+      expect(omit(null, ['a'])).toEqual({});
+      expect(omit(undefined, ['a'])).toEqual({});
+    });
+
+    it('should not mutate the original object', () => {
+      const original = { a: 1, b: 2 };
+      omit(original, ['a']);
+      expect(original).toEqual({ a: 1, b: 2 });
     });
   });
 });
