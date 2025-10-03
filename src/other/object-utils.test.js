@@ -1,4 +1,4 @@
-import { deepMerge } from './object-utils.js';
+import { deepMerge, omit, pick } from './object-utils.js';
 
 describe('deepMerge', () => {
   it('should merge two simple objects', () => {
@@ -37,5 +37,51 @@ describe('deepMerge', () => {
     deepMerge(target, source);
     expect(target).toEqual(targetClone);
     expect(source).toEqual(sourceClone);
+  });
+});
+
+describe('omit', () => {
+  it('should omit specified properties from an object', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: 2 });
+  });
+
+  it('should return a new object without modifying the original', () => {
+    const obj = { a: 1, b: 2 };
+    omit(obj, ['a']);
+    expect(obj).toEqual({ a: 1, b: 2 });
+  });
+
+  it('should handle non-existent properties gracefully', () => {
+    const obj = { a: 1, b: 2 };
+    expect(omit(obj, ['c'])).toEqual({ a: 1, b: 2 });
+  });
+
+  it('should return an empty object if all properties are omitted', () => {
+    const obj = { a: 1, b: 2 };
+    expect(omit(obj, ['a', 'b'])).toEqual({});
+  });
+});
+
+describe('pick', () => {
+  it('should pick specified properties from an object', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+  });
+
+  it('should return a new object without modifying the original', () => {
+    const obj = { a: 1, b: 2 };
+    pick(obj, ['a']);
+    expect(obj).toEqual({ a: 1, b: 2 });
+  });
+
+  it('should handle non-existent properties gracefully', () => {
+    const obj = { a: 1, b: 2 };
+    expect(pick(obj, ['c'])).toEqual({});
+  });
+
+  it('should return an empty object if no properties are picked', () => {
+    const obj = { a: 1, b: 2 };
+    expect(pick(obj, [])).toEqual({});
   });
 });

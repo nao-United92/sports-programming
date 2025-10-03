@@ -28,3 +28,33 @@ export const deepMerge = (target, source) => {
 const isObject = (item) => {
   return (item && typeof item === 'object' && !Array.isArray(item));
 };
+
+/**
+ * Creates an object composed of the own enumerable string keyed properties of `object` that are not `keys`.
+ *
+ * @param {object} object The source object.
+ * @param {Array<string>} keys The property keys to omit.
+ * @returns {object} Returns the new object.
+ */
+export const omit = (object, keys) => {
+  const newObject = { ...object };
+  keys.forEach(key => delete newObject[key]);
+  return newObject;
+};
+
+/**
+ * Creates an object composed of the picked `object` properties.
+ *
+ * @param {object} object The source object.
+ * @param {Array<string>} keys The property keys to pick.
+ * @returns {object} Returns the new object.
+ */
+export const pick = (object, keys) => {
+  const newObject = {};
+  keys.forEach(key => {
+    if (Object.prototype.hasOwnProperty.call(object, key)) {
+      newObject[key] = object[key];
+    }
+  });
+  return newObject;
+};
