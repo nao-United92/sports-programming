@@ -1,11 +1,30 @@
-export const invert = (obj) => {
-  const newObj = {};
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      newObj[obj[key]] = key;
-    }
+/**
+ * Performs a deep merge of two objects.
+ *
+ * @param {object} target The target object to merge into.
+ * @param {object} source The source object to merge from.
+ * @returns {object} The merged object.
+ */
+export const deepMerge = (target, source) => {
+  const output = { ...target };
+
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!(key in target)) {
+          Object.assign(output, { [key]: source[key] });
+        } else {
+          output[key] = deepMerge(target[key], source[key]);
+        }
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
   }
-  return newObj;
+
+  return output;
 };
 
-export const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+const isObject = (item) => {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+};

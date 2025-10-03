@@ -1,53 +1,41 @@
-import { invert, has } from './object-utils.js';
+import { deepMerge } from './object-utils.js';
 
-describe('Object Utilities', () => {
-  describe('invert', () => {
-    test('should invert an object with unique values', () => {
-      const obj = { a: '1', b: '2', c: '3' };
-      const invertedObj = { '1': 'a', '2': 'b', '3': 'c' };
-      expect(invert(obj)).toEqual(invertedObj);
-    });
-
-    test('should handle objects with non-unique values (last one wins)', () => {
-      const obj = { a: '1', b: '2', c: '1' };
-      const invertedObj = { '1': 'c', '2': 'b' };
-      expect(invert(obj)).toEqual(invertedObj);
-    });
-
-    test('should return an empty object for an empty object', () => {
-      expect(invert({})).toEqual({});
-    });
+describe('deepMerge', () => {
+  it('should merge two simple objects', () => {
+    const target = { a: 1, b: 2 };
+    const source = { c: 3, d: 4 };
+    const expected = { a: 1, b: 2, c: 3, d: 4 };
+    expect(deepMerge(target, source)).toEqual(expected);
   });
 
-  describe('has', () => {
-    const obj = { a: 1, b: undefined };
-    function Parent() {
-      this.c = 3;
-    }
-    Parent.prototype.d = 4;
-    const child = new Parent();
-    child.e = 5;
+  it('should overwrite properties in the target object', () => {
+    const target = { a: 1, b: 2 };
+    const source = { b: 3, c: 4 };
+    const expected = { a: 1, b: 3, c: 4 };
+    expect(deepMerge(target, source)).toEqual(expected);
+  });
 
+  it('should merge nested objects', () => {
+    const target = { a: 1, b: { c: 2 } };
+    const source = { b: { d: 3 } };
+    const expected = { a: 1, b: { c: 2, d: 3 } };
+    expect(deepMerge(target, source)).toEqual(expected);
+  });
 
-    test('should return true for own properties', () => {
-      expect(has(obj, 'a')).toBe(true);
-    });
+  it('should handle complex nested objects', () => {
+    const target = { a: { b: { c: 1 } }, d: [1, 2] };
+    const source = { a: { b: { e: 2 } }, d: [3, 4], f: { g: 3 } };
+    const expected = { a: { b: { c: 1, e: 2 } }, d: [3, 4], f: { g: 3 } };
+    expect(deepMerge(target, source)).toEqual(expected);
+  });
 
-    test('should return true for own properties with undefined value', () => {
-      expect(has(obj, 'b')).toBe(true);
-    });
-
-    test('should return false for properties that do not exist', () => {
-      expect(has(obj, 'c')).toBe(false);
-    });
-
-    test('should return true for own properties on child objects', () => {
-        expect(has(child, 'c')).toBe(true);
-        expect(has(child, 'e')).toBe(true);
-    });
-
-    test('should return false for inherited properties', () => {
-      expect(has(child, 'd')).toBe(false);
-    });
+  it('should not modify the original objects', () => {
+    const target = { a: 1, b: { c: 2 } };
+    const source = { b: { d: 3 } };
+    const targetClone = { ...target };
+    const sourceClone = { ...source };
+    deepMerge(target, source);
+    expect(target).toEqual(targetClone);
+    expect(source).toEqual(sourceClone);
   });
 });
