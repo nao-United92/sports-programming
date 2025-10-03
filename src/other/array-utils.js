@@ -403,3 +403,42 @@ export function xor(arr1, arr2) {
 
   return [...new Set([...diff1, ...diff2])];
 }
+
+/**
+ * This method is like `difference` except that it accepts `iteratee` which is
+ * invoked for each element of `array` and `values` to generate the criterion
+ * by which they're compared. The order of result values is determined by the
+ * order of the first array. The iteratee is invoked with one argument: (value).
+ *
+ * @param {Array} array The array to inspect.
+ * @param {Array} values The values to exclude.
+ * @param {Function} iteratee The iteratee invoked per element.
+ * @returns {Array} Returns the new difference array.
+ */
+export function differenceBy(array, values, iteratee) {
+  if (!Array.isArray(array) || !Array.isArray(values)) {
+    return [];
+  }
+  const mappedValues = new Set(values.map(iteratee));
+  return array.filter(item => !mappedValues.has(iteratee(item)));
+}
+
+/**
+ * This method is like `intersection` except that it accepts `iteratee` which
+ * is invoked for each element of `arrays` to generate the criterion by which
+ * they're compared. The order of result values is determined by the order of
+ * the first array. The iteratee is invoked with one argument: (value).
+ *
+ * @param {Array} array The first array to inspect.
+ * @param {Array} values The other array(s) to inspect.
+ * @param {Function} iteratee The iteratee invoked per element.
+ * @returns {Array} Returns the new intersecting array.
+ */
+export function intersectionBy(array, values, iteratee) {
+  if (!Array.isArray(array) || !Array.isArray(values)) {
+    return [];
+  }
+  const mappedValues = new Set(values.map(iteratee));
+  return array.filter(item => mappedValues.has(iteratee(item)));
+}
+
