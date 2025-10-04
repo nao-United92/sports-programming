@@ -6,7 +6,7 @@
  * @returns {Object} Returns the new object.
  */
 export const pick = (object, keys) => {
-  if (object == null) {
+  if (object === null || object === undefined) {
     return {};
   }
   return keys.reduce((obj, key) => {
