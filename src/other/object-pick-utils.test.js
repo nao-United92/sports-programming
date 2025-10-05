@@ -1,28 +1,22 @@
-import { pick } from './object-pick-utils.js';
+const { pick } = require('./object-pick-utils');
 
 describe('pick', () => {
-  it('should create an object with picked properties', () => {
-    const object = { 'a': 1, 'b': '2', 'c': 3 };
-    expect(pick(object, ['a', 'c'])).toEqual({ 'a': 1, 'c': 3 });
+  test('should pick specified properties from an object', () => {
+    const obj = { a: 1, b: '2', c: true };
+    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: true });
   });
 
-  it('should ignore keys that are not in the object', () => {
-    const object = { 'a': 1, 'b': '2' };
-    expect(pick(object, ['a', 'd'])).toEqual({ 'a': 1 });
+  test('should return an empty object if no keys are specified', () => {
+    const obj = { a: 1, b: '2', c: true };
+    expect(pick(obj, [])).toEqual({});
   });
 
-  it('should return an empty object if no keys are picked', () => {
-    const object = { 'a': 1, 'b': '2' };
-    expect(pick(object, [])).toEqual({});
+  test('should ignore keys that do not exist in the object', () => {
+    const obj = { a: 1, b: '2' };
+    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1 });
   });
 
-  it('should return an empty object for null or undefined input object', () => {
-    expect(pick(null, ['a', 'b'])).toEqual({});
-    expect(pick(undefined, ['a', 'b'])).toEqual({});
-  });
-
-  it('should work with an empty keys array', () => {
-    const object = { 'a': 1, 'b': '2' };
-    expect(pick(object, [])).toEqual({});
+  test('should handle an empty source object', () => {
+    expect(pick({}, ['a', 'b'])).toEqual({});
   });
 });

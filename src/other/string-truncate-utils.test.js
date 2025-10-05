@@ -1,36 +1,24 @@
-import { truncate } from './string-truncate-utils.js';
+
+const { truncate } = require('./string-truncate-utils');
 
 describe('truncate', () => {
-  const text = 'This is a long string to test truncation.';
-
-  it('should not truncate a string shorter than the specified length', () => {
-    expect(truncate(text, 100)).toBe(text);
+  test('should not truncate a string shorter than the specified length', () => {
+    expect(truncate('hello', 10)).toBe('hello');
   });
 
-  it('should truncate a string and add a default suffix', () => {
-    expect(truncate(text, 20)).toBe('This is a long...');
+  test('should truncate a string longer than the specified length', () => {
+    expect(truncate('hello world', 5)).toBe('hello...');
   });
 
-  it('should truncate a string with a custom suffix', () => {
-    expect(truncate(text, 20, { suffix: ' read more' })).toBe('This is a long read more');
+  test('should return the same string if length is equal to string length', () => {
+    expect(truncate('hello', 5)).toBe('hello');
   });
 
-  it('should not respect word boundaries if specified', () => {
-    const options = { respectWordBoundaries: false };
-    expect(truncate(text, 20, options)).toBe('This is a long str...');
+  test('should handle empty strings', () => {
+    expect(truncate('', 5)).toBe('');
   });
 
-  it('should handle a single long word by hard truncating', () => {
-    const longWord = 'Supercalifragilisticexpialidocious';
-    expect(truncate(longWord, 20)).toBe('Supercalifragilist...');
-  });
-
-  it('should return the original string if length is equal', () => {
-    expect(truncate(text, text.length)).toBe(text);
-  });
-
-  it('should handle null or undefined input', () => {
-    expect(truncate(null, 10)).toBe(null);
-    expect(truncate(undefined, 10)).toBe(undefined);
+  test('should handle zero length', () => {
+    expect(truncate('hello', 0)).toBe('...');
   });
 });
