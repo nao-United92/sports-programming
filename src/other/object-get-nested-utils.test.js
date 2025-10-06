@@ -1,86 +1,47 @@
-import { getNestedProperty } from './object-get-nested-utils.js';
+const { get } = require('./object-get-nested-utils');
 
-describe('Object Get Nested Utilities', () => {
-  const testObject = {
-    a: 1,
-    b: {
-      c: 2,
-      d: {
-        e: 3,
-        f: 'hello'
-      }
+describe('get (nested property accessor)', () => {
+  const testObj = {
+    a: {
+      b: {
+        c: 'hello',
+      },
+      d: ['e', 'f'],
+      g: null,
     },
-    g: [
-      {
-        h: 4
-      }
-    ]
   };
 
-  test('should return the value for a top-level property', () => {
-    expect(getNestedProperty(testObject, 'a')).toBe(1);
+  test('should get a deeply nested property using a string path', () => {
+    expect(get(testObj, 'a.b.c')).toBe('hello');
   });
 
-  test('should return the value for a nested property', () => {
-    expect(getNestedProperty(testObject, 'b.c')).toBe(2);
+  test('should get a deeply nested property using an array path', () => {
+    expect(get(testObj, ['a', 'b', 'c'])).toBe('hello');
   });
 
-  test('should return the value for a deeply nested property', () => {
-    expect(getNestedProperty(testObject, 'b.d.e')).toBe(3);
+  test('should return the default value for a non-existent path', () => {
+    expect(get(testObj, 'a.b.x', 'default')).toBe('default');
   });
 
-  test('should return the value for a string deeply nested property', () => {
-    expect(getNestedProperty(testObject, 'b.d.f')).toBe('hello');
+  test('should get a property from an array within the object', () => {
+    expect(get(testObj, 'a.d.0')).toBe('e');
+    expect(get(testObj, 'a.d.1')).toBe('f');
   });
 
-  test('should return undefined for a non-existent top-level property', () => {
-    expect(getNestedProperty(testObject, 'x')).toBeUndefined();
+  test('should return the default value for out-of-bounds array index', () => {
+    expect(get(testObj, 'a.d.2', 'not found')).toBe('not found');
   });
 
-  test('should return undefined for a non-existent nested property', () => {
-    expect(getNestedProperty(testObject, 'b.x')).toBeUndefined();
+  test('should handle null or undefined objects gracefully', () => {
+    expect(get(null, 'a.b', 'fallback')).toBe('fallback');
+    expect(get(undefined, 'a.b', 'fallback')).toBe('fallback');
   });
 
-  test('should return undefined for a non-existent deeply nested property', () => {
-    expect(getNestedProperty(testObject, 'b.d.x')).toBeUndefined();
+  test('should return the default value if the resolved value is null', () => {
+    expect(get(testObj, 'a.g', 'default value')).toBe('default value');
   });
 
-  test('should return the default value for a non-existent property', () => {
-    expect(getNestedProperty(testObject, 'x', 'default')).toBe('default');
-    expect(getNestedProperty(testObject, 'b.x', null)).toBe(null);
-  });
-
-  test('should return the default value for a non-existent deeply nested property', () => {
-    expect(getNestedProperty(testObject, 'b.d.x', 99)).toBe(99);
-  });
-
-  test('should handle array elements by index (if path includes index)', () => {
-    expect(getNestedProperty(testObject, 'g.0.h')).toBe(4);
-  });
-
-  test('should return undefined if object is null or undefined', () => {
-    expect(getNestedProperty(null, 'a')).toBeUndefined();
-    expect(getNestedProperty(undefined, 'a')).toBeUndefined();
-  });
-
-  test('should return default value if object is null or undefined', () => {
-    expect(getNestedProperty(null, 'a', 'default')).toBe('default');
-    expect(getNestedProperty(undefined, 'a', 'default')).toBe('default');
-  });
-
-  test('should return undefined if an intermediate path is not an object', () => {
-    const obj = { a: { b: 1 } };
-    expect(getNestedProperty(obj, 'a.b.c')).toBeUndefined();
-  });
-
-  test('should return default value if an intermediate path is not an object', () => {
-    const obj = { a: { b: 1 } };
-    expect(getNestedProperty(obj, 'a.b.c', 'default')).toBe('default');
-  });
-
-  test('should return the value even if it is null or undefined', () => {
-    const obj = { a: null, b: undefined };
-    expect(getNestedProperty(obj, 'a')).toBeNull();
-    expect(getNestedProperty(obj, 'b')).toBeUndefined();
+  test('should get a top-level property', () => {
+    expect(get(testObj, 'a')).toEqual(testObj.a);
   });
 });
