@@ -6,9 +6,6 @@
  * @returns {string} The truncated string.
  */
 export const truncate = (str, length, suffix = '...') => {
-  if (typeof str !== 'string' || str.length === 0) {
-    return '';
-  }
   if (str.length <= length) {
     return str;
   }
@@ -16,18 +13,23 @@ export const truncate = (str, length, suffix = '...') => {
 };
 
 /**
- * Converts a string to a URL-friendly slug.
- * @param {string} str The string to convert.
- * @returns {string} The slugified string.
+ * Escapes HTML special characters in a string.
+ * @param {string} str The string to escape.
+ * @returns {string} The escaped string.
  */
-export const slugify = (str) => {
-  if (typeof str !== 'string' || str.length === 0) {
-    return '';
-  }
-  return str
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
+export const escapeHTML = (str) =>
+  str.replace(
+    /[&<>"']/g,
+    (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])
+  );
+
+/**
+ * Unescapes HTML special characters in a string.
+ * @param {string} str The string to unescape.
+ * @returns {string} The unescaped string.
+ */
+export const unescapeHTML = (str) =>
+  str.replace(
+    /&amp;|&lt;|&gt;|&quot;|&#39;/g,
+    (m) => ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" }[m])
+  );

@@ -1,49 +1,54 @@
-import { once } from './function-once-utils.js';
+const { once } = require('./function-once-utils');
 
 describe('once', () => {
-  test('should invoke the original function only once', () => {
-    const func = jest.fn();
-    const onceFunc = once(func);
+  test('should only call the original function once', () => {
+    const mockFn = jest.fn();
+    const onceFn = once(mockFn);
 
-    onceFunc();
-    onceFunc();
-    onceFunc();
+    onceFn();
+    onceFn();
+    onceFn();
 
-    expect(func).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  test('should return the value from the first invocation on subsequent calls', () => {
-    let count = 0;
-    const func = () => ++count;
-    const onceFunc = once(func);
+  test('should return the result of the first call', () => {
+    let i = 0;
+    const func = () => ++i;
+    const onceFn = once(func);
 
-    const result1 = onceFunc();
-    const result2 = onceFunc();
-    const result3 = onceFunc();
+    const result1 = onceFn();
+    const result2 = onceFn();
+    const result3 = onceFn();
 
     expect(result1).toBe(1);
     expect(result2).toBe(1);
     expect(result3).toBe(1);
   });
 
-  test('should pass arguments to the original function on the first call', () => {
-    const func = jest.fn((a, b) => a + b);
-    const onceFunc = once(func);
+  test('should pass arguments to the original function', () => {
+    const mockFn = jest.fn();
+    const onceFn = once(mockFn);
+    const args = [1, 'a', { b: 2 }];
 
-    const result = onceFunc(3, 4);
+    onceFn(...args);
+    onceFn(...args);
 
-    expect(func).toHaveBeenCalledWith(3, 4);
-    expect(result).toBe(7);
+    expect(mockFn).toHaveBeenCalledWith(...args);
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  test('should maintain the context ('this') of the first call', () => {
-    const func = jest.fn(function() { return this.value; });
-    const onceFunc = once(func);
-    const context = { value: 'test', onceFunc };
+  test('should maintain the `this` context', () => {
+    const obj = {
+      i: 10,
+      method: function() {
+        return this.i;
+      }
+    };
+    obj.onceMethod = once(obj.method);
 
-    const result = context.onceFunc();
-
-    expect(func).toHaveBeenCalledTimes(1);
-    expect(result).toBe('test');
+    expect(obj.onceMethod()).toBe(10);
+    obj.i = 20;
+    expect(obj.onceMethod()).toBe(10); // Still returns the first result
   });
 });

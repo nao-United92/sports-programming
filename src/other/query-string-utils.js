@@ -1,20 +1,61 @@
-const parseQueryString = (queryString) => {
-  const params = {};
-  const query = queryString.startsWith('?') ? queryString.substring(1) : queryString;
-  if (!query) {
-    return params;
+/**
+ * Parses a URL query string into an object.
+ * @param {string} str The URL query string to parse (e.g., 'key=value&key2=value2').
+ * @returns {Object} The object representation of the query string.
+ */
+export const parse = (str) => {
+  const result = {};
+  if (typeof str !== 'string') {
+    return result;
   }
-  query.split('&').forEach(pair => {
-    const [key, value] = pair.split('=');
-    params[decodeURIComponent(key)] = decodeURIComponent(value || '');
-  });
-  return params;
+
+  const cleanStr = str.trim().replace(/^[?#&]/, '');
+
+  if (!cleanStr) {
+    return result;
+  }
+
+  for (const param of cleanStr.split('&')) {
+    let [key, value] = param.split('=');
+    if (key === undefined || key === '') continue;
+
+    key = decodeURIComponent(key);
+    const decodedValue = value === undefined ? null : decodeURIComponent(value.replace(/\+/g, ' '));
+
+    if (result[key] === undefined) {
+      result[key] = decodedValue;
+    } else {
+      if (!Array.isArray(result[key])) {
+        result[key] = [result[key]];
+      }
+      result[key].push(decodedValue);
+    }
+  }
+  return result;
 };
 
-const stringifyQueryString = (params) => {
-  return Object.entries(params)
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join('&');
-};
+/**
+ * Stringifies an object into a URL query string.
+ * @param {Object} obj The object to stringify.
+ * @returns {string} The URL query string.
+ */
+export const stringify = (obj) => {
+  if (obj === null || typeof obj !== 'object') {
+    return '';
+  }
 
-module.exports = { parseQueryString, stringifyQueryString };
+  return Object.keys(obj).map(key => {
+    const value = obj[key];
+    const encodedKey = encodeURIComponent(key);
+
+    if (value === null || value === undefined) {
+      return encodedKey;
+    }
+
+    if (Array.isArray(value)) {
+      return value.map(v => `${encodedKey}=${encodeURIComponent(v)}`).join('&');
+    }
+
+    return `${encodedKey}=${encodeURIComponent(value)}`;
+  }).filter(Boolean).join('&');
+};

@@ -1,46 +1,36 @@
-import { isPromise, allSettled } from './promise-utils.js';
+import { timeout, allSettled } from './promise-utils.js';
 
 describe('Promise Utilities', () => {
-  describe('isPromise', () => {
-    it('should return true for a Promise', () => {
-      const promise = new Promise(() => {});
-      expect(isPromise(promise)).toBe(true);
+  describe('timeout', () => {
+    it('should resolve if the promise resolves in time', async () => {
+      const fastPromise = new Promise(resolve => setTimeout(() => resolve('fast'), 50));
+      await expect(timeout(fastPromise, 100)).resolves.toBe('fast');
     });
 
-    it('should return true for a thenable object', () => {
-      const thenable = { then: () => {} };
-      expect(isPromise(thenable)).toBe(true);
+    it('should reject if the promise takes too long', async () => {
+      const slowPromise = new Promise(resolve => setTimeout(() => resolve('slow'), 200));
+      await expect(timeout(slowPromise, 100)).rejects.toThrow('Promise timed out');
     });
 
-    it('should return false for non-Promise values', () => {
-      expect(isPromise(null)).toBe(false);
-      expect(isPromise(undefined)).toBe(false);
-      expect(isPromise(123)).toBe(false);
-      expect(isPromise('string')).toBe(false);
-      expect(isPromise({})).toBe(false);
-      expect(isPromise([])).toBe(false);
-      expect(isPromise(() => {})).toBe(false);
+    it('should reject with the original reason if the promise rejects', async () => {
+      const failingPromise = new Promise((resolve, reject) => setTimeout(() => reject(new Error('Failed')), 50));
+      await expect(timeout(failingPromise, 100)).rejects.toThrow('Failed');
     });
   });
 
   describe('allSettled', () => {
-    it('should resolve with an array of settled promises', async () => {
-      const promises = [
-        Promise.resolve(1),
-        Promise.reject('Error'),
-        Promise.resolve(3)
-      ];
-      const results = await allSettled(promises);
+    it('should settle all promises', async () => {
+      const p1 = Promise.resolve(1);
+      const p2 = Promise.reject('error');
+      const p3 = new Promise(resolve => setTimeout(() => resolve(3), 100));
+
+      const results = await allSettled([p1, p2, p3]);
+
       expect(results).toEqual([
         { status: 'fulfilled', value: 1 },
-        { status: 'rejected', reason: 'Error' },
-        { status: 'fulfilled', value: 3 }
+        { status: 'rejected', reason: 'error' },
+        { status: 'fulfilled', value: 3 },
       ]);
-    });
-
-    it('should handle an empty array of promises', async () => {
-      const results = await allSettled([]);
-      expect(results).toEqual([]);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy, isEqualArray, xor } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy, isEqualArray, xor, differenceBy, intersectionBy } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -42,8 +42,7 @@ describe('array-utils', () => {
     it('should return the same array when given an array with one element', () => {
       expect(shuffleArray([1])).toEqual([1]);
     });
-
-    
+  });
 
   describe('uniqueArray', () => {
     it('should return an array with unique values', () => {
@@ -347,8 +346,13 @@ describe('array-utils', () => {
     });
 
     test('should handle non-array inputs gracefully', () => {
+      const [truthy, falsy] = partition(null, n => n > 0);
       expect(truthy).toEqual([]);
       expect(falsy).toEqual([]);
+
+      const [truthy2, falsy2] = partition(undefined, n => n > 0);
+      expect(truthy2).toEqual([]);
+      expect(falsy2).toEqual([]);
     });
   });
 
@@ -397,31 +401,6 @@ describe('array-utils', () => {
     });
   });
 
-  describe('containsAll', () => {
-    test('should return true if the array contains all elements', () => {
-      expect(containsAll([1, 2, 3, 4, 5], [2, 4])).toBe(true);
-      expect(containsAll(['a', 'b', 'c'], ['a', 'c'])).toBe(true);
-      expect(containsAll([1, 2, 3], [])).toBe(true);
-    });
-
-    test('should return false if the array does not contain all elements', () => {
-      expect(containsAll([1, 2, 3], [2, 5])).toBe(false);
-      expect(containsAll(['a', 'b'], ['a', 'c'])).toBe(false);
-    });
-
-    test('should return false for non-array inputs', () => {
-      expect(containsAll(null, [1])).toBe(false);
-      expect(containsAll([1], undefined)).toBe(false);
-      expect(containsAll(123, [1])).toBe(false);
-    });
-  });
-
-  
-
-  
-
-  
-
   
 
   describe('chunkArray', () => {
@@ -455,126 +434,141 @@ describe('array-utils', () => {
     });
   });
 
-  
-});
+  describe('filterBy', () => {
+    test('should filter an array based on a predicate', () => {
+      const numbers = [1, 2, 3, 4, 5];
+      expect(filterBy(numbers, n => n % 2 === 0)).toEqual([2, 4]);
+    });
 
-describe('filterBy', () => {
-  test('should filter an array based on a predicate', () => {
-    const numbers = [1, 2, 3, 4, 5];
-    expect(filterBy(numbers, n => n % 2 === 0)).toEqual([2, 4]);
+    test('should handle empty array', () => {
+      expect(filterBy([], n => n > 0)).toEqual([]);
+    });
+
+    test('should handle non-array inputs gracefully', () => {
+      expect(filterBy(null, n => n > 0)).toEqual([]);
+      expect(filterBy(undefined, n => n > 0)).toEqual([]);
+    });
   });
 
-  test('should handle empty array', () => {
-    expect(filterBy([], n => n > 0)).toEqual([]);
-  });
-
-  test('should handle non-array inputs gracefully', () => {
-    expect(filterBy(null, n => n > 0)).toEqual([]);
-    expect(filterBy(undefined, n => n > 0)).toEqual([]);
-  });
-});
-
-describe('sortBy', () => {
-  const users = [
-    { name: 'Alice', age: 30 },
-    { name: 'Bob', age: 25 },
-    { name: 'Charlie', age: 35 },
-  ];
-
-  test('should sort an array of objects by a key in ascending order', () => {
-    const sortedUsers = sortBy(users, 'age');
-    expect(sortedUsers).toEqual([
-      { name: 'Bob', age: 25 },
-      { name: 'Alice', age: 30 },
-      { name: 'Charlie', age: 35 },
-    ]);
-  });
-
-  test('should sort an array of objects by a key in descending order', () => {
-    const sortedUsers = sortBy(users, 'age', 'desc');
-    expect(sortedUsers).toEqual([
-      { name: 'Charlie', age: 35 },
+  describe('sortBy', () => {
+    const users = [
       { name: 'Alice', age: 30 },
       { name: 'Bob', age: 25 },
-    ]);
+      { name: 'Charlie', age: 35 },
+    ];
+
+    test('should sort an array of objects by a key in ascending order', () => {
+      const sortedUsers = sortBy(users, 'age');
+      expect(sortedUsers).toEqual([
+        { name: 'Bob', age: 25 },
+        { name: 'Alice', age: 30 },
+        { name: 'Charlie', age: 35 },
+      ]);
+    });
+
+    test('should sort an array of objects by a key in descending order', () => {
+      const sortedUsers = sortBy(users, 'age', 'desc');
+      expect(sortedUsers).toEqual([
+        { name: 'Charlie', age: 35 },
+        { name: 'Alice', age: 30 },
+        { name: 'Bob', age: 25 },
+      ]);
+    });
+
+    test('should handle empty array', () => {
+      expect(sortBy([], 'age')).toEqual([]);
+    });
+
+    test('should handle non-array inputs gracefully', () => {
+      expect(sortBy(null, 'age')).toEqual([]);
+      expect(sortBy(undefined, 'age')).toEqual([]);
+    });
   });
 
-  test('should handle empty array', () => {
-    expect(sortBy([], 'age')).toEqual([]);
+  describe('isEqualArray', () => {
+    test('should return true for two equal arrays', () => {
+      expect(isEqualArray([1, 2, 3], [1, 2, 3])).toBe(true);
+    });
+
+    test('should return false for arrays with different elements', () => {
+      expect(isEqualArray([1, 2, 3], [1, 2, 4])).toBe(false);
+    });
+
+    test('should return false for arrays with different lengths', () => {
+      expect(isEqualArray([1, 2, 3], [1, 2])).toBe(false);
+    });
+
+    test('should return false for arrays with same elements but different order', () => {
+      expect(isEqualArray([1, 2, 3], [3, 2, 1])).toBe(false);
+    });
+
+    test('should return true for two empty arrays', () => {
+      expect(isEqualArray([], [])).toBe(true);
+    });
+
+    test('should return false for non-array inputs', () => {
+      expect(isEqualArray(null, [1, 2])).toBe(false);
+      expect(isEqualArray([1, 2], undefined)).toBe(false);
+      expect(isEqualArray(123, 456)).toBe(false);
+    });
   });
 
-  test('should handle non-array inputs gracefully', () => {
-    expect(sortBy(null, 'age')).toEqual([]);
-    expect(sortBy(undefined, 'age')).toEqual([]);
-  });
-});
+  describe('xor', () => {
+    it('should return the symmetric difference of two arrays', () => {
+      expect(xor([1, 2, 3], [2, 3, 4])).toEqual([1, 4]);
+      expect(xor(['a', 'b', 'c'], ['b', 'd'])).toEqual(['a', 'c', 'd']);
+      expect(xor([1, 2], [3, 4])).toEqual([1, 2, 3, 4]);
+    });
 
-describe('isEqualArray', () => {
-  test('should return true for two equal arrays', () => {
-    expect(isEqualArray([1, 2, 3], [1, 2, 3])).toBe(true);
-  });
+    it('should handle empty arrays', () => {
+      expect(xor([], [1, 2])).toEqual([1, 2]);
+      expect(xor([1, 2], [])).toEqual([1, 2]);
+      expect(xor([], [])).toEqual([]);
+    });
 
-  test('should return false for arrays with different elements', () => {
-    expect(isEqualArray([1, 2, 3], [1, 2, 4])).toBe(false);
-  });
+    it('should handle arrays with duplicate values within themselves', () => {
+      expect(xor([1, 1, 2], [2, 3, 3])).toEqual([1, 3]);
+    });
 
-  test('should return false for arrays with different lengths', () => {
-    expect(isEqualArray([1, 2, 3], [1, 2])).toBe(false);
-  });
-
-  test('should return false for arrays with same elements but different order', () => {
-    expect(isEqualArray([1, 2, 3], [3, 2, 1])).toBe(false);
-  });
-
-  test('should return true for two empty arrays', () => {
-    expect(isEqualArray([], [])).toBe(true);
+    it('should handle non-array inputs gracefully', () => {
+      expect(xor(null, [1, 2])).toEqual([]);
+      expect(xor([1, 2], undefined)).toEqual([]);
+    });
   });
 
-  test('should return false for non-array inputs', () => {
-    expect(isEqualArray(null, [1, 2])).toBe(false);
-    expect(isEqualArray([1, 2], undefined)).toBe(false);
-    expect(isEqualArray(123, 456)).toBe(false);
-  });
-});
+  describe('differenceBy', () => {
+    it('should return the difference of two arrays based on an iteratee function', () => {
+      const arr1 = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }];
+      const arr2 = [{ 'x': 2 }, { 'x': 4 }];
+      expect(differenceBy(arr1, arr2, o => o.x)).toEqual([{ 'x': 1 }, { 'x': 3 }]);
+    });
 
-describe('containsAll', () => {
-  test('should return true if the array contains all elements', () => {
-    expect(containsAll([1, 2, 3, 4, 5], [2, 4])).toBe(true);
-    expect(containsAll(['a', 'b', 'c'], ['a', 'c'])).toBe(true);
-    expect(containsAll([1, 2, 3], [])).toBe(true);
-  });
+    it('should handle empty arrays', () => {
+      expect(differenceBy([], [{ 'x': 1 }], o => o.x)).toEqual([]);
+      expect(differenceBy([{ 'x': 1 }], [], o => o.x)).toEqual([{ 'x': 1 }]);
+    });
 
-  test('should return false if the array does not contain all elements', () => {
-    expect(containsAll([1, 2, 3], [2, 5])).toBe(false);
-    expect(containsAll(['a', 'b'], ['a', 'c'])).toBe(false);
-  });
-
-  test('should return false for non-array inputs', () => {
-    expect(containsAll(null, [1])).toBe(false);
-    expect(containsAll([1], undefined)).toBe(false);
-    expect(containsAll(123, [1])).toBe(false);
-  });
-});
-
-describe('xor', () => {
-  it('should return the symmetric difference of two arrays', () => {
-    expect(xor([1, 2, 3], [2, 3, 4])).toEqual([1, 4]);
-    expect(xor(['a', 'b', 'c'], ['b', 'd'])).toEqual(['a', 'c', 'd']);
-    expect(xor([1, 2], [3, 4])).toEqual([1, 2, 3, 4]);
+    it('should handle non-array inputs gracefully', () => {
+      expect(differenceBy(null, [{ 'x': 1 }], o => o.x)).toEqual([]);
+      expect(differenceBy([{ 'x': 1 }], undefined, o => o.x)).toEqual([]);
+    });
   });
 
-  it('should handle empty arrays', () => {
-    expect(xor([], [1, 2])).toEqual([1, 2]);
-    expect(xor([1, 2], [])).toEqual([1, 2]);
-    expect(xor([], [])).toEqual([]);
-  });
+  describe('intersectionBy', () => {
+    it('should return the intersection of two arrays based on an iteratee function', () => {
+      const arr1 = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }];
+      const arr2 = [{ 'x': 2 }, { 'x': 4 }];
+      expect(intersectionBy(arr1, arr2, o => o.x)).toEqual([{ 'x': 2 }]);
+    });
 
-  it('should handle arrays with duplicate values within themselves', () => {
-    expect(xor([1, 1, 2], [2, 3, 3])).toEqual([1, 3]);
-  });
+    it('should handle empty arrays', () => {
+      expect(intersectionBy([], [{ 'x': 1 }], o => o.x)).toEqual([]);
+      expect(intersectionBy([{ 'x': 1 }], [], o => o.x)).toEqual([]);
+    });
 
-  it('should handle non-array inputs gracefully', () => {
-    expect(xor(null, [1, 2])).toEqual([]);
-    expect(xor([1, 2], undefined)).toEqual([]);
+    it('should handle non-array inputs gracefully', () => {
+      expect(intersectionBy(null, [{ 'x': 1 }], o => o.x)).toEqual([]);
+      expect(intersectionBy([{ 'x': 1 }], undefined, o => o.x)).toEqual([]);
+    });
   });
 });

@@ -1,47 +1,39 @@
-import { truncate, slugify } from './string-utils';
+import { truncate, escapeHTML, unescapeHTML } from './string-utils';
 
-describe('truncate', () => {
-  test('should truncate a string that is too long', () => {
-    expect(truncate('hello world', 8)).toBe('hello...');
+describe('String Utilities', () => {
+  describe('truncate', () => {
+    it('should not truncate if string is shorter than length', () => {
+      expect(truncate('hello', 10)).toBe('hello');
+    });
+
+    it('should truncate string to specified length', () => {
+      expect(truncate('hello world', 8)).toBe('hello...');
+    });
+
+    it('should use custom suffix', () => {
+      expect(truncate('hello world', 8, '--')).toBe('hello --');
+    });
+
+    it('should handle edge case where length is less than suffix length', () => {
+        expect(truncate('hello world', 2, '...')).toBe('...');
+    });
+
+    it('should return the string if its length is equal to the specified length', () => {
+      expect(truncate('hello', 5)).toBe('hello');
+    });
   });
 
-  test('should not truncate a string that is short enough', () => {
-    expect(truncate('hello', 10)).toBe('hello');
-  });
+  describe('escapeHTML / unescapeHTML', () => {
+    it('should escape HTML characters', () => {
+      const html = '<div class="test">\'Hello & World\'</div>';
+      const expected = '&lt;div class=&quot;test&quot;&gt;&#39;Hello &amp; World&#39;&lt;/div&gt;';
+      expect(escapeHTML(html)).toBe(expected);
+    });
 
-  test('should use a custom suffix', () => {
-    expect(truncate('hello world', 8, '!!')).toBe('hello !!');
-  });
-
-  test('should return an empty string for non-string input', () => {
-    expect(truncate(123, 5)).toBe('');
-  });
-
-  test('should return an empty string for empty input', () => {
-    expect(truncate('', 5)).toBe('');
-  });
-});
-
-describe('slugify', () => {
-  test('should convert string to slug', () => {
-    expect(slugify('Hello World!')).toBe('hello-world');
-  });
-
-  test('should handle multiple spaces and hyphens', () => {
-    expect(slugify(' --some--  string-- ')).toBe('some-string');
-  });
-
-  test('should remove special characters', () => {
-    expect(slugify('!@#$%^&*()=+_`~[]{}|;:\'",.<>/?')).toBe('');
-  });
-
-  test('should handle empty string', () => {
-    expect(slugify('')).toBe('');
-  });
-
-  test('should handle non-string input', () => {
-    expect(slugify(null)).toBe('');
-    expect(slugify(undefined)).toBe('');
-    expect(slugify(123)).toBe('');
+    it('should unescape HTML characters', () => {
+      const escaped = '&lt;div class=&quot;test&quot;&gt;&#39;Hello &amp; World&#39;&lt;/div&gt;';
+      const expected = '<div class="test">\'Hello & World\'</div>';
+      expect(unescapeHTML(escaped)).toBe(expected);
+    });
   });
 });

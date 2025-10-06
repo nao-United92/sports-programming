@@ -78,3 +78,22 @@ export function pick(object, paths) {
   }
   return result;
 }
+
+/**
+ * The opposite of `pick`; this method creates an object composed of the own
+ * and inherited enumerable property paths of `object` that are not omitted.
+ * @param {object} object The source object.
+ * @param {Array<string>} paths The property keys to omit.
+ * @returns {object} Returns the new object.
+ */
+export function omit(object, paths) {
+  const result = { ...object };
+  if (object === null || typeof object !== 'object') {
+    return {};
+  }
+
+  for (const path of paths) {
+    delete result[path];
+  }
+  return result;
+}

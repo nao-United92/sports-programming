@@ -1,53 +1,55 @@
-import { invert, has } from './object-utils.js';
+import { deepClone, isEmpty } from './object-utils.js';
 
-describe('Object Utilities', () => {
-  describe('invert', () => {
-    test('should invert an object with unique values', () => {
-      const obj = { a: '1', b: '2', c: '3' };
-      const invertedObj = { '1': 'a', '2': 'b', '3': 'c' };
-      expect(invert(obj)).toEqual(invertedObj);
+describe('object-utils', () => {
+  describe('deepClone', () => {
+    it('should deep clone a simple object', () => {
+      const obj = { a: 1, b: { c: 2 } };
+      const cloned = deepClone(obj);
+      expect(cloned).toEqual(obj);
+      expect(cloned).not.toBe(obj);
+      expect(cloned.b).not.toBe(obj.b);
     });
 
-    test('should handle objects with non-unique values (last one wins)', () => {
-      const obj = { a: '1', b: '2', c: '1' };
-      const invertedObj = { '1': 'c', '2': 'b' };
-      expect(invert(obj)).toEqual(invertedObj);
+    it('should deep clone an array within an object', () => {
+      const obj = { a: [1, 2, { b: 3 }] };
+      const cloned = deepClone(obj);
+      expect(cloned).toEqual(obj);
+      expect(cloned.a).not.toBe(obj.a);
+      expect(cloned.a[2]).not.toBe(obj.a[2]);
     });
 
-    test('should return an empty object for an empty object', () => {
-      expect(invert({})).toEqual({});
+    it('should handle null and primitive values', () => {
+      expect(deepClone(null)).toBeNull();
+      expect(deepClone(123)).toBe(123);
+      expect(deepClone('hello')).toBe('hello');
+    });
+
+    it('should handle dates', () => {
+        const obj = { d: new Date() };
+        const cloned = deepClone(obj);
+        expect(cloned.d.getTime()).toBe(obj.d.getTime());
+        expect(cloned.d).not.toBe(obj.d);
     });
   });
 
-  describe('has', () => {
-    const obj = { a: 1, b: undefined };
-    function Parent() {
-      this.c = 3;
-    }
-    Parent.prototype.d = 4;
-    const child = new Parent();
-    child.e = 5;
-
-
-    test('should return true for own properties', () => {
-      expect(has(obj, 'a')).toBe(true);
+  describe('isEmpty', () => {
+    it('should return true for an empty object', () => {
+      expect(isEmpty({})).toBe(true);
     });
 
-    test('should return true for own properties with undefined value', () => {
-      expect(has(obj, 'b')).toBe(true);
+    it('should return false for a non-empty object', () => {
+      expect(isEmpty({ a: 1 })).toBe(false);
     });
 
-    test('should return false for properties that do not exist', () => {
-      expect(has(obj, 'c')).toBe(false);
+    it('should return true for null or undefined', () => {
+      expect(isEmpty(null)).toBe(true);
+      expect(isEmpty(undefined)).toBe(true);
     });
 
-    test('should return true for own properties on child objects', () => {
-        expect(has(child, 'c')).toBe(true);
-        expect(has(child, 'e')).toBe(true);
-    });
-
-    test('should return false for inherited properties', () => {
-      expect(has(child, 'd')).toBe(false);
+    it('should return false for non-plain objects', () => {
+        function MyObject() {}
+        expect(isEmpty(new MyObject())).toBe(false);
+        expect(isEmpty([])).toBe(false);
     });
   });
 });

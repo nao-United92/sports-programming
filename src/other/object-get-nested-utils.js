@@ -1,27 +1,14 @@
 /**
- * Safely gets a nested property from an object using a dot-separated path.
- * Returns a default value if the property or any part of the path does not exist.
- *
+ * Safely retrieves a nested value from an object using a path string or array.
  * @param {object} obj The object to query.
- * @param {string} path The dot-separated path to the property (e.g., 'user.address.street').
- * @param {any} [defaultValue] The value to return if the property is not found. Defaults to undefined.
- * @returns {any} The value of the nested property, or the defaultValue if not found.
+ * @param {string|string[]} path The path of the property to retrieve.
+ * @param {*} [defaultValue] The value to return if the path is not found.
+ * @returns {*} Returns the resolved value, else the defaultValue.
  */
-export function getNestedProperty(obj, path, defaultValue) {
-  if (obj === null || typeof obj !== 'object') {
-    return defaultValue;
-  }
+const get = (obj, path, defaultValue = undefined) => {
+  const pathArray = Array.isArray(path) ? path : path.split('.').filter(key => key);
+  const result = pathArray.reduce((acc, key) => acc && acc[key], obj);
+  return result === undefined || result === null ? defaultValue : result;
+};
 
-  const pathParts = path.split('.');
-  let current = obj;
-
-  for (let i = 0; i < pathParts.length; i++) {
-    const part = pathParts[i];
-    if (current === null || typeof current !== 'object' || !current.hasOwnProperty(part)) {
-      return defaultValue;
-    }
-    current = current[part];
-  }
-
-  return current;
-}
+module.exports = { get };
