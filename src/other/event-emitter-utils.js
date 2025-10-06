@@ -1,39 +1,32 @@
-class EventEmitter {
-  constructor() {
-    this.events = {};
-  }
+const createEventEmitter = () => {
+  const events = {};
 
-  on(eventName, listener) {
-    if (!this.events[eventName]) {
-      this.events[eventName] = [];
+  const on = (eventName, listener) => {
+    if (!events[eventName]) {
+      events[eventName] = [];
     }
-    this.events[eventName].push(listener);
-    return () => this.off(eventName, listener); // Return an unsubscribe function
-  }
+    events[eventName].push(listener);
+  };
 
-  off(eventName, listener) {
-    if (!this.events[eventName]) {
+  const off = (eventName, listener) => {
+    if (!events[eventName]) {
       return;
     }
-    this.events[eventName] = this.events[eventName].filter(l => l !== listener);
-  }
+    events[eventName] = events[eventName].filter(l => l !== listener);
+  };
 
-  emit(eventName, ...args) {
-    if (!this.events[eventName]) {
+  const emit = (eventName, ...args) => {
+    if (!events[eventName]) {
       return;
     }
-    // Create a copy of the listeners array in case a listener modifies the array while iterating
-    const listeners = [...this.events[eventName]];
-    listeners.forEach(listener => listener(...args));
-  }
+    events[eventName].forEach(listener => listener(...args));
+  };
 
-  once(eventName, listener) {
-    const onceListener = (...args) => {
-      listener(...args);
-      this.off(eventName, onceListener);
-    };
-    return this.on(eventName, onceListener);
-  }
-}
+  return {
+    on,
+    off,
+    emit,
+  };
+};
 
-module.exports = { EventEmitter };
+module.exports = { createEventEmitter };

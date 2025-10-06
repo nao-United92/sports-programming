@@ -1,46 +1,48 @@
-const assert = require('assert');
-const { EventEmitter } = require('./event-emitter-utils.js');
+const { createEventEmitter } = require('./event-emitter-utils');
 
-try {
-  const emitter = new EventEmitter();
-  let callCount = 0;
-  let lastArgs = [];
+describe('createEventEmitter', () => {
+  let emitter;
 
-  const listener1 = (arg1, arg2) => {
-    callCount++;
-    lastArgs = [arg1, arg2];
-  };
+  beforeEach(() => {
+    emitter = createEventEmitter();
+  });
 
-  // Test 'on' and 'emit'
-  emitter.on('test-event', listener1);
-  emitter.emit('test-event', 'hello', 'world');
-  assert.strictEqual(callCount, 1, 'on/emit: listener should be called once');
-  assert.deepStrictEqual(lastArgs, ['hello', 'world'], 'on/emit: arguments should be passed correctly');
+  it('should call a listener when an event is emitted', () => {
+    const listener = jest.fn();
+    emitter.on('test-event', listener);
+    emitter.emit('test-event');
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
 
-  // Test 'off'
-  emitter.off('test-event', listener1);
-  emitter.emit('test-event', 'foo', 'bar');
-  assert.strictEqual(callCount, 1, 'off: listener should not be called after being removed');
+  it('should pass arguments to the listener', () => {
+    const listener = jest.fn();
+    emitter.on('test-event', listener);
+    emitter.emit('test-event', 1, 'hello', { a: 2 });
+    expect(listener).toHaveBeenCalledWith(1, 'hello', { a: 2 });
+  });
 
-  // Test 'once'
-  callCount = 0;
-  emitter.once('once-event', listener1);
-  emitter.emit('once-event', 1, 2);
-  emitter.emit('once-event', 3, 4);
-  assert.strictEqual(callCount, 1, 'once: listener should be called only once');
-  assert.deepStrictEqual(lastArgs, [1, 2], 'once: arguments should be correct for the single call');
+  it('should call multiple listeners for the same event', () => {
+    const listener1 = jest.fn();
+    const listener2 = jest.fn();
+    emitter.on('test-event', listener1);
+    emitter.on('test-event', listener2);
+    emitter.emit('test-event');
+    expect(listener1).toHaveBeenCalledTimes(1);
+    expect(listener2).toHaveBeenCalledTimes(1);
+  });
 
-  // Test unsubscribe function returned by 'on'
-  callCount = 0;
-  const unsubscribe = emitter.on('unsubscribe-event', listener1);
-  emitter.emit('unsubscribe-event');
-  assert.strictEqual(callCount, 1, 'unsubscribe: listener should be called before unsubscribe');
-  unsubscribe();
-  emitter.emit('unsubscribe-event');
-  assert.strictEqual(callCount, 1, 'unsubscribe: listener should not be called after unsubscribe');
+  it('should stop calling a listener after it has been removed', () => {
+    const listener = jest.fn();
+    emitter.on('test-event', listener);
+    emitter.emit('test-event');
+    expect(listener).toHaveBeenCalledTimes(1);
 
-  console.log('All event-emitter-utils tests passed!');
-} catch (error) {
-  console.error('event-emitter-utils tests failed:', error.message);
-  process.exit(1);
-}
+    emitter.off('test-event', listener);
+    emitter.emit('test-event');
+    expect(listener).toHaveBeenCalledTimes(1); // Not called again
+  });
+
+  it('should not throw when emitting an event with no listeners', () => {
+    expect(() => emitter.emit('non-existent-event')).not.toThrow();
+  });
+});
