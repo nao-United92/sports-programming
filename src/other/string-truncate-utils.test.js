@@ -1,36 +1,26 @@
-import { truncate } from './string-truncate-utils.js';
+const { truncate } = require('./string-truncate-utils');
 
 describe('truncate', () => {
-  const text = 'This is a long string to test truncation.';
+  const str = 'abcdefghijklmnopqrstuvwxyz';
 
-  it('should not truncate a string shorter than the specified length', () => {
-    expect(truncate(text, 100)).toBe(text);
+  it('should truncate a string to a specified length', () => {
+    expect(truncate(str, 20)).toBe('abcdefghijklmnopq...');
   });
 
-  it('should truncate a string and add a default suffix', () => {
-    expect(truncate(text, 20)).toBe('This is a long...');
+  it('should not truncate if the string is shorter than the length', () => {
+    expect(truncate(str, 30)).toBe(str);
   });
 
-  it('should truncate a string with a custom suffix', () => {
-    expect(truncate(text, 20, { suffix: ' read more' })).toBe('This is a long read more');
+  it('should use the default length of 30', () => {
+    const longStr = '123456789012345678901234567890abc';
+    expect(truncate(longStr)).toBe('123456789012345678901234567...');
   });
 
-  it('should not respect word boundaries if specified', () => {
-    const options = { respectWordBoundaries: false };
-    expect(truncate(text, 20, options)).toBe('This is a long str...');
+  it('should allow a custom omission string', () => {
+    expect(truncate(str, 20, '-->')).toBe('abcdefghijklmnopq-->');
   });
 
-  it('should handle a single long word by hard truncating', () => {
-    const longWord = 'Supercalifragilisticexpialidocious';
-    expect(truncate(longWord, 20)).toBe('Supercalifragilist...');
-  });
-
-  it('should return the original string if length is equal', () => {
-    expect(truncate(text, text.length)).toBe(text);
-  });
-
-  it('should handle null or undefined input', () => {
-    expect(truncate(null, 10)).toBe(null);
-    expect(truncate(undefined, 10)).toBe(undefined);
+  it('should handle edge case where length is smaller than omission', () => {
+    expect(truncate(str, 5, '......')).toBe('......');
   });
 });
