@@ -1,34 +1,39 @@
+
 /**
- * Creates an object composed of the picked object properties.
- * @param {Object} obj The source object.
- * @param {string[]} keys The properties to pick.
- * @returns {Object} Returns the new object.
+ * Deeply clones an object.
+ * @param {any} obj The object to clone.
+ * @returns {any} The cloned object.
  */
-export const pick = (obj, keys) => {
-  if (obj === null || obj === undefined) {
-    return {};
+export const deepClone = (obj) => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
   }
-  return keys.reduce((acc, key) => {
-    if (obj.hasOwnProperty(key)) {
-      acc[key] = obj[key];
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime());
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => deepClone(item));
+  }
+
+  const clonedObj = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      clonedObj[key] = deepClone(obj[key]);
     }
-    return acc;
-  }, {});
+  }
+  return clonedObj;
 };
 
 /**
- * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
- * @param {Object} obj The source object.
- * @param {string[]} keys The properties to omit.
- * @returns {Object} Returns the new object.
+ * Checks if an object is empty.
+ * @param {object} obj The object to check.
+ * @returns {boolean} True if the object is empty, false otherwise.
  */
-export const omit = (obj, keys) => {
-  if (obj === null || obj === undefined) {
-    return {};
+export const isEmpty = (obj) => {
+  if (obj == null) {
+    return true;
   }
-  const newObj = { ...obj };
-  keys.forEach(key => {
-    delete newObj[key];
-  });
-  return newObj;
+  return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
