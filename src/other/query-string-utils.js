@@ -1,38 +1,61 @@
 /**
- * クエリ文字列をオブジェクトに変換します。
- * @param {string} queryString - URLのクエリ文字列 (例: '?foo=bar&baz=qux')
- * @returns {object} パースされたキーと値のオブジェクト。
+ * Parses a URL query string into an object.
+ * @param {string} str The URL query string to parse (e.g., 'key=value&key2=value2').
+ * @returns {Object} The object representation of the query string.
  */
-function parse(queryString) {
-  if (!queryString || typeof queryString !== 'string') {
-    return {};
+export const parse = (str) => {
+  const result = {};
+  if (typeof str !== 'string') {
+    return result;
   }
 
-  const params = new URLSearchParams(queryString);
-  const obj = {};
-  for (const [key, value] of params.entries()) {
-    obj[key] = value;
+  const cleanStr = str.trim().replace(/^[?#&]/, '');
+
+  if (!cleanStr) {
+    return result;
   }
-  return obj;
-}
+
+  for (const param of cleanStr.split('&')) {
+    let [key, value] = param.split('=');
+    if (key === undefined || key === '') continue;
+
+    key = decodeURIComponent(key);
+    const decodedValue = value === undefined ? null : decodeURIComponent(value.replace(/\+/g, ' '));
+
+    if (result[key] === undefined) {
+      result[key] = decodedValue;
+    } else {
+      if (!Array.isArray(result[key])) {
+        result[key] = [result[key]];
+      }
+      result[key].push(decodedValue);
+    }
+  }
+  return result;
+};
 
 /**
- * オブジェクトをクエリ文字列に変換します。
- * @param {object} obj - キーと値のオブジェクト。
- * @returns {string} 生成されたクエリ文字列 (例: 'foo=bar&baz=qux')
+ * Stringifies an object into a URL query string.
+ * @param {Object} obj The object to stringify.
+ * @returns {string} The URL query string.
  */
-function stringify(obj) {
+export const stringify = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return '';
   }
 
-  const params = new URLSearchParams();
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      params.append(key, obj[key]);
-    }
-  }
-  return params.toString();
-}
+  return Object.keys(obj).map(key => {
+    const value = obj[key];
+    const encodedKey = encodeURIComponent(key);
 
-module.exports = { parse, stringify };
+    if (value === null || value === undefined) {
+      return encodedKey;
+    }
+
+    if (Array.isArray(value)) {
+      return value.map(v => `${encodedKey}=${encodeURIComponent(v)}`).join('&');
+    }
+
+    return `${encodedKey}=${encodeURIComponent(value)}`;
+  }).filter(Boolean).join('&');
+};
