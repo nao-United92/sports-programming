@@ -1,9 +1,3 @@
-/**
- * Performs a deep clone of an object.
- *
- * @param {any} obj The object to deep clone.
- * @returns {any} The deep cloned object.
- */
 export const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return obj;
