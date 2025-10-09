@@ -1,35 +1,29 @@
 /**
- * Truncates a string to a specified length, appending a suffix if truncated.
+ * Truncates a string to a specified length, appending a suffix if needed.
  * @param {string} str The string to truncate.
- * @param {number} length The maximum length of the string.
+ * @param {number} maxLength The maximum length of the string.
  * @param {string} [suffix='...'] The suffix to append if the string is truncated.
  * @returns {string} The truncated string.
  */
-export const truncate = (str, length, suffix = '...') => {
-  if (str.length <= length) {
+export const truncate = (str, maxLength, suffix = '...') => {
+  if (str.length <= maxLength) {
     return str;
   }
-  return str.slice(0, length - suffix.length) + suffix;
+  if (maxLength <= suffix.length) {
+    return suffix;
+  }
+  return str.slice(0, maxLength - suffix.length) + suffix;
 };
 
 /**
- * Escapes HTML special characters in a string.
- * @param {string} str The string to escape.
- * @returns {string} The escaped string.
+ * Converts a string to camelCase.
+ * @param {string} str The string to convert.
+ * @returns {string} The camelCased string.
  */
-export const escapeHTML = (str) =>
-  str.replace(
-    /[&<>"']/g,
-    (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])
-  );
-
-/**
- * Unescapes HTML special characters in a string.
- * @param {string} str The string to unescape.
- * @returns {string} The unescaped string.
- */
-export const unescapeHTML = (str) =>
-  str.replace(
-    /&amp;|&lt;|&gt;|&quot;|&#39;/g,
-    (m) => ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" }[m])
-  );
+export const toCamelCase = (str) => {
+  return str.replace(/([-_][a-z])/ig, ($1) => {
+    return $1.toUpperCase()
+      .replace('-', '')
+      .replace('_', '');
+  });
+};
