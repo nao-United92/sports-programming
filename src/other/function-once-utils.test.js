@@ -1,54 +1,37 @@
-const { once } = require('./function-once-utils');
+const { once } = require('./function-once-utils.js');
 
 describe('once', () => {
-  test('should only call the original function once', () => {
-    const mockFn = jest.fn();
-    const onceFn = once(mockFn);
+  test('should invoke the function only once', () => {
+    const spy = jest.fn(x => x + 1);
+    const onceFn = once(spy);
 
-    onceFn();
-    onceFn();
-    onceFn();
+    expect(onceFn(1)).toBe(2);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(1);
 
-    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(onceFn(2)).toBe(2); // Subsequent calls return the first result
+    expect(spy).toHaveBeenCalledTimes(1); // Should not be called again
+
+    expect(onceFn(3)).toBe(2);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  test('should return the result of the first call', () => {
-    let i = 0;
-    const func = () => ++i;
-    const onceFn = once(func);
+  test('should preserve the `this` context', () => {
+    const spy = jest.fn(function(x) { return this.value + x; });
+    const onceFn = once(spy);
 
-    const result1 = onceFn();
-    const result2 = onceFn();
-    const result3 = onceFn();
+    const context = { value: 10 };
 
-    expect(result1).toBe(1);
-    expect(result2).toBe(1);
-    expect(result3).toBe(1);
+    expect(onceFn.call(context, 5)).toBe(15);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(5);
+
+    expect(onceFn.call({ value: 20 }, 1)).toBe(15); // `this` context for subsequent calls is ignored
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  test('should pass arguments to the original function', () => {
-    const mockFn = jest.fn();
-    const onceFn = once(mockFn);
-    const args = [1, 'a', { b: 2 }];
-
-    onceFn(...args);
-    onceFn(...args);
-
-    expect(mockFn).toHaveBeenCalledWith(...args);
-    expect(mockFn).toHaveBeenCalledTimes(1);
-  });
-
-  test('should maintain the `this` context', () => {
-    const obj = {
-      i: 10,
-      method: function() {
-        return this.i;
-      }
-    };
-    obj.onceMethod = once(obj.method);
-
-    expect(obj.onceMethod()).toBe(10);
-    obj.i = 20;
-    expect(obj.onceMethod()).toBe(10); // Still returns the first result
+  test('should throw an error if func is not a function', () => {
+    expect(() => once(null)).toThrow('Expected a function');
+    expect(() => once('string')).toThrow('Expected a function');
   });
 });
