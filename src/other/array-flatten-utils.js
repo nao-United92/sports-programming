@@ -3,7 +3,7 @@
  * @param {Array} arr The array to flatten.
  * @returns {Array} Returns the new flattened array.
  */
-export const flatten = (arr) => {
+const flatten = (arr) => {
   if (!Array.isArray(arr)) {
     return [];
   }
@@ -16,7 +16,7 @@ export const flatten = (arr) => {
  * @param {Array} arr The array to flatten.
  * @returns {Array} Returns the new deeply flattened array.
  */
-export const flattenDeep = (arr) => {
+const flattenDeep = (arr) => {
   if (!Array.isArray(arr)) {
     return [];
   }
@@ -29,9 +29,9 @@ export const flattenDeep = (arr) => {
  * @param {number} depth The maximum recursion depth.
  * @returns {Array} Returns the new flattened array.
  */
-export const flattenDepth = (arr, depth) => {
+const flattenDepth = (arr, depth) => {
   if (!Array.isArray(arr) || depth < 1) {
-    return arr;
+    return arr.slice();
   }
 
   return arr.reduce((acc, val) => {
@@ -42,3 +42,5 @@ export const flattenDepth = (arr, depth) => {
     }
   }, []);
 };
+
+module.exports = { flatten, flattenDeep, flattenDepth };
