@@ -1,12 +1,20 @@
 /**
- * Creates a deep clone of a value.
+ * Recursively clones `value`.
  *
- * @param {*} value The value to clone.
+ * @param {*} value The value to deep clone.
  * @returns {*} Returns the deep cloned value.
  */
-export function deepClone(value) {
+function deepClone(value) {
   if (value === null || typeof value !== 'object') {
     return value;
+  }
+
+  if (Array.isArray(value)) {
+    const copy = [];
+    for (let i = 0; i < value.length; i++) {
+      copy[i] = deepClone(value[i]);
+    }
+    return copy;
   }
 
   if (value instanceof Date) {
@@ -17,19 +25,13 @@ export function deepClone(value) {
     return new RegExp(value);
   }
 
-  if (Array.isArray(value)) {
-    const newArray = [];
-    for (let i = 0; i < value.length; i++) {
-      newArray[i] = deepClone(value[i]);
-    }
-    return newArray;
-  }
-
-  const newObject = {};
+  const copy = {};
   for (const key in value) {
     if (Object.prototype.hasOwnProperty.call(value, key)) {
-      newObject[key] = deepClone(value[key]);
+      copy[key] = deepClone(value[key]);
     }
   }
-  return newObject;
+  return copy;
 }
+
+module.exports = { deepClone };

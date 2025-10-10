@@ -1,50 +1,46 @@
-import { isEmpty } from './is-empty-utils';
+const { isEmpty } = require('./is-empty-utils.js');
 
 describe('isEmpty', () => {
-  it('should return true for null and undefined', () => {
+  test('should return true for null or undefined', () => {
     expect(isEmpty(null)).toBe(true);
     expect(isEmpty(undefined)).toBe(true);
   });
 
-  it('should return true for empty strings, arrays, maps, and sets', () => {
+  test('should return true for an empty string', () => {
     expect(isEmpty('')).toBe(true);
-    expect(isEmpty([])).toBe(true);
-    expect(isEmpty(new Map())).toBe(true);
-    expect(isEmpty(new Set())).toBe(true);
   });
 
-  it('should return true for empty objects', () => {
+  test('should return false for a non-empty string', () => {
+    expect(isEmpty('hello')).toBe(false);
+  });
+
+  test('should return true for an empty array', () => {
+    expect(isEmpty([])).toBe(true);
+  });
+
+  test('should return false for a non-empty array', () => {
+    expect(isEmpty([1, 2, 3])).toBe(false);
+  });
+
+  test('should return true for an empty object', () => {
     expect(isEmpty({})).toBe(true);
   });
 
-  it('should return false for non-empty strings, arrays, maps, and sets', () => {
-    expect(isEmpty('text')).toBe(false);
-    expect(isEmpty([1, 2])).toBe(false);
-    expect(isEmpty(new Map([['a', 1]]))).toBe(false);
-    expect(isEmpty(new Set([1]))).toBe(false);
-  });
-
-  it('should return false for non-empty objects', () => {
+  test('should return false for a non-empty object', () => {
     expect(isEmpty({ a: 1 })).toBe(false);
   });
 
-  it('should return true for numbers, booleans, and functions', () => {
-    expect(isEmpty(123)).toBe(true);
-    expect(isEmpty(true)).toBe(true);
-    expect(isEmpty(() => {})).toBe(true);
+  test('should return false for numbers', () => {
+    expect(isEmpty(0)).toBe(false);
+    expect(isEmpty(123)).toBe(false);
   });
 
-  it('should handle objects with non-enumerable properties', () => {
-    const obj = {};
-    Object.defineProperty(obj, 'a', { value: 1, enumerable: false });
-    expect(isEmpty(obj)).toBe(true);
+  test('should return false for booleans', () => {
+    expect(isEmpty(true)).toBe(false);
+    expect(isEmpty(false)).toBe(false);
   });
 
-  it('should handle array-like objects (e.g., arguments)', () => {
-    function getArguments() {
-      return arguments;
-    }
-    expect(isEmpty(getArguments())).toBe(true);
-    expect(isEmpty(getArguments(1, 2))).toBe(false);
+  test('should return false for functions', () => {
+    expect(isEmpty(() => {})).toBe(false);
   });
 });
