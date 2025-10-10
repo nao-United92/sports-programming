@@ -1,4 +1,4 @@
-import { set } from './object-set-utils.js';
+const { set } = require('./object-set-utils.js');
 
 describe('set', () => {
   test('should set a value on a nested path', () => {
@@ -35,5 +35,26 @@ describe('set', () => {
   test('should handle a null or undefined initial object', () => {
     const newObj = set(null, 'a.b', 1);
     expect(newObj.a.b).toBe(1);
+  });
+
+  test('should deep clone nested objects and arrays when setting values', () => {
+    const originalNested = { c: 3 };
+    const obj = { a: { b: originalNested } };
+    const newObj = set(obj, 'a.b.d', 4);
+
+    expect(newObj.a.b.c).toBe(3);
+    expect(newObj.a.b.d).toBe(4);
+    expect(newObj.a.b).not.toBe(originalNested); // Ensure deepClone was used
+    expect(obj.a.b.d).toBeUndefined(); // Original object should not be mutated
+  });
+
+  test('should handle Date objects correctly during deep cloning', () => {
+    const date = new Date();
+    const obj = { a: date };
+    const newObj = set(obj, 'b', 1);
+
+    expect(newObj.a).toEqual(date);
+    expect(newObj.a).not.toBe(date); // Should be a cloned Date object
+    expect(obj.b).toBeUndefined();
   });
 });
