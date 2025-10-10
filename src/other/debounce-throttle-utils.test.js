@@ -1,4 +1,4 @@
-import { debounce, throttle } from './debounce-throttle-utils.js';
+const { debounce, throttle } = require('./debounce-throttle-utils.js');
 
 jest.useFakeTimers();
 

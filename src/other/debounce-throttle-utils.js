@@ -8,7 +8,7 @@
  * @param {number} wait The number of milliseconds to delay.
  * @returns {Function} Returns the new debounced function.
  */
-export function debounce(func, wait) {
+function debounce(func, wait) {
   let timeout, result;
 
   function debounced(...args) {
@@ -50,7 +50,7 @@ export function debounce(func, wait) {
  * @param {number} limit The number of milliseconds to throttle invocations to.
  * @returns {Function} Returns the new throttled function.
  */
-export function throttle(func, limit) {
+function throttle(func, limit) {
   let inThrottle;
   let lastResult;
   let timeout;
@@ -67,3 +67,5 @@ export function throttle(func, limit) {
     return lastResult;
   };
 }
+
+module.exports = { debounce, throttle };

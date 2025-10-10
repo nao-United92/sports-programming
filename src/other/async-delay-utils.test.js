@@ -1,4 +1,4 @@
-import { delay } from './async-delay-utils';
+const { delay } = require('./async-delay-utils.js');
 
 describe('delay', () => {
   // Jestのタイマーモックを有効にする

@@ -4,6 +4,8 @@
  * @param {*} [value] - 遅延後に解決される値。
  * @returns {Promise<*>} 指定時間後に指定された値で解決するPromise。
  */
-export function delay(ms, value) {
+function delay(ms, value) {
   return new Promise(resolve => setTimeout(() => resolve(value), ms));
 }
+
+module.exports = { delay };
