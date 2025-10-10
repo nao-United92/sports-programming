@@ -1,4 +1,4 @@
-import { union } from './array-union-utils.js';
+const { union } = require('./array-union-utils.js');
 
 describe('union', () => {
   test('should return the union of two arrays', () => {

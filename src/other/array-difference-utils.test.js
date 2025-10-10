@@ -1,4 +1,4 @@
-import { difference, differenceBy, symmetricDifference } from './array-difference-utils.js';
+const { difference, differenceBy, symmetricDifference } = require('./array-difference-utils.js');
 
 describe('Array Difference Utilities', () => {
   describe('difference', () => {

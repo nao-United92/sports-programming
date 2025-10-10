@@ -6,7 +6,7 @@
  * @param {...Array} [values] The arrays to exclude.
  * @returns {Array} Returns the new array of filtered values.
  */
-export function difference(array, ...values) {
+function difference(array, ...values) {
   if (!Array.isArray(array)) {
     return [];
   }
@@ -24,7 +24,7 @@ export function difference(array, ...values) {
  * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new array of filtered values.
  */
-export function differenceBy(array, values, iteratee) {
+function differenceBy(array, values, iteratee) {
   if (!Array.isArray(array)) {
     return [];
   }
@@ -38,7 +38,7 @@ export function differenceBy(array, values, iteratee) {
  * @param {Array} array2 The second array.
  * @returns {Array} Returns the new array of symmetric-difference values.
  */
-export function symmetricDifference(array1, array2) {
+function symmetricDifference(array1, array2) {
   if (!Array.isArray(array1) || !Array.isArray(array2)) {
     return [];
   }
@@ -57,3 +57,5 @@ export function symmetricDifference(array1, array2) {
   }
   return diff;
 }
+
+module.exports = { difference, differenceBy, symmetricDifference };
