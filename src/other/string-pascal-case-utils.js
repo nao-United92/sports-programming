@@ -1,16 +1,14 @@
 /**
- * Converts `string` to PascalCase.
- *
- * @param {string} [string=''] The string to convert.
- * @returns {string} Returns the Pascal cased string.
+ * 文字列をパスカルケースに変換します。
+ * @param {string} str - 変換する文字列。
+ * @returns {string} パスカルケースに変換された文字列。
  */
-function pascalCase(string) {
-  if (typeof string !== 'string' || string.length === 0) {
+export const pascalCase = (str) => {
+  if (typeof str !== 'string') {
     return '';
   }
-  return string
-    .replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '')
+  return str
+    .toLowerCase() // Convert to lowercase first
+    .replace(/[-_\s]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '')
     .replace(/^./, (match) => match.toUpperCase());
-}
-
-module.exports = { pascalCase };
+};
