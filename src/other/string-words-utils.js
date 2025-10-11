@@ -1,18 +1,8 @@
 /**
- * Splits `string` into an array of its words.
- *
- * @param {string} [string=''] The string to inspect.
- * @param {RegExp|string} [pattern] The pattern to match words.
- * @returns {Array} Returns the words of `string`.
+ * 文字列を単語の配列に分割します。
+ * @param {string} str - 分割する文字列。
+ * @returns {string[]} 単語の配列。
  */
-function words(string, pattern) {
-  if (typeof string !== 'string' || string.length === 0) {
-    return [];
-  }
-  if (pattern === undefined) {
-    return string.match(/[a-zA-Z0-9]+/g) || [];
-  }
-  return string.match(pattern) || [];
-}
-
-module.exports = { words };
+export const words = (str) => {
+  return str.match(/[A-Za-z0-9]+/g) || [];
+};
