@@ -1,4 +1,4 @@
-import { capitalizeFirstLetter } from './capitalize-utils.js';
+import { capitalizeFirstLetter, capitalizeWords } from './capitalize-utils.js';
 
 describe('capitalizeFirstLetter', () => {
   test('should capitalize the first letter of a string', () => {
@@ -26,5 +26,26 @@ describe('capitalizeFirstLetter', () => {
   test('should handle single character strings', () => {
     expect(capitalizeFirstLetter('a')).toBe('A');
     expect(capitalizeFirstLetter('Z')).toBe('Z');
+  });
+});
+
+describe('capitalizeWords', () => {
+  test('should capitalize the first letter of each word', () => {
+    expect(capitalizeWords('hello world')).toBe('Hello World');
+    expect(capitalizeWords('foo bar baz')).toBe('Foo Bar Baz');
+  });
+
+  test('should handle single word', () => {
+    expect(capitalizeWords('hello')).toBe('Hello');
+  });
+
+  test('should return an empty string for empty or non-string inputs', () => {
+    expect(capitalizeWords('')).toBe('');
+    expect(capitalizeWords(null)).toBe('');
+    expect(capitalizeWords(undefined)).toBe('');
+  });
+
+  test('should handle strings with extra spaces', () => {
+    expect(capitalizeWords('  hello   world  ')).toBe('  Hello   World  ');
   });
 });
