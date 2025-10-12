@@ -1,23 +1,15 @@
 /**
- * Clamps a number within an inclusive range.
+ * Checks if a number is even.
  *
- * @param {number} number The number to clamp.
- * @param {number} lower The lower bound of the range.
- * @param {number} upper The upper bound of the range.
- * @returns {number} The clamped number.
+ * @param {number} n The number to check.
+ * @returns {boolean} True if the number is even, false otherwise.
  */
-export const clamp = (number, lower, upper) => {
-  return Math.max(lower, Math.min(number, upper));
-};
+export const isEven = (n) => n % 2 === 0;
 
 /**
- * Checks if `number` is between `start` and `end` (exclusive of `end`).
+ * Checks if a number is odd.
  *
- * @param {number} number The number to check.
- * @param {number} start The start of the range.
- * @param {number} end The end of the range.
- * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
+ * @param {number} n The number to check.
+ * @returns {boolean} True if the number is odd, false otherwise.
  */
-export const inRange = (number, start, end) => {
-  return number >= start && number < end;
-};
+export const isOdd = (n) => n % 2 !== 0;
