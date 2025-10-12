@@ -1,61 +1,38 @@
 /**
  * Parses a URL query string into an object.
- * @param {string} str The URL query string to parse (e.g., 'key=value&key2=value2').
- * @returns {Object} The object representation of the query string.
+ * @param {string} queryString The query string to parse (e.g., '?foo=bar&baz=qux').
+ * @returns {object} An object representing the query string.
  */
-export const parse = (str) => {
-  const result = {};
-  if (typeof str !== 'string') {
-    return result;
+export const parse = (queryString) => {
+  const params = {};
+  const sanitizedString = queryString.startsWith('?') ? queryString.slice(1) : queryString;
+  if (!sanitizedString) {
+    return params;
   }
-
-  const cleanStr = str.trim().replace(/^[?#&]/, '');
-
-  if (!cleanStr) {
-    return result;
-  }
-
-  for (const param of cleanStr.split('&')) {
-    let [key, value] = param.split('=');
-    if (key === undefined || key === '') continue;
-
-    key = decodeURIComponent(key);
-    const decodedValue = value === undefined ? null : decodeURIComponent(value.replace(/\+/g, ' '));
-
-    if (result[key] === undefined) {
-      result[key] = decodedValue;
-    } else {
-      if (!Array.isArray(result[key])) {
-        result[key] = [result[key]];
-      }
-      result[key].push(decodedValue);
+  const pairs = sanitizedString.split('&');
+  for (const pair of pairs) {
+    const [key, value] = pair.split('=').map(decodeURIComponent);
+    if (key) {
+      params[key] = value !== undefined ? value : '';
     }
   }
-  return result;
+  return params;
 };
 
 /**
  * Stringifies an object into a URL query string.
- * @param {Object} obj The object to stringify.
+ * @param {object} obj The object to stringify.
  * @returns {string} The URL query string.
  */
 export const stringify = (obj) => {
-  if (obj === null || typeof obj !== 'object') {
-    return '';
+  const pairs = [];
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      const encodedKey = encodeURIComponent(key);
+      const encodedValue = encodeURIComponent(String(value));
+      pairs.push(`${encodedKey}=${encodedValue}`);
+    }
   }
-
-  return Object.keys(obj).map(key => {
-    const value = obj[key];
-    const encodedKey = encodeURIComponent(key);
-
-    if (value === null || value === undefined) {
-      return encodedKey;
-    }
-
-    if (Array.isArray(value)) {
-      return value.map(v => `${encodedKey}=${encodeURIComponent(v)}`).join('&');
-    }
-
-    return `${encodedKey}=${encodeURIComponent(value)}`;
-  }).filter(Boolean).join('&');
+  return pairs.join('&');
 };
