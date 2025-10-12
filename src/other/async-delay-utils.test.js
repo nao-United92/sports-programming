@@ -1,4 +1,4 @@
-const { delay } = require('./async-delay-utils.js');
+const { delay, debounce, throttle } = require('./async-delay-utils.js');
 
 describe('delay', () => {
   // Jestのタイマーモックを有効にする
@@ -53,5 +53,84 @@ describe('delay', () => {
     const result = await promise;
 
     expect(result).toBe(testArg);
+  });
+});
+
+describe('debounce', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it('should call the function only once after the wait time', () => {
+    const mockFn = jest.fn();
+    const debouncedFn = debounce(mockFn, 1000);
+
+    debouncedFn();
+    debouncedFn();
+    debouncedFn();
+
+    expect(mockFn).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(1000);
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should reset the timer if called again within the wait time', () => {
+    const mockFn = jest.fn();
+    const debouncedFn = debounce(mockFn, 1000);
+
+    debouncedFn();
+    jest.advanceTimersByTime(500);
+    debouncedFn();
+
+    expect(mockFn).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(1000);
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('throttle', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it('should call the function immediately and then not again within the limit', () => {
+    const mockFn = jest.fn();
+    const throttledFn = throttle(mockFn, 1000);
+
+    throttledFn();
+    throttledFn();
+    throttledFn();
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(500);
+    throttledFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call the function again after the limit has passed', () => {
+    const mockFn = jest.fn();
+    const throttledFn = throttle(mockFn, 1000);
+
+    throttledFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(1000);
+    throttledFn();
+    expect(mockFn).toHaveBeenCalledTimes(2);
   });
 });
