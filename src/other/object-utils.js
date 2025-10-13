@@ -1,39 +1,39 @@
-
 /**
- * Deeply clones an object.
- * @param {any} obj The object to clone.
- * @returns {any} The cloned object.
+ * Performs a deep clone of an object or array.
+ * @param {any} obj The object or array to clone.
+ * @returns {any} The deep cloned object or array.
  */
 export const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
 
-  if (obj instanceof Date) {
-    return new Date(obj.getTime());
-  }
-
   if (Array.isArray(obj)) {
-    return obj.map(item => deepClone(item));
+    const arrCopy = [];
+    for (let i = 0; i < obj.length; i++) {
+      arrCopy[i] = deepClone(obj[i]);
+    }
+    return arrCopy;
   }
 
-  const clonedObj = {};
+  const objCopy = {};
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      clonedObj[key] = deepClone(obj[key]);
+      objCopy[key] = deepClone(obj[key]);
     }
   }
-  return clonedObj;
+  return objCopy;
 };
 
 /**
- * Checks if an object is empty.
- * @param {object} obj The object to check.
- * @returns {boolean} True if the object is empty, false otherwise.
+ * Checks if an object is empty (has no enumerable own properties).
+ * Non-object values (null, undefined, primitives) are also considered empty.
+ * @param {any} obj The value to check.
+ * @returns {boolean} True if the object is empty or not an object, false otherwise.
  */
 export const isEmpty = (obj) => {
-  if (obj == null) {
+  if (obj === null || typeof obj !== 'object') {
     return true;
   }
-  return Object.keys(obj).length === 0 && obj.constructor === Object;
+  return Object.keys(obj).length === 0;
 };

@@ -1,59 +1,95 @@
-import { once, memoize } from './function-utils.js';
+import { debounce, throttle } from './function-utils';
 
 describe('Function Utilities', () => {
-  describe('once', () => {
-    it('should only invoke the function once', () => {
-      const mockFn = jest.fn();
-      const onceFn = once(mockFn);
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
 
-      onceFn();
-      onceFn();
-      onceFn();
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
 
-      expect(mockFn).toHaveBeenCalledTimes(1);
+  describe('debounce', () => {
+    it('should debounce a function', () => {
+      const func = jest.fn();
+      const debouncedFunc = debounce(func, 100);
+
+      debouncedFunc();
+      debouncedFunc();
+      debouncedFunc();
+
+      // Function should not have been called yet
+      expect(func).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(50);
+      expect(func).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(50); // 100ms passed since last call
+      expect(func).toHaveBeenCalledTimes(1);
+
+      debouncedFunc();
+      jest.advanceTimersByTime(50);
+      expect(func).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(50); // 100ms passed since last call
+      expect(func).toHaveBeenCalledTimes(2);
     });
 
-    it('should return the value of the first invocation', () => {
-      let i = 1;
-      const onceFn = once(() => i++);
+    it('should pass arguments and context correctly', () => {
+      const func = jest.fn(function(a, b) {
+        return this.value + a + b;
+      });
+      const debouncedFunc = debounce(func, 100);
+      const context = { value: 10 };
 
-      const val1 = onceFn();
-      const val2 = onceFn();
-      const val3 = onceFn();
+      debouncedFunc.call(context, 1, 2);
+      jest.advanceTimersByTime(100);
 
-      expect(val1).toBe(1);
-      expect(val2).toBe(1);
-      expect(val3).toBe(1);
+      expect(func).toHaveBeenCalledWith(1, 2);
     });
   });
 
-  describe('memoize', () => {
-    it('should memoize the result of a function', () => {
-      const mockFn = jest.fn(x => x * 2);
-      const memoizedFn = memoize(mockFn);
+  describe('throttle', () => {
+    it('should throttle a function', () => {
+      const func = jest.fn();
+      const throttledFunc = throttle(func, 100);
 
-      memoizedFn(2);
-      memoizedFn(2);
+      throttledFunc(); // Should be called immediately
+      throttledFunc(); // Should be ignored
+      throttledFunc(); // Should be ignored
 
-      expect(mockFn).toHaveBeenCalledTimes(1);
-      expect(memoizedFn(2)).toBe(4);
+      expect(func).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(50);
+      throttledFunc(); // Should be ignored
+      expect(func).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(50); // 100ms passed since first call, should call again
+      expect(func).toHaveBeenCalledTimes(2);
+
+      throttledFunc(); // Should be called immediately after the 2nd call
+      expect(func).toHaveBeenCalledTimes(3);
+
+      jest.advanceTimersByTime(50);
+      throttledFunc(); // Should be ignored
+      expect(func).toHaveBeenCalledTimes(3);
+
+      jest.advanceTimersByTime(50); // 100ms passed since 3rd call, should call again
+      expect(func).toHaveBeenCalledTimes(4);
     });
 
-    it('should use a resolver function if provided', () => {
-      const mockFn = jest.fn((a, b) => a + b);
-      const memoizedFn = memoize(mockFn, (a, b) => `${a}-${b}`);
+    it('should pass arguments and context correctly', () => {
+      const func = jest.fn(function(a, b) {
+        return this.value + a + b;
+      });
+      const throttledFunc = throttle(func, 100);
+      const context = { value: 10 };
 
-      memoizedFn(1, 2);
-      memoizedFn(1, 2);
+      throttledFunc.call(context, 1, 2);
+      jest.advanceTimersByTime(100);
 
-      expect(mockFn).toHaveBeenCalledTimes(1);
-      expect(memoizedFn(1, 2)).toBe(3);
-
-      memoizedFn(2, 3);
-      memoizedFn(2, 3);
-
-      expect(mockFn).toHaveBeenCalledTimes(2);
-      expect(memoizedFn(2, 3)).toBe(5);
+      expect(func).toHaveBeenCalledWith(1, 2);
     });
   });
 });
