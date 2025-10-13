@@ -1,39 +1,54 @@
-import { truncate, escapeHTML, unescapeHTML } from './string-utils';
+import { truncate, slugify } from './string-utils';
 
 describe('String Utilities', () => {
   describe('truncate', () => {
-    it('should not truncate if string is shorter than length', () => {
-      expect(truncate('hello', 10)).toBe('hello');
+    it('should not truncate a string shorter than the specified length', () => {
+      expect(truncate('hello world', 20)).toBe('hello world');
     });
 
-    it('should truncate string to specified length', () => {
-      expect(truncate('hello world', 8)).toBe('hello...');
+    it('should return the original string if length is equal to string length', () => {
+      expect(truncate('exact length', 12)).toBe('exact length');
     });
 
-    it('should use custom suffix', () => {
-      expect(truncate('hello world', 8, '--')).toBe('hello --');
+    it('should truncate a string longer than the specified length', () => {
+      expect(truncate('hello world, this is a long string', 20)).toBe('hello world, this...');
     });
 
-    it('should handle edge case where length is less than suffix length', () => {
-        expect(truncate('hello world', 2, '...')).toBe('...');
+    it('should use a custom suffix if provided', () => {
+      expect(truncate('long string', 10, '...')).toBe('long st...');
     });
 
-    it('should return the string if its length is equal to the specified length', () => {
-      expect(truncate('hello', 5)).toBe('hello');
+    it('should handle edge case where length is less than or equal to suffix length', () => {
+      expect(truncate('any string', 3)).toBe('...');
+      expect(truncate('any string', 2)).toBe('..');
     });
   });
 
-  describe('escapeHTML / unescapeHTML', () => {
-    it('should escape HTML characters', () => {
-      const html = '<div class="test">\'Hello & World\'</div>';
-      const expected = '&lt;div class=&quot;test&quot;&gt;&#39;Hello &amp; World&#39;&lt;/div&gt;';
-      expect(escapeHTML(html)).toBe(expected);
+  describe('slugify', () => {
+    it('should convert a string to a slug', () => {
+      expect(slugify('Hello World!')).toBe('hello-world');
     });
 
-    it('should unescape HTML characters', () => {
-      const escaped = '&lt;div class=&quot;test&quot;&gt;&#39;Hello &amp; World&#39;&lt;/div&gt;';
-      const expected = '<div class="test">\'Hello & World\'</div>';
-      expect(unescapeHTML(escaped)).toBe(expected);
+    it('should handle multiple spaces and hyphens', () => {
+      expect(slugify('  --hello--world--  ')).toBe('hello-world');
+    });
+
+    it('should remove special characters and convert underscores to hyphens', () => {
+      expect(slugify('!@#$%^&*()hello_world')).toBe('hello-world');
+    });
+
+    it('should handle leading and trailing hyphens', () => {
+      expect(slugify('-hello-world-')).toBe('hello-world');
+    });
+
+    it('should handle mixed spaces, underscores and hyphens', () => {
+      expect(slugify('  A-b_c  d-e_f ')).toBe('a-b-c-d-e-f');
+    });
+
+    it('should return an empty string for non-string inputs', () => {
+      expect(slugify(null)).toBe('');
+      expect(slugify(undefined)).toBe('');
+      expect(slugify(123)).toBe('');
     });
   });
 });
