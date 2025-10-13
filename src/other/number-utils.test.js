@@ -1,4 +1,4 @@
-import { isEven, isOdd } from './number-utils.js';
+import { isEven, isOdd, sum } from './number-utils.js';
 
 describe('Number Utils', () => {
   describe('isEven', () => {
@@ -24,6 +24,15 @@ describe('Number Utils', () => {
       expect(isOdd(2)).toBe(false);
       expect(isOdd(0)).toBe(false);
       expect(isOdd(-4)).toBe(false);
+    });
+  });
+
+  describe('sum', () => {
+    test('should return the sum of an array of numbers', () => {
+      expect(sum([1, 2, 3, 4, 5])).toBe(15);
+      expect(sum([-1, -2, -3, -4, -5])).toBe(-15);
+      expect(sum([1, -2, 3, -4, 5])).toBe(3);
+      expect(sum([])).toBe(0);
     });
   });
 });
