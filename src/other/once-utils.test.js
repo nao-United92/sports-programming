@@ -1,42 +1,56 @@
-import { once } from './once-utils';
+import { once } from './once-utils.js';
 
 describe('once', () => {
-  test('should only call the original function once', () => {
-    const mockFn = jest.fn();
-    const onceFn = once(mockFn);
+  let originalFunc;
 
-    onceFn();
-    onceFn();
-    onceFn();
-
-    expect(mockFn).toHaveBeenCalledTimes(1);
+  beforeEach(() => {
+    originalFunc = jest.fn();
   });
 
-  test('should return the result of the first call on subsequent calls', () => {
-    let i = 0;
-    const onceFn = once(() => ++i);
+  test('should return a function', () => {
+    const onceFunc = once(originalFunc);
+    expect(typeof onceFunc).toBe('function');
+  });
 
-    const result1 = onceFn();
-    const result2 = onceFn();
-    const result3 = onceFn();
+  test('should call the original function only on the first call', () => {
+    const onceFunc = once(originalFunc);
+    onceFunc();
+    onceFunc();
+    onceFunc();
+    expect(originalFunc).toHaveBeenCalledTimes(1);
+  });
+
+  test('should pass arguments to the original function', () => {
+    const onceFunc = once(originalFunc);
+    onceFunc(1, 'a', true);
+    expect(originalFunc).toHaveBeenCalledWith(1, 'a', true);
+  });
+
+  test('should return the result of the first invocation on all subsequent calls', () => {
+    let counter = 0;
+    const func = () => ++counter;
+    const onceFunc = once(func);
+
+    const result1 = onceFunc();
+    const result2 = onceFunc();
+    const result3 = onceFunc();
 
     expect(result1).toBe(1);
     expect(result2).toBe(1);
     expect(result3).toBe(1);
   });
 
-  test('should pass arguments to the original function', () => {
-    const mockFn = jest.fn((a, b) => a + b);
-    const onceFn = once(mockFn);
+  test('should maintain the context of the original function', () => {
+    const obj = {
+      counter: 0,
+      increment: once(function() {
+        this.counter++;
+      })
+    };
 
-    const result = onceFn(2, 3);
+    obj.increment();
+    obj.increment();
 
-    expect(mockFn).toHaveBeenCalledWith(2, 3);
-    expect(result).toBe(5);
-
-    // Subsequent call with different args should not change the result
-    const result2 = onceFn(4, 5);
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(result2).toBe(5);
+    expect(obj.counter).toBe(1);
   });
 });
