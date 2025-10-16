@@ -1,22 +1,11 @@
-export const throttle = (func, wait) => {
+export const throttle = (func, limit) => {
   let inThrottle;
-  let lastFunc;
-  let lastRan;
-  return function() {
+  return function(...args) {
     const context = this;
-    const args = arguments;
     if (!inThrottle) {
       func.apply(context, args);
-      lastRan = Date.now();
       inThrottle = true;
-    } else {
-      clearTimeout(lastFunc);
-      lastFunc = setTimeout(function() {
-        if ((Date.now() - lastRan) >= wait) {
-          func.apply(context, args);
-          lastRan = Date.now();
-        }
-      }, wait - (Date.now() - lastRan));
+      setTimeout(() => inThrottle = false, limit);
     }
   };
 };
