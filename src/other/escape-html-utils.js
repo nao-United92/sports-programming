@@ -1,66 +1,62 @@
+
 /**
- * A map of characters to their HTML-escaped equivalents.
- * @type {Object<string, string>}
+ * Escapes HTML special characters in a string.
+ *
+ * @param {string} str The string to escape.
+ * @returns {string} The escaped string.
  */
-const htmlEscapes = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;'
+export const escapeHTML = (str) => {
+  if (typeof str !== 'string') {
+    return '';
+  }
+
+  return str.replace(/[&<>'"`]/g, (match) => {
+    switch (match) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&#39;';
+      case '`':
+        return '&#x60;';
+      default:
+        return match;
+    }
+  });
 };
 
 /**
- * Used to match HTML entities and HTML characters.
- * @type {RegExp}
+ * Unescapes HTML special characters in a string.
+ *
+ * @param {string} str The string to unescape.
+ * @returns {string} The unescaped string.
  */
-const reUnescapedHtml = /["&'<>]/g;
+export const unescapeHTML = (str) => {
+  if (typeof str !== 'string') {
+    return '';
+  }
 
-/**
- * A map of HTML-escaped equivalents to their characters.
- * @type {Object<string, string>}
- */
-const htmlUnescapes = {
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&#39;': "'"
+  return str.replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x60;/g, (match) => {
+    switch (match) {
+      case '&amp;':
+        return '&';
+      case '&lt;':
+        return '<';
+      case '&gt;':
+        return '>';
+      case '&quot;':
+        return '"';
+      case '&#39;':
+        return "'";
+      case '&#x60;':
+        return '`';
+      default:
+        return match;
+    }
+  });
 };
-
-/**
- * Used to match HTML entities.
- * @type {RegExp}
- */
-const reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
-
-/**
- * Converts the characters "&", "<", ">", '" ', and "'" in `string` to their
- * corresponding HTML entities.
- *
- * @param {string} string The string to escape.
- * @returns {string} Returns the escaped string.
- */
-function escapeHTML(string) {
-  if (string == null) {
-    return '';
-  }
-  return string.replace(reUnescapedHtml, (char) => htmlEscapes[char]);
-}
-
-/**
- * The inverse of `escapeHTML`. This method converts the HTML entities
- * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
- * corresponding characters.
- *
- * @param {string} string The string to unescape.
- * @returns {string} Returns the unescaped string.
- */
-function unescapeHTML(string) {
-  if (string == null) {
-    return '';
-  }
-  return string.replace(reEscapedHtml, (entity) => htmlUnescapes[entity]);
-}
-
-export { escapeHTML, unescapeHTML };
