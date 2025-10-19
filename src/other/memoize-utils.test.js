@@ -1,53 +1,60 @@
-import { memoize } from './memoize-utils.js';
+const { memoize } = require('./memoize-utils');
 
 describe('memoize', () => {
-  test('should return a function', () => {
-    const memoized = memoize(() => {});
-    expect(typeof memoized).toBe('function');
-  });
+  test('should return the cached result for subsequent calls with the same arguments', () => {
+    const complexCalculation = jest.fn((a, b) => a + b);
+    const memoizedCalc = memoize(complexCalculation);
 
-  test('should call the original function only once for the same arguments', () => {
-    const originalFunc = jest.fn((a, b) => a + b);
-    const memoizedFunc = memoize(originalFunc);
+    // First call
+    const result1 = memoizedCalc(2, 3);
+    expect(result1).toBe(5);
+    expect(complexCalculation).toHaveBeenCalledTimes(1);
 
-    memoizedFunc(1, 2);
-    memoizedFunc(1, 2);
-    memoizedFunc(1, 2);
-
-    expect(originalFunc).toHaveBeenCalledTimes(1);
-  });
-
-  test('should return the cached result for subsequent calls with same arguments', () => {
-    const originalFunc = jest.fn((a, b) => a + b);
-    const memoizedFunc = memoize(originalFunc);
-
-    const result1 = memoizedFunc(1, 2);
-    const result2 = memoizedFunc(1, 2);
-
-    expect(result1).toBe(3);
-    expect(result2).toBe(3);
-    expect(originalFunc).toHaveBeenCalledTimes(1);
+    // Second call with same arguments
+    const result2 = memoizedCalc(2, 3);
+    expect(result2).toBe(5);
+    // The original function should not be called again
+    expect(complexCalculation).toHaveBeenCalledTimes(1);
   });
 
   test('should call the original function again for different arguments', () => {
-    const originalFunc = jest.fn((a, b) => a + b);
-    const memoizedFunc = memoize(originalFunc);
+    const complexCalculation = jest.fn((a, b) => a + b);
+    const memoizedCalc = memoize(complexCalculation);
 
-    memoizedFunc(1, 2); // First call
-    memoizedFunc(3, 4); // Second call with different args
+    memoizedCalc(2, 3); // Call 1
+    expect(complexCalculation).toHaveBeenCalledTimes(1);
 
-    expect(originalFunc).toHaveBeenCalledTimes(2);
+    memoizedCalc(5, 10); // Call 2 (different args)
+    expect(complexCalculation).toHaveBeenCalledTimes(2);
+    expect(memoizedCalc(5, 10)).toBe(15);
   });
 
-  test('should return correct results for different arguments', () => {
-    const memoizedFunc = memoize((a, b) => a + b);
+  test('should work with functions that return different values', () => {
+    let callCount = 0;
+    const func = () => {
+      callCount++;
+      return callCount;
+    };
+    const memoizedFunc = memoize(func);
 
-    const result1 = memoizedFunc(1, 2);
-    const result2 = memoizedFunc(3, 4);
-    const result3 = memoizedFunc(1, 2); // Should be from cache
+    const result1 = memoizedFunc();
+    expect(result1).toBe(1);
+    const result2 = memoizedFunc();
+    expect(result2).toBe(1); // Should be cached
+    expect(callCount).toBe(1);
+  });
 
-    expect(result1).toBe(3);
-    expect(result2).toBe(7);
-    expect(result3).toBe(3);
+  test('should handle object arguments', () => {
+    const complexCalculation = jest.fn(obj => obj.a + obj.b);
+    const memoizedCalc = memoize(complexCalculation);
+
+    memoizedCalc({ a: 1, b: 2 });
+    expect(complexCalculation).toHaveBeenCalledTimes(1);
+
+    memoizedCalc({ a: 1, b: 2 });
+    expect(complexCalculation).toHaveBeenCalledTimes(1); // Should be cached
+
+    memoizedCalc({ a: 2, b: 3 });
+    expect(complexCalculation).toHaveBeenCalledTimes(2); // Different args
   });
 });
