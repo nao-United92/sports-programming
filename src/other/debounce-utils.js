@@ -7,7 +7,7 @@
  * @param {number} wait The number of milliseconds to delay.
  * @returns {Function} Returns the new debounced function.
  */
-export const debounce = (func, wait) => {
+const debounce = (func, wait) => {
   let timeout;
 
   return function executedFunction(...args) {
@@ -20,3 +20,5 @@ export const debounce = (func, wait) => {
     timeout = setTimeout(later, wait);
   };
 };
+
+module.exports = { debounce };
