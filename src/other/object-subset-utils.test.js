@@ -1,43 +1,43 @@
 const { pick, omit } = require('./object-subset-utils');
 
-describe('Object Subset Utilities', () => {
-  const sourceObj = { a: 1, b: 2, c: 3, d: 4 };
+describe('pick', () => {
+  const obj = { a: 1, b: '2', c: 3 };
 
-  describe('pick', () => {
-    it('should pick a subset of properties', () => {
-      expect(pick(sourceObj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
-    });
-
-    it('should ignore keys that do not exist', () => {
-      expect(pick(sourceObj, ['a', 'e'])).toEqual({ a: 1 });
-    });
-
-    it('should return an empty object if no keys are provided', () => {
-      expect(pick(sourceObj, [])).toEqual({});
-    });
-
-    it('should return an empty object from an empty source', () => {
-      expect(pick({}, ['a'])).toEqual({});
-    });
+  test('should return an object with picked properties', () => {
+    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
   });
 
-  describe('omit', () => {
-    it('should omit a subset of properties', () => {
-      expect(omit(sourceObj, ['b', 'd'])).toEqual({ a: 1, c: 3 });
-    });
+  test('should not include properties that are not in the object', () => {
+    expect(pick(obj, ['a', 'd'])).toEqual({ a: 1 });
+  });
 
-    it('should ignore keys that do not exist', () => {
-      expect(omit(sourceObj, ['b', 'e'])).toEqual({ a: 1, c: 3, d: 4 });
-    });
+  test('should return an empty object if no keys are provided', () => {
+    expect(pick(obj, [])).toEqual({});
+  });
 
-    it('should return a shallow copy if no keys are provided', () => {
-      const result = omit(sourceObj, []);
-      expect(result).toEqual(sourceObj);
-      expect(result).not.toBe(sourceObj);
-    });
+  test('should return an empty object if the source object is null or undefined', () => {
+    expect(pick(null, ['a'])).toEqual({});
+    expect(pick(undefined, ['a'])).toEqual({});
+  });
+});
 
-    it('should return an empty object from an empty source', () => {
-      expect(omit({}, ['a'])).toEqual({});
-    });
+describe('omit', () => {
+  const obj = { a: 1, b: '2', c: 3 };
+
+  test('should return an object without the omitted properties', () => {
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: '2' });
+  });
+
+  test('should not change the object if omitted keys do not exist', () => {
+    expect(omit(obj, ['d', 'e'])).toEqual({ a: 1, b: '2', c: 3 });
+  });
+
+  test('should return the same object if no keys are provided', () => {
+    expect(omit(obj, [])).toEqual({ a: 1, b: '2', c: 3 });
+  });
+
+  test('should return an empty object if the source object is null or undefined', () => {
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
   });
 });

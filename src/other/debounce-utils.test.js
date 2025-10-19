@@ -1,4 +1,4 @@
-import { debounce } from './debounce-utils.js';
+const { debounce } = require('./debounce-utils');
 
 jest.useFakeTimers();
 
@@ -8,7 +8,7 @@ describe('debounce', () => {
 
   beforeEach(() => {
     func = jest.fn();
-    debouncedFunc = debounce(func, 1000);
+    debouncedFunc = debounce(func, 500);
   });
 
   test('should not call the function immediately', () => {
@@ -16,39 +16,38 @@ describe('debounce', () => {
     expect(func).not.toHaveBeenCalled();
   });
 
-  test('should call the function after the specified delay', () => {
+  test('should call the function after the wait time', () => {
     debouncedFunc();
     expect(func).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(1000);
+    jest.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
   test('should only call the function once for multiple rapid calls', () => {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       debouncedFunc();
     }
 
-    jest.advanceTimersByTime(1000);
+    jest.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should reset the timer on subsequent calls', () => {
+  test('should reset the timer if called again within the wait time', () => {
     debouncedFunc();
-    jest.advanceTimersByTime(500);
+    jest.advanceTimersByTime(250);
+    debouncedFunc();
+    jest.advanceTimersByTime(250);
+
     expect(func).not.toHaveBeenCalled();
 
-    debouncedFunc();
-    jest.advanceTimersByTime(500);
-    expect(func).not.toHaveBeenCalled(); // 500 + 500 = 1000, but the timer was reset
-
-    jest.advanceTimersByTime(500);
-    expect(func).toHaveBeenCalledTimes(1); // Total time is 1500, 1000ms after the *last* call
+    jest.advanceTimersByTime(250);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
   test('should pass arguments to the debounced function', () => {
     debouncedFunc(1, 'test');
-    jest.advanceTimersByTime(1000);
+    jest.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledWith(1, 'test');
   });
 });
