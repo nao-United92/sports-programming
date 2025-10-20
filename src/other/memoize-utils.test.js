@@ -1,60 +1,74 @@
-const { memoize } = require('./memoize-utils');
+import { memoize } from './memoize-utils';
 
 describe('memoize', () => {
-  test('should return the cached result for subsequent calls with the same arguments', () => {
-    const complexCalculation = jest.fn((a, b) => a + b);
-    const memoizedCalc = memoize(complexCalculation);
-
-    // First call
-    const result1 = memoizedCalc(2, 3);
-    expect(result1).toBe(5);
-    expect(complexCalculation).toHaveBeenCalledTimes(1);
-
-    // Second call with same arguments
-    const result2 = memoizedCalc(2, 3);
-    expect(result2).toBe(5);
-    // The original function should not be called again
-    expect(complexCalculation).toHaveBeenCalledTimes(1);
-  });
-
-  test('should call the original function again for different arguments', () => {
-    const complexCalculation = jest.fn((a, b) => a + b);
-    const memoizedCalc = memoize(complexCalculation);
-
-    memoizedCalc(2, 3); // Call 1
-    expect(complexCalculation).toHaveBeenCalledTimes(1);
-
-    memoizedCalc(5, 10); // Call 2 (different args)
-    expect(complexCalculation).toHaveBeenCalledTimes(2);
-    expect(memoizedCalc(5, 10)).toBe(15);
-  });
-
-  test('should work with functions that return different values', () => {
+  it('should memoize a simple function', () => {
     let callCount = 0;
-    const func = () => {
+    const expensiveFunction = (x) => {
       callCount++;
-      return callCount;
+      return x * 2;
     };
-    const memoizedFunc = memoize(func);
 
-    const result1 = memoizedFunc();
-    expect(result1).toBe(1);
-    const result2 = memoizedFunc();
-    expect(result2).toBe(1); // Should be cached
+    const memoizedFn = memoize(expensiveFunction);
+
+    expect(memoizedFn(2)).toBe(4);
     expect(callCount).toBe(1);
+
+    expect(memoizedFn(2)).toBe(4);
+    expect(callCount).toBe(1); // Should not be called again
+
+    expect(memoizedFn(3)).toBe(6);
+    expect(callCount).toBe(2);
+
+    expect(memoizedFn(3)).toBe(6);
+    expect(callCount).toBe(2); // Should not be called again
   });
 
-  test('should handle object arguments', () => {
-    const complexCalculation = jest.fn(obj => obj.a + obj.b);
-    const memoizedCalc = memoize(complexCalculation);
+  it('should use a resolver function for cache key', () => {
+    let callCount = 0;
+    const expensiveFunction = (obj) => {
+      callCount++;
+      return obj.a + obj.b;
+    };
 
-    memoizedCalc({ a: 1, b: 2 });
-    expect(complexCalculation).toHaveBeenCalledTimes(1);
+    const resolver = (obj) => JSON.stringify(obj);
+    const memoizedFn = memoize(expensiveFunction, resolver);
 
-    memoizedCalc({ a: 1, b: 2 });
-    expect(complexCalculation).toHaveBeenCalledTimes(1); // Should be cached
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { a: 1, b: 2 }; // Same values, different object
+    const obj3 = { a: 2, b: 3 };
 
-    memoizedCalc({ a: 2, b: 3 });
-    expect(complexCalculation).toHaveBeenCalledTimes(2); // Different args
+    expect(memoizedFn(obj1)).toBe(3);
+    expect(callCount).toBe(1);
+
+    expect(memoizedFn(obj2)).toBe(3);
+    expect(callCount).toBe(1); // Should use cache thanks to resolver
+
+    expect(memoizedFn(obj3)).toBe(5);
+    expect(callCount).toBe(2);
+  });
+
+  it('should expose the cache on the memoized function', () => {
+    const memoizedFn = memoize((a) => a);
+    memoizedFn('a');
+    expect(memoizedFn.cache.has('a')).toBe(true);
+    expect(memoizedFn.cache.get('a')).toBe('a');
+  });
+
+  it('should handle context correctly', () => {
+    const context = {
+      multiplier: 10,
+      method: function(val) {
+        return this.multiplier * val;
+      }
+    };
+
+    context.memoizedMethod = memoize(context.method);
+
+    expect(context.memoizedMethod(2)).toBe(20);
+    // Memoization doesn't automatically bind context, the caller must.
+    // Let's test it bound
+    const boundMemoized = memoize(context.method.bind(context));
+    expect(boundMemoized(3)).toBe(30);
+    expect(boundMemoized(3)).toBe(30);
   });
 });
