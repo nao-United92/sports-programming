@@ -1,26 +1,26 @@
-export const deepClone = (obj) => {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
+/**
+ * Creates a deep clone of a value.
+ *
+ * Note: This is a simplified implementation and does not handle all cases.
+ * For example, it doesn't handle functions, Maps, Sets, or circular references.
+ *
+ * @param {*} value The value to clone.
+ * @returns {*} Returns the deep cloned value.
+ */
+export function deepClone(value) {
+  if (typeof value !== 'object' || value === null) {
+    return value;
   }
 
-  if (obj instanceof Date) {
-    return new Date(obj.getTime());
+  if (Array.isArray(value)) {
+    return value.map(item => deepClone(item));
   }
 
-  if (Array.isArray(obj)) {
-    const arrCopy = [];
-    for (let i = 0; i < obj.length; i++) {
-      arrCopy[i] = deepClone(obj[i]);
+  const cloned = {};
+  for (const key in value) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      cloned[key] = deepClone(value[key]);
     }
-    return arrCopy;
   }
-
-  const objCopy = {};
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      objCopy[key] = deepClone(obj[key]);
-    }
-  }
-
-  return objCopy;
-};
+  return cloned;
+}

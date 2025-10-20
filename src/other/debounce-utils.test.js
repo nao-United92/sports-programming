@@ -1,4 +1,4 @@
-const { debounce } = require('./debounce-utils');
+import { debounce } from './debounce-utils';
 
 jest.useFakeTimers();
 
@@ -8,46 +8,39 @@ describe('debounce', () => {
 
   beforeEach(() => {
     func = jest.fn();
-    debouncedFunc = debounce(func, 500);
   });
 
-  test('should not call the function immediately', () => {
+  it('should call the function after the wait time', () => {
+    debouncedFunc = debounce(func, 1000);
     debouncedFunc();
     expect(func).not.toHaveBeenCalled();
-  });
-
-  test('should call the function after the wait time', () => {
-    debouncedFunc();
-    expect(func).not.toHaveBeenCalled();
-
     jest.advanceTimersByTime(500);
+    debouncedFunc();
+    expect(func).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(999);
+    expect(func).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(1);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should only call the function once for multiple rapid calls', () => {
-    for (let i = 0; i < 5; i++) {
-      debouncedFunc();
-    }
-
-    jest.advanceTimersByTime(500);
+  it('should call the function immediately if immediate is true', () => {
+    debouncedFunc = debounce(func, 1000, true);
+    debouncedFunc();
     expect(func).toHaveBeenCalledTimes(1);
+    jest.advanceTimersByTime(500);
+    debouncedFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+    jest.advanceTimersByTime(1000);
+    debouncedFunc();
+    expect(func).toHaveBeenCalledTimes(2);
   });
 
-  test('should reset the timer if called again within the wait time', () => {
-    debouncedFunc();
-    jest.advanceTimersByTime(250);
-    debouncedFunc();
-    jest.advanceTimersByTime(250);
-
-    expect(func).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(250);
-    expect(func).toHaveBeenCalledTimes(1);
-  });
-
-  test('should pass arguments to the debounced function', () => {
-    debouncedFunc(1, 'test');
-    jest.advanceTimersByTime(500);
-    expect(func).toHaveBeenCalledWith(1, 'test');
+  it('should apply the correct context and arguments', () => {
+    const context = { a: 1 };
+    debouncedFunc = debounce(func, 1000);
+    debouncedFunc.apply(context, [1, 2]);
+    jest.advanceTimersByTime(1000);
+    expect(func).toHaveBeenCalledWith(1, 2);
+    expect(func.mock.instances[0]).toBe(context);
   });
 });
