@@ -4,7 +4,7 @@
  * @param {string[]} keys The property keys to pick.
  * @returns {Object} Returns the new object.
  */
-const pick = (obj, keys) => {
+export function pick(obj, keys) {
   const result = {};
   if (obj == null) {
     return result;
@@ -15,7 +15,7 @@ const pick = (obj, keys) => {
     }
   }
   return result;
-};
+}
 
 /**
  * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
@@ -23,15 +23,16 @@ const pick = (obj, keys) => {
  * @param {string[]} keys The property keys to omit.
  * @returns {Object} Returns the new object.
  */
-const omit = (obj, keys) => {
-  const result = { ...obj };
+export function omit(obj, keys) {
+  const result = {};
   if (obj == null) {
-    return {};
+    return result;
   }
-  for (const key of keys) {
-    delete result[key];
+  const keySet = new Set(keys);
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && !keySet.has(key)) {
+      result[key] = obj[key];
+    }
   }
   return result;
-};
-
-module.exports = { pick, omit };
+}
