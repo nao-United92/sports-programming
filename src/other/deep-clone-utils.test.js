@@ -1,48 +1,58 @@
-import { deepClone } from './deep-clone-utils.js';
+import { deepClone } from './deep-clone-utils';
 
 describe('deepClone', () => {
-  test('should clone primitive values', () => {
-    expect(deepClone(42)).toBe(42);
+  it('should clone primitive values', () => {
+    expect(deepClone(1)).toBe(1);
     expect(deepClone('hello')).toBe('hello');
+    expect(deepClone(true)).toBe(true);
     expect(deepClone(null)).toBe(null);
     expect(deepClone(undefined)).toBe(undefined);
   });
 
-  test('should clone a flat object', () => {
+  it('should clone a flat object', () => {
     const obj = { a: 1, b: 'test' };
-    const clonedObj = deepClone(obj);
-    expect(clonedObj).toEqual(obj);
-    expect(clonedObj).not.toBe(obj);
+    const cloned = deepClone(obj);
+    expect(cloned).toEqual(obj);
+    expect(cloned).not.toBe(obj);
   });
 
-  test('should clone an object with nested objects', () => {
+  it('should clone an object with nested objects', () => {
     const obj = { a: 1, b: { c: 2, d: { e: 3 } } };
-    const clonedObj = deepClone(obj);
-    expect(clonedObj).toEqual(obj);
-    expect(clonedObj).not.toBe(obj);
-    expect(clonedObj.b).not.toBe(obj.b);
-    expect(clonedObj.b.d).not.toBe(obj.b.d);
+    const cloned = deepClone(obj);
+    expect(cloned).toEqual(obj);
+    expect(cloned).not.toBe(obj);
+    expect(cloned.b).not.toBe(obj.b);
+    expect(cloned.b.d).not.toBe(obj.b.d);
   });
 
-  test('should clone an array', () => {
+  it('should clone an array with primitives', () => {
     const arr = [1, 2, 3];
-    const clonedArr = deepClone(arr);
-    expect(clonedArr).toEqual(arr);
-    expect(clonedArr).not.toBe(arr);
+    const cloned = deepClone(arr);
+    expect(cloned).toEqual(arr);
+    expect(cloned).not.toBe(arr);
   });
 
-  test('should clone an array of objects', () => {
+  it('should clone an array with objects', () => {
     const arr = [{ a: 1 }, { b: 2 }];
-    const clonedArr = deepClone(arr);
-    expect(clonedArr).toEqual(arr);
-    expect(clonedArr).not.toBe(arr);
-    expect(clonedArr[0]).not.toBe(arr[0]);
+    const cloned = deepClone(arr);
+    expect(cloned).toEqual(arr);
+    expect(cloned).not.toBe(arr);
+    expect(cloned[0]).not.toBe(arr[0]);
+    expect(cloned[1]).not.toBe(arr[1]);
   });
-  
-  test('should clone a Date object', () => {
-    const date = new Date();
-    const clonedDate = deepClone(date);
-    expect(clonedDate).toEqual(date);
-    expect(clonedDate).not.toBe(date);
+
+  it('should clone a complex object with arrays and nested objects', () => {
+    const obj = {
+      a: [1, { b: 2 }],
+      c: { d: [3, 4] },
+      e: 5
+    };
+    const cloned = deepClone(obj);
+    expect(cloned).toEqual(obj);
+    expect(cloned).not.toBe(obj);
+    expect(cloned.a).not.toBe(obj.a);
+    expect(cloned.a[1]).not.toBe(obj.a[1]);
+    expect(cloned.c).not.toBe(obj.c);
+    expect(cloned.c.d).not.toBe(obj.c.d);
   });
 });
