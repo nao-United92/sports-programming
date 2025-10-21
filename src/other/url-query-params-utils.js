@@ -1,20 +1,26 @@
-/**
- * URLからクエリパラメータをオブジェクトとして取得します。
- * @param {string} url - 対象のURL。
- * @returns {Object} クエリパラメータのキーと値を持つオブジェクト。
- */
-export const getUrlQueryParams = (url) => {
+const parseQueryParams = (url = window.location.search) => {
   const params = {};
-  const urlParts = url.split('?');
-  if (urlParts.length > 1) {
-    const queryString = urlParts[1];
-    const pairs = queryString.split('&');
-    for (const pair of pairs) {
-      const [key, value] = pair.split('=');
-      if (key) {
-        params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+  const queryString = url.startsWith('?') ? url.substring(1) : url;
+
+  if (!queryString) {
+    return params;
+  }
+
+  queryString.split('&').forEach(pair => {
+    let [key, value] = pair.split('=').map(decodeURIComponent);
+    if (key) {
+      if (params[key]) {
+        if (!Array.isArray(params[key])) {
+          params[key] = [params[key]];
+        }
+        params[key].push(value || '');
+      } else {
+        params[key] = value || '';
       }
     }
-  }
+  });
+
   return params;
 };
+
+module.exports = { parseQueryParams };
