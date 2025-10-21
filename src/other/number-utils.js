@@ -1,23 +1,33 @@
 /**
  * Checks if a number is even.
- *
- * @param {number} n The number to check.
+ * @param {number} num The number to check.
  * @returns {boolean} True if the number is even, false otherwise.
  */
-export const isEven = (n) => n % 2 === 0;
+export function isEven(num) {
+  return num % 2 === 0;
+}
 
 /**
  * Checks if a number is odd.
- *
- * @param {number} n The number to check.
+ * @param {number} num The number to check.
  * @returns {boolean} True if the number is odd, false otherwise.
  */
-export const isOdd = (n) => n % 2 !== 0;
+export function isOdd(num) {
+  return num % 2 !== 0;
+}
 
 /**
- * Calculates the sum of an array of numbers.
- *
- * @param {number[]} arr The array of numbers.
- * @returns {number} The sum of the numbers.
+ * Generates a random integer within a specified range (inclusive).
+ * @param {number} min The minimum value (inclusive).
+ * @param {number} max The maximum value (inclusive).
+ * @returns {number} A random integer between min and max.
+ * @throws {Error} If min is greater than max.
  */
-export const sum = (arr) => arr.reduce((acc, val) => acc + val, 0);
+export function randomInt(min, max) {
+  if (min > max) {
+    throw new Error('min cannot be greater than max');
+  }
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
