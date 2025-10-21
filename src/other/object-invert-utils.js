@@ -1,12 +1,14 @@
 /**
- * Creates an object with the inverted keys and values of an object.
- *
- * @param {Object} obj The object to invert.
- * @returns {Object} The inverted object.
+ * オブジェクトのキーと値を反転させます。
+ * @param {Object} obj - 反転するオブジェクト。
+ * @returns {Object} 反転した新しいオブジェクト。
  */
-export function invert(obj) {
-  return Object.entries(obj).reduce((acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  }, {});
-}
+export const invert = (obj) => {
+  const newObj = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      newObj[obj[key]] = key;
+    }
+  }
+  return newObj;
+};

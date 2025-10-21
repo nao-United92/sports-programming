@@ -1,4 +1,4 @@
-import { mapObject, filterObject, isEmpty, pick, omit } from './collection-object-utils.js';
+import { mapObject, filterObject, isEmpty, pick, omit, pluck } from './collection-object-utils.js';
 
 describe('Collection Object Utilities', () => {
   const data = { a: 1, b: 2, c: 3 };
@@ -137,6 +137,38 @@ describe('Collection Object Utilities', () => {
       const original = { a: 1, b: 2 };
       omit(original, ['a']);
       expect(original).toEqual({ a: 1, b: 2 });
+    });
+  });
+
+  describe('pluck', () => {
+    const people = [
+      { name: 'Alice', age: 30 },
+      { name: 'Bob', age: 25 },
+      { name: 'Charlie', age: 35 },
+      null, // test with null/undefined in collection
+    ];
+
+    it('should extract the values of a property from an array of objects', () => {
+      expect(pluck(people, 'name')).toEqual(['Alice', 'Bob', 'Charlie', undefined]);
+      expect(pluck(people, 'age')).toEqual([30, 25, 35, undefined]);
+    });
+
+    it('should return an array of undefined if the key does not exist', () => {
+      const peopleWithoutAddress = [
+        { name: 'Alice', age: 30 },
+        { name: 'Bob', age: 25 },
+      ];
+      expect(pluck(peopleWithoutAddress, 'address')).toEqual([undefined, undefined]);
+    });
+
+    it('should return an empty array for an empty collection', () => {
+      expect(pluck([], 'name')).toEqual([]);
+    });
+
+    it('should return an empty array for non-array input', () => {
+      expect(pluck({}, 'name')).toEqual([]);
+      expect(pluck(null, 'name')).toEqual([]);
+      expect(pluck(undefined, 'name')).toEqual([]);
     });
   });
 });

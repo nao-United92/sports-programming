@@ -1,4 +1,4 @@
-import { flatten, flattenDeep, flattenDepth } from './array-flatten-utils.js';
+const { flatten, flattenDeep, flattenDepth } = require('./array-flatten-utils.js');
 
 describe('Array Flatten Utilities', () => {
   describe('flatten', () => {

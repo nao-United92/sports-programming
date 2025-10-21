@@ -5,6 +5,8 @@ const stringToPath = (string) => {
   return string.replace(/\[(\d+)\]/g, '.$1').split('.');
 }
 
+const { deepClone } = require('./object-deep-clone-utils');
+
 /**
  * Sets the value at `path` of `object`. If a portion of `path` doesn't exist, it's created.
  * Arrays are created for missing index properties while objects are created for all other missing properties.
@@ -17,7 +19,7 @@ const stringToPath = (string) => {
  */
 const set = (object, path, value) => {
   const pathArray = Array.isArray(path) ? path : stringToPath(path);
-  const newObject = JSON.parse(JSON.stringify(object || {}));
+  const newObject = deepClone(object || {});
 
   let current = newObject;
   for (let i = 0; i < pathArray.length - 1; i++) {
@@ -35,4 +37,4 @@ const set = (object, path, value) => {
   return newObject;
 };
 
-export { set };
+module.exports = { set };

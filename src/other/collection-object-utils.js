@@ -97,3 +97,16 @@ export function omit(object, paths) {
   }
   return result;
 }
+
+/**
+ * Extracts a list of property values from a collection of objects.
+ * @param {Array<Object>} collection The collection of objects.
+ * @param {string} key The property key to extract.
+ * @returns {Array} The array of property values.
+ */
+export const pluck = (collection, key) => {
+  if (!Array.isArray(collection)) {
+    return [];
+  }
+  return collection.map(item => (item !== null && item !== undefined ? item[key] : undefined));
+};

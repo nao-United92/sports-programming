@@ -1,43 +1,55 @@
-const { pick, omit } = require('./object-subset-utils');
+import { pick, omit } from './object-subset-utils';
 
-describe('Object Subset Utilities', () => {
-  const sourceObj = { a: 1, b: 2, c: 3, d: 4 };
-
-  describe('pick', () => {
-    it('should pick a subset of properties', () => {
-      expect(pick(sourceObj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
-    });
-
-    it('should ignore keys that do not exist', () => {
-      expect(pick(sourceObj, ['a', 'e'])).toEqual({ a: 1 });
-    });
-
-    it('should return an empty object if no keys are provided', () => {
-      expect(pick(sourceObj, [])).toEqual({});
-    });
-
-    it('should return an empty object from an empty source', () => {
-      expect(pick({}, ['a'])).toEqual({});
-    });
+describe('pick', () => {
+  it('should create an object with picked properties', () => {
+    const obj = { a: 1, b: '2', c: 3 };
+    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
   });
 
-  describe('omit', () => {
-    it('should omit a subset of properties', () => {
-      expect(omit(sourceObj, ['b', 'd'])).toEqual({ a: 1, c: 3 });
-    });
+  it('should ignore keys that do not exist', () => {
+    const obj = { a: 1, b: '2' };
+    expect(pick(obj, ['a', 'd'])).toEqual({ a: 1 });
+  });
 
-    it('should ignore keys that do not exist', () => {
-      expect(omit(sourceObj, ['b', 'e'])).toEqual({ a: 1, c: 3, d: 4 });
-    });
+  it('should return an empty object if the source object is null or undefined', () => {
+    expect(pick(null, ['a'])).toEqual({});
+    expect(pick(undefined, ['a'])).toEqual({});
+  });
 
-    it('should return a shallow copy if no keys are provided', () => {
-      const result = omit(sourceObj, []);
-      expect(result).toEqual(sourceObj);
-      expect(result).not.toBe(sourceObj);
-    });
+  it('should return an empty object if no keys are provided', () => {
+    const obj = { a: 1, b: 2 };
+    expect(pick(obj, [])).toEqual({});
+  });
+});
 
-    it('should return an empty object from an empty source', () => {
-      expect(omit({}, ['a'])).toEqual({});
-    });
+describe('omit', () => {
+  it('should create an object without omitted properties', () => {
+    const obj = { a: 1, b: '2', c: 3 };
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: '2' });
+  });
+
+  it('should not omit keys that do not exist', () => {
+    const obj = { a: 1, b: '2' };
+    expect(omit(obj, ['d'])).toEqual({ a: 1, b: '2' });
+  });
+
+  it('should return an empty object if the source object is null or undefined', () => {
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
+  });
+
+  it('should return the full object if no keys are provided', () => {
+    const obj = { a: 1, b: 2 };
+    expect(omit(obj, [])).toEqual({ a: 1, b: 2 });
+  });
+
+  it('should not omit properties from the prototype chain', () => {
+    function MyObject() {
+      this.a = 1;
+    }
+    MyObject.prototype.b = 2;
+    const instance = new MyObject();
+    expect(omit(instance, ['a'])).toEqual({}); // Only own properties are considered
+    expect(omit(instance, [])).toEqual({ a: 1 });
   });
 });

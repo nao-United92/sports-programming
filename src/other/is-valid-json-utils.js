@@ -1,12 +1,14 @@
 /**
- * Checks if a string is a valid JSON.
- *
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is a valid JSON, false otherwise.
+ * 文字列が有効なJSONかどうかをチェックします。
+ * @param {*} value - チェックする値。
+ * @returns {boolean} 有効なJSON文字列であればtrue、そうでなければfalse。
  */
-export const isValidJson = (str) => {
+export const isValidJson = (value) => {
+  if (typeof value !== 'string') {
+    return false;
+  }
   try {
-    JSON.parse(str);
+    JSON.parse(value);
   } catch (e) {
     return false;
   }

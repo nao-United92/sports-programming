@@ -1,26 +1,31 @@
-const { pad } = require('./string-pad-utils.js');
+const { padLeft, padRight } = require('./string-pad-utils.js');
 
-describe('pad', () => {
-  test('should pad a string evenly', () => {
-    expect(pad('abc', 8)).toBe('  abc   ');
+describe('padLeft', () => {
+  test('should pad a string on the left', () => {
+    expect(padLeft('abc', 5)).toBe('  abc');
   });
 
-  test('should pad a string with custom characters', () => {
-    expect(pad('abc', 8, '_- ')).toBe('_-abc_-');
+  test('should use a custom character for padding', () => {
+    expect(padLeft('abc', 5, '0')).toBe('00abc');
   });
 
-  test('should not pad if string length is greater than or equal to length', () => {
-    expect(pad('abc', 3)).toBe('abc');
-    expect(pad('abc', 2)).toBe('abc');
+  test('should not pad if string is already long enough', () => {
+    expect(padLeft('abcde', 5)).toBe('abcde');
+    expect(padLeft('abcdef', 5)).toBe('abcdef');
+  });
+});
+
+describe('padRight', () => {
+  test('should pad a string on the right', () => {
+    expect(padRight('abc', 5)).toBe('abc  ');
   });
 
-  test('should handle empty string', () => {
-    expect(pad('', 5)).toBe('     ');
+  test('should use a custom character for padding', () => {
+    expect(padRight('abc', 5, '0')).toBe('abc00');
   });
 
-  test('should handle non-string input', () => {
-    expect(pad(123, 7)).toBe('  123  ');
-    expect(pad(null, 5)).toBe(' null ');
-    expect(pad(undefined, 9)).toBe('undefined');
+  test('should not pad if string is already long enough', () => {
+    expect(padRight('abcde', 5)).toBe('abcde');
+    expect(padRight('abcdef', 5)).toBe('abcdef');
   });
 });

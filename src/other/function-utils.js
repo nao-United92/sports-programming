@@ -1,36 +1,46 @@
 /**
- * Creates a function that is restricted to invoking fn once. Repeat calls to the function return the value of the first invocation.
- * @param {Function} fn The function to restrict.
- * @returns {Function} Returns the new restricted function.
+ * Creates a debounced function that delays invoking `func` until after `wait` milliseconds
+ * have passed since the last time the debounced function was invoked.
+ * @param {Function} func The function to debounce.
+ * @param {number} wait The number of milliseconds to delay.
+ * @returns {Function} Returns the new debounced function.
  */
-export const once = (fn) => {
-  let hasBeenCalled = false;
-  let result;
-
+export const debounce = (func, wait) => {
+  let timeout;
   return function(...args) {
-    if (!hasBeenCalled) {
-      hasBeenCalled = true;
-      result = fn.apply(this, args);
-    }
-    return result;
+    const context = this;
+    const later = function() {
+      timeout = null;
+      func.apply(context, args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
   };
 };
 
 /**
- * Creates a function that memoizes the result of func. If resolver is provided, it determines the cache key for storing the result based on the arguments provided to the memoized function.
- * @param {Function} func The function to have its output memoized.
- * @param {Function} [resolver] The function to resolve the cache key.
- * @returns {Function} Returns the new memoized function.
+ * Creates a throttled function that only invokes `func` at most once per every `wait` milliseconds.
+ * @param {Function} func The function to throttle.
+ * @param {number} wait The number of milliseconds to throttle invocations to.
+ * @returns {Function} Returns the new throttled function.
  */
-export const memoize = (func, resolver) => {
-  const cache = new Map();
-  return function(...args) {
-    const key = resolver ? resolver(...args) : args[0];
-    if (cache.has(key)) {
-      return cache.get(key);
+export const throttle = (func, wait) => {
+  let inThrottle, lastFn, lastTime;
+  return function() {
+    const context = this,
+      args = arguments;
+    if (!inThrottle) {
+      func.apply(context, args);
+      lastTime = Date.now();
+      inThrottle = true;
+    } else {
+      clearTimeout(lastFn);
+      lastFn = setTimeout(function() {
+        if (Date.now() - lastTime >= wait) {
+          func.apply(context, args);
+          lastTime = Date.now();
+        }
+      }, Math.max(wait - (Date.now() - lastTime), 0));
     }
-    const result = func.apply(this, args);
-    cache.set(key, result);
-    return result;
   };
 };

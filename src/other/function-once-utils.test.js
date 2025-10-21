@@ -1,7 +1,7 @@
-const { once } = require('./function-once-utils');
+const { once } = require('./function-once-utils.js');
 
 describe('once', () => {
-  test('should only call the original function once', () => {
+  test('should invoke the original function only once', () => {
     const mockFn = jest.fn();
     const onceFn = once(mockFn);
 
@@ -12,14 +12,14 @@ describe('once', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  test('should return the result of the first call', () => {
-    let i = 0;
-    const func = () => ++i;
-    const onceFn = once(func);
+  test('should return the value of the first invocation on subsequent calls', () => {
+    let counter = 0;
+    const increment = () => ++counter;
+    const onceIncrement = once(increment);
 
-    const result1 = onceFn();
-    const result2 = onceFn();
-    const result3 = onceFn();
+    const result1 = onceIncrement();
+    const result2 = onceIncrement();
+    const result3 = onceIncrement();
 
     expect(result1).toBe(1);
     expect(result2).toBe(1);
@@ -29,26 +29,25 @@ describe('once', () => {
   test('should pass arguments to the original function', () => {
     const mockFn = jest.fn();
     const onceFn = once(mockFn);
-    const args = [1, 'a', { b: 2 }];
 
-    onceFn(...args);
-    onceFn(...args);
+    onceFn(1, 2, 3);
+    onceFn(4, 5, 6); // These arguments should be ignored
 
-    expect(mockFn).toHaveBeenCalledWith(...args);
-    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledWith(1, 2, 3);
   });
 
   test('should maintain the `this` context', () => {
-    const obj = {
-      i: 10,
-      method: function() {
-        return this.i;
-      }
-    };
-    obj.onceMethod = once(obj.method);
+    const mockFn = jest.fn(function() { return this.value; });
+    const context = { value: 42, onceFn: once(mockFn) };
 
-    expect(obj.onceMethod()).toBe(10);
-    obj.i = 20;
-    expect(obj.onceMethod()).toBe(10); // Still returns the first result
+    const result = context.onceFn();
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(result).toBe(42);
+
+    // Call it again to ensure it returns the cached result and doesn't call mockFn again
+    const result2 = context.onceFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(result2).toBe(42);
   });
 });

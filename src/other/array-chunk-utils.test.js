@@ -1,4 +1,4 @@
-import { chunk } from './array-chunk-utils.js';
+const { chunk } = require('./array-chunk-utils.js');
 
 describe('chunk', () => {
   it('should create chunks of a specified size', () => {
