@@ -1,10 +1,12 @@
-
 const deepFreeze = (obj) => {
-  Object.keys(obj).forEach(prop => {
-    if (typeof obj[prop] === 'object' && obj[prop] !== null) {
-      deepFreeze(obj[prop]);
-    }
-  });
+  if (obj && typeof obj === 'object') {
+    Object.keys(obj).forEach(prop => {
+      const propValue = obj[prop];
+      if (propValue && typeof propValue === 'object') {
+        deepFreeze(propValue);
+      }
+    });
+  }
   return Object.freeze(obj);
 };
 
