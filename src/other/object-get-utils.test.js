@@ -1,45 +1,58 @@
-const { get } = require('./object-get-utils.js');
+const { get } = require('./object-get-utils');
 
 describe('get', () => {
-  const obj = {
+  const testObj = {
     a: {
       b: {
-        c: [1, 2, 3],
+        c: 'hello'
       },
-      d: null,
+      d: ['one', 'two']
     },
+    e: null
   };
 
-  test('should get a nested property value using a string path', () => {
-    expect(get(obj, 'a.b.c[0]')).toBe(1);
-    expect(get(obj, 'a.b.c')).toEqual([1, 2, 3]);
+  it('should get a nested property using a string path', () => {
+    expect(get(testObj, 'a.b.c')).toBe('hello');
   });
 
-  test('should get a nested property value using an array path', () => {
-    expect(get(obj, ['a', 'b', 'c', '2'])).toBe(3);
-    expect(get(obj, ['a', 'b'])).toEqual({ c: [1, 2, 3] });
+  it('should get a nested property using an array path', () => {
+    expect(get(testObj, ['a', 'b', 'c'])).toBe('hello');
   });
 
-  test('should return undefined for a non-existent path', () => {
-    expect(get(obj, 'a.x.y')).toBeUndefined();
+  it('should get an array element by index', () => {
+    expect(get(testObj, 'a.d[1]')).toBe('two');
   });
 
-  test('should return the default value for a non-existent path', () => {
-    expect(get(obj, 'a.x.y', 'default')).toBe('default');
+  it('should return undefined for a non-existent path', () => {
+    expect(get(testObj, 'a.b.x')).toBeUndefined();
   });
 
-  test('should return the default value when the resolved value is undefined', () => {
-    const objWithUndefined = { a: { b: undefined } };
-    expect(get(objWithUndefined, 'a.b', 'default')).toBe('default');
+  it('should return the default value for a non-existent path', () => {
+    expect(get(testObj, 'a.b.x', 'default')).toBe('default');
   });
 
-  test('should handle null values in the path', () => {
-    expect(get(obj, 'a.d.e')).toBeUndefined();
-    expect(get(obj, 'a.d.e', 'default')).toBe('default');
+  it('should return undefined when the path goes through a null or undefined value', () => {
+    expect(get(testObj, 'e.f')).toBeUndefined();
+    expect(get(testObj, 'x.y.z')).toBeUndefined();
   });
 
-  test('should return undefined if the object is null or undefined', () => {
+  it('should return the default value when the path goes through a null or undefined value', () => {
+    expect(get(testObj, 'e.f', 'default')).toBe('default');
+    expect(get(testObj, 'x.y.z', 'fallback')).toBe('fallback');
+  });
+
+  it('should return the value if it is falsy (but not undefined)', () => {
+    const objWithFalsy = { a: { b: 0, c: '', d: false, e: null } };
+    expect(get(objWithFalsy, 'a.b')).toBe(0);
+    expect(get(objWithFalsy, 'a.c')).toBe('');
+    expect(get(objWithFalsy, 'a.d')).toBe(false);
+    expect(get(objWithFalsy, 'a.e')).toBeNull();
+  });
+
+  it('should handle non-object inputs gracefully', () => {
     expect(get(null, 'a.b')).toBeUndefined();
-    expect(get(undefined, 'a.b', 'default')).toBe('default');
+    expect(get(undefined, 'a.b')).toBeUndefined();
+    expect(get(42, 'a.b')).toBeUndefined();
+    expect(get(null, 'a.b', 'default')).toBe('default');
   });
 });

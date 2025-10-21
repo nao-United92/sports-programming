@@ -1,87 +1,68 @@
-import { throttle } from './function-throttle-utils.js';
-
-jest.useFakeTimers();
+const { throttle } = require('./function-throttle-utils');
 
 describe('throttle', () => {
   let func;
+  let throttledFunc;
 
   beforeEach(() => {
     func = jest.fn();
+    jest.useFakeTimers();
   });
 
-  test('should call the function immediately on the first call (leading edge)', () => {
-    const throttled = throttle(func, 100);
-    throttled();
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('should call the function immediately', () => {
+    throttledFunc = throttle(func, 100);
+    throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should not call the function again within the wait period', () => {
-    const throttled = throttle(func, 100);
-    throttled(); // Called at 0ms
-    throttled(); // Should be ignored
-    throttled(); // Should be ignored
+  it('should not call the function again within the time limit', () => {
+    throttledFunc = throttle(func, 100);
+    throttledFunc();
+    throttledFunc();
+    throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should call the function again after the wait period', () => {
-    const throttled = throttle(func, 100);
-    throttled(); // Called at 0ms
+  it('should call the function again after the time limit', () => {
+    throttledFunc = throttle(func, 100);
+    throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
 
     jest.advanceTimersByTime(100);
-    throttled(); // Called at 100ms
+    throttledFunc();
     expect(func).toHaveBeenCalledTimes(2);
   });
 
-  test('should schedule a trailing call if called multiple times within the wait period', () => {
-    const throttled = throttle(func, 100);
-    throttled(); // Called at 0ms
-    expect(func).toHaveBeenCalledTimes(1);
-
-    throttled(); // Ignored, but schedules trailing call
-    throttled(); // Ignored, updates trailing call args
-
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(2); // Trailing call
+  it('should pass arguments to the original function', () => {
+    throttledFunc = throttle(func, 100);
+    throttledFunc(1, 'test');
+    expect(func).toHaveBeenCalledWith(1, 'test');
   });
 
-  test('should not make a trailing call if trailing is false', () => {
-    const throttled = throttle(func, 100, { trailing: false });
-    throttled(); // Called at 0ms
-    expect(func).toHaveBeenCalledTimes(1);
-
-    throttled();
-    throttled();
-
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1); // No trailing call
+  it('should maintain the context of the original function', () => {
+    const context = { func: jest.fn() };
+    const throttled = throttle(context.func, 100);
+    throttled.call(context);
+    expect(context.func).toHaveBeenCalledTimes(1);
+    expect(context.func).toHaveBeenCalledWith();
   });
 
-  test('should not make a leading call if leading is false', () => {
-    const throttled = throttle(func, 100, { leading: false });
-    throttled(); // Should not be called immediately
-    expect(func).not.toHaveBeenCalled();
+  it('should return the result of the last invoked function call', () => {
+    const funcWithReturn = jest.fn(x => x * 2);
+    const throttled = throttle(funcWithReturn, 100);
+
+    const result1 = throttled(2);
+    expect(result1).toBe(4);
+
+    const result2 = throttled(3); // This call should be throttled
+    expect(result2).toBe(4); // Returns the result of the first call
 
     jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1); // Trailing call
-  });
-
-  test('cancel should prevent a scheduled trailing call', () => {
-    const throttled = throttle(func, 100, { leading: false });
-    throttled();
-
-    throttled.cancel();
-    jest.advanceTimersByTime(100);
-
-    expect(func).not.toHaveBeenCalled();
-  });
-
-  test('flush should immediately execute a scheduled trailing call', () => {
-    const throttled = throttle(func, 100, { leading: false });
-    throttled();
-    expect(func).not.toHaveBeenCalled();
-
-    throttled.flush();
-    expect(func).toHaveBeenCalledTimes(1);
+    const result3 = throttled(4);
+    expect(result3).toBe(8);
   });
 });

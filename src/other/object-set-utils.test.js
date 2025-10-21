@@ -1,60 +1,89 @@
-const { set } = require('./object-set-utils.js');
+const { set } = require('./object-set-utils');
 
 describe('set', () => {
-  test('should set a value on a nested path', () => {
-    const obj = { a: { b: 2 } };
-    const newObj = set(obj, 'a.c', 3);
-    expect(newObj.a.c).toBe(3);
+  it('should set a top-level property', () => {
+    const obj = { a: 1 };
+    set(obj, 'b', 2);
+    expect(obj).toEqual({ a: 1, b: 2 });
   });
 
-  test('should not mutate the original object', () => {
-    const obj = { a: { b: 2 } };
-    set(obj, 'a.c', 3);
-    expect(obj.a.c).toBeUndefined();
+  it('should set a nested property using a string path', () => {
+    const obj = { a: { b: 1 } };
+    set(obj, 'a.c', 2);
+    expect(obj).toEqual({ a: { b: 1, c: 2 } });
   });
 
-  test('should create nested properties if they do not exist', () => {
+  it('should set a nested property using an array path', () => {
+    const obj = { a: { b: 1 } };
+    set(obj, ['a', 'c'], 2);
+    expect(obj).toEqual({ a: { b: 1, c: 2 } });
+  });
+
+  it('should create intermediate objects if they do not exist', () => {
     const obj = {};
-    const newObj = set(obj, 'a.b.c', 1);
-    expect(newObj.a.b.c).toBe(1);
+    set(obj, 'a.b.c', 1);
+    expect(obj).toEqual({ a: { b: { c: 1 } } });
   });
 
-  test('should set a value in a nested array', () => {
+  it('should create intermediate arrays if path suggests an array index', () => {
+    const obj = {};
+    set(obj, 'a.0.b', 1);
+    expect(obj).toEqual({ a: [{ b: 1 }] });
+  });
+
+  it('should overwrite an existing property', () => {
+    const obj = { a: { b: 1 } };
+    set(obj, 'a.b', 2);
+    expect(obj).toEqual({ a: { b: 2 } });
+  });
+
+  it('should handle setting a property on an array element', () => {
     const obj = { a: [{ b: 1 }] };
-    const newObj = set(obj, 'a[0].c', 2);
-    expect(newObj.a[0].c).toBe(2);
+    set(obj, 'a.0.c', 2);
+    expect(obj).toEqual({ a: [{ b: 1, c: 2 }] });
   });
 
-  test('should create nested arrays', () => {
+  it('should return the original object', () => {
     const obj = {};
-    const newObj = set(obj, 'a[0].b', 1);
-    expect(Array.isArray(newObj.a)).toBe(true);
-    expect(newObj.a[0].b).toBe(1);
+    const result = set(obj, 'a', 1);
+    expect(result).toBe(obj);
   });
 
-  test('should handle a null or undefined initial object', () => {
-    const newObj = set(null, 'a.b', 1);
-    expect(newObj.a.b).toBe(1);
+  it('should not modify non-object inputs', () => {
+    let num = 1;
+    set(num, 'a', 2);
+    expect(num).toBe(1);
+
+    let str = 'test';
+    set(str, 'a', 2);
+    expect(str).toBe('test');
+
+    let bool = true;
+    set(bool, 'a', 2);
+    expect(bool).toBe(true);
   });
 
-  test('should deep clone nested objects and arrays when setting values', () => {
-    const originalNested = { c: 3 };
-    const obj = { a: { b: originalNested } };
-    const newObj = set(obj, 'a.b.d', 4);
+  it('should handle null or undefined initial object', () => {
+    let obj = null;
+    const result = set(obj, 'a', 1);
+    expect(result).toBeNull();
 
-    expect(newObj.a.b.c).toBe(3);
-    expect(newObj.a.b.d).toBe(4);
-    expect(newObj.a.b).not.toBe(originalNested); // Ensure deepClone was used
-    expect(obj.a.b.d).toBeUndefined(); // Original object should not be mutated
+    obj = undefined;
+    const result2 = set(obj, 'a', 1);
+    expect(result2).toBeUndefined();
   });
 
-  test('should handle Date objects correctly during deep cloning', () => {
-    const date = new Date();
-    const obj = { a: date };
-    const newObj = set(obj, 'b', 1);
+  it('should convert existing non-object intermediate values to objects/arrays', () => {
+    const obj = { a: 1 };
+    set(obj, 'a.b', 2);
+    expect(obj).toEqual({ a: { b: 2 } });
 
-    expect(newObj.a).toEqual(date);
-    expect(newObj.a).not.toBe(date); // Should be a cloned Date object
-    expect(obj.b).toBeUndefined();
+    const obj2 = { a: 'string' };
+    set(obj2, 'a.b', 2);
+    expect(obj2).toEqual({ a: { b: 2 } });
+
+    const obj3 = { a: null };
+    set(obj3, 'a.b', 2);
+    expect(obj3).toEqual({ a: { b: 2 } });
   });
 });

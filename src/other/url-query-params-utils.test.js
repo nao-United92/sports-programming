@@ -1,27 +1,56 @@
-import { getUrlQueryParams } from './url-query-params-utils.js';
+const { parseQueryParams } = require('./url-query-params-utils');
 
-describe('getUrlQueryParams', () => {
-  test('should return an empty object for a URL without query params', () => {
-    expect(getUrlQueryParams('https://example.com')).toEqual({});
+describe('parseQueryParams', () => {
+  it('should parse a simple query string', () => {
+    const queryString = '?param1=value1';
+    expect(parseQueryParams(queryString)).toEqual({ param1: 'value1' });
   });
 
-  test('should extract a single query parameter', () => {
-    expect(getUrlQueryParams('https://example.com?foo=bar')).toEqual({ foo: 'bar' });
+  it('should parse a query string with multiple parameters', () => {
+    const queryString = '?param1=value1&param2=value2';
+    expect(parseQueryParams(queryString)).toEqual({ param1: 'value1', param2: 'value2' });
   });
 
-  test('should extract multiple query parameters', () => {
-    expect(getUrlQueryParams('https://example.com?foo=bar&baz=qux')).toEqual({ foo: 'bar', baz: 'qux' });
+  it('should parse a query string with encoded characters', () => {
+    const queryString = '?param1=value%20with%20spaces&param2=value%26with%3Dsymbols';
+    expect(parseQueryParams(queryString)).toEqual({
+      param1: 'value with spaces',
+      param2: 'value&with=symbols',
+    });
   });
 
-  test('should handle URL encoded characters', () => {
-    expect(getUrlQueryParams('https://example.com?name=John%20Doe')).toEqual({ name: 'John Doe' });
+  it('should handle parameters with no values', () => {
+    const queryString = '?param1=&param2';
+    expect(parseQueryParams(queryString)).toEqual({ param1: '', param2: '', });
   });
 
-  test('should handle parameters without values', () => {
-    expect(getUrlQueryParams('https://example.com?foo=&bar')).toEqual({ foo: '', bar: '' });
+  it('should handle duplicate parameter names by returning an array', () => {
+    const queryString = '?param1=value1&param1=value2';
+    expect(parseQueryParams(queryString)).toEqual({ param1: ['value1', 'value2'] });
   });
 
-  test('should handle an empty query string', () => {
-    expect(getUrlQueryParams('https://example.com?')).toEqual({});
+  it('should handle an empty query string', () => {
+    const queryString = '';
+    expect(parseQueryParams(queryString)).toEqual({});
+  });
+
+  it('should handle a query string without a leading question mark', () => {
+    const queryString = 'param1=value1&param2=value2';
+    expect(parseQueryParams(queryString)).toEqual({ param1: 'value1', param2: 'value2' });
+  });
+
+  it('should handle complex query strings with mixed cases', () => {
+    const queryString = '?name=John%20Doe&age=30&tags=js&tags=web&active';
+    expect(parseQueryParams(queryString)).toEqual({
+      name: 'John Doe',
+      age: '30',
+      tags: ['js', 'web'],
+      active: '',
+    });
+  });
+
+  it('should return an empty object if no query string is present', () => {
+    // Mock window.location.search for testing purposes if needed, but for direct string input, it's simple
+    expect(parseQueryParams('http://example.com')).toEqual({});
   });
 });
