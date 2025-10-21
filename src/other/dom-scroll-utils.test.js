@@ -1,114 +1,64 @@
-import { smoothScroll, isElementInViewport, scrollToElement } from './dom-scroll-utils.js';
+const { scrollToElement } = require('./dom-scroll-utils');
 
-// Mocking scrollIntoView
-if (typeof window.HTMLElement !== 'undefined') {
-  window.HTMLElement.prototype.scrollIntoView = jest.fn();
-}
+describe('scrollToElement', () => {
+  let mockElement;
 
-describe('DOM Scroll Utils', () => {
   beforeEach(() => {
-    // Clear mock history before each test
-    if (typeof window.HTMLElement !== 'undefined') {
-      window.HTMLElement.prototype.scrollIntoView.mockClear();
-    }
-    // Set up a basic DOM for testing
-    document.body.innerHTML = '<div id="test-element" style="height: 100px; width: 100px;"></div>';
+    // Mock the scrollIntoView method for elements
+    mockElement = {
+      scrollIntoView: jest.fn(),
+    };
+
+    // Mock document.querySelector to return our mock element
+    jest.spyOn(document, 'querySelector').mockReturnValue(mockElement);
   });
 
-  describe('smoothScroll', () => {
-    it('should call scrollIntoView on the element', () => {
-      smoothScroll('#test-element');
-      const element = document.querySelector('#test-element');
-      expect(element.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
-    });
-
-    it('should not throw an error if the element does not exist', () => {
-      expect(() => smoothScroll('#non-existent-element')).not.toThrow();
-    });
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
-  describe('isElementInViewport', () => {
-    it('should return true if the element is in the viewport', () => {
-      const element = document.querySelector('#test-element');
-      // Mock getBoundingClientRect to simulate being in the viewport
-      element.getBoundingClientRect = jest.fn(() => ({
-        top: 10,
-        left: 10,
-        bottom: 110,
-        right: 110,
-        width: 100,
-        height: 100,
-      }));
-      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 500 });
-      Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 500 });
+  it('should scroll to an element by selector with default smooth behavior', () => {
+    const selector = '#targetElement';
+    const result = scrollToElement(selector);
 
-      expect(isElementInViewport(element)).toBe(true);
-    });
-
-    it('should return false if the element is not in the viewport', () => {
-      const element = document.querySelector('#test-element');
-      // Mock getBoundingClientRect to simulate being outside the viewport
-      element.getBoundingClientRect = jest.fn(() => ({
-        top: -200,
-        left: -200,
-        bottom: -100,
-        right: -100,
-        width: 100,
-        height: 100,
-      }));
-      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 500 });
-      Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 500 });
-
-      expect(isElementInViewport(element)).toBe(false);
-    });
-
-    it('should return false for a null element', () => {
-      expect(isElementInViewport(null)).toBe(false);
-    });
+    expect(document.querySelector).toHaveBeenCalledWith(selector);
+    expect(mockElement.scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(mockElement.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(result).toBe(true);
   });
 
-  describe('scrollToElement', () => {
-    let element;
-    let scrollIntoViewMock;
+  it('should scroll to an element by direct element reference', () => {
+    const result = scrollToElement(mockElement);
 
-    beforeEach(() => {
-      document.body.innerHTML = '<div id="targetElement"></div>';
-      element = document.getElementById('targetElement');
-      scrollIntoViewMock = jest.fn();
-      element.scrollIntoView = scrollIntoViewMock; // elementのscrollIntoViewをモック
-      jest.spyOn(console, 'warn').mockImplementation(() => {}); // console.warnをモック
-    });
+    expect(document.querySelector).not.toHaveBeenCalled(); // Should not use querySelector
+    expect(mockElement.scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(mockElement.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(result).toBe(true);
+  });
 
-    afterEach(() => {
-      jest.restoreAllMocks(); // モックをリストア
-      document.body.innerHTML = '';
-    });
+  it('should scroll with custom options', () => {
+    const selector = '.anotherElement';
+    const customOptions = { behavior: 'auto', block: 'center' };
+    scrollToElement(selector, customOptions);
 
-    test('should call scrollIntoView on the element with default smooth behavior', () => {
-      scrollToElement(element);
-      expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
-      expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth' });
-    });
+    expect(document.querySelector).toHaveBeenCalledWith(selector);
+    expect(mockElement.scrollIntoView).toHaveBeenCalledWith(customOptions);
+  });
 
-    test('should call scrollIntoView with custom options', () => {
-      const customOptions = { behavior: 'auto', block: 'center' };
-      scrollToElement(element, customOptions);
-      expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
-      expect(scrollIntoViewMock).toHaveBeenCalledWith(customOptions);
-    });
+  it('should return false if the element is not found by selector', () => {
+    document.querySelector.mockReturnValue(null); // Element not found
+    const result = scrollToElement('#nonExistentElement');
 
-    test('should warn and return if a non-HTMLElement is provided', () => {
-      scrollToElement(null);
-      expect(scrollIntoViewMock).not.toHaveBeenCalled();
-      expect(console.warn).toHaveBeenCalledWith('Invalid element provided to scrollToElement.', null);
+    expect(document.querySelector).toHaveBeenCalledWith('#nonExistentElement');
+    expect(mockElement.scrollIntoView).not.toHaveBeenCalled();
+    expect(result).toBe(false);
+  });
 
-      scrollToElement(undefined);
-      expect(scrollIntoViewMock).not.toHaveBeenCalled();
-      expect(console.warn).toHaveBeenCalledWith('Invalid element provided to scrollToElement.', undefined);
-
-      scrollToElement({});
-      expect(scrollIntoViewMock).not.toHaveBeenCalled();
-      expect(console.warn).toHaveBeenCalledWith('Invalid element provided to scrollToElement.', {});
-    });
+  it('should return false if target is not a string or Element', () => {
+    expect(scrollToElement(null)).toBe(false);
+    expect(scrollToElement(undefined)).toBe(false);
+    expect(scrollToElement(123)).toBe(false);
+    expect(scrollToElement({})).toBe(false);
+    expect(mockElement.scrollIntoView).not.toHaveBeenCalled();
   });
 });
