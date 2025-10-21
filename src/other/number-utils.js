@@ -1,23 +1,33 @@
 /**
- * Clamps a number within an inclusive range.
- *
- * @param {number} number The number to clamp.
- * @param {number} lower The lower bound of the range.
- * @param {number} upper The upper bound of the range.
- * @returns {number} The clamped number.
+ * Checks if a number is even.
+ * @param {number} num The number to check.
+ * @returns {boolean} True if the number is even, false otherwise.
  */
-export const clamp = (number, lower, upper) => {
-  return Math.max(lower, Math.min(number, upper));
-};
+export function isEven(num) {
+  return num % 2 === 0;
+}
 
 /**
- * Checks if `number` is between `start` and `end` (exclusive of `end`).
- *
- * @param {number} number The number to check.
- * @param {number} start The start of the range.
- * @param {number} end The end of the range.
- * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
+ * Checks if a number is odd.
+ * @param {number} num The number to check.
+ * @returns {boolean} True if the number is odd, false otherwise.
  */
-export const inRange = (number, start, end) => {
-  return number >= start && number < end;
-};
+export function isOdd(num) {
+  return num % 2 !== 0;
+}
+
+/**
+ * Generates a random integer within a specified range (inclusive).
+ * @param {number} min The minimum value (inclusive).
+ * @param {number} max The maximum value (inclusive).
+ * @returns {number} A random integer between min and max.
+ * @throws {Error} If min is greater than max.
+ */
+export function randomInt(min, max) {
+  if (min > max) {
+    throw new Error('min cannot be greater than max');
+  }
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
