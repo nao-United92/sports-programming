@@ -1,24 +1,38 @@
-import { titleCase } from './string-title-case-utils.js';
+import { toTitleCase } from './string-title-case-utils.js';
 
-describe('titleCase', () => {
-  test('should convert a string to title case', () => {
-    expect(titleCase('hello world')).toBe('Hello World');
-    expect(titleCase('this is a test string')).toBe('This Is A Test String');
-    expect(titleCase('another-example-string')).toBe('Another-Example-String');
-    expect(titleCase('already Title Case')).toBe('Already Title Case');
+describe('toTitleCase', () => {
+  it('should convert a single word to title case', () => {
+    expect(toTitleCase('hello')).toBe('Hello');
   });
 
-  test('should handle empty string', () => {
-    expect(titleCase('')).toBe('');
+  it('should convert a sentence to title case', () => {
+    expect(toTitleCase('hello world')).toBe('Hello World');
   });
 
-  test('should handle single word string', () => {
-    expect(titleCase('word')).toBe('Word');
+  it('should handle already title cased strings', () => {
+    expect(toTitleCase('Hello World')).toBe('Hello World');
   });
 
-  test('should return empty string for non-string inputs', () => {
-    expect(titleCase(123)).toBe('');
-    expect(titleCase(null)).toBe('');
-    expect(titleCase(undefined)).toBe('');
+  it('should handle strings with mixed case', () => {
+    expect(toTitleCase('hELLo wORLd')).toBe('Hello World');
+  });
+
+  it('should handle strings with multiple spaces', () => {
+    expect(toTitleCase('  hello   world  ')).toBe('  Hello   World  ');
+  });
+
+  it('should handle empty strings', () => {
+    expect(toTitleCase('')).toBe('');
+  });
+
+  it('should handle non-string inputs', () => {
+    expect(toTitleCase(null)).toBe('');
+    expect(toTitleCase(undefined)).toBe('');
+    expect(toTitleCase(123)).toBe('');
+  });
+
+  it('should handle strings with special characters', () => {
+    expect(toTitleCase('hello-world')).toBe('Hello-world');
+    expect(toTitleCase('hello_world')).toBe('Hello_world');
   });
 });

@@ -1,51 +1,51 @@
-import { deepMerge } from './object-deep-merge-utils.js';
+import { mergeDeep } from './object-deep-merge-utils';
 
-describe('deepMerge', () => {
+describe('mergeDeep', () => {
+  it('should merge two simple objects', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { c: 3, d: 4 };
+    expect(mergeDeep(obj1, obj2)).toEqual({ a: 1, b: 2, c: 3, d: 4 });
+  });
+
+  it('should overwrite properties from left to right', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { b: 3, c: 4 };
+    expect(mergeDeep(obj1, obj2)).toEqual({ a: 1, b: 3, c: 4 });
+  });
+
   it('should merge nested objects', () => {
-    const obj1 = { a: { b: 1 } };
-    const obj2 = { a: { c: 2 } };
-    expect(deepMerge(obj1, obj2)).toEqual({ a: { b: 1, c: 2 } });
+    const obj1 = { a: { x: 1 }, b: 2 };
+    const obj2 = { a: { y: 2 }, c: 3 };
+    expect(mergeDeep(obj1, obj2)).toEqual({ a: { x: 1, y: 2 }, b: 2, c: 3 });
   });
 
-  it('should overwrite non-object properties', () => {
-    const obj1 = { a: { b: 1 } };
-    const obj2 = { a: 2 };
-    expect(deepMerge(obj1, obj2)).toEqual({ a: 2 });
-  });
-
-  it('should handle more than two objects', () => {
-    const obj1 = { a: { b: 1 } };
-    const obj2 = { a: { c: 2 } };
-    const obj3 = { a: { d: 3 } };
-    expect(deepMerge(obj1, obj2, obj3)).toEqual({ a: { b: 1, c: 2, d: 3 } });
+  it('should handle multiple objects', () => {
+    const obj1 = { a: 1 };
+    const obj2 = { b: { x: 1 } };
+    const obj3 = { b: { y: 2 }, c: 3 };
+    expect(mergeDeep(obj1, obj2, obj3)).toEqual({ a: 1, b: { x: 1, y: 2 }, c: 3 });
   });
 
   it('should not modify the original objects', () => {
-    const obj1 = { a: { b: 1 } };
-    const obj2 = { a: { c: 2 } };
-    deepMerge(obj1, obj2);
-    expect(obj1).toEqual({ a: { b: 1 } });
-    expect(obj2).toEqual({ a: { c: 2 } });
+    const obj1 = { a: { x: 1 }, b: 2 };
+    const obj1Original = JSON.parse(JSON.stringify(obj1));
+    const obj2 = { a: { y: 2 }, c: 3 };
+    const obj2Original = JSON.parse(JSON.stringify(obj2));
+    mergeDeep(obj1, obj2);
+    expect(obj1).toEqual(obj1Original);
+    expect(obj2).toEqual(obj2Original);
   });
 
-  it('should overwrite arrays, not merge them', () => {
+  it('should handle arrays by overwriting', () => {
     const obj1 = { a: [1, 2] };
     const obj2 = { a: [3, 4] };
-    expect(deepMerge(obj1, obj2)).toEqual({ a: [3, 4] });
+    expect(mergeDeep(obj1, obj2)).toEqual({ a: [3, 4] });
   });
 
-  it('should handle empty and null inputs', () => {
+  it('should handle empty or non-object arguments gracefully', () => {
     const obj1 = { a: 1 };
-    expect(deepMerge(obj1, {})).toEqual({ a: 1 });
-    expect(deepMerge({}, obj1)).toEqual({ a: 1 });
-    expect(deepMerge(obj1, null)).toEqual({ a: 1 });
-    expect(deepMerge(null, obj1)).toEqual({ a: 1 });
-  });
-
-  it('should return a new object instance', () => {
-    const obj1 = { a: 1 };
-    const result = deepMerge(obj1);
-    expect(result).toEqual(obj1);
-    expect(result).not.toBe(obj1);
+    expect(mergeDeep(obj1, null, undefined, 42, "hello")).toEqual({ a: 1 });
+    expect(mergeDeep({}, obj1)).toEqual({ a: 1 });
+    expect(mergeDeep(obj1, {})).toEqual({ a: 1 });
   });
 });

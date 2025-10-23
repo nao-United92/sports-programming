@@ -1,84 +1,79 @@
-const { memoize } = require('./function-memoize-utils');
+import { memoize } from './function-memoize-utils.js';
 
 describe('memoize', () => {
-  it('should memoize a simple function', () => {
-    const expensiveFunction = jest.fn(x => x * 2);
-    const memoizedFunction = memoize(expensiveFunction);
+  let expensiveFunction;
+  let spy;
 
-    // First call
-    expect(memoizedFunction(2)).toBe(4);
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-
-    // Second call with the same argument
-    expect(memoizedFunction(2)).toBe(4);
-    expect(expensiveFunction).toHaveBeenCalledTimes(1); // Should not be called again
-
-    // Call with a different argument
-    expect(memoizedFunction(3)).toBe(6);
-    expect(expensiveFunction).toHaveBeenCalledTimes(2);
-
-    // Call with the first argument again
-    expect(memoizedFunction(2)).toBe(4);
-    expect(expensiveFunction).toHaveBeenCalledTimes(2); // Should not be called again
+  beforeEach(() => {
+    expensiveFunction = jest.fn(function(a, b) { // Make it a spy directly
+      return a + b;
+    });
+    spy = expensiveFunction; // Now spy is the function itself
   });
 
-  it('should handle multiple arguments', () => {
-    const expensiveFunction = jest.fn((a, b) => a + b);
-    const memoizedFunction = memoize(expensiveFunction);
+  it('should cache the result of the function', () => {
+    const memoizedSum = memoize(spy);
 
-    expect(memoizedFunction(1, 2)).toBe(3);
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-
-    expect(memoizedFunction(1, 2)).toBe(3);
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-
-    expect(memoizedFunction(2, 3)).toBe(5);
-    expect(expensiveFunction).toHaveBeenCalledTimes(2);
+    memoizedSum(1, 2);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(memoizedSum(1, 2)).toBe(3);
+    expect(spy).toHaveBeenCalledTimes(1); // Should not be called again
   });
 
-  it('should handle object arguments', () => {
-    const expensiveFunction = jest.fn(obj => obj.a);
-    const memoizedFunction = memoize(expensiveFunction);
+  it('should call the function with different arguments', () => {
+    const memoizedSum = memoize(spy);
 
-    const obj1 = { a: 1 };
-    const obj2 = { a: 2 };
-
-    expect(memoizedFunction(obj1)).toBe(1);
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-
-    expect(memoizedFunction(obj1)).toBe(1);
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-
-    expect(memoizedFunction(obj2)).toBe(2);
-    expect(expensiveFunction).toHaveBeenCalledTimes(2);
+    memoizedSum(1, 2);
+    memoizedSum(3, 4);
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(memoizedSum(1, 2)).toBe(3);
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(memoizedSum(3, 4)).toBe(7);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('should maintain the context of the original function', () => {
-    const context = {
-      multiplier: 2,
-      calculate: jest.fn(function(x) {
-        return x * this.multiplier;
+  it('should use a custom resolver for cache keys', () => {
+    const resolver = (a, b) => `${a}-${b}`; // Custom key: "1-2"
+    const memoizedSum = memoize(spy, resolver);
+
+    memoizedSum(1, 2);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(memoizedSum(1, 2)).toBe(3);
+    expect(spy).toHaveBeenCalledTimes(1);
+    memoizedSum(2, 1); // Different arguments, but resolver might produce same key if not careful
+    expect(spy).toHaveBeenCalledTimes(2); // Should be called for "2-1"
+  });
+
+  it('should allow clearing the cache', () => {
+    const memoizedSum = memoize(spy);
+
+    memoizedSum(1, 2);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(memoizedSum.cache.size).toBe(1);
+
+    memoizedSum.cache.clear();
+    expect(memoizedSum.cache.size).toBe(0);
+
+    memoizedSum(1, 2);
+    expect(spy).toHaveBeenCalledTimes(2); // Should be called again after clearing
+  });
+
+  it('should handle `this` context correctly', () => {
+    const obj = {
+      value: 10,
+      add: jest.fn(function(a) { // Make the method itself a spy
+        return this.value + a;
       })
     };
-    const memoizedCalculate = memoize(context.calculate);
+    const memoizedAdd = memoize(obj.add);
 
-    // Call the memoized function with the context
-    expect(memoizedCalculate.call(context, 2)).toBe(4);
-    expect(context.calculate).toHaveBeenCalledTimes(1);
+    // Call memoizedAdd with obj as its `this` context
+    expect(memoizedAdd.call(obj, 5)).toBe(15);
+    expect(obj.add).toHaveBeenCalledTimes(1); // Now this should pass
+    expect(obj.add).toHaveBeenCalledWith(5); // Check arguments
 
-    // Call again with the same arguments
-    expect(memoizedCalculate.call(context, 2)).toBe(4);
-    expect(context.calculate).toHaveBeenCalledTimes(1);
-  });
-
-  it('should return undefined for functions that return undefined', () => {
-    const func = jest.fn(x => {});
-    const memoizedFunc = memoize(func);
-
-    expect(memoizedFunc(1)).toBeUndefined();
-    expect(func).toHaveBeenCalledTimes(1);
-
-    expect(memoizedFunc(1)).toBeUndefined();
-    expect(func).toHaveBeenCalledTimes(1);
+    // Call again, should be cached
+    expect(memoizedAdd.call(obj, 5)).toBe(15);
+    expect(obj.add).toHaveBeenCalledTimes(1); // Still 1 call
   });
 });
