@@ -1,36 +1,55 @@
-const { inRange } = require('./number-in-range-utils.js');
+import { inRange } from './number-in-range-utils.js';
 
 describe('inRange', () => {
-  test('should return true for a number within the range', () => {
-    expect(inRange(3, 2, 4)).toBe(true);
+  it('should return true when number is within range (start < end)', () => {
+    expect(inRange(5, 0, 10)).toBe(true);
   });
 
-  test('should return false for a number equal to the end of the range', () => {
-    expect(inRange(4, 2, 4)).toBe(false);
+  it('should return true when number is within range (end < start)', () => {
+    expect(inRange(5, 10, 0)).toBe(true);
   });
 
-  test('should return false for a number outside the range', () => {
-    expect(inRange(5, 2, 4)).toBe(false);
-    expect(inRange(1, 2, 4)).toBe(false);
+  it('should return true when number is equal to start (inclusive)', () => {
+    expect(inRange(0, 0, 10)).toBe(true);
   });
 
-  test('should handle swapped start and end arguments', () => {
-    expect(inRange(3, 4, 2)).toBe(true);
+  it('should return false when number is equal to end (exclusive)', () => {
+    expect(inRange(10, 0, 10)).toBe(false);
   });
 
-  test('should work with a single argument (range from 0)', () => {
-    expect(inRange(2, 4)).toBe(true);
-    expect(inRange(4, 4)).toBe(false);
-    expect(inRange(-1, 4)).toBe(false);
+  it('should return false when number is outside range (less than start)', () => {
+    expect(inRange(-1, 0, 10)).toBe(false);
   });
 
-  test('should work with negative numbers', () => {
-    expect(inRange(-3, -2, -4)).toBe(true);
-    expect(inRange(-2, -4, -2)).toBe(false);
+  it('should return false when number is outside range (greater than end)', () => {
+    expect(inRange(11, 0, 10)).toBe(false);
   });
 
-  test('should handle floating point numbers', () => {
-    expect(inRange(2.5, 1.5, 3.5)).toBe(true);
-    expect(inRange(3.5, 1.5, 3.5)).toBe(false);
+  it('should handle only one argument (end, start defaults to 0)', () => {
+    expect(inRange(5, 10)).toBe(true);
+    expect(inRange(0, 10)).toBe(true);
+    expect(inRange(10, 10)).toBe(false);
+    expect(inRange(-1, 10)).toBe(false);
+  });
+
+  it('should handle negative ranges', () => {
+    expect(inRange(-5, -10, 0)).toBe(true);
+    expect(inRange(0, -10, 0)).toBe(false);
+    expect(inRange(-10, -10, 0)).toBe(true);
+  });
+
+  it('should handle floating point numbers', () => {
+    expect(inRange(5.5, 0.1, 10.9)).toBe(true);
+    expect(inRange(0.0, 0.1, 10.9)).toBe(false);
+    expect(inRange(10.9, 0.1, 10.9)).toBe(false);
+  });
+
+  it('should return false for non-numeric inputs', () => {
+    expect(inRange('5', 0, 10)).toBe(false);
+    expect(inRange(5, '0', 10)).toBe(false);
+    expect(inRange(5, 0, '10')).toBe(false);
+    expect(inRange(null, 0, 10)).toBe(false);
+    expect(inRange(undefined, 0, 10)).toBe(false);
+    expect(inRange({}, 0, 10)).toBe(false);
   });
 });
