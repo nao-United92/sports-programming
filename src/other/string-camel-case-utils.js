@@ -1,11 +1,13 @@
 /**
- * 文字列をキャメルケースに変換します。
- * @param {string} str - 変換する文字列。
- * @returns {string} キャメルケースに変換された文字列。
+ * Converts `string` to camel case.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} Returns the camel cased string.
  */
 export const camelCase = (str) => {
-  const s = str
-    .toLowerCase()
-    .replace(/[-_\s]+(.)?/g, (match, chr) => (chr ? chr.toUpperCase() : ''));
-  return s.replace(/^./, (match) => match.toLowerCase());
+  if (typeof str !== 'string') {
+    return '';
+  }
+
+  return str.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
 };
