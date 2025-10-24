@@ -1,56 +1,50 @@
-import { isPlainObject } from './object-is-plain-object-utils.js';
+import { isPlainObject } from './object-is-plain-object-utils';
 
 describe('isPlainObject', () => {
-  it('should return true for a plain object literal', () => {
+  test('should return true for plain objects', () => {
     expect(isPlainObject({})).toBe(true);
-  });
-
-  it('should return true for an object created with new Object()', () => {
-    expect(isPlainObject(new Object())).toBe(true);
-  });
-
-  it('should return true for an object created with Object.create(null)', () => {
+    expect(isPlainObject({ a: 1, b: 2 })).toBe(true);
     expect(isPlainObject(Object.create(null))).toBe(true);
   });
 
-  it('should return false for an array', () => {
+  test('should return false for arrays', () => {
     expect(isPlainObject([])).toBe(false);
+    expect(isPlainObject([1, 2, 3])).toBe(false);
   });
 
-  it('should return false for a function', () => {
+  test('should return false for functions', () => {
     expect(isPlainObject(() => {})).toBe(false);
+    expect(isPlainObject(function() {})).toBe(false);
   });
 
-  it('should return false for null', () => {
+  test('should return false for null and undefined', () => {
     expect(isPlainObject(null)).toBe(false);
-  });
-
-  it('should return false for undefined', () => {
     expect(isPlainObject(undefined)).toBe(false);
   });
 
-  it('should return false for a string', () => {
-    expect(isPlainObject('hello')).toBe(false);
-  });
-
-  it('should return false for a number', () => {
-    expect(isPlainObject(123)).toBe(false);
-  });
-
-  it('should return false for a boolean', () => {
+  test('should return false for primitive values', () => {
+    expect(isPlainObject(1)).toBe(false);
+    expect(isPlainObject('string')).toBe(false);
     expect(isPlainObject(true)).toBe(false);
+    expect(isPlainObject(Symbol('test'))).toBe(false);
   });
 
-  it('should return false for a Date object', () => {
+  test('should return false for Date objects', () => {
     expect(isPlainObject(new Date())).toBe(false);
   });
 
-  it('should return false for a RegExp object', () => {
+  test('should return false for RegExp objects', () => {
     expect(isPlainObject(/abc/)).toBe(false);
   });
 
-  it('should return false for a custom class instance', () => {
+  test('should return false for class instances', () => {
     class MyClass {}
     expect(isPlainObject(new MyClass())).toBe(false);
+  });
+
+  test('should return false for objects with custom prototypes', () => {
+    const proto = { a: 1 };
+    const obj = Object.create(proto);
+    expect(isPlainObject(obj)).toBe(false);
   });
 });
