@@ -1,6 +1,15 @@
+/**
+ * Checks if `number` is between `start` and `end` (exclusive of `end`).
+ * If `end` is not specified, it's set to `start` and `start` is set to `0`.
+ * If `start` is greater than `end` the parameters are swapped to support negative ranges.
+ *
+ * @param {number} number The number to check.
+ * @param {number} start The start of the range.
+ * @param {number} [end] The end of the range.
+ * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
+ */
 export const inRange = (number, start, end) => {
-  // Ensure all inputs are numbers
-  if (typeof number !== 'number' || typeof start !== 'number' || (end !== undefined && typeof end !== 'number')) {
+  if (typeof number !== 'number' || typeof start !== 'number') {
     return false;
   }
 
@@ -8,5 +17,12 @@ export const inRange = (number, start, end) => {
     end = start;
     start = 0;
   }
-  return number >= Math.min(start, end) && number < Math.max(start, end);
+
+  if (start > end) {
+    const temp = start;
+    start = end;
+    end = temp;
+  }
+
+  return number >= start && number < end;
 };
