@@ -6,9 +6,13 @@
  * @param {Function} func The function to restrict.
  * @returns {Function} Returns the new restricted function.
  */
-function once(func) {
+const once = (func) => {
   let hasBeenCalled = false;
   let result;
+
+  if (typeof func !== 'function') {
+    throw new Error('First argument must be a function.');
+  }
 
   return function(...args) {
     if (!hasBeenCalled) {
@@ -17,6 +21,6 @@ function once(func) {
     }
     return result;
   };
-}
+};
 
 module.exports = { once };

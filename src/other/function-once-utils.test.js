@@ -1,53 +1,53 @@
-const { once } = require('./function-once-utils.js');
+const { once } = require('./function-once-utils');
 
 describe('once', () => {
-  test('should invoke the original function only once', () => {
-    const mockFn = jest.fn();
-    const onceFn = once(mockFn);
+  let func;
 
-    onceFn();
-    onceFn();
-    onceFn();
-
-    expect(mockFn).toHaveBeenCalledTimes(1);
+  beforeEach(() => {
+    func = jest.fn();
   });
 
-  test('should return the value of the first invocation on subsequent calls', () => {
-    let counter = 0;
-    const increment = () => ++counter;
-    const onceIncrement = once(increment);
-
-    const result1 = onceIncrement();
-    const result2 = onceIncrement();
-    const result3 = onceIncrement();
-
-    expect(result1).toBe(1);
-    expect(result2).toBe(1);
-    expect(result3).toBe(1);
+  test('should call the original function only once', () => {
+    const onceFunc = once(func);
+    onceFunc();
+    onceFunc();
+    onceFunc();
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should pass arguments to the original function', () => {
-    const mockFn = jest.fn();
-    const onceFn = once(mockFn);
+  test('should pass arguments to the original function on the first call', () => {
+    const onceFunc = once(func);
+    onceFunc(1, 'a', true);
+    onceFunc(2, 'b', false);
+    expect(func).toHaveBeenCalledWith(1, 'a', true);
+  });
 
-    onceFn(1, 2, 3);
-    onceFn(4, 5, 6); // These arguments should be ignored
+  test('should return the value from the first invocation on all calls', () => {
+    const funcWithReturn = jest.fn((x) => x * 2);
+    const onceFunc = once(funcWithReturn);
 
-    expect(mockFn).toHaveBeenCalledWith(1, 2, 3);
+    const result1 = onceFunc(5);
+    const result2 = onceFunc(10);
+    const result3 = onceFunc(20);
+
+    expect(result1).toBe(10);
+    expect(result2).toBe(10);
+    expect(result3).toBe(10);
+    expect(funcWithReturn).toHaveBeenCalledTimes(1);
   });
 
   test('should maintain the `this` context', () => {
-    const mockFn = jest.fn(function() { return this.value; });
-    const context = { value: 42, onceFn: once(mockFn) };
+    const obj = {
+      func: jest.fn(function() { return this; }),
+    };
+    obj.onceFunc = once(obj.func);
 
-    const result = context.onceFn();
+    const context = obj.onceFunc();
+    expect(context).toBe(obj);
+    expect(obj.func).toHaveBeenCalledTimes(1);
+  });
 
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(result).toBe(42);
-
-    // Call it again to ensure it returns the cached result and doesn't call mockFn again
-    const result2 = context.onceFn();
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(result2).toBe(42);
+  test('should throw an error if the argument is not a function', () => {
+    expect(() => once('not a function')).toThrow('First argument must be a function.');
   });
 });
