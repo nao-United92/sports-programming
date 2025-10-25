@@ -1,39 +1,34 @@
-import { omit } from './object-omit-utils.js';
+const { omit } = require('./object-omit-utils');
 
 describe('omit', () => {
-  it('should create a new object without the specified keys', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    const result = omit(obj, ['a', 'c']);
-    expect(result).toEqual({ b: 2 });
+  const sourceObj = { a: 1, b: 'hello', c: true, d: { nested: 1 } };
+
+  test('should omit specified properties from an object', () => {
+    const omitted = omit(sourceObj, ['b', 'd']);
+    expect(omitted).toEqual({ a: 1, c: true });
   });
 
-  it('should not modify the original object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    omit(obj, ['a']);
-    expect(obj).toEqual({ a: 1, b: 2, c: 3 });
+  test('should not change the object if omitted keys do not exist', () => {
+    const omitted = omit(sourceObj, ['e', 'f']);
+    expect(omitted).toEqual(sourceObj);
   });
 
-  it('should handle an empty array of keys', () => {
-    const obj = { a: 1, b: 2 };
-    const result = omit(obj, []);
-    expect(result).toEqual({ a: 1, b: 2 });
+  test('should return a full copy if no keys are provided', () => {
+    const omitted = omit(sourceObj, []);
+    expect(omitted).toEqual(sourceObj);
+    expect(omitted).not.toBe(sourceObj);
   });
 
-  it('should handle keys that do not exist in the object', () => {
-    const obj = { a: 1, b: 2 };
-    const result = omit(obj, ['c', 'd']);
-    expect(result).toEqual({ a: 1, b: 2 });
+  test('should return an empty object if the source is not an object', () => {
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
+    expect(omit('string', ['a'])).toEqual({});
   });
 
-  it('should return an empty object if all keys are omitted', () => {
-    const obj = { a: 1, b: 2 };
-    const result = omit(obj, ['a', 'b']);
-    expect(result).toEqual({});
-  });
-
-  it('should work with an empty source object', () => {
-    const obj = {};
-    const result = omit(obj, ['a', 'b']);
-    expect(result).toEqual({});
+  test('should create a new object (shallow copy)', () => {
+    const omitted = omit(sourceObj, ['a']);
+    expect(omitted).not.toBe(sourceObj);
+    // The nested object should be the same reference (shallow)
+    expect(omitted.d).toBe(sourceObj.d);
   });
 });

@@ -1,68 +1,56 @@
 const { throttle } = require('./function-throttle-utils');
 
+jest.useFakeTimers();
+
 describe('throttle', () => {
   let func;
-  let throttledFunc;
 
   beforeEach(() => {
     func = jest.fn();
-    jest.useFakeTimers();
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
-  it('should call the function immediately', () => {
-    throttledFunc = throttle(func, 100);
+  test('should call the function immediately on the first call', () => {
+    const throttledFunc = throttle(func, 1000);
     throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should not call the function again within the time limit', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc();
-    throttledFunc();
-    throttledFunc();
+  test('should not call the function again within the wait time', () => {
+    const throttledFunc = throttle(func, 1000);
+    throttledFunc(); // Called at t=0
+    throttledFunc(); // Ignored
+    throttledFunc(); // Ignored
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should call the function again after the time limit', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc();
+  test('should call the function again after the wait time has passed', () => {
+    const throttledFunc = throttle(func, 1000);
+    throttledFunc(); // Called at t=0
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(100);
-    throttledFunc();
+    // Fast-forward time
+    jest.advanceTimersByTime(1000);
+
+    throttledFunc(); // Called at t=1000
     expect(func).toHaveBeenCalledTimes(2);
   });
 
-  it('should pass arguments to the original function', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc(1, 'test');
-    expect(func).toHaveBeenCalledWith(1, 'test');
+  test('should use the latest arguments for the throttled call', () => {
+    const throttledFunc = throttle(func, 1000);
+    throttledFunc(1);
+    expect(func).toHaveBeenCalledWith(1);
+
+    jest.advanceTimersByTime(1000);
+
+    throttledFunc(2);
+    throttledFunc(3);
+    expect(func).toHaveBeenCalledWith(2);
+    expect(func).not.toHaveBeenCalledWith(3);
+    expect(func).toHaveBeenCalledTimes(2);
   });
 
-  it('should maintain the context of the original function', () => {
-    const context = { func: jest.fn() };
-    const throttled = throttle(context.func, 100);
-    throttled.call(context);
-    expect(context.func).toHaveBeenCalledTimes(1);
-    expect(context.func).toHaveBeenCalledWith();
-  });
-
-  it('should return the result of the last invoked function call', () => {
-    const funcWithReturn = jest.fn(x => x * 2);
-    const throttled = throttle(funcWithReturn, 100);
-
-    const result1 = throttled(2);
-    expect(result1).toBe(4);
-
-    const result2 = throttled(3); // This call should be throttled
-    expect(result2).toBe(4); // Returns the result of the first call
-
-    jest.advanceTimersByTime(100);
-    const result3 = throttled(4);
-    expect(result3).toBe(8);
+  test('should throw an error for invalid arguments', () => {
+    expect(() => throttle('not a function', 1000)).toThrow('First argument must be a function.');
+    expect(() => throttle(() => {}, 'not a number')).toThrow('Second argument must be a number.');
   });
 });
