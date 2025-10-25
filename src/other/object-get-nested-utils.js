@@ -1,14 +1,30 @@
+
+
 /**
- * Safely retrieves a nested value from an object using a path string or array.
- * @param {object} obj The object to query.
+ * Gets the value at a path of an object. If the resolved value is
+ * `undefined`, the `defaultValue` is returned in its place.
+ *
+ * @param {Object} obj The object to query.
  * @param {string|string[]} path The path of the property to retrieve.
- * @param {*} [defaultValue] The value to return if the path is not found.
- * @returns {*} Returns the resolved value, else the defaultValue.
+ * @param {*} [defaultValue] The value returned for `undefined` resolved values.
+ * @returns {*} Returns the resolved value.
  */
-const get = (obj, path, defaultValue = undefined) => {
-  const pathArray = Array.isArray(path) ? path : path.split('.').filter(key => key);
-  const result = pathArray.reduce((acc, key) => acc && acc[key], obj);
-  return result === undefined || result === null ? defaultValue : result;
+const get = (obj, path, defaultValue) => {
+  if (obj === null || typeof obj !== 'object') {
+    return defaultValue;
+  }
+
+  const pathArray = Array.isArray(path) ? path : path.replace(/\\[(\\.+?)\\]/g, '.$1').split('.');
+
+  let result = obj;
+  for (const key of pathArray) {
+    result = result !== null && result !== undefined ? result[key] : undefined;
+    if (result === undefined) {
+      return defaultValue;
+    }
+  }
+  return result;
 };
 
 module.exports = { get };
+
