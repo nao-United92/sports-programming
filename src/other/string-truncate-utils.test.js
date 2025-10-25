@@ -1,40 +1,32 @@
-
-import { truncate } from './string-truncate-utils';
+const { truncate } = require('./string-truncate-utils');
 
 describe('truncate', () => {
-  test('should not truncate if string is shorter than maxLength', () => {
-    expect(truncate('hello world', 20)).toBe('hello world');
+  test('should not truncate a string shorter than the specified length', () => {
+    expect(truncate('hello', 10)).toBe('hello');
   });
 
-  test('should truncate and add default ellipsis', () => {
-    expect(truncate('hello world', 10)).toBe('hello...');
-  });
-
-  test('should truncate and add custom ellipsis', () => {
-    expect(truncate('hello world', 10, '--')).toBe('hello wo--');
-  });
-
-  test('should handle empty string', () => {
-    expect(truncate('', 5)).toBe('');
-  });
-
-  test('should handle maxLength equal to string length', () => {
+  test('should not truncate a string equal to the specified length', () => {
     expect(truncate('hello', 5)).toBe('hello');
   });
 
-  test('should return only ellipsis if maxLength is too small', () => {
-    expect(truncate('hello world', 2)).toBe('..');
+  test('should truncate a string longer than the specified length', () => {
+    expect(truncate('hello world', 5)).toBe('hello...');
   });
 
-  test('should return original string for invalid string input', () => {
-    expect(truncate(null, 5)).toBe(null);
-    expect(truncate(undefined, 5)).toBe(undefined);
-    expect(truncate(123, 5)).toBe(123);
+  test('should use a custom suffix if provided', () => {
+    expect(truncate('hello world', 8, '--')).toBe('hello wo--');
   });
 
-  test('should return original string for invalid maxLength input', () => {
-    expect(truncate('hello', null)).toBe('hello');
-    expect(truncate('hello', undefined)).toBe('hello');
-    expect(truncate('hello', -1)).toBe('hello');
+  test('should handle an empty string', () => {
+    expect(truncate('', 5)).toBe('');
+  });
+
+  test('should handle zero length', () => {
+    expect(truncate('hello', 0)).toBe('...');
+  });
+
+  test('should throw an error for invalid argument types', () => {
+    expect(() => truncate(123, 5)).toThrow('Invalid arguments: str must be a string and length must be a number.');
+    expect(() => truncate('hello', '5')).toThrow('Invalid arguments: str must be a string and length must be a number.');
   });
 });
