@@ -1,38 +1,47 @@
-import { curry } from './curry-utils.js';
+import { curry } from './curry-utils';
 
 describe('curry', () => {
-  const sum = (a, b, c) => a + b + c;
+  it('should return a curried function', () => {
+    const add = (a, b, c) => a + b + c;
+    const curriedAdd = curry(add);
 
-  test('should return a function that can be called until all arguments are supplied', () => {
-    const curriedSum = curry(sum);
-    const add1 = curriedSum(1);
-    expect(typeof add1).toBe('function');
-    const add1and2 = add1(2);
-    expect(typeof add1and2).toBe('function');
-    const finalResult = add1and2(3);
-    expect(finalResult).toBe(6);
+    expect(typeof curriedAdd).toBe('function');
   });
 
-  test('should execute the function when all arguments are supplied at once', () => {
-    const curriedSum = curry(sum);
-    expect(curriedSum(1, 2, 3)).toBe(6);
+  it('should allow partial application of arguments', () => {
+    const add = (a, b, c) => a + b + c;
+    const curriedAdd = curry(add);
+
+    const add5 = curriedAdd(5);
+    const add5and6 = add5(6);
+
+    expect(add5and6(7)).toBe(18);
   });
 
-  test('should execute the function when arguments are supplied in chunks', () => {
-    const curriedSum = curry(sum);
-    const add1 = curriedSum(1);
-    expect(add1(2, 3)).toBe(6);
+  it('should work when all arguments are passed at once', () => {
+    const multiply = (a, b, c) => a * b * c;
+    const curriedMultiply = curry(multiply);
+
+    expect(curriedMultiply(2, 3, 4)).toBe(24);
   });
 
-  test('should return the correct value for multiple curried calls', () => {
-    const curriedSum = curry(sum);
-    expect(curriedSum(1)(2)(3)).toBe(6);
+  it('should handle functions with no arguments', () => {
+    const fn = () => 'hello';
+    const curriedFn = curry(fn);
+
+    expect(curriedFn()).toBe('hello');
   });
 
-  test('should work with functions of different arities', () => {
-    const multiply = (a, b) => a * b;
-    const curriedMul = curry(multiply);
-    expect(curriedMul(3)(4)).toBe(12);
-    expect(curriedMul(5, 6)).toBe(30);
+  it('should maintain the `this` context', () => {
+    const obj = {
+      val: 10,
+      add: function(a, b) {
+        return this.val + a + b;
+      },
+    };
+    const curriedAdd = curry(obj.add);
+    const boundCurriedAdd = curriedAdd.bind(obj);
+
+    expect(boundCurriedAdd(5)(3)).toBe(18);
   });
 });
