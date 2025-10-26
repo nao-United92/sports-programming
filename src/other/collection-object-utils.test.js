@@ -171,4 +171,36 @@ describe('Collection Object Utilities', () => {
       expect(pluck(undefined, 'name')).toEqual([]);
     });
   });
+
+  describe('deepClone', () => {
+    test('should clone primitive values', () => {
+      expect(deepClone(42)).toBe(42);
+      expect(deepClone('hello')).toBe('hello');
+      expect(deepClone(null)).toBe(null);
+      expect(deepClone(undefined)).toBe(undefined);
+    });
+
+    test('should perform a deep clone of a nested object', () => {
+      const original = { a: 1, b: { c: 2, d: [3, 4] } };
+      const cloned = deepClone(original);
+      expect(cloned).toEqual(original);
+      expect(cloned).not.toBe(original);
+      expect(cloned.b).not.toBe(original.b);
+      expect(cloned.b.d).not.toBe(original.b.d);
+    });
+
+    test('should correctly clone arrays with objects', () => {
+      const original = [{ a: 1 }, { b: 2 }];
+      const cloned = deepClone(original);
+      expect(cloned).toEqual(original);
+      expect(cloned[0]).not.toBe(original[0]);
+    });
+
+    test('should correctly clone dates', () => {
+      const original = { date: new Date() };
+      const cloned = deepClone(original);
+      expect(cloned.date.getTime()).toBe(original.date.getTime());
+      expect(cloned.date).not.toBe(original.date);
+    });
+  });
 });

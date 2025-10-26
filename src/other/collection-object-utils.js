@@ -86,17 +86,11 @@ export function pick(object, paths) {
  * @param {Array<string>} paths The property keys to omit.
  * @returns {object} Returns the new object.
  */
-export function omit(object, paths) {
-  const result = { ...object };
-  if (object === null || typeof object !== 'object') {
-    return {};
-  }
-
-  for (const path of paths) {
-    delete result[path];
-  }
-  return result;
-}
+export const omit = (obj, keys) => {
+  const newObj = { ...obj };
+  keys.forEach(key => delete newObj[key]);
+  return newObj;
+};
 
 /**
  * Extracts a list of property values from a collection of objects.
@@ -109,4 +103,30 @@ export const pluck = (collection, key) => {
     return [];
   }
   return collection.map(item => (item !== null && item !== undefined ? item[key] : undefined));
+};
+
+export const deepClone = (obj) => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime());
+  }
+
+  if (Array.isArray(obj)) {
+    const arrCopy = [];
+    for (let i = 0; i < obj.length; i++) {
+      arrCopy[i] = deepClone(obj[i]);
+    }
+    return arrCopy;
+  }
+
+  const objCopy = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      objCopy[key] = deepClone(obj[key]);
+    }
+  }
+  return objCopy;
 };
