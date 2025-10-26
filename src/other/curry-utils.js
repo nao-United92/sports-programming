@@ -1,9 +1,11 @@
 export const curry = (fn) => {
-  const curried = (...args) => {
+  return function curried(...args) {
     if (args.length >= fn.length) {
-      return fn(...args);
+      return fn.apply(this, args);
+    } else {
+      return function(...nextArgs) {
+        return curried.apply(this, args.concat(nextArgs));
+      };
     }
-    return (...nextArgs) => curried(...args, ...nextArgs);
   };
-  return curried;
 };

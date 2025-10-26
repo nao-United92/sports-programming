@@ -1,38 +1,35 @@
-import { pipe } from './pipe-utils.js';
+import { pipe } from './pipe-utils';
 
 describe('pipe', () => {
-  const add = (x) => x + 5;
-  const multiply = (x) => x * 2;
-  const subtract = (x) => x - 3;
+  it('should pipe the functions from left to right', () => {
+    const add5 = (x) => x + 5;
+    const multiplyBy2 = (x) => x * 2;
+    const subtract10 = (x) => x - 10;
 
-  test('should return a function', () => {
-    const piped = pipe(add, multiply);
-    expect(typeof piped).toBe('function');
+    const piped = pipe(add5, multiplyBy2, subtract10);
+
+    expect(piped(5)).toBe(10); // (5 + 5) * 2 - 10 = 10
   });
 
-  test('should pipe functions from left to right', () => {
-    const piped = pipe(add, multiply, subtract); // (10 + 5) * 2 - 3 = 27
-    const result = piped(10);
-    expect(result).toBe(27);
+  it('should work with a single function', () => {
+    const add5 = (x) => x + 5;
+    const piped = pipe(add5);
+
+    expect(piped(5)).toBe(10);
   });
 
-  test('should work with a single function', () => {
-    const piped = pipe(add);
-    const result = piped(10);
-    expect(result).toBe(15);
-  });
-
-  test('should return the initial value if no functions are provided', () => {
+  it('should return the initial value if no functions are provided', () => {
     const piped = pipe();
-    const result = piped(10);
-    expect(result).toBe(10);
+    expect(piped(5)).toBe(5);
   });
 
-  test('should handle different types of data', () => {
-    const toUpper = (str) => str.toUpperCase();
-    const exclaim = (str) => `${str}!`;
-    const piped = pipe(toUpper, exclaim);
-    const result = piped('hello');
-    expect(result).toBe('HELLO!');
+  it('should handle different types of data', () => {
+    const toUpperCase = (str) => str.toUpperCase();
+    const addExclamation = (str) => str + '!';
+    const repeat = (str) => str.repeat(3);
+
+    const piped = pipe(toUpperCase, addExclamation, repeat);
+
+    expect(piped('hello')).toBe('HELLO!HELLO!HELLO!');
   });
 });
