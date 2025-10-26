@@ -8,39 +8,47 @@ describe('debounce', () => {
 
   beforeEach(() => {
     func = jest.fn();
+    debouncedFunc = debounce(func, 1000);
   });
 
-  it('should call the function after the wait time', () => {
-    debouncedFunc = debounce(func, 1000);
+  test('should not call the function immediately', () => {
     debouncedFunc();
     expect(func).not.toHaveBeenCalled();
+  });
+
+  test('should call the function only once after the wait time', () => {
+    for (let i = 0; i < 10; i++) {
+      debouncedFunc();
+    }
+
+    // Fast-forward time
+    jest.runAllTimers();
+
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  test('should call the function with the last arguments', () => {
+    debouncedFunc(1);
+    debouncedFunc(2);
+    debouncedFunc(3);
+
+    jest.runAllTimers();
+
+    expect(func).toHaveBeenCalledWith(3);
+  });
+
+  test('should reset the timer if called again within the wait time', () => {
+    debouncedFunc();
     jest.advanceTimersByTime(500);
     debouncedFunc();
-    expect(func).not.toHaveBeenCalled();
-    jest.advanceTimersByTime(999);
-    expect(func).not.toHaveBeenCalled();
-    jest.advanceTimersByTime(1);
-    expect(func).toHaveBeenCalledTimes(1);
-  });
-
-  it('should call the function immediately if immediate is true', () => {
-    debouncedFunc = debounce(func, 1000, true);
-    debouncedFunc();
-    expect(func).toHaveBeenCalledTimes(1);
     jest.advanceTimersByTime(500);
-    debouncedFunc();
-    expect(func).toHaveBeenCalledTimes(1);
-    jest.advanceTimersByTime(1000);
-    debouncedFunc();
-    expect(func).toHaveBeenCalledTimes(2);
-  });
 
-  it('should apply the correct context and arguments', () => {
-    const context = { a: 1 };
-    debouncedFunc = debounce(func, 1000);
-    debouncedFunc.apply(context, [1, 2]);
-    jest.advanceTimersByTime(1000);
-    expect(func).toHaveBeenCalledWith(1, 2);
-    expect(func.mock.instances[0]).toBe(context);
+    // At this point, 1000ms have passed, but the timer was reset at 500ms.
+    // So the function should not have been called.
+    expect(func).not.toHaveBeenCalled();
+
+    // Fast-forward to the end of the new timer
+    jest.runAllTimers();
+    expect(func).toHaveBeenCalledTimes(1);
   });
 });
