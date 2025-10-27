@@ -1,29 +1,25 @@
-
-const isObject = (item) => {
-  return (item && typeof item === 'object' && !Array.isArray(item));
-};
-
-export const deepMerge = (target, ...sources) => {
-  if (!sources.length) {
+export function deepMerge(target, source) {
+  if (target === null || target === undefined) {
+    return source;
+  }
+  if (source === null || source === undefined) {
     return target;
   }
-  const source = sources.shift();
 
   const output = { ...target };
 
-  if (isObject(target) && isObject(source)) {
-    for (const key in source) {
-      if (isObject(source[key])) {
-        if (!target[key]) {
+  if (typeof target === 'object' && typeof source === 'object') {
+    Object.keys(source).forEach(key => {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        if (!(key in target))
           Object.assign(output, { [key]: source[key] });
-        } else {
+        else
           output[key] = deepMerge(target[key], source[key]);
-        }
       } else {
         Object.assign(output, { [key]: source[key] });
       }
-    }
+    });
   }
 
-  return deepMerge(output, ...sources);
-};
+  return output;
+}
