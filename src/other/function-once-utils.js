@@ -1,18 +1,18 @@
 /**
- * Creates a function that is restricted to invoking func once. Repeat calls
- * to the function return the value of the first invocation. The func is invoked
- * with the `this` binding and arguments of the created function.
+ * Creates a function that is restricted to invoking `func` once. Repeat calls to the function
+ * return the value of the first invocation. The `func` is invoked with the `this` binding
+ * and arguments of the created function.
  *
  * @param {Function} func The function to restrict.
  * @returns {Function} Returns the new restricted function.
  */
-const once = (func) => {
+function once(func) {
+  if (typeof func !== 'function') {
+    throw new TypeError('Expected a function');
+  }
+
   let hasBeenCalled = false;
   let result;
-
-  if (typeof func !== 'function') {
-    throw new Error('First argument must be a function.');
-  }
 
   return function(...args) {
     if (!hasBeenCalled) {
@@ -21,6 +21,6 @@ const once = (func) => {
     }
     return result;
   };
-};
+}
 
-module.exports = { once };
+export { once };

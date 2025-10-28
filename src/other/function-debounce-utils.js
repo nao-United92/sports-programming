@@ -1,21 +1,31 @@
 /**
- * Creates a debounced function that delays invoking `func` until after `wait` milliseconds have elapsed since the last time the debounced function was invoked.
- * The debounced function comes with a `cancel` method to cancel delayed `func` invocations and a `flush` method to immediately invoke them.
- * Provide `options` to indicate whether `func` should be invoked on the leading and/or trailing edge of the `wait` timeout.
- * The `func` is invoked with the last arguments provided to the debounced function. Subsequent calls to the debounced function return the result of the last `func` invocation.
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was invoked.
+ * The debounced function comes with a `cancel` method to cancel delayed `func` invocations
+ * and a `flush` method to immediately invoke them. Provide `options` to indicate whether
+ * `func` should be invoked on the leading and/or trailing edge of the `wait` timeout.
+ * The `func` is invoked with the last arguments provided to the debounced function.
+ * Subsequent calls to the debounced function return the result of the last `func` invocation.
  *
  * @param {Function} func The function to debounce.
  * @param {number} [wait=0] The number of milliseconds to delay.
  * @param {Object} [options={}] The options object.
  * @param {boolean} [options.leading=false] Specify invoking on the leading edge of the timeout.
- * @param {number} [options.maxWait] The maximum time `func` is allowed to be delayed before it's invoked.
+ * @param {boolean} [options.maxWait] The maximum time `func` is allowed to be delayed.
  * @param {boolean} [options.trailing=true] Specify invoking on the trailing edge of the timeout.
  * @returns {Function} Returns the new debounced function.
  */
-export function debounce(func, wait = 0, options = {}) {
-  let lastArgs, lastThis, maxWait, result, timerId, lastCallTime, lastInvokeTime = 0;
+function debounce(func, wait = 0, options = {}) {
+  let lastArgs,
+    lastThis,
+    maxTimeoutId,
+    result,
+    timerId,
+    lastCallTime = 0;
+
+  let lastInvokeTime = 0;
   let leading = false;
-  let maxing = false;
+  let maxWait = false;
   let trailing = true;
 
   if (typeof func !== 'function') {
@@ -24,8 +34,7 @@ export function debounce(func, wait = 0, options = {}) {
   wait = +wait || 0;
   if (typeof options === 'object') {
     leading = !!options.leading;
-    maxing = 'maxWait' in options;
-    maxWait = maxing ? Math.max(+options.maxWait || 0, wait) : maxWait;
+    maxWait = 'maxWait' in options ? Math.max(+options.maxWait || 0, wait) : maxWait;
     trailing = 'trailing' in options ? !!options.trailing : trailing;
   }
 
@@ -40,8 +49,11 @@ export function debounce(func, wait = 0, options = {}) {
   }
 
   function leadingEdge(time) {
+    // Reset any `maxWait` timer.
     lastInvokeTime = time;
+    // Start the timer for the trailing edge.
     timerId = setTimeout(timerExpired, wait);
+    // Invoke the leading edge.
     return leading ? invokeFunc(time) : result;
   }
 
@@ -50,7 +62,7 @@ export function debounce(func, wait = 0, options = {}) {
     const timeSinceLastInvoke = time - lastInvokeTime;
     const timeWaiting = wait - timeSinceLastCall;
 
-    return maxing
+    return maxWait
       ? Math.min(timeWaiting, maxWait - timeSinceLastInvoke)
       : timeWaiting;
   }
@@ -59,11 +71,14 @@ export function debounce(func, wait = 0, options = {}) {
     const timeSinceLastCall = time - lastCallTime;
     const timeSinceLastInvoke = time - lastInvokeTime;
 
+    // Either this is the first call, activity has stopped and we're at the trailing
+    // edge, the system time has gone backwards and we're getting an unexpected
+    // `init` call, or there's been a delay and `maxWait` is set.
     return (
-      lastCallTime === undefined ||
+      lastCallTime === 0 ||
       timeSinceLastCall >= wait ||
       timeSinceLastCall < 0 ||
-      (maxing && timeSinceLastInvoke >= maxWait)
+      (maxWait && timeSinceLastInvoke >= maxWait)
     );
   }
 
@@ -72,11 +87,15 @@ export function debounce(func, wait = 0, options = {}) {
     if (shouldInvoke(time)) {
       return trailingEdge(time);
     }
+    // Restart the timer.
     timerId = setTimeout(timerExpired, remainingWait(time));
   }
 
   function trailingEdge(time) {
     timerId = undefined;
+
+    // Only invoke if we have `lastArgs` (i.e. debounce has been called)
+    // and / or `trailing` is set.
     if (trailing && lastArgs) {
       return invokeFunc(time);
     }
@@ -86,12 +105,13 @@ export function debounce(func, wait = 0, options = {}) {
 
   function cancel() {
     clearTimeout(timerId);
-    lastInvokeTime = 0;
-    lastArgs = lastThis = lastCallTime = timerId = undefined;
+    clearTimeout(maxTimeoutId);
+    lastInvokeTime = lastCallTime = 0;
+    timerId = maxTimeoutId = lastArgs = lastThis = undefined;
   }
 
   function flush() {
-    return timerId === undefined ? result : trailingEdge(Date.now());
+    return timerId ? trailingEdge(Date.now()) : result;
   }
 
   function debounced(...args) {
@@ -106,19 +126,10 @@ export function debounce(func, wait = 0, options = {}) {
       if (timerId === undefined) {
         return leadingEdge(lastCallTime);
       }
-      if (maxing) {
-        // When maxWait triggers an invocation, we need to clear the current timer
-        // and then immediately invoke the function. After invocation, if trailing
-        // is enabled, we should set a new timer for the trailing edge.
-        clearTimeout(timerId);
-        timerId = undefined; // Clear timer before invoking
-        const result = invokeFunc(lastCallTime); // Invoke immediately due to maxWait
-
-        // If trailing is true, set a new timer for the trailing edge
-        if (trailing) {
-          timerId = setTimeout(timerExpired, wait);
-        }
-        return result;
+      if (maxWait) {
+        // Handle invocations in a tight loop.
+        timerId = setTimeout(timerExpired, wait);
+        return invokeFunc(lastCallTime);
       }
     }
     if (timerId === undefined) {
@@ -130,3 +141,5 @@ export function debounce(func, wait = 0, options = {}) {
   debounced.flush = flush;
   return debounced;
 }
+
+export { debounce };

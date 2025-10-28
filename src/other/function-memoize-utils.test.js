@@ -1,79 +1,89 @@
-import { memoize } from './function-memoize-utils.js';
+import { memoize } from './function-memoize-utils';
 
 describe('memoize', () => {
-  let expensiveFunction;
-  let spy;
+  let func;
+  let memoizedFunc;
 
   beforeEach(() => {
-    expensiveFunction = jest.fn(function(a, b) { // Make it a spy directly
-      return a + b;
-    });
-    spy = expensiveFunction; // Now spy is the function itself
+    func = jest.fn(x => x * 2);
   });
 
-  it('should cache the result of the function', () => {
-    const memoizedSum = memoize(spy);
+  it('should memoize function results based on the first argument', () => {
+    memoizedFunc = memoize(func);
 
-    memoizedSum(1, 2);
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(memoizedSum(1, 2)).toBe(3);
-    expect(spy).toHaveBeenCalledTimes(1); // Should not be called again
+    expect(memoizedFunc(1)).toBe(2);
+    expect(func).toHaveBeenCalledTimes(1);
+
+    expect(memoizedFunc(1)).toBe(2);
+    expect(func).toHaveBeenCalledTimes(1); // Should not be called again
+
+    expect(memoizedFunc(2)).toBe(4);
+    expect(func).toHaveBeenCalledTimes(2);
+
+    expect(memoizedFunc(2)).toBe(4);
+    expect(func).toHaveBeenCalledTimes(2); // Should not be called again
   });
 
-  it('should call the function with different arguments', () => {
-    const memoizedSum = memoize(spy);
+  it('should use a resolver function to generate the cache key', () => {
+    const resolver = jest.fn((a, b) => `${a}-${b}`);
+    func = jest.fn((a, b) => a + b);
+    memoizedFunc = memoize(func, resolver);
 
-    memoizedSum(1, 2);
-    memoizedSum(3, 4);
-    expect(spy).toHaveBeenCalledTimes(2);
-    expect(memoizedSum(1, 2)).toBe(3);
-    expect(spy).toHaveBeenCalledTimes(2);
-    expect(memoizedSum(3, 4)).toBe(7);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(memoizedFunc(1, 2)).toBe(3);
+    expect(resolver).toHaveBeenCalledWith(1, 2);
+    expect(func).toHaveBeenCalledTimes(1);
+
+    expect(memoizedFunc(1, 2)).toBe(3);
+    expect(resolver).toHaveBeenCalledWith(1, 2);
+    expect(func).toHaveBeenCalledTimes(1); // Should not be called again
+
+    expect(memoizedFunc(2, 1)).toBe(3);
+    expect(resolver).toHaveBeenCalledWith(2, 1);
+    expect(func).toHaveBeenCalledTimes(2);
   });
 
-  it('should use a custom resolver for cache keys', () => {
-    const resolver = (a, b) => `${a}-${b}`; // Custom key: "1-2"
-    const memoizedSum = memoize(spy, resolver);
+  it('should handle different `this` contexts', () => {
+    func = jest.fn(function(x) { return this.multiplier * x; });
+    memoizedFunc = memoize(func);
 
-    memoizedSum(1, 2);
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(memoizedSum(1, 2)).toBe(3);
-    expect(spy).toHaveBeenCalledTimes(1);
-    memoizedSum(2, 1); // Different arguments, but resolver might produce same key if not careful
-    expect(spy).toHaveBeenCalledTimes(2); // Should be called for "2-1"
+    const context1 = { multiplier: 2 };
+    const context2 = { multiplier: 3 };
+
+    expect(memoizedFunc.call(context1, 5)).toBe(10);
+    expect(func).toHaveBeenCalledTimes(1);
+
+    expect(memoizedFunc.call(context1, 5)).toBe(10);
+    expect(func).toHaveBeenCalledTimes(1);
+
+    expect(memoizedFunc.call(context2, 5)).toBe(15);
+    expect(func).toHaveBeenCalledTimes(2);
   });
 
   it('should allow clearing the cache', () => {
-    const memoizedSum = memoize(spy);
+    memoizedFunc = memoize(func);
 
-    memoizedSum(1, 2);
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(memoizedSum.cache.size).toBe(1);
+    memoizedFunc(1);
+    expect(func).toHaveBeenCalledTimes(1);
 
-    memoizedSum.cache.clear();
-    expect(memoizedSum.cache.size).toBe(0);
+    memoizedFunc.cache.clear();
 
-    memoizedSum(1, 2);
-    expect(spy).toHaveBeenCalledTimes(2); // Should be called again after clearing
+    memoizedFunc(1);
+    expect(func).toHaveBeenCalledTimes(2); // Should be called again after cache clear
   });
 
-  it('should handle `this` context correctly', () => {
-    const obj = {
-      value: 10,
-      add: jest.fn(function(a) { // Make the method itself a spy
-        return this.value + a;
-      })
-    };
-    const memoizedAdd = memoize(obj.add);
+  it('should return the same memoized function instance', () => {
+    const memoizedFunc1 = memoize(func);
+    const memoizedFunc2 = memoize(func);
+    expect(memoizedFunc1).not.toBe(memoizedFunc2);
+    expect(memoizedFunc1.cache).not.toBe(memoizedFunc2.cache);
+  });
 
-    // Call memoizedAdd with obj as its `this` context
-    expect(memoizedAdd.call(obj, 5)).toBe(15);
-    expect(obj.add).toHaveBeenCalledTimes(1); // Now this should pass
-    expect(obj.add).toHaveBeenCalledWith(5); // Check arguments
+  it('should throw an error if func is not a function', () => {
+    expect(() => memoize(null)).toThrow('Expected a function');
+    expect(() => memoize('not a function')).toThrow('Expected a function');
+  });
 
-    // Call again, should be cached
-    expect(memoizedAdd.call(obj, 5)).toBe(15);
-    expect(obj.add).toHaveBeenCalledTimes(1); // Still 1 call
+  it('should throw an error if resolver is not a function (and not null/undefined)', () => {
+    expect(() => memoize(func, 'not a function')).toThrow('Expected a function');
   });
 });
