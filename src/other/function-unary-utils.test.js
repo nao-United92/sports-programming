@@ -1,40 +1,40 @@
-
-import { unary } from './function-unary-utils.js';
+import { unary } from './function-unary-utils';
 
 describe('unary', () => {
-  it('should return a function that accepts only one argument', () => {
-    const multiArgFn = jest.fn((a, b, c) => a + b + c);
-    const unaryFn = unary(multiArgFn);
+  const multiArgFunc = (a, b, c) => `a: ${a}, b: ${b}, c: ${c}`;
+  const sumAll = (...args) => args.reduce((acc, val) => acc + val, 0);
 
-    unaryFn(1, 2, 3); // Call with multiple arguments
-
-    expect(multiArgFn).toHaveBeenCalledWith(1); // Only the first argument should be passed
+  it('should create a function that accepts only one argument', () => {
+    const unaryFunc = unary(multiArgFunc);
+    expect(unaryFunc(1, 2, 3)).toBe('a: 1, b: undefined, c: undefined');
   });
 
-  it('should correctly pass the single argument to the original function', () => {
-    const addOne = (num) => num + 1;
-    const unaryAddOne = unary(addOne);
-
-    expect(unaryAddOne(5)).toBe(6);
-    expect(unaryAddOne(10)).toBe(11);
+  it('should pass the single argument correctly', () => {
+    const unarySum = unary(sumAll);
+    expect(unarySum(5, 10, 15)).toBe(5);
   });
 
-  it('should be useful with array methods like map', () => {
-    const parseIntWithRadix = (str, radix) => parseInt(str, radix);
-    const numbersAsStrings = ['1', '2', '3'];
+  it('should maintain the `this` context', () => {
+    const obj = {
+      value: 10,
+      add: function(a, b) {
+        return this.value + a + b;
+      },
+    };
 
-    // Without unary, map passes index and array, which can break parseInt
-    // const parsedNumbers = numbersAsStrings.map(parseIntWithRadix); // This would result in [1, NaN, NaN]
-
-    const parsedNumbersUnary = numbersAsStrings.map(unary(parseIntWithRadix));
-    expect(parsedNumbersUnary).toEqual([1, 2, 3]);
-  });
-
-  it('should maintain the context of the original function', () => {
-    const obj = { value: 10, add: function(num) { return this.value + num; } };
     const unaryAdd = unary(obj.add);
+    expect(unaryAdd.call(obj, 5, 20)).toBe(15); // 10 + 5 + undefined
+  });
 
-    const result = unaryAdd.call(obj, 5, 10); // Call with multiple args, but only 5 should be used
-    expect(result).toBe(15); // 10 (this.value) + 5 (num)
+  it('should throw an error if func is not a function', () => {
+    expect(() => unary(null)).toThrow('Expected a function');
+    expect(() => unary('not a function')).toThrow('Expected a function');
+  });
+
+  it('should work with functions that naturally accept one argument', () => {
+    const identity = (x) => x;
+    const unaryIdentity = unary(identity);
+    expect(unaryIdentity(10)).toBe(10);
+    expect(unaryIdentity(10, 20)).toBe(10);
   });
 });
