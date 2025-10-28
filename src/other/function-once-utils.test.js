@@ -1,53 +1,67 @@
-const { once } = require('./function-once-utils');
+import { once } from './function-once-utils';
 
 describe('once', () => {
   let func;
+  let onceFunc;
 
   beforeEach(() => {
-    func = jest.fn();
+    func = jest.fn((x) => x * 2);
   });
 
-  test('should call the original function only once', () => {
-    const onceFunc = once(func);
-    onceFunc();
-    onceFunc();
-    onceFunc();
+  it('should invoke the function only once', () => {
+    onceFunc = once(func);
+
+    expect(onceFunc(1)).toBe(2);
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenCalledWith(1);
+
+    expect(onceFunc(2)).toBe(2); // Subsequent calls return the first result
+    expect(func).toHaveBeenCalledTimes(1); // func should not be called again
+
+    expect(onceFunc(3)).toBe(2);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should pass arguments to the original function on the first call', () => {
-    const onceFunc = once(func);
-    onceFunc(1, 'a', true);
-    onceFunc(2, 'b', false);
-    expect(func).toHaveBeenCalledWith(1, 'a', true);
-  });
-
-  test('should return the value from the first invocation on all calls', () => {
-    const funcWithReturn = jest.fn((x) => x * 2);
-    const onceFunc = once(funcWithReturn);
-
-    const result1 = onceFunc(5);
-    const result2 = onceFunc(10);
-    const result3 = onceFunc(20);
-
-    expect(result1).toBe(10);
-    expect(result2).toBe(10);
-    expect(result3).toBe(10);
-    expect(funcWithReturn).toHaveBeenCalledTimes(1);
-  });
-
-  test('should maintain the `this` context', () => {
+  it('should maintain the `this` context', () => {
     const obj = {
-      func: jest.fn(function() { return this; }),
+      value: 10,
+      getValue: once(function() {
+        return this.value;
+      }),
     };
-    obj.onceFunc = once(obj.func);
 
-    const context = obj.onceFunc();
-    expect(context).toBe(obj);
-    expect(obj.func).toHaveBeenCalledTimes(1);
+    const obj2 = {
+      value: 20,
+      getValue: obj.getValue,
+    };
+
+    expect(obj.getValue()).toBe(10);
+    expect(obj.getValue()).toBe(10);
+    expect(obj2.getValue()).toBe(10); // The `this` context is bound to the first call
   });
 
-  test('should throw an error if the argument is not a function', () => {
-    expect(() => once('not a function')).toThrow('First argument must be a function.');
+  it('should pass arguments only to the first invocation', () => {
+    onceFunc = once(func);
+
+    onceFunc(5);
+    expect(func).toHaveBeenCalledWith(5);
+
+    onceFunc(10);
+    expect(func).not.toHaveBeenCalledWith(10);
+  });
+
+  it('should throw an error if func is not a function', () => {
+    expect(() => once(null)).toThrow('Expected a function');
+    expect(() => once('not a function')).toThrow('Expected a function');
+  });
+
+  it('should return the same result for all subsequent calls', () => {
+    let counter = 0;
+    const increment = once(() => ++counter);
+
+    expect(increment()).toBe(1);
+    expect(increment()).toBe(1);
+    expect(increment()).toBe(1);
+    expect(counter).toBe(1);
   });
 });
