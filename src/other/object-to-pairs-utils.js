@@ -1,12 +1,14 @@
 /**
- * Creates an array of key-value pairs for an object.
+ * Converts an object into an array of [key, value] pairs.
  *
- * @param {Object} object The object to query.
- * @returns {Array} Returns the new array of key-value pairs.
+ * @param {object} obj The object to convert.
+ * @returns {Array<Array<any>>} Returns the new array of key-value pairs.
  */
-export function toPairs(object) {
-  if (object == null) {
+function toPairs(obj) {
+  if (typeof obj !== 'object' || obj === null) {
     return [];
   }
-  return Object.entries(object);
+  return Object.entries(obj);
 }
+
+module.exports = { toPairs };
