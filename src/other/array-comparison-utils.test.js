@@ -1,4 +1,4 @@
-import { isEqual, isSubset } from './array-comparison-utils.js';
+import { isEqual, isSubset, isDeepEqual } from './array-comparison-utils.js';
 
 describe('Array Comparison Utilities', () => {
   describe('isEqual', () => {
@@ -42,6 +42,42 @@ describe('Array Comparison Utilities', () => {
 
     it('should handle empty superset', () => {
       expect(isSubset([1], [])).toBe(false);
+    });
+  });
+
+  describe('isDeepEqual', () => {
+    it('should return true for deeply equal arrays', () => {
+      expect(isDeepEqual([1, { a: 1 }, [2, 3]], [1, { a: 1 }, [2, 3]])).toBe(true);
+    });
+
+    it('should return false for arrays with different nested object values', () => {
+      expect(isDeepEqual([1, { a: 1 }], [1, { a: 2 }])).toBe(false);
+    });
+
+    it('should return false for arrays with different nested array values', () => {
+      expect(isDeepEqual([1, [2, 3]], [1, [2, 4]])).toBe(false);
+    });
+
+    it('should return false for arrays with different lengths', () => {
+      expect(isDeepEqual([1, 2], [1, 2, 3])).toBe(false);
+    });
+
+    it('should handle dates within arrays', () => {
+      const date1 = new Date();
+      const date2 = new Date(date1.getTime());
+      const date3 = new Date(date1.getTime() + 1000);
+      expect(isDeepEqual([date1], [date2])).toBe(true);
+      expect(isDeepEqual([date1], [date3])).toBe(false);
+    });
+
+    it('should return false for non-array inputs', () => {
+      expect(isDeepEqual(null, [])).toBe(false);
+      expect(isDeepEqual([], {})).toBe(false);
+      expect(isDeepEqual({}, {})).toBe(false);
+    });
+
+    it('should handle empty nested objects and arrays', () => {
+      expect(isDeepEqual([{}, []], [{}, []])).toBe(true);
     });
   });
 });
