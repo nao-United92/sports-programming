@@ -1,29 +1,27 @@
-export function getProperty(obj, path, defaultValue = undefined) {
-  if (!obj || typeof obj !== 'object') {
-    return defaultValue;
-  }
-
-  // path が無効な型の場合、defaultValue を返す
-  if (typeof path !== 'string' && !Array.isArray(path)) {
-    return defaultValue;
-  }
-
-  const pathParts = Array.isArray(path) ? path : path.split('.');
-
-  // pathParts が空の場合、obj そのものを返す
-  if (pathParts.length === 0 || (pathParts.length === 1 && pathParts[0] === '')) {
-    return obj;
-  }
+/**
+ * Retrieves the value of a nested property from an object using a string path.
+ * Handles dot notation and bracket notation for arrays.
+ *
+ * @param {object} obj The object to query.
+ * @param {string|string[]} path The path of the property to retrieve.
+ * @param {any} [defaultValue] The value returned for `undefined` resolved values.
+ * @returns {any} Returns the resolved value, else `defaultValue`.
+ */
+function getProperty(obj, path, defaultValue = undefined) {
+  const pathArray = Array.isArray(path)
+    ? path
+    : (path ? String(path).replace(/\[(\d+)\]/g, '.$1').replace(/^\./, '').split('.') : []);
 
   let current = obj;
-
-  for (let i = 0; i < pathParts.length; i++) {
-    const part = pathParts[i];
-    if (current === null || typeof current !== 'object' || !current.hasOwnProperty(part)) {
+  for (let i = 0; i < pathArray.length; i++) {
+    const key = pathArray[i];
+    if (current === null || current === undefined) {
       return defaultValue;
     }
-    current = current[part];
+    current = current[key];
   }
 
-  return current;
+  return current === undefined ? defaultValue : current;
 }
+
+module.exports = { getProperty };
