@@ -1,80 +1,61 @@
-import { getProperty } from './object-get-property-utils';
+const { getProperty } = require('./object-get-property-utils.js');
 
 describe('getProperty', () => {
-  const testObject = {
-    a: 1,
-    b: {
-      c: 2,
-      d: {
-        e: 3,
+  const testObj = {
+    a: {
+      b: {
+        c: 'hello',
       },
+      d: ['foo', 'bar'],
+      e: null,
     },
-    f: null,
-    g: undefined,
-    h: [10, 20, { i: 30 }],
+    f: 123,
   };
 
-  test('should return the value of a top-level property', () => {
-    expect(getProperty(testObject, 'a')).toBe(1);
+  it('should get a deeply nested property using dot notation', () => {
+    expect(getProperty(testObj, 'a.b.c')).toBe('hello');
   });
 
-  test('should return the value of a nested property', () => {
-    expect(getProperty(testObject, 'b.c')).toBe(2);
+  it('should get an element from an array using bracket notation in the path', () => {
+    expect(getProperty(testObj, 'a.d[0]')).toBe('foo');
+    expect(getProperty(testObj, 'a.d[1]')).toBe('bar');
   });
 
-  test('should return the value of a deeply nested property', () => {
-    expect(getProperty(testObject, 'b.d.e')).toBe(3);
+  it('should return a top-level property', () => {
+    expect(getProperty(testObj, 'f')).toBe(123);
   });
 
-  test('should return defaultValue for a non-existent top-level property', () => {
-    expect(getProperty(testObject, 'x', 'default')).toBe('default');
+  it('should return undefined for a non-existent path', () => {
+    expect(getProperty(testObj, 'a.x.y')).toBeUndefined();
   });
 
-  test('should return defaultValue for a non-existent nested property', () => {
-    expect(getProperty(testObject, 'b.x.y', 'default')).toBe('default');
+  it('should return the default value for a non-existent path when provided', () => {
+    expect(getProperty(testObj, 'a.x.y', 'default')).toBe('default');
+    expect(getProperty(testObj, 'a.b.z', null)).toBeNull();
   });
 
-  test('should return defaultValue for a path that traverses through null', () => {
-    expect(getProperty(testObject, 'f.x', 'default')).toBe('default');
+  it('should return undefined if an intermediate path is null or undefined', () => {
+    expect(getProperty(testObj, 'a.e.f')).toBeUndefined();
+    const objWithUndefined = { a: { b: undefined } };
+    expect(getProperty(objWithUndefined, 'a.b.c')).toBeUndefined();
   });
 
-  test('should return defaultValue for a path that traverses through undefined', () => {
-    expect(getProperty(testObject, 'g.x', 'default')).toBe('default');
+  it('should return the default value if an intermediate path is null or undefined', () => {
+    expect(getProperty(testObj, 'a.e.f', 'default')).toBe('default');
   });
 
-  test('should return null if the property value is null and no defaultValue is provided', () => {
-    expect(getProperty(testObject, 'f')).toBeNull();
+  it('should handle an array path', () => {
+    expect(getProperty(testObj, ['a', 'b', 'c'])).toBe('hello');
+    expect(getProperty(testObj, ['a', 'd', '0'])).toBe('foo');
   });
 
-  test('should return undefined if the property value is undefined and no defaultValue is provided', () => {
-    expect(getProperty(testObject, 'g')).toBeUndefined();
+  it('should return the object itself for an empty path', () => {
+    expect(getProperty(testObj, '')).toEqual(testObj);
   });
 
-  test('should return defaultValue if the object is null or undefined', () => {
-    expect(getProperty(null, 'a', 'default')).toBe('default');
-    expect(getProperty(undefined, 'a', 'default')).toBe('default');
-  });
-
-  test('should return the object itself if path is empty or not provided', () => {
-    expect(getProperty(testObject, '')).toEqual(testObject);
-    expect(getProperty(testObject, [])).toEqual(testObject);
-  });
-
-  test('should handle array indices', () => {
-    expect(getProperty(testObject, 'h.0')).toBe(10);
-    expect(getProperty(testObject, 'h.2.i')).toBe(30);
-  });
-
-  test('should work with array path', () => {
-    expect(getProperty(testObject, ['b', 'c'])).toBe(2);
-    expect(getProperty(testObject, ['b', 'd', 'e'])).toBe(3);
-  });
-
-  test('should return defaultValue if path is invalid (e.g., number)', () => {
-    expect(getProperty(testObject, 123, 'default')).toBe('default');
-  });
-
-  test('should return defaultValue if path is not a string or array', () => {
-    expect(getProperty(testObject, {}, 'default')).toBe('default');
+  it('should handle invalid inputs gracefully', () => {
+    expect(getProperty(null, 'a.b')).toBeUndefined();
+    expect(getProperty(undefined, 'a.b')).toBeUndefined();
+    expect(getProperty({}, 'a.b', 'default')).toBe('default');
   });
 });

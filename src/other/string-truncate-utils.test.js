@@ -1,32 +1,42 @@
-const { truncate } = require('./string-truncate-utils');
+const { truncate } = require('./string-truncate-utils.js');
 
 describe('truncate', () => {
-  test('should not truncate a string shorter than the specified length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
+  it('should not truncate if string is shorter than or equal to length', () => {
+    expect(truncate('hello', { length: 10 })).toBe('hello');
+    expect(truncate('hello world', { length: 11 })).toBe('hello world');
   });
 
-  test('should not truncate a string equal to the specified length', () => {
-    expect(truncate('hello', 5)).toBe('hello');
+  it('should truncate a string and add default omission', () => {
+    expect(truncate('hello world', { length: 7 })).toBe('hell...');
   });
 
-  test('should truncate a string longer than the specified length', () => {
-    expect(truncate('hello world', 5)).toBe('hello...');
+  it('should use custom omission', () => {
+    expect(truncate('hello world', { length: 8, omission: '---' })).toBe('hello---');
   });
 
-  test('should use a custom suffix if provided', () => {
-    expect(truncate('hello world', 8, '--')).toBe('hello wo--');
+  it('should handle empty string', () => {
+    expect(truncate('', { length: 5 })).toBe('');
   });
 
-  test('should handle an empty string', () => {
-    expect(truncate('', 5)).toBe('');
+  it('should handle string shorter than omission length', () => {
+    expect(truncate('a', { length: 2, omission: '...' })).toBe('...');
+    expect(truncate('ab', { length: 3, omission: '...' })).toBe('ab...');
   });
 
-  test('should handle zero length', () => {
-    expect(truncate('hello', 0)).toBe('...');
+  it('should return omission if length is less than or equal to omission length', () => {
+    expect(truncate('long string', { length: 3, omission: '...' })).toBe('...');
+    expect(truncate('long string', { length: 2, omission: '...' })).toBe('...');
   });
 
-  test('should throw an error for invalid argument types', () => {
-    expect(() => truncate(123, 5)).toThrow('Invalid arguments: str must be a string and length must be a number.');
-    expect(() => truncate('hello', '5')).toThrow('Invalid arguments: str must be a string and length must be a number.');
+  it('should use default length if not provided', () => {
+    const longString = 'This is a very long string that needs to be truncated.';
+    expect(truncate(longString)).toBe('This is a very long stri...'); // Default length is 30
+  });
+
+  it('should handle non-string input', () => {
+    expect(truncate(null)).toBe('');
+    expect(truncate(undefined)).toBe('');
+    expect(truncate(123)).toBe('');
+    expect(truncate({})).toBe('');
   });
 });

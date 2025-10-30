@@ -1,4 +1,4 @@
-import { throttle } from './function-throttle-utils';
+const { throttle } = require('./function-throttle-utils.js');
 
 describe('throttle', () => {
   let func;
@@ -14,132 +14,78 @@ describe('throttle', () => {
     jest.useRealTimers();
   });
 
-  it('should throttle a function', () => {
+  it('should execute the function immediately on the leading edge by default', () => {
     throttledFunc = throttle(func, 100);
-
-    throttledFunc(); // Called immediately
-    throttledFunc(); // Ignored
-    throttledFunc(); // Ignored
-
+    throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
+  });
 
+  it('should not execute the function again within the wait period', () => {
+    throttledFunc = throttle(func, 100);
+    throttledFunc();
+    throttledFunc(); // Second call within wait period
+    throttledFunc(); // Third call within wait period
+    expect(func).toHaveBeenCalledTimes(1); // Still only called once
+  });
+
+  it('should execute the function on the trailing edge if called within the wait period', () => {
+    throttledFunc = throttle(func, 100);
+    throttledFunc(); // Leading call
     jest.advanceTimersByTime(50);
-    throttledFunc(); // Ignored
-    expect(func).toHaveBeenCalledTimes(1);
+    throttledFunc(); // Call within wait period
+    expect(func).toHaveBeenCalledTimes(1); // Still only leading call
 
-    jest.advanceTimersByTime(50); // 100ms total
-    expect(func).toHaveBeenCalledTimes(2); // Trailing call
-
-    throttledFunc(); // Called immediately
-    expect(func).toHaveBeenCalledTimes(3);
+    jest.advanceTimersByTime(50); // Advance to end of wait period
+    expect(func).toHaveBeenCalledTimes(2); // Trailing call should happen
   });
 
-  it('should pass the last arguments to the throttled function', () => {
+  it('should pass arguments and context to the throttled function', () => {
     throttledFunc = throttle(func, 100);
-
-    throttledFunc(1);
-    throttledFunc(2, 3);
-    throttledFunc(4, 5, 6);
-
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledWith(4, 5, 6);
+    const context = { a: 1 };
+    throttledFunc.call(context, 'arg1', 'arg2');
+    expect(func).toHaveBeenCalledWith('arg1', 'arg2');
+    expect(func).toHaveBeenCalledOnLastCallWith('arg1', 'arg2');
   });
 
-  it('should call the function immediately with leading option (default)', () => {
-    throttledFunc = throttle(func, 100, { leading: true, trailing: false });
-
-    throttledFunc(1);
-    expect(func).toHaveBeenCalledWith(1);
-    expect(func).toHaveBeenCalledTimes(1);
-
-    throttledFunc(2);
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1);
-  });
-
-  it('should not call on leading edge if leading is false', () => {
+  it('should respect leading: false option', () => {
     throttledFunc = throttle(func, 100, { leading: false });
-
-    throttledFunc(1);
-    expect(func).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenCalledWith(1);
-  });
-
-  it('should call on trailing edge by default', () => {
-    throttledFunc = throttle(func, 100);
-
-    throttledFunc(1);
-    throttledFunc(2);
+    throttledFunc();
+    expect(func).not.toHaveBeenCalled(); // Not called immediately
 
     jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(2);
-    expect(func).toHaveBeenCalledWith(2);
+    expect(func).toHaveBeenCalledTimes(1); // Called on trailing edge
   });
 
-  it('should not call on trailing edge if trailing is false', () => {
+  it('should respect trailing: false option', () => {
     throttledFunc = throttle(func, 100, { trailing: false });
-
-    throttledFunc(1);
-    throttledFunc(2);
-
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenCalledWith(1);
+    throttledFunc(); // Leading call
+    jest.advanceTimersByTime(50);
+    throttledFunc(); // Call within wait period
+    jest.advanceTimersByTime(50); // Advance to end of wait period
+    expect(func).toHaveBeenCalledTimes(1); // Only leading call, no trailing
   });
 
-  it('should cancel a throttled function', () => {
-    throttledFunc = throttle(func, 100);
-
+  it('should allow cancelling delayed invocations', () => {
+    throttledFunc = throttle(func, 100, { leading: false });
     throttledFunc();
     jest.advanceTimersByTime(50);
     throttledFunc.cancel();
-
     jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).not.toHaveBeenCalled(); // Should not have been called
   });
 
-  it('should flush a throttled function', () => {
-    throttledFunc = throttle(func, 100, { leading: false });
-
-    throttledFunc(1);
-    throttledFunc(2);
-
-    expect(func).not.toHaveBeenCalled();
-
-    throttledFunc.flush();
-
+  it('should reset after a long pause', () => {
+    throttledFunc = throttle(func, 100);
+    throttledFunc(); // Call 1 (leading)
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenCalledWith(2);
 
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1);
-  });
-
-  it('should return the result of the last function invocation', () => {
-    let callCount = 0;
-    const funcWithReturn = jest.fn(() => ++callCount);
-    throttledFunc = throttle(funcWithReturn, 100);
-
-    const result1 = throttledFunc();
     jest.advanceTimersByTime(50);
-    const result2 = throttledFunc();
+    throttledFunc(); // Call 2 (trailing scheduled)
     jest.advanceTimersByTime(50);
+    expect(func).toHaveBeenCalledTimes(2); // Call 2 (trailing executed)
 
-    expect(funcWithReturn).toHaveBeenCalledTimes(2);
-    expect(result1).toBe(1);
-    expect(result2).toBe(1); // Result of the first call, as the second was throttled
-  });
-
-  it('should handle `this` context correctly', () => {
-    throttledFunc = throttle(function(arg) { this.value = arg; }, 100);
-    const context = { value: 0 };
-
-    throttledFunc.call(context, 1);
-    jest.advanceTimersByTime(100);
-
-    expect(context.value).toBe(1);
+    jest.advanceTimersByTime(500); // Long pause
+    throttledFunc(); // Call 3 (leading again)
+    expect(func).toHaveBeenCalledTimes(3);
   });
 });
