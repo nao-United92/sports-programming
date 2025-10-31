@@ -1,13 +1,12 @@
+
 const deepFreeze = (obj) => {
-  if (obj && typeof obj === 'object') {
+  if (obj && typeof obj === 'object' && !Object.isFrozen(obj)) {
     Object.keys(obj).forEach(prop => {
-      const propValue = obj[prop];
-      if (propValue && typeof propValue === 'object') {
-        deepFreeze(propValue);
-      }
+      deepFreeze(obj[prop]);
     });
+    Object.freeze(obj);
   }
-  return Object.freeze(obj);
+  return obj;
 };
 
 module.exports = { deepFreeze };
