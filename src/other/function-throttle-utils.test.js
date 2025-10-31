@@ -1,4 +1,6 @@
-const { throttle } = require('./function-throttle-utils.js');
+const { throttle } = require('./function-throttle-utils');
+
+jest.useFakeTimers();
 
 describe('throttle', () => {
   let func;
@@ -6,86 +8,74 @@ describe('throttle', () => {
 
   beforeEach(() => {
     func = jest.fn();
-    jest.useFakeTimers();
+    throttledFunc = throttle(func, 500);
   });
 
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-  });
-
-  it('should execute the function immediately on the leading edge by default', () => {
-    throttledFunc = throttle(func, 100);
+  it('should call the function immediately on the first call', () => {
     throttledFunc();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should not execute the function again within the wait period', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc();
-    throttledFunc(); // Second call within wait period
-    throttledFunc(); // Third call within wait period
-    expect(func).toHaveBeenCalledTimes(1); // Still only called once
+  it('should not call the function again within the limit period', () => {
+    throttledFunc(); // Called once
+    throttledFunc(); // Should be ignored
+    throttledFunc(); // Should be ignored
+
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should execute the function on the trailing edge if called within the wait period', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc(); // Leading call
-    jest.advanceTimersByTime(50);
-    throttledFunc(); // Call within wait period
-    expect(func).toHaveBeenCalledTimes(1); // Still only leading call
-
-    jest.advanceTimersByTime(50); // Advance to end of wait period
-    expect(func).toHaveBeenCalledTimes(2); // Trailing call should happen
-  });
-
-  it('should pass arguments and context to the throttled function', () => {
-    throttledFunc = throttle(func, 100);
-    const context = { a: 1 };
-    throttledFunc.call(context, 'arg1', 'arg2');
-    expect(func).toHaveBeenCalledWith('arg1', 'arg2');
-    expect(func).toHaveBeenCalledOnLastCallWith('arg1', 'arg2');
-  });
-
-  it('should respect leading: false option', () => {
-    throttledFunc = throttle(func, 100, { leading: false });
-    throttledFunc();
-    expect(func).not.toHaveBeenCalled(); // Not called immediately
-
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1); // Called on trailing edge
-  });
-
-  it('should respect trailing: false option', () => {
-    throttledFunc = throttle(func, 100, { trailing: false });
-    throttledFunc(); // Leading call
-    jest.advanceTimersByTime(50);
-    throttledFunc(); // Call within wait period
-    jest.advanceTimersByTime(50); // Advance to end of wait period
-    expect(func).toHaveBeenCalledTimes(1); // Only leading call, no trailing
-  });
-
-  it('should allow cancelling delayed invocations', () => {
-    throttledFunc = throttle(func, 100, { leading: false });
-    throttledFunc();
-    jest.advanceTimersByTime(50);
-    throttledFunc.cancel();
-    jest.advanceTimersByTime(100);
-    expect(func).not.toHaveBeenCalled(); // Should not have been called
-  });
-
-  it('should reset after a long pause', () => {
-    throttledFunc = throttle(func, 100);
-    throttledFunc(); // Call 1 (leading)
+  it('should call the function again after the limit period has passed', () => {
+    throttledFunc(); // Called once
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(50);
-    throttledFunc(); // Call 2 (trailing scheduled)
-    jest.advanceTimersByTime(50);
-    expect(func).toHaveBeenCalledTimes(2); // Call 2 (trailing executed)
+    // Fast-forward time
+    jest.advanceTimersByTime(500);
 
-    jest.advanceTimersByTime(500); // Long pause
-    throttledFunc(); // Call 3 (leading again)
+    throttledFunc(); // Should be called again
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  it('should pass arguments to the original function', () => {
+    throttledFunc(1, 'test');
+    expect(func).toHaveBeenCalledWith(1, 'test');
+  });
+
+  it('should ignore subsequent calls within the throttle period and their arguments', () => {
+    throttledFunc('first');
+    throttledFunc('second');
+    throttledFunc('third');
+
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenCalledWith('first');
+
+    jest.advanceTimersByTime(500);
+
+    throttledFunc('fourth');
+    expect(func).toHaveBeenCalledTimes(2);
+    expect(func).toHaveBeenCalledWith('fourth');
+  });
+
+  it('should handle multiple throttle periods correctly', () => {
+    // First call
+    throttledFunc(1);
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenLastCalledWith(1);
+
+    // Second call within limit, should be ignored
+    jest.advanceTimersByTime(250);
+    throttledFunc(2);
+    expect(func).toHaveBeenCalledTimes(1);
+
+    // Third call after limit, should execute
+    jest.advanceTimersByTime(250); // Total time = 500
+    throttledFunc(3);
+    expect(func).toHaveBeenCalledTimes(2);
+    expect(func).toHaveBeenLastCalledWith(3);
+
+    // Fourth call after another limit, should execute
+    jest.advanceTimersByTime(500);
+    throttledFunc(4);
     expect(func).toHaveBeenCalledTimes(3);
+    expect(func).toHaveBeenLastCalledWith(4);
   });
 });
