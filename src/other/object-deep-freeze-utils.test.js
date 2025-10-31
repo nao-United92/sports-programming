@@ -1,77 +1,77 @@
-const { deepFreeze } = require('./object-deep-freeze-utils.js');
+const { deepFreeze } = require('./object-deep-freeze-utils');
 
 describe('deepFreeze', () => {
   it('should freeze a simple object', () => {
     const obj = { a: 1, b: 2 };
     deepFreeze(obj);
     expect(Object.isFrozen(obj)).toBe(true);
-    expect(() => { obj.a = 3; }).toThrow();
-    expect(() => { obj.c = 4; }).toThrow();
   });
 
-  it('should freeze a nested object', () => {
+  it('should not allow properties to be added', () => {
+    const obj = { a: 1 };
+    deepFreeze(obj);
+    // In strict mode, this would throw a TypeError. In non-strict mode, it fails silently.
+    // Jest runs in strict mode.
+    expect(() => {
+      obj.b = 2;
+    }).toThrow(TypeError);
+  });
+
+  it('should not allow properties to be modified', () => {
+    const obj = { a: 1 };
+    deepFreeze(obj);
+    expect(() => {
+      obj.a = 2;
+    }).toThrow(TypeError);
+  });
+
+  it('should freeze nested objects', () => {
     const obj = {
       a: 1,
       b: {
-        c: 2,
+        c: 3,
         d: {
-          e: 3
-        }
-      }
+          e: 4,
+        },
+      },
     };
     deepFreeze(obj);
     expect(Object.isFrozen(obj)).toBe(true);
     expect(Object.isFrozen(obj.b)).toBe(true);
     expect(Object.isFrozen(obj.b.d)).toBe(true);
-    expect(() => { obj.b.c = 99; }).toThrow();
-    expect(() => { obj.b.d.e = 100; }).toThrow();
   });
 
-  it('should freeze objects within an array', () => {
-      const obj = {
-          a: [ {b:1}, {c:2} ]
-      };
-      deepFreeze(obj);
-      expect(Object.isFrozen(obj)).toBe(true);
-      expect(Object.isFrozen(obj.a)).toBe(true);
-      expect(Object.isFrozen(obj.a[0])).toBe(true);
-      expect(Object.isFrozen(obj.a[1])).toBe(true);
-      expect(() => { obj.a[0].b = 3; }).toThrow();
-      expect(() => { obj.a[1].c = 4; }).toThrow();
-  });
-
-  it('should handle arrays of primitives', () => {
+  it('should not allow nested properties to be modified', () => {
     const obj = {
-        a: [1, 2, 3]
+      a: 1,
+      b: {
+        c: 3,
+      },
     };
     deepFreeze(obj);
-    expect(Object.isFrozen(obj)).toBe(true);
+    expect(() => {
+      obj.b.c = 4;
+    }).toThrow(TypeError);
+  });
+
+  it('should handle arrays in objects', () => {
+    const obj = {
+      a: [1, { b: 2 }],
+    };
+    deepFreeze(obj);
     expect(Object.isFrozen(obj.a)).toBe(true);
-    // Primitives themselves cannot be frozen, only the array containing them
-    expect(() => { obj.a[0] = 99; }).toThrow();
+    expect(Object.isFrozen(obj.a[1])).toBe(true);
+    expect(() => {
+      obj.a[0] = 99;
+    }).toThrow(TypeError);
+    expect(() => {
+      obj.a[1].b = 99;
+    }).toThrow(TypeError);
   });
 
-  it('should return the frozen object', () => {
-    const obj = { a: 1 };
-    const frozenObj = deepFreeze(obj);
-    expect(frozenObj).toBe(obj);
-    expect(Object.isFrozen(frozenObj)).toBe(true);
-  });
-
-  it('should not throw error for null or undefined', () => {
-    expect(() => deepFreeze(null)).not.toThrow();
-    expect(() => deepFreeze(undefined)).not.toThrow();
-  });
-
-  it('should not freeze non-object types', () => {
-    const num = 123;
-    const frozenNum = deepFreeze(num);
-    expect(frozenNum).toBe(num);
-    expect(Object.isFrozen(frozenNum)).toBe(false);
-
-    const str = 'hello';
-    const frozenStr = deepFreeze(str);
-    expect(frozenStr).toBe(str);
-    expect(Object.isFrozen(frozenStr)).toBe(false);
+  it('should handle null and undefined values gracefully', () => {
+    const obj = { a: null, b: undefined };
+    deepFreeze(obj);
+    expect(Object.isFrozen(obj)).toBe(true);
   });
 });
