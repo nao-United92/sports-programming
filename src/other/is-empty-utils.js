@@ -1,20 +1,30 @@
 /**
- * Checks if `value` is an empty object, collection, or string.
+ * Checks if a value is empty. Supports objects, arrays, strings, Maps, and Sets.
  *
- * @param {*} value The value to inspect.
- * @returns {boolean} Returns `true` if `value` is empty, else `false`.
+ * A value is considered empty if:
+ * - It's null or undefined.
+ * - It's an empty array, string, Map, or Set.
+ * - It's an object with no own enumerable string-keyed properties.
+ *
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if the value is empty, else `false`.
  */
-function isEmpty(value) {
+export const isEmpty = (value) => {
   if (value == null) {
     return true;
   }
-  if (Array.isArray(value) || typeof value === 'string') {
-    return !value.length;
-  }
-  if (typeof value === 'object') {
-    return !Object.keys(value).length;
-  }
-  return false;
-}
 
-module.exports = { isEmpty };
+  if (Array.isArray(value) || typeof value === 'string') {
+    return value.length === 0;
+  }
+
+  if (value instanceof Map || value instanceof Set) {
+    return value.size === 0;
+  }
+
+  if (typeof value === 'object') {
+    return Object.keys(value).length === 0;
+  }
+
+  return false;
+};

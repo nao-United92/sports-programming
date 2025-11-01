@@ -1,5 +1,6 @@
-import { debounce } from './debounce-utils';
+import { debounce } from './debounce-utils.js';
 
+// Mock setTimeout and clearTimeout
 jest.useFakeTimers();
 
 describe('debounce', () => {
@@ -8,40 +9,47 @@ describe('debounce', () => {
 
   beforeEach(() => {
     func = jest.fn();
-    debouncedFunc = debounce(func, 500);
+    debouncedFunc = debounce(func, 1000);
   });
 
-  it('should not call the function immediately', () => {
+  test('should not call the function immediately', () => {
     debouncedFunc();
     expect(func).not.toHaveBeenCalled();
   });
 
-  it('should call the function only once after the wait time', () => {
-    for (let i = 0; i < 5; i++) {
+  test('should call the function only once after the wait time', () => {
+    for (let i = 0; i < 10; i++) {
       debouncedFunc();
     }
 
-    jest.advanceTimersByTime(500);
+    // Fast-forward time
+    jest.runAllTimers();
+
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should reset the timer if called again within the wait time', () => {
-    debouncedFunc();
-    jest.advanceTimersByTime(300);
-    debouncedFunc();
-    jest.advanceTimersByTime(400);
-
-    expect(func).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1);
-  });
-
-  it('should pass the latest arguments to the debounced function', () => {
+  test('should call the function with the latest arguments', () => {
     debouncedFunc(1);
     debouncedFunc(2);
+    debouncedFunc(3);
+
+    jest.runAllTimers();
+
+    expect(func).toHaveBeenCalledWith(3);
+  });
+
+  test('resets the timer if called again within the wait time', () => {
+    debouncedFunc();
+    expect(func).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    expect(func).toHaveBeenCalledWith(2);
+    debouncedFunc(); // Called again after 500ms
+    expect(func).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(999);
+    expect(func).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(1);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 });

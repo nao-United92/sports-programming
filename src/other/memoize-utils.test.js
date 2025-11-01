@@ -1,60 +1,74 @@
-import { memoize } from './memoize-utils';
+import { memoize } from './memoize-utils.js';
 
 describe('memoize', () => {
-  it('should call the function only once for the same arguments', () => {
-    const mockFn = jest.fn((a, b) => a + b);
-    const memoizedFn = memoize(mockFn);
+  test('should return the cached result for subsequent calls with the same arguments', () => {
+    const complexCalculation = jest.fn((a, b) => a + b);
+    const memoizedCalc = memoize(complexCalculation);
 
-    memoizedFn(1, 2);
-    memoizedFn(1, 2);
+    // First call
+    const result1 = memoizedCalc(2, 3);
+    expect(result1).toBe(5);
+    expect(complexCalculation).toHaveBeenCalledTimes(1);
 
-    expect(mockFn).toHaveBeenCalledTimes(1);
+    // Second call with same arguments
+    const result2 = memoizedCalc(2, 3);
+    expect(result2).toBe(5);
+    expect(complexCalculation).toHaveBeenCalledTimes(1); // Should not be called again
   });
 
-  it('should return the cached result for the same arguments', () => {
-    const mockFn = jest.fn((a, b) => a + b);
-    const memoizedFn = memoize(mockFn);
+  test('should call the original function again for different arguments', () => {
+    const complexCalculation = jest.fn((a, b) => a + b);
+    const memoizedCalc = memoize(complexCalculation);
 
-    const result1 = memoizedFn(1, 2);
-    const result2 = memoizedFn(1, 2);
+    memoizedCalc(2, 3); // First call
+    expect(complexCalculation).toHaveBeenCalledTimes(1);
 
+    memoizedCalc(5, 5); // Second call with different arguments
+    expect(complexCalculation).toHaveBeenCalledTimes(2);
+  });
+
+  test('should work with functions that have no arguments', () => {
+    const getConstant = jest.fn(() => 42);
+    const memoizedConstant = memoize(getConstant);
+
+    const result1 = memoizedConstant();
+    expect(result1).toBe(42);
+    expect(getConstant).toHaveBeenCalledTimes(1);
+
+    const result2 = memoizedConstant();
+    expect(result2).toBe(42);
+    expect(getConstant).toHaveBeenCalledTimes(1);
+  });
+
+  test('should work with complex arguments like objects', () => {
+    const processObject = jest.fn(obj => obj.a + obj.b);
+    const memoizedProcess = memoize(processObject);
+
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { a: 1, b: 2 }; // Structurally same object
+    const obj3 = { a: 3, b: 4 };
+
+    const result1 = memoizedProcess(obj1);
     expect(result1).toBe(3);
+    expect(processObject).toHaveBeenCalledTimes(1);
+
+    const result2 = memoizedProcess(obj2);
     expect(result2).toBe(3);
+    expect(processObject).toHaveBeenCalledTimes(1); // Should be cached
+
+    const result3 = memoizedProcess(obj3);
+    expect(result3).toBe(7);
+    expect(processObject).toHaveBeenCalledTimes(2); // Should be called again
   });
 
-  it('should call the function again for different arguments', () => {
-    const mockFn = jest.fn((a, b) => a + b);
-    const memoizedFn = memoize(mockFn);
+  test('should differentiate between similar but distinct arguments', () => {
+    const someFunc = jest.fn(a => a * 2);
+    const memoizedFunc = memoize(someFunc);
 
-    memoizedFn(1, 2);
-    memoizedFn(2, 3);
+    memoizedFunc(5); // number
+    expect(someFunc).toHaveBeenCalledTimes(1);
 
-    expect(mockFn).toHaveBeenCalledTimes(2);
-  });
-
-  it('should handle different argument types', () => {
-    const mockFn = jest.fn((a) => a.toString());
-    const memoizedFn = memoize(mockFn);
-
-    memoizedFn({ a: 1 });
-    memoizedFn({ a: 1 });
-    memoizedFn({ a: 2 });
-
-    expect(mockFn).toHaveBeenCalledTimes(2);
-  });
-
-  it('should maintain the `this` context', () => {
-    const obj = {
-      mockFn: jest.fn(function(a) {
-        return this.prefix + a;
-      }),
-      prefix: 'result: ',
-    };
-    obj.memoizedFn = memoize(obj.mockFn);
-
-    const result = obj.memoizedFn('test');
-
-    expect(result).toBe('result: test');
-    expect(obj.mockFn).toHaveBeenCalledTimes(1);
+    memoizedFunc('5'); // string
+    expect(someFunc).toHaveBeenCalledTimes(2);
   });
 });

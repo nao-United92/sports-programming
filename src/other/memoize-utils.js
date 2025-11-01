@@ -1,4 +1,11 @@
-export const memoize = (fn) => {
+/**
+ * Creates a memoized version of a function. The memoized function caches the
+ * results of the original function for a given set of arguments.
+ *
+ * @param {Function} func The function to memoize.
+ * @returns {Function} Returns the new memoized function.
+ */
+export const memoize = (func) => {
   const cache = new Map();
 
   return function(...args) {
@@ -8,7 +15,7 @@ export const memoize = (fn) => {
       return cache.get(key);
     }
 
-    const result = fn.apply(this, args);
+    const result = func.apply(this, args);
     cache.set(key, result);
 
     return result;
