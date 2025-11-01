@@ -1,4 +1,4 @@
-import { isEmpty, deepClone } from './object-utils.js';
+import { isEmpty, deepClone, isEqual } from './object-utils.js';
 
 describe('isEmpty', () => {
   test('should return true for null', () => {
@@ -105,5 +105,62 @@ describe('deepClone', () => {
     expect(cloned.e).not.toBe(original.e);
     expect(cloned.e.f).not.toBe(original.e.f);
     expect(cloned.e.g).not.toBe(original.e.g);
+  });
+});
+
+describe('isEqual', () => {
+  test('should return true for identical primitive values', () => {
+    expect(isEqual(1, 1)).toBe(true);
+    expect(isEqual('a', 'a')).toBe(true);
+    expect(isEqual(true, true)).toBe(true);
+  });
+
+  test('should return false for different primitive values', () => {
+    expect(isEqual(1, 2)).toBe(false);
+    expect(isEqual('a', 'b')).toBe(false);
+    expect(isEqual(true, false)).toBe(false);
+  });
+
+  test('should return true for identical objects', () => {
+    const obj1 = { a: 1, b: { c: 2 } };
+    const obj2 = { a: 1, b: { c: 2 } };
+    expect(isEqual(obj1, obj2)).toBe(true);
+  });
+
+  test('should return false for different objects', () => {
+    const obj1 = { a: 1, b: { c: 2 } };
+    const obj2 = { a: 1, b: { c: 3 } };
+    expect(isEqual(obj1, obj2)).toBe(false);
+  });
+
+  test('should return true for identical arrays', () => {
+    const arr1 = [1, [2, 3]];
+    const arr2 = [1, [2, 3]];
+    expect(isEqual(arr1, arr2)).toBe(true);
+  });
+
+  test('should return false for different arrays', () => {
+    const arr1 = [1, [2, 3]];
+    const arr2 = [1, [2, 4]];
+    expect(isEqual(arr1, arr2)).toBe(false);
+  });
+
+  test('should handle null and undefined', () => {
+    expect(isEqual(null, null)).toBe(true);
+    expect(isEqual(undefined, undefined)).toBe(true);
+    expect(isEqual(null, undefined)).toBe(false);
+    expect(isEqual({}, null)).toBe(false);
+  });
+
+  test('should return true for identical Date objects', () => {
+    const date1 = new Date('2020-01-01');
+    const date2 = new Date('2020-01-01');
+    expect(isEqual(date1, date2)).toBe(true);
+  });
+
+  test('should return true for identical RegExp objects', () => {
+    const regex1 = /a/g;
+    const regex2 = /a/g;
+    expect(isEqual(regex1, regex2)).toBe(true);
   });
 });
