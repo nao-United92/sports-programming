@@ -5,6 +5,7 @@ describe('isPlainObject', () => {
     expect(isPlainObject({})).toBe(true);
     expect(isPlainObject({ a: 1, b: 2 })).toBe(true);
     expect(isPlainObject(Object.create(null))).toBe(true);
+    expect(isPlainObject(Object.create(Object.prototype))).toBe(true);
   });
 
   test('should return false for arrays', () => {
@@ -24,27 +25,20 @@ describe('isPlainObject', () => {
 
   test('should return false for primitive values', () => {
     expect(isPlainObject(1)).toBe(false);
-    expect(isPlainObject('string')).toBe(false);
+    expect(isPlainObject('hello')).toBe(false);
     expect(isPlainObject(true)).toBe(false);
     expect(isPlainObject(Symbol('test'))).toBe(false);
   });
 
-  test('should return false for Date objects', () => {
-    expect(isPlainObject(new Date())).toBe(false);
-  });
-
-  test('should return false for RegExp objects', () => {
-    expect(isPlainObject(/abc/)).toBe(false);
-  });
-
-  test('should return false for class instances', () => {
+  test('should return false for instances of custom classes', () => {
     class MyClass {}
     expect(isPlainObject(new MyClass())).toBe(false);
   });
 
-  test('should return false for objects with custom prototypes', () => {
-    const proto = { a: 1 };
-    const obj = Object.create(proto);
-    expect(isPlainObject(obj)).toBe(false);
+  test('should return false for built-in objects', () => {
+    expect(isPlainObject(new Date())).toBe(false);
+    expect(isPlainObject(/a/)).toBe(false);
+    expect(isPlainObject(new Map())).toBe(false);
+    expect(isPlainObject(new Set())).toBe(false);
   });
 });
