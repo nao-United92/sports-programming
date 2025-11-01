@@ -1,47 +1,62 @@
-import { curry } from './curry-utils';
+import { curry } from './curry-utils.js';
 
 describe('curry', () => {
-  it('should return a curried function', () => {
-    const add = (a, b, c) => a + b + c;
-    const curriedAdd = curry(add);
+  // A simple function to test currying
+  const add = (a, b, c) => a + b + c;
 
-    expect(typeof curriedAdd).toBe('function');
+  test('should return a function when not all arguments are provided', () => {
+    const curriedAdd = curry(add);
+    expect(typeof curriedAdd(1)).toBe('function');
+    expect(typeof curriedAdd(1)(2)).toBe('function');
   });
 
-  it('should allow partial application of arguments', () => {
-    const add = (a, b, c) => a + b + c;
+  test('should execute the function when all arguments are provided at once', () => {
     const curriedAdd = curry(add);
-
-    const add5 = curriedAdd(5);
-    const add5and6 = add5(6);
-
-    expect(add5and6(7)).toBe(18);
+    expect(curriedAdd(1, 2, 3)).toBe(6);
   });
 
-  it('should work when all arguments are passed at once', () => {
-    const multiply = (a, b, c) => a * b * c;
+  test('should execute the function when all arguments are provided step-by-step', () => {
+    const curriedAdd = curry(add);
+    expect(curriedAdd(1)(2)(3)).toBe(6);
+  });
+
+  test('should execute the function when arguments are provided in mixed steps', () => {
+    const curriedAdd = curry(add);
+    expect(curriedAdd(1, 2)(3)).toBe(6);
+    expect(curriedAdd(1)(2, 3)).toBe(6);
+  });
+
+  test('should work with functions having fewer arguments', () => {
+    const multiply = (a, b) => a * b;
     const curriedMultiply = curry(multiply);
-
-    expect(curriedMultiply(2, 3, 4)).toBe(24);
+    expect(curriedMultiply(2)(5)).toBe(10);
+    expect(curriedMultiply(3, 4)).toBe(12);
   });
 
-  it('should handle functions with no arguments', () => {
-    const fn = () => 'hello';
-    const curriedFn = curry(fn);
-
-    expect(curriedFn()).toBe('hello');
+  test('should work with functions having no arguments', () => {
+    const greet = () => 'Hello';
+    const curriedGreet = curry(greet);
+    expect(curriedGreet()).toBe('Hello');
   });
 
-  it('should maintain the `this` context', () => {
+  test('should maintain `this` context if bound explicitly or called as method', () => {
     const obj = {
-      val: 10,
+      value: 10,
       add: function(a, b) {
-        return this.val + a + b;
+        return this.value + a + b;
       },
     };
     const curriedAdd = curry(obj.add);
-    const boundCurriedAdd = curriedAdd.bind(obj);
 
-    expect(boundCurriedAdd(5)(3)).toBe(18);
+    // Using call/apply to set `this` context
+    expect(curriedAdd.call(obj, 1, 2)).toBe(13);
+    expect(curriedAdd.apply(obj, [1, 2])).toBe(13);
+
+    // Currying step-by-step with `this` context
+    const step1 = curriedAdd.call(obj, 1);
+    expect(step1(2)).toBe(13);
+
+    const step2 = curriedAdd(1).bind(obj);
+    expect(step2(2)).toBe(13);
   });
 });
