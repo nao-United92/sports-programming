@@ -34,3 +34,40 @@ export const median = (arr) => {
 
   return sorted[mid];
 };
+
+/**
+ * Calculates the mode(s) of an array of numbers.
+ *
+ * @param {number[]} arr The array of numbers.
+ * @returns {number[]} An array of the most frequent numbers.
+ */
+export const mode = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return [];
+  }
+
+  const counts = arr.reduce((acc, val) => {
+    acc[val] = (acc[val] || 0) + 1;
+    return acc;
+  }, {});
+
+  let maxFreq = 0;
+  for (const key in counts) {
+    if (counts[key] > maxFreq) {
+      maxFreq = counts[key];
+    }
+  }
+
+  if (maxFreq <= 1) {
+    return [];
+  }
+
+  const modes = [];
+  for (const key in counts) {
+    if (counts[key] === maxFreq) {
+      modes.push(Number(key));
+    }
+  }
+
+  return modes.sort((a, b) => a - b);
+};

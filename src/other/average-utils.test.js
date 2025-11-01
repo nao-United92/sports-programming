@@ -1,5 +1,5 @@
 
-import { average, median } from './average-utils.js';
+import { average, median, mode } from './average-utils.js';
 
 describe('average', () => {
   test('should calculate the average of an array of numbers', () => {
@@ -39,5 +39,27 @@ describe('median', () => {
 
   test('should handle negative numbers', () => {
     expect(median([-1, -5, -2, -8, -3])).toBe(-3);
+  });
+});
+
+describe('mode', () => {
+  test('should find the single mode in an array', () => {
+    expect(mode([1, 2, 2, 3, 4])).toEqual([2]);
+  });
+
+  test('should find multiple modes in an array', () => {
+    expect(mode([1, 1, 2, 2, 3])).toEqual([1, 2]);
+  });
+
+  test('should return an empty array if all elements are unique', () => {
+    expect(mode([1, 2, 3, 4, 5])).toEqual([]);
+  });
+
+  test('should return an empty array for an empty array', () => {
+    expect(mode([])).toEqual([]);
+  });
+
+  test('should handle negative numbers', () => {
+    expect(mode([-1, -2, -2, -3])).toEqual([-2]);
   });
 });

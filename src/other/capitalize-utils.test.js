@@ -1,4 +1,4 @@
-import { capitalizeFirstLetter, capitalizeWords } from './capitalize-utils.js';
+import { capitalizeFirstLetter, capitalizeWords, decapitalizeFirstLetter } from './capitalize-utils.js';
 
 describe('capitalizeFirstLetter', () => {
   test('should capitalize the first letter of a string', () => {
@@ -47,5 +47,34 @@ describe('capitalizeWords', () => {
 
   test('should handle strings with extra spaces', () => {
     expect(capitalizeWords('  hello   world  ')).toBe('  Hello   World  ');
+  });
+});
+
+describe('decapitalizeFirstLetter', () => {
+  test('should decapitalize the first letter of a string', () => {
+    expect(decapitalizeFirstLetter('Hello')).toBe('hello');
+    expect(decapitalizeFirstLetter('World')).toBe('world');
+    expect(decapitalizeFirstLetter('FooBar')).toBe('fooBar');
+  });
+
+  test('should return an empty string for an empty string input', () => {
+    expect(decapitalizeFirstLetter('')).toBe('');
+  });
+
+  test('should handle strings with leading spaces', () => {
+    expect(decapitalizeFirstLetter('  Test')).toBe('  Test');
+  });
+
+  test('should return an empty string for non-string inputs', () => {
+    expect(decapitalizeFirstLetter(null)).toBe('');
+    expect(decapitalizeFirstLetter(undefined)).toBe('');
+    expect(decapitalizeFirstLetter(123)).toBe('');
+    expect(decapitalizeFirstLetter({})).toBe('');
+    expect(decapitalizeFirstLetter([])).toBe('');
+  });
+
+  test('should handle single character strings', () => {
+    expect(decapitalizeFirstLetter('A')).toBe('a');
+    expect(decapitalizeFirstLetter('z')).toBe('z');
   });
 });

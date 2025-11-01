@@ -16,3 +16,15 @@ export const capitalizeWords = (str) => {
   }
   return str.replace(/\b\w/g, char => char.toUpperCase());
 };
+
+/**
+ * Decapitalizes the first letter of a string.
+ * @param {string} string The string to decapitalize.
+ * @returns {string} The decapitalized string.
+ */
+export const decapitalizeFirstLetter = (string) => {
+  if (typeof string !== 'string' || string.length === 0) {
+    return '';
+  }
+  return string.charAt(0).toLowerCase() + string.slice(1);
+};
