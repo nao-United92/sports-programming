@@ -7,3 +7,12 @@
  */
 export const compose = (...fns) => (initialValue) =>
   fns.reduceRight((acc, fn) => fn(acc), initialValue);
+
+/**
+ * Performs left-to-right function composition.
+ *
+ * @param {...Function} fns The functions to compose.
+ * @returns {Function} Returns the new composite function.
+ */
+export const pipe = (...fns) => (initialValue) =>
+  fns.reduce((acc, fn) => fn(acc), initialValue);

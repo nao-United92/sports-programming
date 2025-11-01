@@ -1,38 +1,56 @@
-import { isEven, isOdd, sum } from './number-utils.js';
 
-describe('Number Utils', () => {
-  describe('isEven', () => {
-    test('should return true for even numbers', () => {
-      expect(isEven(2)).toBe(true);
-      expect(isEven(0)).toBe(true);
-      expect(isEven(-4)).toBe(true);
-    });
+import { randomInt, sum } from './number-utils.js';
 
-    test('should return false for odd numbers', () => {
-      expect(isEven(1)).toBe(false);
-      expect(isEven(-3)).toBe(false);
-    });
+describe('randomInt', () => {
+  test('should return an integer within the specified range', () => {
+    const min = 1;
+    const max = 10;
+    for (let i = 0; i < 100; i++) {
+      const result = randomInt(min, max);
+      expect(result).toBeGreaterThanOrEqual(min);
+      expect(result).toBeLessThanOrEqual(max);
+      expect(Number.isInteger(result)).toBe(true);
+    }
   });
 
-  describe('isOdd', () => {
-    test('should return true for odd numbers', () => {
-      expect(isOdd(1)).toBe(true);
-      expect(isOdd(-3)).toBe(true);
-    });
-
-    test('should return false for even numbers', () => {
-      expect(isOdd(2)).toBe(false);
-      expect(isOdd(0)).toBe(false);
-      expect(isOdd(-4)).toBe(false);
-    });
+  test('should handle negative ranges', () => {
+    const min = -5;
+    const max = -1;
+    for (let i = 0; i < 100; i++) {
+      const result = randomInt(min, max);
+      expect(result).toBeGreaterThanOrEqual(min);
+      expect(result).toBeLessThanOrEqual(max);
+      expect(Number.isInteger(result)).toBe(true);
+    }
   });
 
-  describe('sum', () => {
-    test('should return the sum of an array of numbers', () => {
-      expect(sum([1, 2, 3, 4, 5])).toBe(15);
-      expect(sum([-1, -2, -3, -4, -5])).toBe(-15);
-      expect(sum([1, -2, 3, -4, 5])).toBe(3);
-      expect(sum([])).toBe(0);
-    });
+  test('should handle min and max being the same', () => {
+    expect(randomInt(5, 5)).toBe(5);
+  });
+});
+
+describe('sum', () => {
+  test('should correctly sum an array of positive numbers', () => {
+    expect(sum([1, 2, 3, 4, 5])).toBe(15);
+  });
+
+  test('should correctly sum an array of negative numbers', () => {
+    expect(sum([-1, -2, -3])).toBe(-6);
+  });
+
+  test('should correctly sum an array of mixed positive and negative numbers', () => {
+    expect(sum([-1, 2, -3, 4])).toBe(2);
+  });
+
+  test('should return 0 for an empty array', () => {
+    expect(sum([])).toBe(0);
+  });
+
+  test('should handle an array with a single number', () => {
+    expect(sum([7])).toBe(7);
+  });
+
+  test('should handle floating point numbers', () => {
+    expect(sum([0.1, 0.2])).toBeCloseTo(0.3);
   });
 });

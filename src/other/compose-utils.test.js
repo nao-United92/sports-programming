@@ -1,4 +1,4 @@
-import { compose } from './compose-utils.js';
+import { compose, pipe } from './compose-utils.js';
 
 describe('compose', () => {
   const add1 = (x) => x + 1;
@@ -70,5 +70,27 @@ describe('compose', () => {
     const add5 = (x) => x + 5;
     const composedWithUnary = compose(multiply2, add5);
     expect(composedWithUnary(10)).toBe((10 + 5) * 2); // (15) * 2 = 30
+  });
+});
+
+describe('pipe', () => {
+  const add1 = (x) => x + 1;
+  const multiply2 = (x) => x * 2;
+  const subtract3 = (x) => x - 3;
+
+  test('should compose functions from left to right', () => {
+    const piped = pipe(add1, multiply2, subtract3);
+    // (5 + 1) * 2 - 3 = 9
+    expect(piped(5)).toBe(9);
+  });
+
+  test('should return the initial value if no functions are provided', () => {
+    const piped = pipe();
+    expect(piped(10)).toBe(10);
+  });
+
+  test('should work with a single function', () => {
+    const piped = pipe(add1);
+    expect(piped(10)).toBe(11);
   });
 });

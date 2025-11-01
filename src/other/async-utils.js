@@ -140,3 +140,33 @@ export async function asyncPool(poolLimit, tasks) {
   }
   return Promise.all(results);
 }
+
+/**
+ * Memoizes an async function.
+ *
+ * @param {Function} fn The async function to memoize.
+ * @param {Function} [resolver] A function to generate the cache key.
+ * @returns {Function} Returns the new memoized function.
+ */
+export const memoizeAsync = (fn, resolver) => {
+  const cache = new Map();
+
+  return async function(...args) {
+    const key = resolver ? resolver(...args) : JSON.stringify(args);
+
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+
+    const promise = fn(...args);
+    cache.set(key, promise);
+
+    promise.catch(() => {
+      if (cache.get(key) === promise) {
+        cache.delete(key);
+      }
+    });
+
+    return promise;
+  };
+};
