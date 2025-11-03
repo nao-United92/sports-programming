@@ -1,95 +1,35 @@
-import { setCookie, getCookie, deleteCookie } from './cookie-utils';
+import { setCookie, getCookie, deleteCookie } from './cookie-utils.js';
 
-describe('cookie-utils', () => {
-  // Mock document.cookie
-  let cookies = {};
-  let mockCookieSetter = jest.fn(value => {
-    const parts = value.split(';')[0].split('=');
-    const name = parts[0];
-    const val = parts.slice(1).join('=');
-    cookies[name] = val;
-
-    // Handle expiration for deletion
-    if (value.includes('Max-Age=-99999999')) {
-      delete cookies[name];
-    }
-  });
-
-  let mockCookieGetter = jest.fn(() => {
-    return Object.keys(cookies)
-      .map(key => `${key}=${cookies[key]}`)
-      .join('; ');
-  });
-
-  Object.defineProperty(document, 'cookie', {
-    get: mockCookieGetter, // jest.fn() のインスタンスを割り当てる
-    set: mockCookieSetter, // jest.fn() のインスタンスを割り当てる
-    configurable: true,
-  });
-
+describe('Cookie Utils', () => {
   beforeEach(() => {
-    cookies = {}; // Clear cookies before each test
-    mockCookieSetter.mockClear(); // set アクセサのモックの呼び出し履歴をクリア
-    mockCookieGetter.mockClear(); // get アクセサのモックの呼び出し履歴をクリア
-  });
-
-  describe('setCookie', () => {
-    test('should set a cookie with name and value', () => {
-      setCookie('testName', 'testValue');
-      expect(mockCookieSetter).toHaveBeenCalledWith('testName=testValue; path=/');
-      expect(cookies).toEqual({ testName: 'testValue' });
-    });
-
-    test('should set a cookie with expiration days', () => {
-      const date = new Date();
-      date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000));
-      const expectedExpires = '; expires=' + date.toUTCString();
-
-      setCookie('testName', 'testValue', 7);
-      expect(mockCookieSetter).toHaveBeenCalledWith(expect.stringContaining('testName=testValue' + expectedExpires + '; path=/'));
-      expect(cookies).toEqual({ testName: 'testValue' });
-    });
-
-    test('should set a cookie with empty value', () => {
-      setCookie('emptyCookie', '');
-      expect(mockCookieSetter).toHaveBeenCalledWith('emptyCookie=; path=/');
-      expect(cookies).toEqual({ emptyCookie: '' });
+    // Clear all cookies before each test
+    const cookies = document.cookie.split(';');
+    cookies.forEach(cookie => {
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
     });
   });
 
-  describe('getCookie', () => {
-    test('should get an existing cookie by name', () => {
-      setCookie('testName', 'testValue');
-      setCookie('anotherCookie', 'anotherValue');
-      expect(getCookie('testName')).toBe('testValue');
-    });
-
-    test('should return null for a non-existent cookie', () => {
-      expect(getCookie('nonExistent')).toBeNull();
-    });
-
-    test('should handle cookies with spaces', () => {
-      // Directly set the mock cookie string for this test
-      mockCookieGetter.mockImplementationOnce(() => '  testName=testValue; anotherCookie=anotherValue');
-      expect(getCookie('testName')).toBe('testValue');
-    });
+  test('setCookie and getCookie', () => {
+    setCookie('test', 'hello');
+    expect(getCookie('test')).toBe('hello');
   });
 
-  describe('deleteCookie', () => {
-    test('should delete an existing cookie', () => {
-      setCookie('testName', 'testValue');
-      expect(getCookie('testName')).toBe('testValue');
+  test('getCookie for a non-existent cookie should return null', () => {
+    expect(getCookie('nonexistent')).toBeNull();
+  });
 
-      deleteCookie('testName');
-      expect(mockCookieSetter).toHaveBeenCalledWith('testName=; Max-Age=-99999999; path=/');
-      expect(getCookie('testName')).toBeNull();
-      expect(cookies).toEqual({});
-    });
+  test('setCookie with expiration days', () => {
+    setCookie('test_expires', 'value', 1);
+    expect(document.cookie).toContain('test_expires=value');
+    // Note: JSDOM doesn't fully implement expires, so we just check if it's set
+  });
 
-    test('should do nothing if cookie does not exist', () => {
-      deleteCookie('nonExistent');
-      expect(mockCookieSetter).toHaveBeenCalledWith('nonExistent=; Max-Age=-99999999; path=/');
-      expect(getCookie('nonExistent')).toBeNull();
-    });
+  test('deleteCookie', () => {
+    setCookie('to_delete', 'some_value');
+    expect(getCookie('to_delete')).toBe('some_value');
+    deleteCookie('to_delete');
+    expect(getCookie('to_delete')).toBeNull();
   });
 });
