@@ -1,30 +1,38 @@
 /**
  * Checks if a string is a valid email address.
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is a valid email, false otherwise.
+ * @param {string} email The email string to validate.
+ * @returns {boolean} True if the email is valid, false otherwise.
  */
-export const isEmail = (str) => {
-  if (typeof str !== 'string') {
-    return false;
-  }
-  // A simple regex for email validation, not fully RFC 5322 compliant but good enough for most cases.
-  const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return emailRegex.test(str);
+export const isValidEmail = (email) => {
+  const re = /.+@.+\..+/;
+  return re.test(String(email).toLowerCase());
 };
 
 /**
  * Checks if a string is a valid URL.
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is a valid URL, false otherwise.
+ * @param {string} url The URL string to validate.
+ * @returns {boolean} True if the URL is valid, false otherwise.
  */
-export const isURL = (str) => {
-  if (typeof str !== 'string') {
-    return false;
-  }
+export const isValidURL = (url) => {
   try {
-    new URL(str);
+    new URL(url);
     return true;
   } catch (e) {
     return false;
   }
+};
+
+/**
+ * Checks if a password meets a minimum strength requirement.
+ * (At least 8 characters, one uppercase, one lowercase, one number, one special character)
+ * @param {string} password The password string to validate.
+ * @returns {boolean} True if the password is strong, false otherwise.
+ */
+export const isStrongPassword = (password) => {
+  const hasMinLength = password.length >= 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  return hasMinLength && hasUppercase && hasLowercase && hasNumber && hasSpecialChar;
 };
