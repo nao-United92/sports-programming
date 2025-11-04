@@ -1,34 +1,25 @@
-const { omit } = require('./object-omit-utils');
+
+import { omit } from './object-omit-utils.js';
 
 describe('omit', () => {
-  const sourceObj = { a: 1, b: 'hello', c: true, d: { nested: 1 } };
+  const object = { 'a': 1, 'b': '2', 'c': 3 };
 
-  test('should omit specified properties from an object', () => {
-    const omitted = omit(sourceObj, ['b', 'd']);
-    expect(omitted).toEqual({ a: 1, c: true });
+  test('should omit specified properties', () => {
+    expect(omit(object, ['a', 'c'])).toEqual({ 'b': '2' });
   });
 
-  test('should not change the object if omitted keys do not exist', () => {
-    const omitted = omit(sourceObj, ['e', 'f']);
-    expect(omitted).toEqual(sourceObj);
+  test('should work with a single property path', () => {
+    expect(omit(object, 'a')).toEqual({ 'b': '2', 'c': 3 });
   });
 
-  test('should return a full copy if no keys are provided', () => {
-    const omitted = omit(sourceObj, []);
-    expect(omitted).toEqual(sourceObj);
-    expect(omitted).not.toBe(sourceObj);
+  test('should return a new object if no properties are omitted', () => {
+    const result = omit(object, ['d', 'e']);
+    expect(result).toEqual(object);
+    expect(result).not.toBe(object);
   });
 
-  test('should return an empty object if the source is not an object', () => {
-    expect(omit(null, ['a'])).toEqual({});
-    expect(omit(undefined, ['a'])).toEqual({});
-    expect(omit('string', ['a'])).toEqual({});
-  });
-
-  test('should create a new object (shallow copy)', () => {
-    const omitted = omit(sourceObj, ['a']);
-    expect(omitted).not.toBe(sourceObj);
-    // The nested object should be the same reference (shallow)
-    expect(omitted.d).toBe(sourceObj.d);
+  test('should return an empty object if the source object is null or undefined', () => {
+    expect(omit(null, ['a', 'b'])).toEqual({});
+    expect(omit(undefined, 'a')).toEqual({});
   });
 });

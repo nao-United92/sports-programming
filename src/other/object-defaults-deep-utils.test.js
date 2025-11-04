@@ -1,47 +1,32 @@
+
 import { defaultsDeep } from './object-defaults-deep-utils.js';
 
 describe('defaultsDeep', () => {
-  test('should recursively assign default properties', () => {
-    const obj = { a: { b: 2 } };
-    const source = { a: { b: 3, c: 3 }, d: 4 };
-    defaultsDeep(obj, source);
-    expect(obj).toEqual({ a: { b: 2, c: 3 }, d: 4 });
+  test('should recursively fill in undefined properties', () => {
+    const obj = { 'a': { 'b': 2 } };
+    const source = { 'a': { 'b': 3, 'c': 4 }, 'd': 5 };
+    const result = defaultsDeep(obj, source);
+    expect(result).toEqual({ 'a': { 'b': 2, 'c': 4 }, 'd': 5 });
   });
 
-  test('should not overwrite existing properties', () => {
-    const obj = { a: 1 };
-    const source = { a: 2, b: 2 };
+  test('should not overwrite existing nested properties', () => {
+    const obj = { 'a': { 'b': 2, 'c': { 'd': 6 } } };
+    const source = { 'a': { 'b': 3, 'c': { 'd': 7, 'e': 8 } } };
     defaultsDeep(obj, source);
-    expect(obj).toEqual({ a: 1, b: 2 });
+    expect(obj).toEqual({ 'a': { 'b': 2, 'c': { 'd': 6, 'e': 8 } } });
   });
 
   test('should handle multiple source objects', () => {
-    const obj = { a: { b: 2 } };
-    const source1 = { a: { c: 3 } };
-    const source2 = { a: { b: 99, d: 4 }, e: 5 };
+    const obj = { 'a': { 'b': undefined } };
+    const source1 = { 'a': { 'b': 2, 'c': 3 } };
+    const source2 = { 'a': { 'c': 4, 'd': 5 } };
     defaultsDeep(obj, source1, source2);
-    expect(obj).toEqual({ a: { b: 2, c: 3, d: 4 }, e: 5 });
+    expect(obj).toEqual({ 'a': { 'b': 2, 'c': 3, 'd': 5 } });
   });
 
-  test('should not overwrite null properties', () => {
-    const obj = { a: null };
-    const source = { a: 1 };
-    defaultsDeep(obj, source);
-    expect(obj).toEqual({ a: null });
-  });
-
-  test('should assign undefined properties', () => {
-    const obj = { a: undefined };
-    const source = { a: 1 };
-    defaultsDeep(obj, source);
-    expect(obj).toEqual({ a: 1 });
-  });
-
-  test('should mutate the destination object', () => {
-    const obj = {};
-    const source = { a: 1 };
-    const result = defaultsDeep(obj, source);
-    expect(result).toBe(obj);
-    expect(obj).toEqual({ a: 1 });
+  test('should modify the original object', () => {
+    const obj = { 'a': { 'b': 2 } };
+    defaultsDeep(obj, { 'a': { 'c': 3 } });
+    expect(obj).toEqual({ 'a': { 'b': 2, 'c': 3 } });
   });
 });

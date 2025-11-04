@@ -1,9 +1,33 @@
-const debounce = (fn, ms = 0) => {
-  let timeoutId;
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked.
+ *
+ * @param {Function} func The function to debounce.
+ * @param {number} wait The number of milliseconds to delay.
+ * @param {boolean} immediate If `true`, trigger the function on the leading edge instead of the trailing.
+ * @returns {Function} Returns the new debounced function.
+ */
+export const debounce = (func, wait, immediate = false) => {
+  let timeout;
+
   return function(...args) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn.apply(this, args), ms);
+    const context = this;
+
+    const later = () => {
+      timeout = null;
+      if (!immediate) {
+        func.apply(context, args);
+      }
+    };
+
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+
+    if (callNow) {
+      func.apply(context, args);
+    }
   };
 };
-
-export { debounce };

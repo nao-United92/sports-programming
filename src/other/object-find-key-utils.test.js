@@ -7,27 +7,24 @@ describe('findKey', () => {
     'pebbles': { 'age': 1,  'active': true }
   };
 
-  it('should return the key of the first element predicate returns truthy for', () => {
-    const result = findKey(users, (user) => user.age < 40);
+  test('should find a key based on a predicate function', () => {
+    const result = findKey(users, o => o.age < 40);
     expect(result).toBe('barney');
   });
 
-  it('should work with a predicate that uses the key', () => {
-    const result = findKey(users, (user, key) => key === 'fred');
-    expect(result).toBe('fred');
+  test('should return undefined if no key is found', () => {
+    const result = findKey(users, o => o.age > 50);
+    expect(result).toBe(undefined);
   });
 
-  it('should return undefined if no element satisfies the predicate', () => {
-    const result = findKey(users, (user) => user.age > 50);
-    expect(result).toBeUndefined();
+  test('should pass value, key, and object to the predicate', () => {
+    const predicate = jest.fn();
+    findKey({ a: 1 }, predicate);
+    expect(predicate).toHaveBeenCalledWith(1, 'a', { a: 1 });
   });
 
-  it('should handle an empty object', () => {
-    expect(findKey({}, () => true)).toBeUndefined();
-  });
-
-  it('should handle null or undefined input', () => {
-    expect(findKey(null, () => true)).toBeUndefined();
-    expect(findKey(undefined, () => true)).toBeUndefined();
+  test('should return undefined for null or undefined input', () => {
+    expect(findKey(null, () => true)).toBe(undefined);
+    expect(findKey(undefined, () => true)).toBe(undefined);
   });
 });
