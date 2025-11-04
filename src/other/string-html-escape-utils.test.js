@@ -1,53 +1,32 @@
-import { escape, unescape } from './string-html-escape-utils.js';
+import { escapeHTML, unescapeHTML } from './string-html-escape-utils.js';
 
-describe('escape and unescape', () => {
-  const unescapedString = 'fred, barney, & pebbles';
-  const escapedString = 'fred, barney, &amp; pebbles';
+describe('escapeHTML and unescapeHTML', () => {
+  const unescaped = '<a>"Hello" & \'World\'</a>';
+  const escaped = '&lt;a&gt;&quot;Hello&quot; &amp; &#39;World&#39;&lt;/a&gt;';
 
-  const allSpecialChars = '<script>alert("XSS & Injection");</script>';
-  const allEscapedChars = '&lt;script&gt;alert(&quot;XSS &amp; Injection&quot;);&lt;/script&gt;';
-
-  describe('escape', () => {
-    test('should escape special HTML characters', () => {
-      expect(escape(unescapedString)).toBe(escapedString);
-    });
-
-    test('should escape all special characters correctly', () => {
-      expect(escape(allSpecialChars)).toBe(allEscapedChars);
-    });
-
-    test('should return the original string if no special characters are present', () => {
-      const str = 'hello world';
-      expect(escape(str)).toBe(str);
-    });
-
-    test('should handle an empty string', () => {
-      expect(escape('')).toBe('');
-    });
+  test('escapeHTML should convert special characters to HTML entities', () => {
+    expect(escapeHTML(unescaped)).toBe(escaped);
   });
 
-  describe('unescape', () => {
-    test('should unescape HTML entities', () => {
-      expect(unescape(escapedString)).toBe(unescapedString);
-    });
-
-    test('should unescape all entities correctly', () => {
-      expect(unescape(allEscapedChars)).toBe(allSpecialChars);
-    });
-
-    test('should return the original string if no entities are present', () => {
-      const str = 'hello world';
-      expect(unescape(str)).toBe(str);
-    });
-
-    test('should handle an empty string', () => {
-      expect(unescape('')).toBe('');
-    });
+  test('escapeHTML should return an empty string for null or undefined input', () => {
+    expect(escapeHTML(null)).toBe('');
+    expect(escapeHTML(undefined)).toBe('');
   });
 
-  describe('Symmetry', () => {
-    test('unescape(escape(str)) should return the original string', () => {
-      expect(unescape(escape(allSpecialChars))).toBe(allSpecialChars);
-    });
+  test('escapeHTML should not change a string with no special characters', () => {
+    expect(escapeHTML('Hello World')).toBe('Hello World');
+  });
+
+  test('unescapeHTML should convert HTML entities back to special characters', () => {
+    expect(unescapeHTML(escaped)).toBe(unescaped);
+  });
+
+  test('unescapeHTML should return an empty string for null or undefined input', () => {
+    expect(unescapeHTML(null)).toBe('');
+    expect(unescapeHTML(undefined)).toBe('');
+  });
+
+  test('unescapeHTML should not change a string with no HTML entities', () => {
+    expect(unescapeHTML('Hello World')).toBe('Hello World');
   });
 });
