@@ -1,20 +1,23 @@
 /**
- * Assigns own enumerable string keyed properties of source objects to the
- * destination object for all destination properties that resolve to `undefined`.
- * Source properties are iterated toward right.
+ * Assigns own and inherited enumerable string keyed properties of source
+ * objects to the destination object for all destination properties that resolve
+ * to `undefined`. Source objects are applied from left to right.
  *
- * @param {Object} object The destination object.
- * @param {...Object} [sources] The source objects.
- * @returns {Object} Returns `object`.
+ * @param {object} object The destination object.
+ * @param {...object} sources The source objects.
+ * @returns {object} Returns `object`.
  */
 export const defaults = (object, ...sources) => {
-  object = object == null ? {} : Object(object);
-  sources.forEach(source => {
-    if (source != null) {
-      for (const key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key) && object[key] === undefined) {
-          object[key] = source[key];
-        }
+  object = Object(object);
+  sources.forEach((source) => {
+    if (source == null) {
+      return;
+    }
+    source = Object(source);
+    for (const key in source) {
+      const value = object[key];
+      if (value === undefined) {
+        object[key] = source[key];
       }
     }
   });

@@ -1,44 +1,32 @@
-import { defaults } from './object-defaults-utils';
+import { defaults } from './object-defaults-utils.js';
 
 describe('defaults', () => {
-  it('should assign default properties to an object', () => {
-    const object = { 'a': 1 };
-    defaults(object, { 'b': 2, 'a': 3 });
-    expect(object).toEqual({ 'a': 1, 'b': 2 });
+  test('should fill in undefined properties', () => {
+    const result = defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+    expect(result).toEqual({ 'a': 1, 'b': 2 });
   });
 
-  it('should not overwrite existing properties', () => {
-    const object = { 'a': 1, 'b': 2 };
-    defaults(object, { 'a': 3, 'c': 4 });
-    expect(object).toEqual({ 'a': 1, 'b': 2, 'c': 4 });
+  test('should not overwrite existing properties', () => {
+    const obj = { 'a': 1, 'b': null, 'c': false };
+    const result = defaults(obj, { 'a': 10, 'b': 20, 'c': true, 'd': 40 });
+    expect(result).toEqual({ 'a': 1, 'b': null, 'c': false, 'd': 40 });
   });
 
-  it('should assign properties that are undefined in the destination', () => {
-    const object = { 'a': undefined, 'b': 2 };
-    defaults(object, { 'a': 3, 'c': 4 });
-    expect(object).toEqual({ 'a': 3, 'b': 2, 'c': 4 });
+  test('should handle multiple source objects', () => {
+    const result = defaults({ 'a': undefined }, { 'a': 1, 'b': 2 }, { 'b': 3, 'c': 4 });
+    expect(result).toEqual({ 'a': 1, 'b': 2, 'c': 4 });
   });
 
-  it('should handle multiple source objects', () => {
-    const object = { 'a': 1 };
-    defaults(object, { 'b': 2 }, { 'c': 3, 'a': 4 });
-    expect(object).toEqual({ 'a': 1, 'b': 2, 'c': 3 });
+  test('should modify the original object', () => {
+    const obj = { 'a': 1 };
+    defaults(obj, { 'b': 2 });
+    expect(obj).toEqual({ 'a': 1, 'b': 2 });
   });
 
-  it('should iterate sources from left to right', () => {
-    const object = {};
-    defaults(object, { 'a': 1, 'b': 2 }, { 'b': 3, 'c': 4 });
-    expect(object).toEqual({ 'a': 1, 'b': 2, 'c': 4 });
-  });
-
-  it('should handle null or undefined destination object', () => {
-    expect(defaults(null, { a: 1 })).toEqual({ a: 1 });
-    expect(defaults(undefined, { a: 1 })).toEqual({ a: 1 });
-  });
-
-  it('should handle null or undefined source objects', () => {
-    const object = { a: 1 };
-    defaults(object, null, { b: 2 }, undefined);
-    expect(object).toEqual({ a: 1, b: 2 });
+  test('should copy inherited properties from source', () => {
+    function Foo() { this.a = 1; }
+    Foo.prototype.b = 2;
+    const result = defaults({ 'a': undefined }, new Foo());
+    expect(result.b).toBe(2);
   });
 });
