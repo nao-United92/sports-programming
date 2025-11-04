@@ -1,14 +1,16 @@
 /**
- * オブジェクトのキーと値を反転させます。
- * @param {Object} obj - 反転するオブジェクト。
- * @returns {Object} 反転した新しいオブジェクト。
+ * Creates an object with inverted keys and values. If an object has multiple
+ * keys with the same value, the last key will overwrite the previous ones.
+ *
+ * @param {object} object The object to invert.
+ * @returns {object} Returns the new inverted object.
  */
-export const invert = (obj) => {
-  const newObj = {};
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      newObj[obj[key]] = key;
-    }
+export const invert = (object) => {
+  if (!object) {
+    return {};
   }
-  return newObj;
+  return Object.keys(object).reduce((result, key) => {
+    result[object[key]] = key;
+    return result;
+  }, {});
 };

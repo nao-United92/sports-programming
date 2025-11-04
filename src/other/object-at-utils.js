@@ -1,12 +1,25 @@
-import { get } from './object-get-utils.js';
+const get = (object, path) => {
+  const pathArray = Array.isArray(path) ? path : path.replace(/\\[(\\d+)\\]/g, '.$1').split('.').filter(Boolean);
+  let current = object;
+  for (let i = 0; i < pathArray.length; i++) {
+    if (current === null || current === undefined) {
+      return undefined;
+    }
+    current = current[pathArray[i]];
+  }
+  return current;
+};
 
 /**
- * Creates an array of values corresponding to paths of object.
+ * Creates an array of values corresponding to `paths` of `object`.
  *
- * @param {Object} object The object to iterate over.
- * @param {...(string|string[])} [paths] The property paths to pick.
- * @returns {Array} Returns the new array of picked values.
+ * @param {object} object The object to iterate over.
+ * @param {string[]} paths The paths of the property to pick.
+ * @returns {Array} Returns the new array of values.
  */
-export function at(object, ...paths) {
-  return paths.flat().map(path => get(object, path));
-}
+export const at = (object, paths) => {
+  if (!object || !paths) {
+    return [];
+  }
+  return paths.map(path => get(object, path));
+};
