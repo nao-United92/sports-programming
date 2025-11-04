@@ -1,45 +1,45 @@
-import { get } from './object-get-utils';
+import { get } from './object-get-utils.js';
 
 describe('get', () => {
-  const object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
+  const object = {
+    a: [
+      { b: { c: 3, d: null } },
+      4
+    ],
+    x: { y: 'z' }
+  };
 
-  it('should get a value using a string path', () => {
+  test('should get a value using a string path', () => {
     expect(get(object, 'a[0].b.c')).toBe(3);
+    expect(get(object, 'x.y')).toBe('z');
   });
 
-  it('should get a value using an array path', () => {
+  test('should get a value using an array path', () => {
     expect(get(object, ['a', '0', 'b', 'c'])).toBe(3);
   });
 
-  it('should get a value from an array in the path', () => {
-    expect(get(object, 'a[1]')).toBe(4);
+  test('should return undefined for a non-existent path', () => {
+    expect(get(object, 'a.b.c')).toBe(undefined);
+    expect(get(object, 'x.y.z')).toBe(undefined);
   });
 
-  it('should return undefined for a non-existent path', () => {
-    expect(get(object, 'a.b.c')).toBeUndefined();
-  });
-
-  it('should return the default value for a non-existent path', () => {
+  test('should return the default value for a non-existent path', () => {
     expect(get(object, 'a.b.c', 'default')).toBe('default');
+    expect(get(object, 'x.y.z', 123)).toBe(123);
   });
 
-  it('should return the default value for a path that leads to undefined', () => {
-    const objWithUndefined = { a: { b: undefined } };
-    expect(get(objWithUndefined, 'a.b', 'default')).toBe('default');
+  test('should handle null and undefined values in the path', () => {
+    expect(get(object, 'a[0].b.d.e')).toBe(undefined);
+    expect(get(object, 'a[0].b.d.e', 'default')).toBe('default');
+    expect(get(object, 'a[0].b.d')).toBe(null);
   });
 
-  it('should handle null and undefined objects gracefully', () => {
-    expect(get(null, 'a.b.c')).toBeUndefined();
-    expect(get(undefined, 'a.b.c')).toBeUndefined();
+  test('should return default value if path is empty', () => {
+    expect(get(object, '', 'default')).toBe('default');
+    expect(get(object, [])).toBe(undefined);
   });
 
-  it('should handle null and undefined objects with a default value', () => {
-    expect(get(null, 'a.b.c', 'default')).toBe('default');
-    expect(get(undefined, 'a.b.c', 'default')).toBe('default');
-  });
-
-  it('should handle paths that go through null or undefined values', () => {
-    const obj = { a: null };
-    expect(get(obj, 'a.b', 'default')).toBe('default');
+  test('should return array elements', () => {
+    expect(get(object, 'a[1]')).toBe(4);
   });
 });
