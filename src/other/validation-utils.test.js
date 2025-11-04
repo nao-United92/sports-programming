@@ -1,40 +1,49 @@
-import { isEmail, isURL } from './validation-utils.js';
+import { isValidEmail, isValidURL, isStrongPassword } from './validation-utils.js';
 
-describe('Validation Utils', () => {
-  describe('isEmail', () => {
-    it('should return true for valid email addresses', () => {
-      expect(isEmail('test@example.com')).toBe(true);
-      expect(isEmail('user.name+tag@domain.co.uk')).toBe(true);
-      expect(isEmail('_______@domain.com')).toBe(true);
+describe('Validation Utilities', () => {
+  describe('isValidEmail', () => {
+    it('should return true for valid emails', () => {
+      expect(isValidEmail('test@example.com')).toBe(true);
+      expect(isValidEmail('john.doe@sub.domain.co.uk')).toBe(true);
     });
 
-    it('should return false for invalid email addresses', () => {
-      expect(isEmail('plainaddress')).toBe(false);
-      expect(isEmail('@missingusername.com')).toBe(false);
-      expect(isEmail('username@.com')).toBe(false);
-      expect(isEmail('username@domain.')).toBe(false);
-      expect(isEmail('username@domain.c')).toBe(false);
-      expect(isEmail('username@domain..com')).toBe(false);
-      expect(isEmail(null)).toBe(false);
-      expect(isEmail(undefined)).toBe(false);
+    it('should return false for invalid emails', () => {
+      expect(isValidEmail('invalid-email')).toBe(false);
+      expect(isValidEmail('test@.com')).toBe(false);
+      expect(isValidEmail('test@example')).toBe(false);
+      expect(isValidEmail('')).toBe(false);
+      expect(isValidEmail(null)).toBe(false);
     });
   });
 
-  describe('isURL', () => {
+  describe('isValidURL', () => {
     it('should return true for valid URLs', () => {
-      expect(isURL('http://example.com')).toBe(true);
-      expect(isURL('https://www.example.com/path?query=value#hash')).toBe(true);
-      expect(isURL('ftp://user:pass@host:port/path')).toBe(true);
-      expect(isURL('https://sub.domain.co.uk')).toBe(true);
+      expect(isValidURL('http://example.com')).toBe(true);
+      expect(isValidURL('https://www.example.com/path?query=1')).toBe(true);
+      expect(isValidURL('ftp://ftp.example.com')).toBe(true);
     });
 
     it('should return false for invalid URLs', () => {
-      expect(isURL('not a url')).toBe(false);
-      expect(isURL('example.com')).toBe(false); // protocol is required
-      expect(isURL('htp://example.com')).toBe(false);
-      expect(isURL('http//example.com')).toBe(false);
-      expect(isURL(null)).toBe(false);
-      expect(isURL(undefined)).toBe(false);
+      expect(isValidURL('invalid-url')).toBe(false);
+      expect(isValidURL('example.com')).toBe(false); // Needs protocol
+      expect(isValidURL('')).toBe(false);
+      expect(isValidURL(null)).toBe(false);
+    });
+  });
+
+  describe('isStrongPassword', () => {
+    it('should return true for strong passwords', () => {
+      expect(isStrongPassword('Password123!')).toBe(true);
+      expect(isStrongPassword('MyStrongP@ssw0rd')).toBe(true);
+    });
+
+    it('should return false for weak passwords', () => {
+      expect(isStrongPassword('short')).toBe(false); // Too short
+      expect(isStrongPassword('nouppercase1!')).toBe(false); // No uppercase
+      expect(isStrongPassword('NOLOWERCASE1!')).toBe(false); // No lowercase
+      expect(isStrongPassword('NoNumber!!')).toBe(false); // No number
+      expect(isStrongPassword('NoSpecialChar1')).toBe(false); // No special char
+      expect(isStrongPassword('')).toBe(false);
     });
   });
 });

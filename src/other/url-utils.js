@@ -1,16 +1,27 @@
 /**
  * Parses a URL query string into an object.
- * @param {string} url The URL or query string.
- * @returns {object} The parsed query object.
+ *
+ * @param {string} url The URL to parse.
+ * @returns {object} An object containing the query parameters.
  */
 export const parseQuery = (url) => {
-  const queryString = url.includes('?') ? url.split('?')[1] : (url.includes('=') ? url : '');
+  const queryString = url.includes('?') ? url.split('?')[1] : '';
   if (!queryString) {
     return {};
   }
-  return queryString.split('&').reduce((acc, param) => {
-    const [key, value] = param.split('=');
-    acc[decodeURIComponent(key)] = value ? decodeURIComponent(value) : true;
-    return acc;
-  }, {});
+
+  const params = new URLSearchParams(queryString);
+  const obj = {};
+  for (const [key, value] of params.entries()) {
+    if (obj.hasOwnProperty(key)) {
+      if (Array.isArray(obj[key])) {
+        obj[key].push(value);
+      } else {
+        obj[key] = [obj[key], value];
+      }
+    } else {
+      obj[key] = value;
+    }
+  }
+  return obj;
 };

@@ -1,41 +1,21 @@
 /**
- * Checks if an element is visible.
- * @param {HTMLElement} el The element to check.
- * @returns {boolean} Returns `true` if the element is visible, else `false`.
+ * Creates a DOM element with given attributes and children.
+ * @param {string} tag The HTML tag for the element.
+ * @param {object} [attributes] An object of attributes to set on the element.
+ * @param {...(string|Node)} children Child nodes or strings to append.
+ * @returns {HTMLElement} The created element.
  */
-const isVisible = (el) => {
-  if (!el) return false;
-  const style = window.getComputedStyle(el);
-  return (style.width !== '0' &&
-    style.height !== '0' &&
-    style.opacity !== '0' &&
-    style.display !== 'none' &&
-    style.visibility !== 'hidden');
-};
-
-/**
- * Gets the scroll position of an element.
- * @param {HTMLElement} el The element to check.
- * @returns {{x: number, y: number}} Returns an object with the scroll position.
- */
-const getScrollPosition = (el = window) => ({
-  x: (el.pageXOffset !== undefined) ? el.pageXOffset : el.scrollLeft,
-  y: (el.pageYOffset !== undefined) ? el.pageYOffset : el.scrollTop,
-});
-
-/**
- * Scrolls to a specific position.
- * @param {HTMLElement} el The element to scroll.
- * @param {number} x The x position to scroll to.
- * @param {number} y The y position to scroll to.
- */
-const scrollTo = (el, x, y) => {
-  if (el === window) {
-    window.scrollTo(x, y);
-  } else {
-    el.scrollLeft = x;
-    el.scrollTop = y;
+export const createElement = (tag, attributes = {}, ...children) => {
+  const element = document.createElement(tag);
+  for (const [key, value] of Object.entries(attributes)) {
+    element.setAttribute(key, value);
   }
+  for (const child of children) {
+    if (typeof child === 'string') {
+      element.appendChild(document.createTextNode(child));
+    } else {
+      element.appendChild(child);
+    }
+  }
+  return element;
 };
-
-module.exports = { isVisible, getScrollPosition, scrollTo };

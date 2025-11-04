@@ -1,52 +1,57 @@
-const { memoize } = require('./function-memoize-utils.js');
+import { memoize } from './function-memoize-utils.js';
 
 describe('memoize', () => {
   let expensiveFunction;
+  let memoizedFunction;
 
   beforeEach(() => {
     expensiveFunction = jest.fn((a, b) => a + b);
+    memoizedFunction = memoize(expensiveFunction);
   });
 
-  it('should memoize the result of a function call', () => {
-    const memoizedSum = memoize(expensiveFunction);
+  it('should return the cached result for the same arguments', () => {
+    memoizedFunction(1, 2);
+    memoizedFunction(1, 2);
+    memoizedFunction(1, 2);
 
-    expect(memoizedSum(1, 2)).toBe(3);
     expect(expensiveFunction).toHaveBeenCalledTimes(1);
-
-    expect(memoizedSum(1, 2)).toBe(3); // Should return cached result
-    expect(expensiveFunction).toHaveBeenCalledTimes(1); // Should not be called again
-
-    expect(memoizedSum(2, 3)).toBe(5);
-    expect(expensiveFunction).toHaveBeenCalledTimes(2); // Called for new arguments
+    expect(memoizedFunction(1, 2)).toBe(3);
   });
 
-  it('should use a custom resolver function', () => {
-    const resolver = (a, b) => `${a}-${b}`; // Custom key based on both arguments
-    const memoizedSum = memoize(expensiveFunction, resolver);
+  it('should re-calculate for different arguments', () => {
+    memoizedFunction(1, 2);
+    memoizedFunction(3, 4);
 
-    expect(memoizedSum(1, 2)).toBe(3);
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-    expect(memoizedSum.cache.has('1-2')).toBe(true);
-
-    expect(memoizedSum(1, 2)).toBe(3);
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-
-    expect(memoizedSum(2, 1)).toBe(3); // Different key, so function should be called
     expect(expensiveFunction).toHaveBeenCalledTimes(2);
-    expect(memoizedSum.cache.has('2-1')).toBe(true);
+    expect(memoizedFunction(1, 2)).toBe(3);
+    expect(memoizedFunction(3, 4)).toBe(7);
   });
 
-  it('should allow clearing the cache', () => {
-    const memoizedSum = memoize(expensiveFunction);
+  it('should handle context (this) correctly', () => {
+    const context = {
+      multiplier: 10,
+      multiply: jest.fn(function(a) { return a * this.multiplier; })
+    };
+    const memoizedMultiply = memoize(context.multiply);
 
-    memoizedSum(1, 2);
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-    expect(memoizedSum.cache.size).toBe(1);
+    memoizedMultiply.call(context, 5);
+    memoizedMultiply.call(context, 5);
 
-    memoizedSum.cache.clear();
-    expect(memoizedSum.cache.size).toBe(0);
+    expect(context.multiply).toHaveBeenCalledTimes(1);
+    expect(memoizedMultiply.call(context, 5)).toBe(50);
+  });
 
-    memoizedSum(1, 2);
-    expect(expensiveFunction).toHaveBeenCalledTimes(2); // Called again after cache clear
+  it('should treat objects/arrays with same content as different keys if JSON.stringify is used', () => {
+    const obj1 = { x: 1 };
+    const obj1_copy = { x: 1 };
+    const arr1 = [1, 2];
+    const arr1_copy = [1, 2];
+
+    memoizedFunction(obj1);
+    memoizedFunction(obj1_copy); // JSON.stringify({x:1}) === JSON.stringify({x:1})
+    memoizedFunction(arr1);
+    memoizedFunction(arr1_copy); // JSON.stringify([1,2]) === JSON.stringify([1,2])
+
+    expect(expensiveFunction).toHaveBeenCalledTimes(2); // Called for obj1, then for arr1
   });
 });

@@ -1,28 +1,41 @@
-import { isWeekday } from './date-utils.js';
+import { formatDate, isLeapYear } from './date-utils.js';
 
-describe('isWeekday', () => {
-  test('should return true for a weekday (Monday)', () => {
-    const monday = new Date('2025-11-03T12:00:00'); // A Monday
-    expect(isWeekday(monday)).toBe(true);
+describe('Date Utilities', () => {
+  describe('formatDate', () => {
+    it('should format a date object into YYYY-MM-DD format', () => {
+      const date = new Date('2024-01-05T12:00:00.000Z');
+      expect(formatDate(date)).toBe('2024-01-05');
+    });
+
+    it('should handle single-digit months and days', () => {
+      const date = new Date('2023-03-04T00:00:00.000Z');
+      expect(formatDate(date)).toBe('2023-03-04');
+    });
+
+    it('should return an empty string for an invalid date', () => {
+      expect(formatDate(new Date('invalid-date'))).toBe('');
+      expect(formatDate(null)).toBe('');
+      expect(formatDate(undefined)).toBe('');
+    });
   });
 
-  test('should return true for a weekday (Friday)', () => {
-    const friday = new Date('2025-11-07T12:00:00'); // A Friday
-    expect(isWeekday(friday)).toBe(true);
-  });
+  describe('isLeapYear', () => {
+    it('should return true for leap years', () => {
+      expect(isLeapYear(2000)).toBe(true);
+      expect(isLeapYear(2020)).toBe(true);
+      expect(isLeapYear(2400)).toBe(true);
+    });
 
-  test('should return false for a weekend (Saturday)', () => {
-    const saturday = new Date('2025-11-08T12:00:00'); // A Saturday
-    expect(isWeekday(saturday)).toBe(false);
-  });
+    it('should return false for common years', () => {
+      expect(isLeapYear(1900)).toBe(false);
+      expect(isLeapYear(2021)).toBe(false);
+      expect(isLeapYear(2100)).toBe(false);
+    });
 
-  test('should return false for a weekend (Sunday)', () => {
-    const sunday = new Date('2025-11-09T12:00:00'); // A Sunday
-    expect(isWeekday(sunday)).toBe(false);
-  });
-
-  test('should use the current date if no date is provided', () => {
-    // This just checks if it runs without error and returns a boolean.
-    expect(typeof isWeekday()).toBe('boolean');
+    it('should return false for non-number inputs', () => {
+        expect(isLeapYear('2020')).toBe(false);
+        expect(isLeapYear(null)).toBe(false);
+        expect(isLeapYear(undefined)).toBe(false);
+    });
   });
 });

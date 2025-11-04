@@ -1,28 +1,32 @@
-import { parseQuery } from './url-utils';
+import { parseQuery } from './url-utils.js';
 
 describe('parseQuery', () => {
-  test('should parse a full URL', () => {
-    const url = 'https://example.com?foo=bar&baz=qux';
-    expect(parseQuery(url)).toEqual({ foo: 'bar', baz: 'qux' });
+  test('should return an empty object for a URL with no query string', () => {
+    expect(parseQuery('https://example.com')).toEqual({});
   });
 
-  test('should parse just a query string', () => {
-    const queryString = 'foo=bar&baz=qux';
-    expect(parseQuery(queryString)).toEqual({ foo: 'bar', baz: 'qux' });
+  test('should parse a simple query string', () => {
+    const url = 'https://example.com?a=1&b=hello';
+    expect(parseQuery(url)).toEqual({ a: '1', b: 'hello' });
   });
 
-  test('should handle URI encoded components', () => {
-    const url = 'https://example.com?name=%E3%83%86%E3%82%B9%E3%83%88&value=a%26b';
-    expect(parseQuery(url)).toEqual({ name: 'テスト', value: 'a&b' });
+  test('should handle multiple values for the same key', () => {
+    const url = 'https://example.com?a=1&a=2&b=3';
+    expect(parseQuery(url)).toEqual({ a: ['1', '2'], b: '3' });
   });
 
-  test('should handle params without values', () => {
-    const url = 'https://example.com?foo&bar=baz';
-    expect(parseQuery(url)).toEqual({ foo: true, bar: 'baz' });
+  test('should handle a query string with no value', () => {
+    const url = 'https://example.com?a=&b=2';
+    expect(parseQuery(url)).toEqual({ a: '', b: '2' });
   });
 
-  test('should handle empty query string', () => {
-    const url = 'https://example.com';
-    expect(parseQuery(url)).toEqual({});
+  test('should handle a query string with special characters', () => {
+    const url = 'https://example.com?name=John%20Doe&city=New%20York';
+    expect(parseQuery(url)).toEqual({ name: 'John Doe', city: 'New York' });
+  });
+
+  test('should handle just the query string part', () => {
+    const url = '?a=1&b=2';
+    expect(parseQuery(url)).toEqual({ a: '1', b: '2' });
   });
 });

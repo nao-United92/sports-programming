@@ -1,76 +1,28 @@
-const { isVisible, getScrollPosition, scrollTo } = require('./dom-utils.js');
+import { createElement } from './dom-utils.js';
 
-// Mock DOM elements and window
-global.window = {
-  getComputedStyle: jest.fn(() => ({
-    width: '100px',
-    height: '100px',
-    opacity: '1',
-    display: 'block',
-    visibility: 'visible',
-  })),
-  scrollTo: jest.fn(),
-  pageXOffset: 0,
-  pageYOffset: 0,
-};
-
-global.HTMLElement = class HTMLElement {};
-
-describe('DOM Utilities', () => {
-  beforeEach(() => {
-    window.getComputedStyle.mockClear();
-    window.scrollTo.mockClear();
-    window.pageXOffset = 0;
-    window.pageYOffset = 0;
+describe('createElement', () => {
+  it('should create a simple element', () => {
+    const el = createElement('div');
+    expect(el.tagName).toBe('DIV');
   });
 
-  describe('isVisible', () => {
-    it('should return true if the element is visible', () => {
-      const el = {};
-      expect(isVisible(el)).toBe(true);
-    });
-
-    it('should return false if the element is null', () => {
-      expect(isVisible(null)).toBe(false);
-    });
-
-    it('should return false if the element has display: none', () => {
-      window.getComputedStyle.mockReturnValueOnce({
-        width: '100px',
-        height: '100px',
-        opacity: '1',
-        display: 'none',
-        visibility: 'visible',
-      });
-      const el = {};
-      expect(isVisible(el)).toBe(false);
-    });
+  it('should create an element with attributes', () => {
+    const el = createElement('a', { href: '#', id: 'myLink' });
+    expect(el.getAttribute('href')).toBe('#');
+    expect(el.id).toBe('myLink');
   });
 
-  describe('getScrollPosition', () => {
-    it('should return the scroll position of the window', () => {
-      window.pageXOffset = 100;
-      window.pageYOffset = 200;
-      expect(getScrollPosition()).toEqual({ x: 100, y: 200 });
-    });
-
-    it('should return the scroll position of an element', () => {
-      const el = { scrollLeft: 50, scrollTop: 75 };
-      expect(getScrollPosition(el)).toEqual({ x: 50, y: 75 });
-    });
+  it('should create an element with text content', () => {
+    const el = createElement('p', {}, 'Hello world');
+    expect(el.textContent).toBe('Hello world');
   });
 
-  describe('scrollTo', () => {
-    it('should scroll the window to the specified position', () => {
-      scrollTo(window, 100, 200);
-      expect(window.scrollTo).toHaveBeenCalledWith(100, 200);
-    });
-
-    it('should scroll an element to the specified position', () => {
-      const el = { scrollLeft: 0, scrollTop: 0 };
-      scrollTo(el, 50, 75);
-      expect(el.scrollLeft).toBe(50);
-      expect(el.scrollTop).toBe(75);
-    });
+  it('should create an element with child elements', () => {
+    const child = createElement('span', {}, 'content');
+    const parent = createElement('div', { class: 'parent' }, child);
+    expect(parent.classList.contains('parent')).toBe(true);
+    expect(parent.children.length).toBe(1);
+    expect(parent.children[0].tagName).toBe('SPAN');
+    expect(parent.children[0].textContent).toBe('content');
   });
 });

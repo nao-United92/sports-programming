@@ -1,5 +1,5 @@
 /**
- * Truncates a string to a specified length, appending a suffix.
+ * Truncates a string to a certain length and appends a suffix.
  * @param {string} str The string to truncate.
  * @param {number} length The maximum length of the string.
  * @param {string} [suffix='...'] The suffix to append if the string is truncated.
@@ -10,24 +10,7 @@ export const truncate = (str, length, suffix = '...') => {
     return str;
   }
   if (length <= suffix.length) {
-    return suffix.slice(0, length);
+    return suffix;
   }
   return str.slice(0, length - suffix.length) + suffix;
-};
-
-/**
- * Converts a string to a URL-friendly slug.
- * @param {string} str The string to convert.
- * @returns {string} The slugified string.
- */
-export const slugify = (str) => {
-  if (typeof str !== 'string') {
-    return '';
-  }
-  return str
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 };

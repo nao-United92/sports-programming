@@ -1,56 +1,26 @@
+import { formatWithCommas } from './number-utils.js';
 
-import { randomInt, sum } from './number-utils.js';
-
-describe('randomInt', () => {
-  test('should return an integer within the specified range', () => {
-    const min = 1;
-    const max = 10;
-    for (let i = 0; i < 100; i++) {
-      const result = randomInt(min, max);
-      expect(result).toBeGreaterThanOrEqual(min);
-      expect(result).toBeLessThanOrEqual(max);
-      expect(Number.isInteger(result)).toBe(true);
-    }
+describe('formatWithCommas', () => {
+  it('should format a number with commas', () => {
+    expect(formatWithCommas(1000)).toBe('1,000');
+    expect(formatWithCommas(1234567)).toBe('1,234,567');
   });
 
-  test('should handle negative ranges', () => {
-    const min = -5;
-    const max = -1;
-    for (let i = 0; i < 100; i++) {
-      const result = randomInt(min, max);
-      expect(result).toBeGreaterThanOrEqual(min);
-      expect(result).toBeLessThanOrEqual(max);
-      expect(Number.isInteger(result)).toBe(true);
-    }
+  it('should not format numbers less than 1000', () => {
+    expect(formatWithCommas(999)).toBe('999');
+    expect(formatWithCommas(100)).toBe('100');
   });
 
-  test('should handle min and max being the same', () => {
-    expect(randomInt(5, 5)).toBe(5);
-  });
-});
-
-describe('sum', () => {
-  test('should correctly sum an array of positive numbers', () => {
-    expect(sum([1, 2, 3, 4, 5])).toBe(15);
+  it('should handle decimal numbers', () => {
+    expect(formatWithCommas(12345.6789)).toBe('12,345.6789');
   });
 
-  test('should correctly sum an array of negative numbers', () => {
-    expect(sum([-1, -2, -3])).toBe(-6);
+  it('should handle negative numbers', () => {
+    expect(formatWithCommas(-1234567)).toBe('-1,234,567');
   });
 
-  test('should correctly sum an array of mixed positive and negative numbers', () => {
-    expect(sum([-1, 2, -3, 4])).toBe(2);
-  });
-
-  test('should return 0 for an empty array', () => {
-    expect(sum([])).toBe(0);
-  });
-
-  test('should handle an array with a single number', () => {
-    expect(sum([7])).toBe(7);
-  });
-
-  test('should handle floating point numbers', () => {
-    expect(sum([0.1, 0.2])).toBeCloseTo(0.3);
+  it('should return non-number inputs as strings', () => {
+    expect(formatWithCommas('10000')).toBe('10000');
+    expect(formatWithCommas(null)).toBe('null');
   });
 });
