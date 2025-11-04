@@ -1,13 +1,10 @@
-
 /**
  * Creates a deep clone of a value.
- * Note: This is a simple implementation and does not handle functions, Maps, Sets, etc.
- * It is intended for JSON-serializable objects.
  *
  * @param {*} value The value to clone.
- * @returns {*} The deep cloned value.
+ * @returns {*} Returns the deep cloned value.
  */
-const cloneDeep = (value) => {
+export const cloneDeep = (value) => {
   if (value === null || typeof value !== 'object') {
     return value;
   }
@@ -23,13 +20,11 @@ const cloneDeep = (value) => {
   }
 
   // Handle Object
-  const clonedObject = {};
+  const clonedObj = {};
   for (const key in value) {
     if (Object.prototype.hasOwnProperty.call(value, key)) {
-      clonedObject[key] = cloneDeep(value[key]);
+      clonedObj[key] = cloneDeep(value[key]);
     }
   }
-  return clonedObject;
+  return clonedObj;
 };
-
-module.exports = { cloneDeep };
