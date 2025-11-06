@@ -1,34 +1,32 @@
-
 import { truncate } from './string-truncate-utils.js';
 
 describe('truncate', () => {
-  const text = 'hi-diddly-ho there, neighborino';
+  const longString = 'This is a very long string that needs to be truncated.';
 
-  test('should not truncate if string is shorter than length', () => {
-    expect(truncate(text, { length: 50 })).toBe(text);
+  it('should not truncate a string shorter than the specified length', () => {
+    expect(truncate('short', 10)).toBe('short');
   });
 
-  test('should truncate string to default length', () => {
-    const expected = 'hi-diddly-ho there, neighbo...';
-    expect(truncate(text)).toBe(expected);
+  it('should truncate a string longer than the specified length', () => {
+    expect(truncate(longString, 20)).toBe('This is a very lo...');
   });
 
-  test('should truncate string to a specified length', () => {
-    const expected = 'hi-diddly-...';
-    expect(truncate(text, { length: 12 })).toBe(expected);
+  it('should use the default suffix', () => {
+    expect(truncate(longString, 20)).toContain('...');
   });
 
-  test('should use a custom omission string', () => {
-    const expected = 'hi-diddly-ho there, [...]';
-    expect(truncate(text, { length: 24, omission: ' [...]' })).toBe(expected);
+  it('should use a custom suffix', () => {
+    expect(truncate(longString, 20, '---')).toBe('This is a very---');
   });
 
-  test('should not have omission string longer than length', () => {
-    const expected = '...';
-    expect(truncate(text, { length: 2, omission: '...' })).toBe(expected);
+  it('should return the original string if input is not a string', () => {
+    expect(truncate(null, 10)).toBe(null);
+    expect(truncate(undefined, 10)).toBe(undefined);
+    expect(truncate(12345, 10)).toBe(12345);
   });
 
-   test('should return an empty string if length is 0', () => {
-    expect(truncate(text, { length: 0, omission: '' })).toBe('');
+  it('should handle edge case where length is equal to string length', () => {
+    const str = 'exact length';
+    expect(truncate(str, str.length)).toBe(str);
   });
 });
