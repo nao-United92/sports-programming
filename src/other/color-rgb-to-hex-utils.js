@@ -1,17 +1,15 @@
 /**
- * Converts an RGB color value to a hexadecimal color string.
+ * Converts RGB color values to a HEX color string.
  *
- * @param {number} r The red component (0-255).
- * @param {number} g The green component (0-255).
- * @param {number} b The blue component (0-255).
- * @returns {string} Returns the hexadecimal color string (e.g., '#RRGGBB').
+ * @param {number} r The red color value.
+ * @param {number} g The green color value.
+ * @param {number} b The blue color value.
+ * @returns {string} The HEX color string.
  */
-function rgbToHex(r, g, b) {
+export const rgbToHex = (r, g, b) => {
   const toHex = (c) => {
-    const hex = Math.max(0, Math.min(255, c)).toString(16);
+    const hex = c.toString(16);
     return hex.length === 1 ? '0' + hex : hex;
   };
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-}
-
-module.exports = { rgbToHex };
+};

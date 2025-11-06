@@ -1,24 +1,19 @@
 /**
- * Performs right-to-left function composition. The rightmost function may have
- * any arity; the remaining functions must be unary. The `compose` function is
- * variadic: it accepts any number of arguments.
+ * Creates a function that returns the result of invoking the given functions from right to left.
+ * The rightmost function is invoked with the arguments of the created function,
+ * the second rightmost function is invoked with the result of the first function, and so on.
  *
- * @param {...Function} funcs The functions to compose.
+ * @param {Function[]} fns The functions to compose.
  * @returns {Function} Returns the new composite function.
  */
-function compose(...funcs) {
-  if (funcs.length === 0) {
+export const compose = (...fns) => {
+  if (fns.length === 0) {
     return (...args) => args.length > 1 ? [...args] : args[0];
   }
 
-  if (funcs.some(func => typeof func !== 'function')) {
-    throw new TypeError('Expected all arguments to be functions');
+  if (fns.length === 1) {
+    return fns[0];
   }
 
-  const last = funcs[funcs.length - 1];
-  const rest = funcs.slice(0, -1);
-
-  return (...args) => rest.reduceRight((composed, f) => f(composed), last(...args));
-}
-
-export { compose };
+  return fns.reduce((a, b) => (...args) => a(b(...args)));
+};

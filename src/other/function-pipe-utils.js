@@ -1,21 +1,19 @@
 /**
- * Performs left-to-right function composition. The leftmost function may have
- * any arity; the remaining functions must be unary. The `pipe` function is
- * variadic: it accepts any number of arguments.
+ * Creates a function that returns the result of invoking the given functions from left to right.
+ * The first function is invoked with the arguments of the created function,
+ * the second function is invoked with the result of the first function, and so on.
  *
- * @param {...Function} funcs The functions to compose.
+ * @param {Function[]} fns The functions to pipe.
  * @returns {Function} Returns the new composite function.
  */
-function pipe(...funcs) {
-  if (funcs.length === 0) {
+export const pipe = (...fns) => {
+  if (fns.length === 0) {
     return (...args) => args.length > 1 ? [...args] : args[0];
   }
 
-  if (funcs.some(func => typeof func !== 'function')) {
-    throw new TypeError('Expected all arguments to be functions');
+  if (fns.length === 1) {
+    return fns[0];
   }
 
-  return funcs.reduce((a, b) => (...args) => b(a(...args)));
-}
-
-export { pipe };
+  return fns.reduce((a, b) => (...args) => b(a(...args)));
+};
