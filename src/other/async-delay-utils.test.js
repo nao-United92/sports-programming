@@ -1,4 +1,4 @@
-const { delay, debounce, throttle } = require('./async-delay-utils.js');
+const { delay, debounce, throttle, cancellableDelay } = require('./async-delay-utils.js');
 
 describe('delay', () => {
   // Jestのタイマーモックを有効にする
@@ -132,5 +132,43 @@ describe('throttle', () => {
     jest.advanceTimersByTime(1000);
     throttledFn();
     expect(mockFn).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('cancellableDelay', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it('should resolve after the specified time', async () => {
+    const { promise } = cancellableDelay(1000);
+    const mockFn = jest.fn();
+    promise.then(mockFn);
+
+    jest.advanceTimersByTime(1000);
+    await promise;
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should be cancellable', async () => {
+    const { promise, cancel } = cancellableDelay(1000);
+    const mockFn = jest.fn();
+    promise.catch(mockFn);
+
+    cancel();
+
+    try {
+      await promise;
+    } catch (e) {
+      expect(e.message).toBe('Delay cancelled');
+    }
+
+    jest.advanceTimersByTime(1000);
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 });

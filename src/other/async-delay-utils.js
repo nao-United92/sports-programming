@@ -41,4 +41,26 @@ function throttle(func, limit) {
   };
 }
 
-module.exports = { delay, debounce, throttle };
+module.exports = { delay, debounce, throttle, cancellableDelay };
+
+/**
+ * Creates a cancellable delay.
+ * @param {number} ms - The number of milliseconds to delay.
+ * @returns {{promise: Promise, cancel: function}} An object containing the promise and a cancel function.
+ */
+function cancellableDelay(ms) {
+  let timeoutId;
+  let rejectFn;
+
+  const promise = new Promise((resolve, reject) => {
+    rejectFn = reject;
+    timeoutId = setTimeout(resolve, ms);
+  });
+
+  const cancel = () => {
+    clearTimeout(timeoutId);
+    rejectFn(new Error('Delay cancelled'));
+  };
+
+  return { promise, cancel };
+}
