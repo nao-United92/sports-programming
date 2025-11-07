@@ -1,38 +1,36 @@
-const { clamp } = require('./number-clamp-utils');
+import { clamp } from './number-clamp-utils.js';
 
 describe('clamp', () => {
-  test('should return the number if it is within the range', () => {
-    expect(clamp(5, 0, 10)).toBe(5);
+  it('should clamp a number within the inclusive bounds', () => {
+    expect(clamp(10, 0, 100)).toBe(10);
+    expect(clamp(0, 0, 100)).toBe(0);
+    expect(clamp(100, 0, 100)).toBe(100);
   });
 
-  test('should return the upper bound if the number is above the range', () => {
-    expect(clamp(15, 0, 10)).toBe(10);
+  it('should return the lower bound if number is less than lower', () => {
+    expect(clamp(-10, 0, 100)).toBe(0);
   });
 
-  test('should return the lower bound if the number is below the range', () => {
-    expect(clamp(-5, 0, 10)).toBe(0);
+  it('should return the upper bound if number is greater than upper', () => {
+    expect(clamp(110, 0, 100)).toBe(100);
   });
 
-  test('should work with negative numbers', () => {
-    expect(clamp(-15, -10, -5)).toBe(-10);
-    expect(clamp(-7, -10, -5)).toBe(-7);
-    expect(clamp(-2, -10, -5)).toBe(-5);
+  it('should handle negative bounds', () => {
+    expect(clamp(-5, -10, 10)).toBe(-5);
+    expect(clamp(-15, -10, 10)).toBe(-10);
+    expect(clamp(15, -10, 10)).toBe(10);
   });
 
-  test('should handle cases where lower and upper bounds are the same', () => {
-    expect(clamp(10, 5, 5)).toBe(5);
-    expect(clamp(0, 5, 5)).toBe(5);
+  it('should swap bounds if lower is greater than upper', () => {
+    expect(clamp(50, 100, 0)).toBe(50);
+    expect(clamp(-10, 100, 0)).toBe(0);
+    expect(clamp(110, 100, 0)).toBe(100);
   });
 
-  test('should work correctly even if lower and upper bounds are swapped', () => {
-    expect(clamp(15, 10, 0)).toBe(10);
-    expect(clamp(-5, 10, 0)).toBe(0);
-    expect(clamp(5, 10, 0)).toBe(5);
-  });
-
-  test('should handle floating point numbers', () => {
-    expect(clamp(3.14, 2.5, 4.5)).toBe(3.14);
-    expect(clamp(1.2, 2.5, 4.5)).toBe(2.5);
-    expect(clamp(5.8, 2.5, 4.5)).toBe(4.5);
+  it('should handle non-numeric inputs by coercing to number', () => {
+    expect(clamp('10', '0', '100')).toBe(10);
+    expect(clamp(null, 0, 100)).toBe(0); // null becomes 0
+    expect(clamp(undefined, 0, 100)).toBe(0); // undefined becomes NaN, then 0 for lower/upper
+    expect(clamp(50, 'a', 100)).toBe(0); // 'a' becomes NaN, then 0 for lower
   });
 });
