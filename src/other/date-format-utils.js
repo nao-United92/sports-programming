@@ -1,26 +1,29 @@
 /**
- * Formats a Date object into a string based on a specified format.
- * @param {Date} date The date to format.
- * @param {string} format The format string (e.g., 'YYYY-MM-DD hh:mm:ss').
+ * Formats a Date object into a string based on the provided format.
+ *
+ * @param {Date} date The Date object to format.
+ * @param {string} format The format string (e.g., 'YYYY-MM-DD HH:mm:ss').
  * @returns {string} The formatted date string.
  */
 export const formatDate = (date, format) => {
-  const o = {
-    'M+': date.getMonth() + 1, // Month
-    'D+': date.getDate(), // Day
-    'h+': date.getHours(), // Hour
-    'm+': date.getMinutes(), // Minute
-    's+': date.getSeconds(), // Second
-    'q+': Math.floor((date.getMonth() + 3) / 3), // Quarter
-    'S': date.getMilliseconds(), // Millisecond
-  };
-  if (/(Y+)/.test(format)) {
-    format = format.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+  if (!(date instanceof Date) || isNaN(date)) {
+    return ''; // Return empty string for invalid dates
   }
-  for (let k in o) {
-    if (new RegExp('(' + k + ')').test(format)) {
-      format = format.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
-    }
-  }
-  return format;
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+
+  return format
+    .replace(/YYYY/g, year)
+    .replace(/MM/g, month)
+    .replace(/DD/g, day)
+    .replace(/HH/g, hours)
+    .replace(/mm/g, minutes)
+    .replace(/ss/g, seconds)
+    .replace(/SSS/g, milliseconds);
 };
