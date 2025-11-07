@@ -1,56 +1,44 @@
 /**
- * Provides utility functions for interacting with localStorage,
- * handling JSON serialization and deserialization automatically.
+ * Safely sets an item in localStorage.
+ * Values are automatically stringified to JSON.
+ *
+ * @param {string} key The key to set.
+ * @param {*} value The value to store.
  */
-export const localStorageUtils = {
-  /**
-   * Sets an item in localStorage.
-   * @param {string} key The key to store the item under.
-   * @param {*} value The value to store. Will be JSON.stringify-ed.
-   */
-  set: (key, value) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error(`Error setting item to localStorage for key "${key}":`, error);
-    }
-  },
+export const set = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error('Error setting item in localStorage:', error);
+  }
+};
 
-  /**
-   * Gets an item from localStorage.
-   * @param {string} key The key of the item to retrieve.
-   * @returns {*} The retrieved value, JSON.parse-d, or null if not found or an error occurs.
-   */
-  get: (key) => {
-    try {
-      const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : null;
-    } catch (error) {
-      console.error(`Error getting item from localStorage for key "${key}":`, error);
-      return null;
-    }
-  },
+/**
+ * Safely gets an item from localStorage.
+ * Values are automatically parsed from JSON.
+ *
+ * @param {string} key The key to get.
+ * @returns {*} The parsed value, or null if not found or parsing fails.
+ */
+export const get = (key) => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : null;
+  } catch (error) {
+    console.error('Error getting or parsing item from localStorage:', error);
+    return null;
+  }
+};
 
-  /**
-   * Removes an item from localStorage.
-   * @param {string} key The key of the item to remove.
-   */
-  remove: (key) => {
-    try {
-      localStorage.removeItem(key);
-    } catch (error) {
-      console.error(`Error removing item from localStorage for key "${key}":`, error);
-    }
-  },
-
-  /**
-   * Clears all items from localStorage.
-   */
-  clear: () => {
-    try {
-      localStorage.clear();
-    } catch (error) {
-      console.error('Error clearing localStorage:', error);
-    }
-  },
+/**
+ * Safely removes an item from localStorage.
+ *
+ * @param {string} key The key to remove.
+ */
+export const remove = (key) => {
+  try {
+    localStorage.removeItem(key);
+  } catch (error) {
+    console.error('Error removing item from localStorage:', error);
+  }
 };

@@ -1,31 +1,28 @@
-export function getQueryParams(url) {
+/**
+ * Parses the query parameters from a given URL string or the current window location.
+ *
+ * @param {string} [url=window.location.search] The URL string to parse. Defaults to current window.location.search.
+ * @returns {object} An object containing the parsed query parameters.
+ */
+export const parseQueryParams = (url) => {
+  const queryString = url || window.location.search;
   const params = {};
-  const queryString = url.split('?')[1];
 
   if (queryString) {
-    queryString.split('&').forEach(param => {
-      const [key, value] = param.split('=');
-      params[decodeURIComponent(key)] = decodeURIComponent(value || '');
-    });
+    // Remove '?' if present at the beginning
+    const searchParams = new URLSearchParams(queryString.startsWith('?') ? queryString.substring(1) : queryString);
+
+    for (const [key, value] of searchParams.entries()) {
+      // If key already exists, convert to array
+      if (params[key]) {
+        if (!Array.isArray(params[key])) {
+          params[key] = [params[key]];
+        }
+        params[key].push(value);
+      } else {
+        params[key] = value;
+      }
+    }
   }
   return params;
-}
-
-export function buildQueryParams(params) {
-  if (!params || Object.keys(params).length === 0) {
-    return '';
-  }
-
-  const queryString = Object.keys(params)
-    .map(key => {
-      const value = params[key];
-      if (value === null || value === undefined) {
-        return ''; // Skip null or undefined values
-      }
-      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-    })
-    .filter(param => param !== '') // Remove empty strings from skipped values
-    .join('&');
-
-  return queryString ? `?${queryString}` : '';
-}
+};

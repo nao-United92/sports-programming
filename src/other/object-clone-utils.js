@@ -1,16 +1,12 @@
 /**
- * Creates a shallow clone of `value`.
+ * Creates a deep clone of a value.
  *
  * @param {*} value The value to clone.
- * @returns {*} Returns the cloned value.
+ * @returns {*} Returns the deep cloned value.
  */
-export const clone = (value) => {
+export const deepClone = (value) => {
   if (value === null || typeof value !== 'object') {
     return value;
-  }
-
-  if (Array.isArray(value)) {
-    return value.slice();
   }
 
   if (value instanceof Date) {
@@ -18,20 +14,16 @@ export const clone = (value) => {
   }
 
   if (value instanceof RegExp) {
-    return new RegExp(value.source, value.flags);
+    return new RegExp(value);
   }
 
-  if (value instanceof Map) {
-    return new Map(value);
+  const clone = Array.isArray(value) ? [] : {};
+
+  for (const key in value) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      clone[key] = deepClone(value[key]);
+    }
   }
 
-  if (value instanceof Set) {
-    return new Set(value);
-  }
-
-  // Handle plain objects and class instances
-  // Create a new instance of the same constructor
-  const cloned = Object.create(Object.getPrototypeOf(value));
-  // Copy own enumerable properties
-  return Object.assign(cloned, value);
+  return clone;
 };
