@@ -1,5 +1,5 @@
 
-import { average, median, mode } from './average-utils.js';
+import { average, median, mode, sum } from './average-utils.js';
 
 describe('average', () => {
   test('should calculate the average of an array of numbers', () => {
@@ -61,5 +61,30 @@ describe('mode', () => {
 
   test('should handle negative numbers', () => {
     expect(mode([-1, -2, -2, -3])).toEqual([-2]);
+  });
+});
+
+describe('sum', () => {
+  test('should calculate the sum of an array of numbers', () => {
+    expect(sum([1, 2, 3, 4, 5])).toBe(15);
+    expect(sum([10, 20, 30])).toBe(60);
+  });
+
+  test('should return 0 for an empty array', () => {
+    expect(sum([])).toBe(0);
+  });
+
+  test('should handle negative numbers', () => {
+    expect(sum([-1, -2, -3, -4, -5])).toBe(-15);
+  });
+
+  test('should handle floating-point numbers', () => {
+    expect(sum([1.5, 2.5, 3.5])).toBe(7.5);
+  });
+
+  test('should return 0 for non-array input', () => {
+    expect(sum(null)).toBe(0);
+    expect(sum(undefined)).toBe(0);
+    expect(sum(123)).toBe(0);
   });
 });

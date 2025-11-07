@@ -71,3 +71,16 @@ export const mode = (arr) => {
 
   return modes.sort((a, b) => a - b);
 };
+
+/**
+ * Calculates the sum of an array of numbers.
+ *
+ * @param {number[]} arr The array of numbers.
+ * @returns {number} The sum of the numbers.
+ */
+export const sum = (arr) => {
+  if (!Array.isArray(arr)) {
+    return 0;
+  }
+  return arr.reduce((acc, val) => acc + val, 0);
+};
