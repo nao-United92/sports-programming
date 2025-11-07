@@ -1,24 +1,26 @@
-import { formatYYYYMMDD } from './date-format-utils.js';
+import { formatDate } from './date-format-utils';
 
-describe('formatYYYYMMDD', () => {
-  it('should format a valid date correctly', () => {
-    const date = new Date('2023-10-27T10:00:00Z');
-    expect(formatYYYYMMDD(date)).toBe('2023-10-27');
+describe('formatDate', () => {
+  const date = new Date('2023-10-27T05:08:09.123Z');
+
+  test('should format date to YYYY-MM-DD', () => {
+    expect(formatDate(date, 'YYYY-MM-DD')).toBe('2023-10-27');
   });
 
-  it('should handle single-digit months and days', () => {
-    const date = new Date('2023-01-05T10:00:00Z');
-    expect(formatYYYYMMDD(date)).toBe('2023-01-05');
+  test('should format date to YYYY/MM/DD hh:mm:ss', () => {
+    expect(formatDate(date, 'YYYY/MM/DD hh:mm:ss')).toBe('2023/10/27 05:08:09');
   });
 
-  it('should return an empty string for an invalid date', () => {
-    const date = new Date('invalid-date');
-    expect(formatYYYYMMDD(date)).toBe('');
+  test('should handle single digit month and day', () => {
+    const earlyDate = new Date('2023-01-02T03:04:05.006Z');
+    expect(formatDate(earlyDate, 'YYYY-MM-DD hh:mm:ss')).toBe('2023-01-02 03:04:05');
   });
 
-  it('should return an empty string for non-Date input', () => {
-    expect(formatYYYYMMDD(null)).toBe('');
-    expect(formatYYYYMMDD(undefined)).toBe('');
-    expect(formatYYYYMMDD('2023-10-27')).toBe('');
+  test('should format with milliseconds', () => {
+    expect(formatDate(date, 'YYYY-MM-DD hh:mm:ss.S')).toBe('2023-10-27 05:08:09.123');
+  });
+
+  test('should format year with two digits', () => {
+    expect(formatDate(date, 'YY-MM-DD')).toBe('23-10-27');
   });
 });
