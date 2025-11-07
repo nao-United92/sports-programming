@@ -1,86 +1,88 @@
-import { localStorageUtils } from './browser-local-storage-utils.js';
-
-// Mock localStorage for testing in a Node.js environment
-const localStorageMock = (() => {
-  let store = {};
-  return {
-    getItem: (key) => store[key] || null,
-    setItem: (key, value) => {
-      store[key] = value.toString();
-    },
-    removeItem: (key) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-  };
-})();
-
-Object.defineProperty(global, 'localStorage', { value: localStorageMock });
+import { set, get, remove } from './browser-local-storage-utils.js';
 
 describe('localStorageUtils', () => {
+  // Mock localStorage before each test
+  const localStorageMock = (() => {
+    let store = {};
+    return {
+      getItem: jest.fn((key) => store[key] || null),
+      setItem: jest.fn((key, value) => {
+        store[key] = value.toString();
+      }),
+      removeItem: jest.fn((key) => {
+        delete store[key];
+      }),
+      clear: jest.fn(() => {
+        store = {};
+      }),
+    };
+  })();
+
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+  });
+
   beforeEach(() => {
-    localStorageUtils.clear(); // Clear localStorage before each test
+    localStorageMock.clear();
+    jest.clearAllMocks();
   });
 
-  test('should set and get a string item', () => {
-    localStorageUtils.set('testString', 'hello');
-    expect(localStorageUtils.get('testString')).toBe('hello');
+  it('should set and get a string value', () => {
+    set('testString', 'hello');
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('testString', JSON.stringify('hello'));
+    expect(get('testString')).toBe('hello');
+    expect(localStorageMock.getItem).toHaveBeenCalledWith('testString');
   });
 
-  test('should set and get an object item', () => {
-    const obj = { name: 'test', value: 123 };
-    localStorageUtils.set('testObject', obj);
-    expect(localStorageUtils.get('testObject')).toEqual(obj);
+  it('should set and get a number value', () => {
+    set('testNumber', 123);
+    expect(get('testNumber')).toBe(123);
   });
 
-  test('should set and get an array item', () => {
-    const arr = [1, 2, 3];
-    localStorageUtils.set('testArray', arr);
-    expect(localStorageUtils.get('testArray')).toEqual(arr);
+  it('should set and get a boolean value', () => {
+    set('testBoolean', true);
+    expect(get('testBoolean')).toBe(true);
   });
 
-  test('should return null for a non-existent item', () => {
-    expect(localStorageUtils.get('nonExistent')).toBeNull();
+  it('should set and get an object', () => {
+    const testObject = { a: 1, b: 'test' };
+    set('testObject', testObject);
+    expect(get('testObject')).toEqual(testObject);
   });
 
-  test('should remove an item', () => {
-    localStorageUtils.set('toRemove', 'value');
-    localStorageUtils.remove('toRemove');
-    expect(localStorageUtils.get('toRemove')).toBeNull();
+  it('should set and get an array', () => {
+    const testArray = [1, 'a', { b: 2 }];
+    set('testArray', testArray);
+    expect(get('testArray')).toEqual(testArray);
   });
 
-  test('should clear all items', () => {
-    localStorageUtils.set('item1', 'value1');
-    localStorageUtils.set('item2', 'value2');
-    localStorageUtils.clear();
-    expect(localStorageUtils.get('item1')).toBeNull();
-    expect(localStorageUtils.get('item2')).toBeNull();
+  it('should return null for a non-existent key', () => {
+    expect(get('nonExistentKey')).toBeNull();
   });
 
-  // Simplified error handling tests
-  test('should not throw error when setting item fails', () => {
-    const originalSetItem = localStorageMock.setItem;
-    localStorageMock.setItem = () => { throw new Error('Quota exceeded'); };
-    expect(() => localStorageUtils.set('errorKey', 'largeValue')).not.toThrow();
-    localStorageMock.setItem = originalSetItem; // Restore original
+  it('should remove an item', () => {
+    set('itemToRemove', 'value');
+    expect(get('itemToRemove')).toBe('value');
+    remove('itemToRemove');
+    expect(localStorageMock.removeItem).toHaveBeenCalledWith('itemToRemove');
+    expect(get('itemToRemove')).toBeNull();
   });
 
-  test('should return null when getting item fails', () => {
-    const originalGetItem = localStorageMock.getItem;
-    localStorageMock.getItem = () => { throw new Error('Read error'); };
-    expect(localStorageUtils.get('errorKey')).toBeNull();
-    localStorageMock.getItem = originalGetItem; // Restore original
+  it('should handle JSON parsing errors gracefully', () => {
+    localStorageMock.setItem('invalidJson', '{"a":1,'); // Malformed JSON
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    expect(get('invalidJson')).toBeNull();
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
-  test('should get all items as an object', () => {
-    localStorageUtils.set('item1', 'value1');
-    localStorageUtils.set('item2', { a: 1 });
-    const allItems = localStorageUtils.getAll();
-    expect(allItems).toEqual({
-      'item1': 'value1',
-      'item2': { a: 1 },
+  it('should handle localStorage.setItem errors gracefully', () => {
+    localStorageMock.setItem.mockImplementationOnce(() => {
+      throw new Error('Quota exceeded');
     });
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    set('largeItem', 'a'.repeat(1024 * 1024 * 5)); // Simulate large item
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error setting item in localStorage:', expect.any(Error));
+    consoleErrorSpy.mockRestore();
   });
 });
