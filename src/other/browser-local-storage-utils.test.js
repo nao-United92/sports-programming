@@ -73,4 +73,14 @@ describe('localStorageUtils', () => {
     expect(localStorageUtils.get('errorKey')).toBeNull();
     localStorageMock.getItem = originalGetItem; // Restore original
   });
+
+  test('should get all items as an object', () => {
+    localStorageUtils.set('item1', 'value1');
+    localStorageUtils.set('item2', { a: 1 });
+    const allItems = localStorageUtils.getAll();
+    expect(allItems).toEqual({
+      'item1': 'value1',
+      'item2': { a: 1 },
+    });
+  });
 });

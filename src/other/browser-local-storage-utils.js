@@ -53,4 +53,22 @@ export const localStorageUtils = {
       console.error('Error clearing localStorage:', error);
     }
   },
+
+  /**
+   * Gets all items from localStorage as an object.
+   * @returns {object} An object containing all items from localStorage.
+   */
+  getAll: () => {
+    try {
+      const items = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        items[key] = localStorageUtils.get(key);
+      }
+      return items;
+    } catch (error) {
+      console.error('Error getting all items from localStorage:', error);
+      return {};
+    }
+  },
 };
