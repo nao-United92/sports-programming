@@ -1,62 +1,54 @@
-import { isVisible, toggleVisibility } from './dom-visibility-utils.js';
+import { toggleVisibility } from './dom-visibility-utils.js';
 
-describe('DOM Visibility Utilities', () => {
+describe('toggleVisibility', () => {
   let element;
 
   beforeEach(() => {
-    element = document.createElement('div');
-    document.body.appendChild(element);
+    // Create a mock DOM element for testing
+    document.body.innerHTML = '<div id="test-element" style="display: block;">Hello</div>';
+    element = document.getElementById('test-element');
   });
 
   afterEach(() => {
-    document.body.removeChild(element);
+    document.body.innerHTML = ''; // Clean up DOM
   });
 
-  describe('isVisible', () => {
-    it('should return true if the element is visible', () => {
-      element.style.display = 'block';
-      element.style.visibility = 'visible';
-      element.style.opacity = '1';
-      expect(isVisible(element)).toBe(true);
-    });
-
-    it('should return false if the element has display: none', () => {
-      element.style.display = 'none';
-      expect(isVisible(element)).toBe(false);
-    });
-
-    it('should return false if the element has visibility: hidden', () => {
-      element.style.visibility = 'hidden';
-      expect(isVisible(element)).toBe(false);
-    });
-
-    it('should return false if the element has opacity: 0', () => {
-      element.style.opacity = '0';
-      expect(isVisible(element)).toBe(false);
-    });
-
-    it('should return false for a non-existent element', () => {
-      expect(isVisible(null)).toBe(false);
-    });
+  it('should hide a visible element', () => {
+    expect(element.style.display).toBe('block');
+    toggleVisibility(element);
+    expect(element.style.display).toBe('none');
   });
 
-  describe('toggleVisibility', () => {
-    it('should hide a visible element', () => {
-      element.style.display = 'block';
-      toggleVisibility(element);
-      expect(element.style.display).toBe('none');
-    });
+  it('should show a hidden element', () => {
+    element.style.display = 'none';
+    expect(element.style.display).toBe('none');
+    toggleVisibility(element);
+    expect(element.style.display).toBe('block'); // Restores to original 'block'
+  });
 
-    it('should show a hidden element with default display', () => {
-      element.style.display = 'none';
-      toggleVisibility(element);
-      expect(element.style.display).toBe('block');
-    });
+  it('should restore original display style when showing', () => {
+    element.style.display = 'flex';
+    toggleVisibility(element); // Hide
+    expect(element.style.display).toBe('none');
+    toggleVisibility(element); // Show
+    expect(element.style.display).toBe('flex'); // Should restore 'flex'
+  });
 
-    it('should show a hidden element with specified display', () => {
-      element.style.display = 'none';
-      toggleVisibility(element, 'flex');
-      expect(element.style.display).toBe('flex');
-    });
+  it('should handle elements with no initial display style (default to empty string)', () => {
+    document.body.innerHTML = '<span id="test-span">Span Text</span>';
+    const spanElement = document.getElementById('test-span');
+    expect(spanElement.style.display).toBe(''); // Default is empty string
+
+    toggleVisibility(spanElement); // Hide
+    expect(spanElement.style.display).toBe('none');
+    toggleVisibility(spanElement); // Show
+    expect(spanElement.style.display).toBe(''); // Should restore to empty string
+  });
+
+  it('should log a warning for invalid element input', () => {
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    toggleVisibility(null);
+    expect(consoleWarnSpy).toHaveBeenCalledWith('toggleVisibility: Invalid element provided.', null);
+    consoleWarnSpy.mockRestore();
   });
 });

@@ -1,28 +1,25 @@
-/**
- * Checks if an element is visible (not display: none or visibility: hidden).
- * @param {HTMLElement} element The element to check.
- * @returns {boolean} True if the element is visible, false otherwise.
- */
-export function isVisible(element) {
-  if (!element) {
-    return false;
-  }
-  const style = window.getComputedStyle(element);
-  return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
-}
+const originalDisplay = new WeakMap();
 
 /**
- * Toggles the visibility of an element.
- * @param {HTMLElement} element The element to toggle visibility for.
- * @param {string} [display='block'] The display value to set when showing the element.
+ * Toggles the visibility of a DOM element.
+ * If the element is currently visible, it will be hidden (display: 'none').
+ * If the element is currently hidden, it will be shown using its original display style.
+ *
+ * @param {HTMLElement} element The DOM element to toggle visibility for.
  */
-export function toggleVisibility(element, display = 'block') {
-  if (!element) {
+export const toggleVisibility = (element) => {
+  if (!(element instanceof HTMLElement)) {
+    console.warn('toggleVisibility: Invalid element provided.', element);
     return;
   }
-  if (isVisible(element)) {
-    element.style.display = 'none';
+
+  if (element.style.display === 'none') {
+    // Element is hidden, show it
+    element.style.display = originalDisplay.get(element) || ''; // Restore original or default
+    originalDisplay.delete(element);
   } else {
-    element.style.display = display;
+    // Element is visible, hide it
+    originalDisplay.set(element, element.style.display); // Store original display
+    element.style.display = 'none';
   }
-}
+};
