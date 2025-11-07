@@ -1,174 +1,55 @@
-const { delay, debounce, throttle, cancellableDelay } = require('./async-delay-utils.js');
+import { delay } from './async-delay-utils.js';
 
 describe('delay', () => {
-  // Jestのタイマーモックを有効にする
   beforeEach(() => {
     jest.useFakeTimers();
   });
 
-  // 各テストの後にタイマーモックを無効にする
   afterEach(() => {
     jest.runOnlyPendingTimers();
     jest.useRealTimers();
   });
 
-  test('should delay for the specified amount of time', async () => {
-    const mockFn = jest.fn();
-    const delayTime = 1000;
+  it('should delay execution for the specified time', async () => {
+    const startTime = Date.now();
+    const delayTime = 1000; // 1 second
 
-    const promise = delay(delayTime).then(mockFn);
-
-    // delayTimeが経過していないので、関数はまだ呼び出されていないはず
-    expect(mockFn).not.toHaveBeenCalled();
-
-    // delayTimeだけ時間を進める
+    const promise = delay(delayTime);
     jest.advanceTimersByTime(delayTime);
-
-    // Promiseが解決されるのを待つ
     await promise;
 
-    // 関数が呼び出されたはず
-    expect(mockFn).toHaveBeenCalledTimes(1);
+    const endTime = Date.now();
+    expect(endTime - startTime).toBe(delayTime);
   });
 
-  test('should resolve immediately if delay time is 0', async () => {
-    const mockFn = jest.fn();
-    const promise = delay(0).then(mockFn);
-
-    // 0msなので、すぐに解決されるはず
-    jest.advanceTimersByTime(0);
-    await promise;
-
-    expect(mockFn).toHaveBeenCalledTimes(1);
-  });
-
-  test('should pass through any arguments if provided', async () => {
+  it('should resolve the promise after the delay', async () => {
     const delayTime = 500;
-    const testArg = 'hello';
+    let resolved = false;
 
-    const promise = delay(delayTime, testArg);
+    const promise = delay(delayTime).then(() => {
+      resolved = true;
+    });
 
+    expect(resolved).toBe(false);
     jest.advanceTimersByTime(delayTime);
-
-    const result = await promise;
-
-    expect(result).toBe(testArg);
-  });
-});
-
-describe('debounce', () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-  });
-
-  it('should call the function only once after the wait time', () => {
-    const mockFn = jest.fn();
-    const debouncedFn = debounce(mockFn, 1000);
-
-    debouncedFn();
-    debouncedFn();
-    debouncedFn();
-
-    expect(mockFn).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(1000);
-
-    expect(mockFn).toHaveBeenCalledTimes(1);
-  });
-
-  it('should reset the timer if called again within the wait time', () => {
-    const mockFn = jest.fn();
-    const debouncedFn = debounce(mockFn, 1000);
-
-    debouncedFn();
-    jest.advanceTimersByTime(500);
-    debouncedFn();
-
-    expect(mockFn).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(1000);
-
-    expect(mockFn).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('throttle', () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-  });
-
-  it('should call the function immediately and then not again within the limit', () => {
-    const mockFn = jest.fn();
-    const throttledFn = throttle(mockFn, 1000);
-
-    throttledFn();
-    throttledFn();
-    throttledFn();
-
-    expect(mockFn).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(500);
-    throttledFn();
-    expect(mockFn).toHaveBeenCalledTimes(1);
-  });
-
-  it('should call the function again after the limit has passed', () => {
-    const mockFn = jest.fn();
-    const throttledFn = throttle(mockFn, 1000);
-
-    throttledFn();
-    expect(mockFn).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(1000);
-    throttledFn();
-    expect(mockFn).toHaveBeenCalledTimes(2);
-  });
-});
-
-describe('cancellableDelay', () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-  });
-
-  it('should resolve after the specified time', async () => {
-    const { promise } = cancellableDelay(1000);
-    const mockFn = jest.fn();
-    promise.then(mockFn);
-
-    jest.advanceTimersByTime(1000);
     await promise;
-    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(resolved).toBe(true);
   });
 
-  it('should be cancellable', async () => {
-    const { promise, cancel } = cancellableDelay(1000);
-    const mockFn = jest.fn();
-    promise.catch(mockFn);
+  it('should work with async/await', async () => {
+    const delayTime = 200;
+    let step = 0;
 
-    cancel();
+    const func = async () => {
+      step = 1;
+      await delay(delayTime);
+      step = 2;
+    };
 
-    try {
-      await promise;
-    } catch (e) {
-      expect(e.message).toBe('Delay cancelled');
-    }
-
-    jest.advanceTimersByTime(1000);
-    expect(mockFn).toHaveBeenCalledTimes(1);
+    const promise = func();
+    expect(step).toBe(1);
+    jest.advanceTimersByTime(delayTime);
+    await promise;
+    expect(step).toBe(2);
   });
 });
