@@ -1,27 +1,15 @@
 /**
- * Parses a URL query string into an object.
+ * Parses a URL into its components.
  *
  * @param {string} url The URL to parse.
- * @returns {object} An object containing the query parameters.
+ * @returns {object|null} An object containing the URL components, or null if the URL is invalid.
  */
-export const parseQuery = (url) => {
-  const queryString = url.includes('?') ? url.split('?')[1] : '';
-  if (!queryString) {
-    return {};
+export const parseUrl = (url) => {
+  try {
+    const { href, protocol, hostname, port, pathname, search, hash } = new URL(url);
+    const params = Object.fromEntries(new URLSearchParams(search));
+    return { href, protocol, hostname, port, pathname, search, hash, params };
+  } catch (error) {
+    return null;
   }
-
-  const params = new URLSearchParams(queryString);
-  const obj = {};
-  for (const [key, value] of params.entries()) {
-    if (obj.hasOwnProperty(key)) {
-      if (Array.isArray(obj[key])) {
-        obj[key].push(value);
-      } else {
-        obj[key] = [obj[key], value];
-      }
-    } else {
-      obj[key] = value;
-    }
-  }
-  return obj;
 };
