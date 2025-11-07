@@ -1,67 +1,59 @@
-import { getQueryParams, buildQueryParams } from './url-query-params-utils';
+import { parseQueryParams } from './url-query-params-utils.js';
 
-describe('url-query-params-utils', () => {
-  describe('getQueryParams', () => {
-    test('should parse query parameters from a URL', () => {
-      const url = 'http://example.com?name=Alice&age=30';
-      expect(getQueryParams(url)).toEqual({ name: 'Alice', age: '30' });
-    });
+describe('parseQueryParams', () => {
+  // Mock window.location.search for testing
+  const originalLocation = window.location;
 
-    test('should handle URL without query parameters', () => {
-      const url = 'http://example.com';
-      expect(getQueryParams(url)).toEqual({});
-    });
-
-    test('should handle URL with empty query string', () => {
-      const url = 'http://example.com?';
-      expect(getQueryParams(url)).toEqual({});
-    });
-
-    test('should handle URL with encoded characters', () => {
-      const url = 'http://example.com?param=hello%20world%21&key=value%3D1';
-      expect(getQueryParams(url)).toEqual({ param: 'hello world!', key: 'value=1' });
-    });
-
-    test('should handle parameters with no value', () => {
-      const url = 'http://example.com?param1&param2=value2';
-      expect(getQueryParams(url)).toEqual({ param1: '', param2: 'value2' });
-    });
-
-    test('should handle duplicate parameter keys (last one wins)', () => {
-      const url = 'http://example.com?param=value1&param=value2';
-      expect(getQueryParams(url)).toEqual({ param: 'value2' });
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { ...originalLocation, search: '' },
     });
   });
 
-  describe('buildQueryParams', () => {
-    test('should build query string from an object', () => {
-      const params = { name: 'Bob', age: 25 };
-      expect(buildQueryParams(params)).toBe('?name=Bob&age=25');
+  afterAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
     });
+  });
 
-    test('should handle empty object', () => {
-      const params = {};
-      expect(buildQueryParams(params)).toBe('');
-    });
+  it('should parse basic query parameters from a string', () => {
+    const url = '?name=John Doe&age=30';
+    expect(parseQueryParams(url)).toEqual({ name: 'John Doe', age: '30' });
+  });
 
-    test('should handle parameters with special characters (encoding)', () => {
-      const params = { query: 'hello world!', key: 'value=1' };
-      expect(buildQueryParams(params)).toBe('?query=hello%20world!&key=value%3D1');
-    });
+  it('should parse query parameters with multiple values for the same key', () => {
+    const url = '?item=apple&item=banana&color=red';
+    expect(parseQueryParams(url)).toEqual({ item: ['apple', 'banana'], color: 'red' });
+  });
 
-    test('should handle null and undefined values (skip them)', () => {
-      const params = { a: 1, b: null, c: undefined, d: 4 };
-      expect(buildQueryParams(params)).toBe('?a=1&d=4');
-    });
+  it('should handle encoded characters', () => {
+    const url = '?query=hello%20world%21&param=%C3%A9';
+    expect(parseQueryParams(url)).toEqual({ query: 'hello world!', param: 'é' });
+  });
 
-    test('should handle boolean values', () => {
-      const params = { active: true, admin: false };
-      expect(buildQueryParams(params)).toBe('?active=true&admin=false');
-    });
+  it('should handle query parameters without values', () => {
+    const url = '?param1&param2=value';
+    expect(parseQueryParams(url)).toEqual({ param1: '', param2: 'value' });
+  });
 
-    test('should handle number values', () => {
-      const params = { id: 123, count: 0 };
-      expect(buildQueryParams(params)).toBe('?id=123&count=0');
-    });
+  it('should return an empty object if no query parameters are present', () => {
+    const url = 'https://example.com/path';
+    expect(parseQueryParams(url)).toEqual({});
+  });
+
+  it('should use window.location.search if no URL is provided', () => {
+    window.location.search = '?defaultParam=test';
+    expect(parseQueryParams()).toEqual({ defaultParam: 'test' });
+  });
+
+  it('should handle URL without leading question mark', () => {
+    const url = 'name=Alice&id=123';
+    expect(parseQueryParams(url)).toEqual({ name: 'Alice', id: '123' });
+  });
+
+  it('should handle complex URL with hash and multiple params', () => {
+    const url = 'https://example.com/path?a=1&b=2#hash';
+    expect(parseQueryParams(url)).toEqual({ a: '1', b: '2' });
   });
 });
