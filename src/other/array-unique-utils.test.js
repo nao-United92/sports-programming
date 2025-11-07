@@ -1,32 +1,36 @@
-const assert = require('assert');
-const {
-  uniqueElements,
-  uniqueElementsBy,
-  uniqBy,
-} = require('./array-unique-utils.js');
+import { unique } from './array-unique-utils.js';
 
-try {
-  assert.deepStrictEqual(uniqueElements([1, 2, 2, 3, 4, 4, 5]), [1, 2, 3, 4, 5]);
-  assert.deepStrictEqual(
-    uniqueElementsBy(
-      [
-        { id: 0, value: 'a' },
-        { id: 1, value: 'b' },
-        { id: 2, value: 'c' },
-        { id: 1, value: 'd' },
-        { id: 0, value: 'e' },
-      ],
-      (a, b) => a.id == b.id
-    ),
-    [
-      { id: 0, value: 'a' },
-      { id: 1, value: 'b' },
-      { id: 2, value: 'c' },
-    ]
-  );
-  assert.deepStrictEqual(uniqBy([{ n: 1 }, { n: 2 }, { n: 1 }], o => o.n), [{ n: 1 }, { n: 2 }]);
-  console.log('All array-unique tests passed!');
-} catch (e) {
-  console.error('array-unique tests failed:', e.message);
-  process.exit(1);
-}
+describe('unique', () => {
+  it('should remove duplicate numbers from an array', () => {
+    expect(unique([1, 2, 1, 3, 2])).toEqual([1, 2, 3]);
+  });
+
+  it('should remove duplicate strings from an array', () => {
+    expect(unique(['a', 'b', 'a', 'c', 'b'])).toEqual(['a', 'b', 'c']);
+  });
+
+  it('should handle an empty array', () => {
+    expect(unique([])).toEqual([]);
+  });
+
+  it('should handle an array with no duplicates', () => {
+    expect(unique([1, 2, 3])).toEqual([1, 2, 3]);
+  });
+
+  it('should handle an array with null and undefined values', () => {
+    expect(unique([1, null, 2, undefined, 1, null])).toEqual([1, null, 2, undefined]);
+  });
+
+  it('should not remove duplicate objects (by reference)', () => {
+    const obj1 = { a: 1 };
+    const obj2 = { a: 1 };
+    expect(unique([obj1, obj2, obj1])).toEqual([obj1, obj2]);
+  });
+
+  it('should return an empty array if input is not an array', () => {
+    expect(unique(null)).toEqual([]);
+    expect(unique(undefined)).toEqual([]);
+    expect(unique('string')).toEqual([]);
+    expect(unique(123)).toEqual([]);
+  });
+});

@@ -1,21 +1,13 @@
-const uniqueElements = arr => [...new Set(arr)];
-
-const uniqueElementsBy = (arr, fn) =>
-  arr.reduce((acc, v) => {
-    if (!acc.some(x => fn(v, x))) acc.push(v);
-    return acc;
-  }, []);
-
-const uniqBy = (arr, fn) => {
-  const seen = new Set();
-  return arr.filter(el => {
-    const applied = fn(el);
-    if (seen.has(applied)) {
-      return false;
-    }
-    seen.add(applied);
-    return true;
-  });
+/**
+ * Creates a duplicate-free version of an array, using SameValueZero for equality comparisons.
+ * The order of result values is determined by the order they occur in the array.
+ *
+ * @param {Array} array The array to inspect.
+ * @returns {Array} Returns the new duplicate free array.
+ */
+export const unique = (array) => {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+  return [...new Set(array)];
 };
-
-module.exports = { uniqueElements, uniqueElementsBy, uniqBy };
