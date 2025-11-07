@@ -70,4 +70,14 @@ describe('cookieUtils', () => {
     expect(cookieString).toContain('toRemove=');
     expect(cookieString).toContain('expires=Thu, 01 Jan 1970');
   });
+
+  test('should get all cookies as an object', () => {
+    cookieUtils.set('cookie1', 'value1');
+    cookieUtils.set('cookie2', 'value2');
+    const allCookies = cookieUtils.getAll();
+    expect(allCookies).toEqual({
+      'cookie1': 'value1',
+      'cookie2': 'value2',
+    });
+  });
 });

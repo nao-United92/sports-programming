@@ -43,4 +43,22 @@ export const cookieUtils = {
   remove: (name, path = '/') => {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path}`;
   },
+
+  /**
+   * Gets all cookies as an object.
+   * @returns {object} An object containing all cookies.
+   */
+  getAll: () => {
+    const cookies = {};
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      const parts = c.split('=');
+      if (parts.length === 2) {
+        cookies[parts[0]] = parts[1];
+      }
+    }
+    return cookies;
+  },
 };
