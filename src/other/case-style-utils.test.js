@@ -1,4 +1,4 @@
-import { camelCase, kebabCase, snakeCase, startCase, pascalCase, toggleCase, pascalCaseToKebabCase, pascalCaseToSnakeCase } from './case-style-utils.js';
+import { camelCase, kebabCase, snakeCase, startCase, pascalCase, toggleCase, pascalCaseToKebabCase, pascalCaseToSnakeCase, sentenceCase } from './case-style-utils.js';
 
 describe('Case Style Utilities', () => {
 
@@ -114,6 +114,24 @@ describe('Case Style Utilities', () => {
       expect(pascalCaseToSnakeCase(null)).toBe('');
       expect(pascalCaseToSnakeCase(undefined)).toBe('');
       expect(pascalCaseToSnakeCase(123)).toBe('');
+    });
+  });
+
+  describe('sentenceCase', () => {
+    it('should convert a string to sentence case', () => {
+      expect(sentenceCase('hello world')).toBe('Hello world');
+      expect(sentenceCase('HELLO WORLD')).toBe('Hello world');
+      expect(sentenceCase('HeLLo WoRLD')).toBe('Hello world');
+    });
+
+    it('should handle empty strings', () => {
+      expect(sentenceCase('')).toBe('');
+    });
+
+    it('should handle non-string inputs', () => {
+      expect(sentenceCase(null)).toBe('');
+      expect(sentenceCase(undefined)).toBe('');
+      expect(sentenceCase(123)).toBe('');
     });
   });
 
