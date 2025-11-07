@@ -1,31 +1,35 @@
-const { capitalize } = require('./string-capitalize-utils.js');
+import { capitalize } from './string-capitalize-utils.js';
 
 describe('capitalize', () => {
-  test('should capitalize the first letter of a string', () => {
+  it('should capitalize the first letter of a word', () => {
     expect(capitalize('fred')).toBe('Fred');
   });
 
-  test('should convert the rest of the string to lowercase', () => {
+  it('should handle an empty string', () => {
+    expect(capitalize('')).toBe('');
+  });
+
+  it('should handle a string that is already capitalized', () => {
+    expect(capitalize('Fred')).toBe('Fred');
+  });
+
+  it('should convert the rest of the string to lowercase', () => {
     expect(capitalize('FRED')).toBe('Fred');
     expect(capitalize('fRED')).toBe('Fred');
   });
 
-  test('should handle empty string', () => {
-    expect(capitalize('')).toBe('');
-  });
-
-  test('should handle single character string', () => {
-    expect(capitalize('a')).toBe('A');
-    expect(capitalize('Z')).toBe('Z');
-  });
-
-  test('should handle strings with spaces', () => {
+  it('should handle strings with multiple words (only first letter of first word)', () => {
     expect(capitalize('hello world')).toBe('Hello world');
   });
 
-  test('should handle non-string input', () => {
+  it('should handle strings starting with numbers', () => {
+    expect(capitalize('123test')).toBe('123test');
+  });
+
+  it('should handle non-string inputs', () => {
     expect(capitalize(null)).toBe('');
     expect(capitalize(undefined)).toBe('');
     expect(capitalize(123)).toBe('');
+    expect(capitalize({})).toBe('');
   });
 });

@@ -5,11 +5,9 @@
  * @param {string} [string=''] The string to capitalize.
  * @returns {string} Returns the capitalized string.
  */
-function capitalize(string) {
+export const capitalize = (string) => {
   if (typeof string !== 'string' || string.length === 0) {
     return '';
   }
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-}
-
-module.exports = { capitalize };
+};
