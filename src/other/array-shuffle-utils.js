@@ -1,5 +1,11 @@
-export const shuffle = (array) => {
-  const shuffledArray = [...array];
+/**
+ * Creates a shuffled version of `array` using a version of the Fisher-Yates shuffle.
+ *
+ * @param {Array} array The array to shuffle.
+ * @returns {Array} Returns the new shuffled array.
+ */
+const shuffle = (array) => {
+  const shuffledArray = [...array]; // Create a shallow copy to avoid modifying the original array
   let currentIndex = shuffledArray.length;
   let randomIndex;
 
@@ -18,3 +24,5 @@ export const shuffle = (array) => {
 
   return shuffledArray;
 };
+
+module.exports = { shuffle };

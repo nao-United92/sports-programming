@@ -1,35 +1,40 @@
-const toCamel = (s) => {
-  return s.replace(/([-_][a-z])/ig, ($1) => {
-    return $1.toUpperCase()
-      .replace('-', '')
-      .replace('_', '');
-  });
-};
+const toCamelCase = (str) =>
+  str.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
 
-const toSnake = (str) => {
-  if (typeof str !== 'string') return str;
-  return str
-    .replace(/([A-Z])/g, '_$1')
-    .toLowerCase()
-    .replace(/^_/, '');
-};
+const toSnakeCase = (str) =>
+  str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 
-const isObject = (obj) => obj !== null && typeof obj === 'object' && !Array.isArray(obj);
-
-const convertKeys = (obj, converter) => {
-  if (isObject(obj)) {
-    const newObj = {};
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        newObj[converter(key)] = convertKeys(obj[key], converter);
-      }
-    }
-    return newObj;
-  } else if (Array.isArray(obj)) {
-    return obj.map(item => convertKeys(item, converter));
+const processKeys = (obj, processer) => {
+  if (Array.isArray(obj)) {
+    return obj.map((v) => processKeys(v, processer));
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce(
+      (acc, key) => ({
+        ...acc,
+        [processer(key)]: processKeys(obj[key], processer),
+      }),
+      {}
+    );
   }
   return obj;
 };
 
-export const keysToCamel = (obj) => convertKeys(obj, toCamel);
-export const keysToSnake = (obj) => convertKeys(obj, toSnake);
+/**
+ * Recursively converts object keys to camelCase.
+ * @param {object} obj The object to process.
+ * @returns {object} A new object with camelCase keys.
+ */
+const deepCamelCaseKeys = (obj) => {
+  return processKeys(obj, toCamelCase);
+};
+
+/**
+ * Recursively converts object keys to snake_case.
+ * @param {object} obj The object to process.
+ * @returns {object} A new object with snake_case keys.
+ */
+const deepSnakeCaseKeys = (obj) => {
+  return processKeys(obj, toSnakeCase);
+};
+
+module.exports = { deepCamelCaseKeys, deepSnakeCaseKeys };

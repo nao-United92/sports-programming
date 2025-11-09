@@ -1,34 +1,41 @@
-const isObject = (value) => value !== null && typeof value === 'object';
+/**
+ * Checks if the item is a plain object.
+ * @param {*} item The item to check.
+ * @returns {boolean} True if the item is a plain object, false otherwise.
+ */
+const isObject = (item) => {
+  return item && typeof item === 'object' && !Array.isArray(item);
+};
 
 /**
- * Recursively merges own and inherited enumerable string keyed properties of
- * source objects into the destination object. Source objects are applied
- * from left to right. Subsequent sources overwrite property assignments of
- * previous sources.
+ * Recursively merges sources objects into the target object.
  *
- * @param {object} object The destination object.
- * @param {...object} sources The source objects.
- * @returns {object} Returns `object`.
+ * @param {object} target The target object to merge into.
+ * @param {...object} sources The source objects to merge from.
+ * @returns {object} The merged object.
  */
-export const merge = (object, ...sources) => {
-  if (!isObject(object)) {
-    return object;
+const deepMerge = (target, ...sources) => {
+  if (!sources.length) {
+    return target;
+  }
+  const source = sources.shift();
+  const output = { ...target };
+
+  if (isObject(output) && isObject(source)) {
+    Object.keys(source).forEach((key) => {
+      if (isObject(source[key])) {
+        if (!(key in output)) {
+          Object.assign(output, { [key]: source[key] });
+        } else {
+          output[key] = deepMerge(output[key], source[key]);
+        }
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
   }
 
-  sources.forEach((source) => {
-    if (!isObject(source)) {
-      return;
-    }
-
-    for (const key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        if (isObject(object[key]) && isObject(source[key])) {
-          object[key] = merge(object[key], source[key]);
-        } else {
-          object[key] = source[key];
-        }
-      }
-    }
-  });
-  return object;
+  return deepMerge(output, ...sources);
 };
+
+module.exports = { deepMerge };
