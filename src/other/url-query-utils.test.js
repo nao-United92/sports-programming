@@ -1,56 +1,45 @@
-import { objectToQueryString, queryStringToObject } from './url-query-utils.js';
+const { getQueryParams } = require('./url-query-utils');
 
-describe('url-query-utils', () => {
-  describe('objectToQueryString', () => {
-    it('should convert a simple object to a query string', () => {
-      expect(objectToQueryString({ a: 1, b: 'hello' })).toBe('a=1&b=hello');
-    });
+describe('URL Query Utilities', () => {
+    describe('getQueryParams', () => {
+        it('should parse a simple query string from a full URL', () => {
+            const url = 'https://example.com?name=John&age=30';
+            expect(getQueryParams(url)).toEqual({ name: 'John', age: '30' });
+        });
 
-    it('should handle special characters', () => {
-      expect(objectToQueryString({ q: 'a&b=c', next: '/path' })).toBe('q=a%26b%3Dc&next=%2Fpath');
-    });
+        it('should handle multiple values for the same key by creating an array', () => {
+            const url = 'https://example.com?a=1&a=2&b=3';
+            expect(getQueryParams(url)).toEqual({ a: ['1', '2'], b: '3' });
+        });
 
-    it('should handle arrays by adding []', () => {
-      expect(objectToQueryString({ ids: [1, 2, 3] })).toBe('ids[]=1&ids[]=2&ids[]=3');
-    });
+        it('should handle keys with empty values and keys without values', () => {
+            // URLSearchParams treats '?c' as a key 'c' with an empty string value.
+            const url = 'https://example.com?a=&b=2&c';
+            expect(getQueryParams(url)).toEqual({ a: '', b: '2', c: '' });
+        });
 
-    it('should handle null and undefined values', () => {
-      expect(objectToQueryString({ a: 1, b: null, c: undefined, d: 'd' })).toBe('a=1&b&d=d');
-    });
+        it('should correctly decode URL-encoded characters', () => {
+            const url = 'https://example.com?q=%E3%83%86%E3%82%B9%E3%83%88&lang=ja';
+            expect(getQueryParams(url)).toEqual({ q: 'テスト', lang: 'ja' });
+        });
 
-    it('should return an empty string for empty, null, or non-object inputs', () => {
-      expect(objectToQueryString({})).toBe('');
-      expect(objectToQueryString(null)).toBe('');
-      expect(objectToQueryString('test')).toBe('');
-    });
-  });
+        it('should return an empty object for URLs without a query string', () => {
+            const url = 'https://example.com/path/page';
+            expect(getQueryParams(url)).toEqual({});
+        });
 
-  describe('queryStringToObject', () => {
-    it('should convert a simple query string to an object', () => {
-      expect(queryStringToObject('a=1&b=hello')).toEqual({ a: '1', b: 'hello' });
-    });
+        it('should handle just a query string without a base URL', () => {
+            const queryString = 'name=Jane&hobbies=reading&hobbies=coding';
+            expect(getQueryParams(queryString)).toEqual({ name: 'Jane', hobbies: ['reading', 'coding'] });
+        });
 
-    it('should handle URL-encoded characters', () => {
-      expect(queryStringToObject('q=a%26b%3Dc&next=%2Fpath')).toEqual({ q: 'a&b=c', next: '/path' });
-    });
+        it('should handle complex cases with more than two same-key values', () => {
+            const url = '?a=1&a=2&a=3&b=4';
+            expect(getQueryParams(url)).toEqual({ a: ['1', '2', '3'], b: '4' });
+        });
 
-    it('should handle array syntax with []', () => {
-      expect(queryStringToObject('ids[]=1&ids[]=2&ids[]=3')).toEqual({ ids: ['1', '2', '3'] });
+        it('should return an empty object for an empty string input', () => {
+            expect(getQueryParams('')).toEqual({});
+        });
     });
-
-    it('should handle keys without values as null', () => {
-      expect(queryStringToObject('a&b=2')).toEqual({ a: null, b: '2' });
-    });
-
-    it('should handle repeated keys by creating an array', () => {
-        expect(queryStringToObject('key=v1&key=v2')).toEqual({ key: ['v1', 'v2'] });
-    });
-
-    it('should return an empty object for empty, null, or non-string inputs', () => {
-      expect(queryStringToObject('')).toEqual({});
-      expect(queryStringToObject('?')).toEqual({});
-      expect(queryStringToObject(null)).toEqual({});
-      expect(queryStringToObject({})).toEqual({});
-    });
-  });
 });
