@@ -1,52 +1,46 @@
-import { merge } from './object-merge-utils.js';
+const { deepMerge } = require('./object-merge-utils');
 
-describe('merge', () => {
-  test('should merge properties of source objects into the destination object', () => {
-    const object = {
-      'a': [{ 'b': 2 }, { 'd': 4 }]
-    };
-    const source = {
-      'a': [{ 'c': 3 }, { 'e': 5 }]
-    };
-    expect(merge(object, source)).toEqual({
-      'a': [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }]
-    });
+describe('deepMerge', () => {
+  test('should merge simple objects', () => {
+    const target = { a: 1, b: 2 };
+    const source = { b: 3, c: 4 };
+    const expected = { a: 1, b: 3, c: 4 };
+    expect(deepMerge(target, source)).toEqual(expected);
   });
 
-  test('should overwrite simple properties', () => {
-    const object = { 'a': 1, 'b': 2 };
-    const source = { 'b': 3, 'c': 4 };
-    expect(merge(object, source)).toEqual({ 'a': 1, 'b': 3, 'c': 4 });
+  test('should merge nested objects', () => {
+    const target = { a: { x: 1 }, b: 2 };
+    const source = { a: { y: 2 }, c: 3 };
+    const expected = { a: { x: 1, y: 2 }, b: 2, c: 3 };
+    expect(deepMerge(target, source)).toEqual(expected);
   });
 
-  test('should deeply merge objects', () => {
-    const object = { 'a': { 'b': 1 } };
-    const source = { 'a': { 'c': 2 } };
-    expect(merge(object, source)).toEqual({ 'a': { 'b': 1, 'c': 2 } });
+  test('should overwrite arrays, not merge them', () => {
+    const target = { a: [1, 2] };
+    const source = { a: [3, 4] };
+    const expected = { a: [3, 4] };
+    expect(deepMerge(target, source)).toEqual(expected);
   });
 
   test('should handle multiple source objects', () => {
-    const object = { 'a': 1 };
-    const source1 = { 'b': 2 };
-    const source2 = { 'c': 3 };
-    expect(merge(object, source1, source2)).toEqual({ 'a': 1, 'b': 2, 'c': 3 });
+    const target = { a: 1 };
+    const source1 = { b: 2 };
+    const source2 = { c: { d: 3 } };
+    const source3 = { a: 4, c: { e: 5 } };
+    const expected = { a: 4, b: 2, c: { d: 3, e: 5 } };
+    expect(deepMerge(target, source1, source2, source3)).toEqual(expected);
   });
 
-  test('should modify the original object', () => {
-    const object = { 'a': 1 };
-    const result = merge(object, { 'b': 2 });
-    expect(result).toBe(object);
+  test('should not mutate the original target object', () => {
+    const target = { a: { x: 1 }, b: 2 };
+    const source = { a: { y: 2 }, c: 3 };
+    deepMerge(target, source);
+    expect(target).toEqual({ a: { x: 1 }, b: 2 });
   });
 
-  test('should handle arrays by merging elements if they are objects', () => {
-    const object = { 'a': [{ 'b': 1 }] };
-    const source = { 'a': [{ 'c': 2 }] };
-    expect(merge(object, source)).toEqual({ 'a': [{ 'b': 1, 'c': 2 }] });
-  });
-
-  test('should replace arrays if source is not an object', () => {
-    const object = { 'a': [1, 2] };
-    const source = { 'a': [3] };
-    expect(merge(object, source)).toEqual({ 'a': [3] });
+  test('should handle empty or non-object sources gracefully', () => {
+    const target = { a: 1 };
+    expect(deepMerge(target)).toEqual({ a: 1 });
+    expect(deepMerge(target, null, undefined)).toEqual({ a: 1 });
   });
 });
