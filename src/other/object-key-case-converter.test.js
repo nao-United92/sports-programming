@@ -1,55 +1,73 @@
-import { keysToCamel, keysToSnake } from './object-key-case-converter.js';
+const { keysToCamel, keysToSnake } = require('./object-key-case-converter');
 
-describe('object-key-case-converter', () => {
+describe('Object Key Case Converter', () => {
   describe('keysToCamel', () => {
-    it('should convert snake_case keys to camelCase', () => {
-      const snakeCase = {
-        first_name: 'John',
-        last_name: 'Doe',
-        user_details: {
-          phone_number: '123-456-7890'
-        }
+    it('should convert snake_case and kebab-case keys to camelCase recursively', () => {
+      const input = {
+        'user-profile': {
+          first_name: 'John',
+          'last-name': 'Doe',
+          address_details: [
+            { zip_code: '12345', 'city-name': 'Testville' }
+          ]
+        },
+        account_id: 123
       };
-      const camelCase = {
-        firstName: 'John',
-        lastName: 'Doe',
-        userDetails: {
-          phoneNumber: '123-456-7890'
-        }
+      const expected = {
+        userProfile: {
+          firstName: 'John',
+          lastName: 'Doe',
+          addressDetails: [
+            { zipCode: '12345', cityName: 'Testville' }
+          ]
+        },
+        accountId: 123
       };
-      expect(keysToCamel(snakeCase)).toEqual(camelCase);
+      expect(keysToCamel(input)).toEqual(expected);
     });
 
-    it('should handle arrays of objects', () => {
-        const snakeArray = [{first_name: 'Jane'}, {first_name: 'John'}];
-        const camelArray = [{firstName: 'Jane'}, {firstName: 'John'}];
-        expect(keysToCamel(snakeArray)).toEqual(camelArray);
+    it('should return non-objects as is', () => {
+      expect(keysToCamel(null)).toBeNull();
+      expect(keysToCamel('some_string')).toBe('some_string');
+      expect(keysToCamel(123)).toBe(123);
     });
   });
 
   describe('keysToSnake', () => {
-    it('should convert camelCase keys to snake_case', () => {
-      const camelCase = {
-        firstName: 'John',
-        lastName: 'Doe',
-        userDetails: {
-          phoneNumber: '123-456-7890'
-        }
+    it('should convert camelCase keys to snake_case recursively', () => {
+      const input = {
+        userProfile: {
+          firstName: 'Jane',
+          lastName: 'Doe',
+          addressDetails: [
+            { zipCode: '54321', cityName: 'Testburg' }
+          ]
+        },
+        accountId: 456
       };
-      const snakeCase = {
-        first_name: 'John',
-        last_name: 'Doe',
-        user_details: {
-          phone_number: '123-456-7890'
-        }
+      const expected = {
+        user_profile: {
+          first_name: 'Jane',
+          last_name: 'Doe',
+          address_details: [
+            { zip_code: '54321', city_name: 'Testburg' }
+          ]
+        },
+        account_id: 456
       };
-      expect(keysToSnake(camelCase)).toEqual(snakeCase);
+      expect(keysToSnake(input)).toEqual(expected);
     });
 
-    it('should handle arrays of objects', () => {
-        const camelArray = [{firstName: 'Jane'}, {firstName: 'John'}];
-        const snakeArray = [{first_name: 'Jane'}, {first_name: 'John'}];
-        expect(keysToSnake(camelArray)).toEqual(snakeArray);
+    it('should handle PascalCase keys', () => {
+        const input = { UserProfile: { FirstName: 'Jane' } };
+        const expected = { user_profile: { first_name: 'Jane' } };
+        expect(keysToSnake(input)).toEqual(expected);
+    });
+
+    it('should return non-objects as is', () => {
+      expect(keysToSnake(null)).toBeNull();
+      expect(keysToSnake('someString')).toBe('someString');
+      expect(keysToSnake(123)).toBe(123);
     });
   });
 });
