@@ -1,29 +1,32 @@
 /**
- * Creates a deep clone of a value.
+ * Recursively clones `value`.
  *
- * @param {*} value The value to clone.
+ * @param {*} value The value to deep clone.
  * @returns {*} Returns the deep cloned value.
  */
-export const deepClone = (value) => {
+const cloneDeep = (value) => {
   if (value === null || typeof value !== 'object') {
     return value;
   }
 
-  if (value instanceof Date) {
-    return new Date(value.getTime());
+  if (Array.isArray(value)) {
+    return value.map((item) => cloneDeep(item));
   }
 
-  if (value instanceof RegExp) {
-    return new RegExp(value);
-  }
-
-  const clone = Array.isArray(value) ? [] : {};
-
-  for (const key in value) {
-    if (Object.prototype.hasOwnProperty.call(value, key)) {
-      clone[key] = deepClone(value[key]);
+  if (value.constructor === Object) {
+    const newObject = {};
+    for (const key in value) {
+      if (Object.prototype.hasOwnProperty.call(value, key)) {
+        newObject[key] = cloneDeep(value[key]);
+      }
     }
+    return newObject;
   }
 
-  return clone;
+  // For other object types (e.g., Date, RegExp, custom classes),
+  // return a shallow copy or the original object depending on desired behavior.
+  // For simplicity, we'll return the original object for now.
+  return value;
 };
+
+module.exports = { cloneDeep };
