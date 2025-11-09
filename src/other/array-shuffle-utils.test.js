@@ -1,37 +1,45 @@
-import { shuffle } from './array-shuffle-utils';
+const { shuffle } = require('./array-shuffle-utils');
 
 describe('shuffle', () => {
-  it('should return an array of the same length', () => {
-    const array = [1, 2, 3, 4, 5];
-    const shuffled = shuffle(array);
-    expect(shuffled.length).toBe(array.length);
+  const originalArray = [1, 2, 3, 4, 5];
+
+  test('should return an array of the same length', () => {
+    const shuffled = shuffle(originalArray);
+    expect(shuffled.length).toBe(originalArray.length);
   });
 
-  it('should contain the same elements as the original array', () => {
-    const array = [1, 2, 3, 4, 5];
-    const shuffled = shuffle(array);
-    expect(shuffled).toEqual(expect.arrayContaining(array));
-    expect(array).toEqual(expect.arrayContaining(shuffled));
+  test('should contain the same elements as the original array', () => {
+    const shuffled = shuffle(originalArray);
+    expect(shuffled.sort()).toEqual(originalArray.sort());
   });
 
-  it('should not modify the original array', () => {
-    const array = [1, 2, 3, 4, 5];
-    const originalArray = [...array];
-    shuffle(array);
-    expect(array).toEqual(originalArray);
+  test('should not mutate the original array', () => {
+    const originalCopy = [...originalArray];
+    shuffle(originalArray);
+    expect(originalArray).toEqual(originalCopy);
   });
 
-  it('should return a new array instance', () => {
-    const array = [1, 2, 3];
-    const shuffled = shuffle(array);
-    expect(shuffled).not.toBe(array);
+  test('should return a new array instance', () => {
+    const shuffled = shuffle(originalArray);
+    expect(shuffled).not.toBe(originalArray);
   });
 
-  it('should handle empty arrays', () => {
+  test('should return an empty array for an empty input array', () => {
     expect(shuffle([])).toEqual([]);
   });
 
-  it('should handle single element arrays', () => {
-    expect(shuffle([1])).toEqual([1]);
+  // This test has a very small chance of failing if Math.random produces a sequence
+  // that results in the array being shuffled back to its original order.
+  // However, for practical purposes, it's a good check for randomness.
+  test('should generally change the order of elements', () => {
+    let isShuffled = false;
+    for (let i = 0; i < 100; i++) { // Try multiple times to reduce false negatives
+      const shuffled = shuffle(originalArray);
+      if (!shuffled.every((val, index) => val === originalArray[index])) {
+        isShuffled = true;
+        break;
+      }
+    }
+    expect(isShuffled).toBe(true);
   });
 });
