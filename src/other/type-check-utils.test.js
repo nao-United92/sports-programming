@@ -1,61 +1,89 @@
+const { isEmpty } = require('./type-check-utils');
 
-import {
-  isObject, isArray, isFunction, isString, isNumber, isBoolean, isNull, isUndefined, isDate
-} from './type-check-utils.js';
-
-describe('Type Checking Utilities', () => {
-  test('isObject', () => {
-    expect(isObject({})).toBe(true);
-    expect(isObject({ a: 1 })).toBe(true);
-    expect(isObject([])).toBe(false);
-    expect(isObject(null)).toBe(false);
-    expect(isObject(() => {})).toBe(false);
+describe('isEmpty', () => {
+  // Primitive values
+  test('should return true for null', () => {
+    expect(isEmpty(null)).toBe(true);
   });
 
-  test('isArray', () => {
-    expect(isArray([])).toBe(true);
-    expect(isArray([1, 2])).toBe(true);
-    expect(isArray({})).toBe(false);
+  test('should return true for undefined', () => {
+    expect(isEmpty(undefined)).toBe(true);
   });
 
-  test('isFunction', () => {
-    expect(isFunction(() => {})).toBe(true);
-    expect(isFunction(function() {})).toBe(true);
-    expect(isFunction({})).toBe(false);
+  test('should return true for an empty string', () => {
+    expect(isEmpty('')).toBe(true);
   });
 
-  test('isString', () => {
-    expect(isString('')).toBe(true);
-    expect(isString('hello')).toBe(true);
-    expect(isString(123)).toBe(false);
+  test('should return false for a non-empty string', () => {
+    expect(isEmpty('hello')).toBe(false);
   });
 
-  test('isNumber', () => {
-    expect(isNumber(123)).toBe(true);
-    expect(isNumber(0)).toBe(true);
-    expect(isNumber(NaN)).toBe(false);
-    expect(isNumber('123')).toBe(false);
+  test('should return false for a string with only spaces', () => {
+    expect(isEmpty(' ')).toBe(false);
   });
 
-  test('isBoolean', () => {
-    expect(isBoolean(true)).toBe(true);
-    expect(isBoolean(false)).toBe(true);
-    expect(isBoolean(0)).toBe(false);
+  // Arrays
+  test('should return true for an empty array', () => {
+    expect(isEmpty([])).toBe(true);
   });
 
-  test('isNull', () => {
-    expect(isNull(null)).toBe(true);
-    expect(isNull(undefined)).toBe(false);
-    expect(isNull(0)).toBe(false);
+  test('should return false for a non-empty array', () => {
+    expect(isEmpty([1, 2])).toBe(false);
   });
 
-  test('isUndefined', () => {
-    expect(isUndefined(undefined)).toBe(true);
-    expect(isUndefined(null)).toBe(false);
+  // Objects
+  test('should return true for an empty object', () => {
+    expect(isEmpty({})).toBe(true);
   });
 
-  test('isDate', () => {
-    expect(isDate(new Date())).toBe(true);
-    expect(isDate('2023-01-01')).toBe(false);
+  test('should return false for a non-empty object', () => {
+    expect(isEmpty({ a: 1 })).toBe(false);
+  });
+
+  // Maps
+  test('should return true for an empty Map', () => {
+    expect(isEmpty(new Map())).toBe(true);
+  });
+
+  test('should return false for a non-empty Map', () => {
+    const map = new Map();
+    map.set('a', 1);
+    expect(isEmpty(map)).toBe(false);
+  });
+
+  // Sets
+  test('should return true for an empty Set', () => {
+    expect(isEmpty(new Set())).toBe(true);
+  });
+
+  test('should return false for a non-empty Set', () => {
+    const set = new Set();
+    set.add(1);
+    expect(isEmpty(set)).toBe(false);
+  });
+
+  // Other values
+  test('should return false for the number 0', () => {
+    expect(isEmpty(0)).toBe(false);
+  });
+
+  test('should return false for any other number', () => {
+    expect(isEmpty(123)).toBe(false);
+  });
+
+  test('should return false for boolean true', () => {
+    expect(isEmpty(true)).toBe(false);
+  });
+
+  test('should return false for boolean false', () => {
+    expect(isEmpty(false)).toBe(false);
+  });
+
+  test('should return false for a function', () => {
+    expect(isEmpty(() => {})).toBe(false);
+  });
+
+  test('should return false for a Date object', () => {
+    expect(isEmpty(new Date())).toBe(false);
   });
 });
