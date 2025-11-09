@@ -1,20 +1,46 @@
-const { performance } = (typeof window === 'undefined') ? require('perf_hooks') : window;
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked.
+ *
+ * @param {Function} func The function to debounce.
+ * @param {number} wait The number of milliseconds to delay.
+ * @returns {Function} Returns the new debounced function.
+ */
+function debounce(func, wait) {
+  let timeout;
+
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
 /**
- * Measures the execution time of a function.
- * Works for both synchronous and asynchronous functions.
- * @param {Function} fn The function to measure.
- * @param {...*} args The arguments to pass to the function.
- * @returns {Promise<{result: *, time: number}>} An object containing the function's result and the execution time in milliseconds.
+ * Creates a throttled function that only invokes `func` at most once per
+ * every `limit` milliseconds.
+ *
+ * @param {Function} func The function to throttle.
+ * @param {number} limit The number of milliseconds to throttle invocations to.
+ * @returns {Function} Returns the new throttled function.
  */
-const measureExecutionTime = async (fn, ...args) => {
-  const startTime = performance.now();
-  const result = await fn(...args);
-  const endTime = performance.now();
-  return {
-    result,
-    time: endTime - startTime,
-  };
-};
+function throttle(func, limit) {
+  let inThrottle;
+  let lastResult;
 
-module.exports = { measureExecutionTime };
+  return function executedFunction(...args) {
+    if (!inThrottle) {
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+      lastResult = func(...args);
+    }
+    return lastResult;
+  };
+}
+
+module.exports = { debounce, throttle };

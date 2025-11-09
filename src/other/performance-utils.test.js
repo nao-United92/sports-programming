@@ -1,31 +1,95 @@
-const assert = require('assert');
-const { measureExecutionTime } = require('./performance-utils.js');
+const { debounce, throttle } = require('./performance-utils');
 
-const runTests = async () => {
-  try {
-    // Test with a synchronous function
-    const syncFn = (a, b) => {
-      // Simulate some work
-      for (let i = 0; i < 1000000; i++) {}
-      return a + b;
-    };
-    const syncResult = await measureExecutionTime(syncFn, 5, 10);
-    assert.strictEqual(syncResult.result, 15, 'Sync Test Failed: Incorrect result');
-    assert.ok(syncResult.time >= 0, 'Sync Test Failed: Time should be a positive number');
-    console.log(`Sync function took ${syncResult.time.toFixed(2)} ms`);
+jest.useFakeTimers();
 
-    // Test with an asynchronous function
-    const asyncFn = (ms) => new Promise(resolve => setTimeout(() => resolve('done'), ms));
-    const asyncResult = await measureExecutionTime(asyncFn, 100);
-    assert.strictEqual(asyncResult.result, 'done', 'Async Test Failed: Incorrect result');
-    assert.ok(asyncResult.time >= 100, 'Async Test Failed: Time should be at least 100ms');
-    console.log(`Async function took ${asyncResult.time.toFixed(2)} ms`);
+describe('debounce', () => {
+  let func;
 
-    console.log('All performance-utils tests passed!');
-  } catch (error) {
-    console.error('performance-utils tests failed:', error.message);
-    process.exit(1);
-  }
-};
+  beforeEach(() => {
+    func = jest.fn();
+  });
 
-runTests();
+  test('should call the function only once after the wait time', () => {
+    const debouncedFunc = debounce(func, 1000);
+
+    debouncedFunc();
+    debouncedFunc();
+    debouncedFunc();
+
+    // At this point, func should not have been called
+    expect(func).not.toHaveBeenCalled();
+
+    // Fast-forward time by 1000ms
+    jest.advanceTimersByTime(1000);
+
+    // Now, func should have been called exactly once
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  test('should reset the timer if called again within the wait time', () => {
+    const debouncedFunc = debounce(func, 1000);
+
+    debouncedFunc();
+    jest.advanceTimersByTime(500);
+    debouncedFunc();
+    jest.advanceTimersByTime(500);
+    debouncedFunc();
+
+    expect(func).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(1000);
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  test('should pass arguments to the debounced function', () => {
+    const debouncedFunc = debounce(func, 1000);
+    debouncedFunc(1, 'test');
+
+    jest.advanceTimersByTime(1000);
+
+    expect(func).toHaveBeenCalledWith(1, 'test');
+  });
+});
+
+describe('throttle', () => {
+  let func;
+
+  beforeEach(() => {
+    func = jest.fn();
+  });
+
+  test('should call the function immediately on the first call', () => {
+    const throttledFunc = throttle(func, 1000);
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  test('should not call the function again within the limit time', () => {
+    const throttledFunc = throttle(func, 1000);
+
+    throttledFunc(); // Called
+    throttledFunc(); // Throttled
+    throttledFunc(); // Throttled
+
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  test('should call the function again after the limit time has passed', () => {
+    const throttledFunc = throttle(func, 1000);
+
+    throttledFunc(); // Called
+    expect(func).toHaveBeenCalledTimes(1);
+
+    // Fast-forward time
+    jest.advanceTimersByTime(1000);
+
+    throttledFunc(); // Called again
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  test('should pass arguments to the throttled function', () => {
+    const throttledFunc = throttle(func, 1000);
+    throttledFunc('arg1', 2);
+    expect(func).toHaveBeenCalledWith('arg1', 2);
+  });
+});
