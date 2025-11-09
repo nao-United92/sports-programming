@@ -1,34 +1,58 @@
-export const memoize = (func, resolver) => {
-  const memoized = function(...args) {
-    const key = resolver ? resolver.apply(this, args) : args[0];
-    if (memoized.cache.has(key)) {
-      return memoized.cache.get(key);
-    }
-    const result = func.apply(this, args);
-    memoized.cache.set(key, result);
-    return result;
-  };
-  memoized.cache = new Map();
-  return memoized;
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was invoked.
+ * @param {Function} func The function to debounce.
+ * @param {number} wait The number of milliseconds to delay.
+ * @returns {Function} Returns the new debounced function.
+ */
+const debounce = (func, wait) => {
+    let timeout;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
 };
 
-export const before = (n, func) => {
-  let result;
-  return function(...args) {
-    if (--n > 0) {
-      result = func.apply(this, args);
-    }
-    if (n <= 1) {
-      func = undefined;
-    }
-    return result;
-  };
+/**
+ * Creates a throttled function that only invokes `func` at most once per
+ * every `limit` milliseconds.
+ * @param {Function} func The function to throttle.
+ * @param {number} limit The number of milliseconds to throttle invocations to.
+ * @returns {Function} Returns the new throttled function.
+ */
+const throttle = (func, limit) => {
+    let inThrottle;
+    return function(...args) {
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => (inThrottle = false), limit);
+        }
+    };
 };
 
-export const after = (n, func) => {
-  return function(...args) {
-    if (--n < 1) {
-      return func.apply(this, args);
-    }
-  };
+/**
+ * Creates a function that is restricted to invoking func once. Repeat calls
+ * to the function return the value of the first invocation.
+ * @param {Function} func The function to restrict.
+ * @returns {Function} Returns the new restricted function.
+ */
+const once = (func) => {
+    let hasBeenCalled = false;
+    let result;
+    return function(...args) {
+        if (!hasBeenCalled) {
+            hasBeenCalled = true;
+            result = func.apply(this, args);
+        }
+        return result;
+    };
+};
+
+module.exports = {
+    debounce,
+    throttle,
+    once,
 };

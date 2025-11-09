@@ -1,62 +1,99 @@
-import { memoize, before, after } from './function-control-utils.js';
+const { debounce, throttle, once } = require('./function-control-utils');
 
-describe('memoize', () => {
-  it('should cache the result of a function', () => {
-    const mockFn = jest.fn((x) => x * 2);
-    const memoizedFn = memoize(mockFn);
+jest.useFakeTimers();
 
-    memoizedFn(2);
-    memoizedFn(2);
-    expect(mockFn).toHaveBeenCalledTimes(1);
+describe('Function Control Utilities', () => {
+    describe('debounce', () => {
+        it('should call the function only once after the wait time', () => {
+            const mockFn = jest.fn();
+            const debouncedFn = debounce(mockFn, 1000);
 
-    memoizedFn(3);
-    memoizedFn(3);
-    expect(mockFn).toHaveBeenCalledTimes(2);
-  });
+            debouncedFn();
+            debouncedFn();
+            debouncedFn();
 
-  it('should use a resolver function if provided', () => {
-    const mockFn = jest.fn((x, y) => x + y);
-    const resolver = (x, y) => `${x}-${y}`;
-    const memoizedFn = memoize(mockFn, resolver);
+            expect(mockFn).not.toHaveBeenCalled();
 
-    memoizedFn(1, 2);
-    memoizedFn(1, 2);
-    expect(mockFn).toHaveBeenCalledTimes(1);
+            jest.advanceTimersByTime(1000);
 
-    memoizedFn(2, 1);
-    expect(mockFn).toHaveBeenCalledTimes(2);
-  });
-});
+            expect(mockFn).toHaveBeenCalledTimes(1);
+        });
 
-describe('before', () => {
-  it('should call the function until the limit is reached', () => {
-    const mockFn = jest.fn();
-    const limitedFn = before(3, mockFn);
-    limitedFn();
-    limitedFn();
-    limitedFn();
-    expect(mockFn).toHaveBeenCalledTimes(2);
-  });
+        it('should reset the timer if called again within the wait time', () => {
+            const mockFn = jest.fn();
+            const debouncedFn = debounce(mockFn, 1000);
 
-  it('should return the last result after the limit is reached', () => {
-    const mockFn = jest.fn(a => a);
-    const limitedFn = before(3, mockFn);
-    expect(limitedFn(1)).toBe(1);
-    expect(limitedFn(2)).toBe(2);
-    expect(limitedFn(3)).toBe(2); // Returns the last result
-  });
-});
+            debouncedFn();
+            jest.advanceTimersByTime(500);
+            debouncedFn();
+            jest.advanceTimersByTime(500);
+            debouncedFn();
 
-describe('after', () => {
-  it('should only call the function after being called n times', () => {
-    const mockFn = jest.fn();
-    const delayedFn = after(3, mockFn);
-    delayedFn();
-    delayedFn();
-    expect(mockFn).not.toHaveBeenCalled();
-    delayedFn();
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    delayedFn();
-    expect(mockFn).toHaveBeenCalledTimes(2);
-  });
+            expect(mockFn).not.toHaveBeenCalled();
+
+            jest.advanceTimersByTime(1000);
+            expect(mockFn).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('throttle', () => {
+        it('should call the function immediately on the first call', () => {
+            const mockFn = jest.fn();
+            const throttledFn = throttle(mockFn, 1000);
+
+            throttledFn();
+            expect(mockFn).toHaveBeenCalledTimes(1);
+        });
+
+        it('should not call the function again within the limit time', () => {
+            const mockFn = jest.fn();
+            const throttledFn = throttle(mockFn, 1000);
+
+            throttledFn();
+            throttledFn();
+            throttledFn();
+
+            expect(mockFn).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call the function again after the limit time has passed', () => {
+            const mockFn = jest.fn();
+            const throttledFn = throttle(mockFn, 1000);
+
+            throttledFn();
+            expect(mockFn).toHaveBeenCalledTimes(1);
+
+            jest.advanceTimersByTime(1000);
+
+            throttledFn();
+            expect(mockFn).toHaveBeenCalledTimes(2);
+        });
+    });
+
+    describe('once', () => {
+        it('should call the original function only once', () => {
+            const mockFn = jest.fn();
+            const onceFn = once(mockFn);
+
+            onceFn();
+            onceFn();
+            onceFn();
+
+            expect(mockFn).toHaveBeenCalledTimes(1);
+        });
+
+        it('should return the result of the first call on subsequent calls', () => {
+            let i = 0;
+            const func = () => ++i;
+            const onceFn = once(func);
+
+            const result1 = onceFn();
+            const result2 = onceFn();
+            const result3 = onceFn();
+
+            expect(result1).toBe(1);
+            expect(result2).toBe(1);
+            expect(result3).toBe(1);
+        });
+    });
 });
