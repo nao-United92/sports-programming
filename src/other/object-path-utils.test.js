@@ -1,4 +1,4 @@
-const { get } = require('./object-path-utils');
+const { get, set } = require('./object-path-utils');
 
 describe('get', () => {
   const testObj = {
@@ -66,5 +66,53 @@ describe('get', () => {
   test('should return default value for null or undefined object', () => {
     expect(get(null, 'a.b', 'default')).toBe('default');
     expect(get(undefined, 'a.b', 'default')).toBe('default');
+  });
+});
+
+describe('set', () => {
+  test('should set a value at a specified path', () => {
+    const obj = { a: { b: { c: 1 } } };
+    set(obj, 'a.b.c', 2);
+    expect(obj.a.b.c).toBe(2);
+  });
+
+  test('should create nested objects if they do not exist', () => {
+    const obj = {};
+    set(obj, 'a.b.c', 3);
+    expect(obj.a.b.c).toBe(3);
+  });
+
+  test('should set a value using an array path', () => {
+    const obj = { x: { y: { z: 10 } } };
+    set(obj, ['x', 'y', 'z'], 20);
+    expect(obj.x.y.z).toBe(20);
+  });
+
+  test('should set a value in an array using a string path', () => {
+    const obj = { data: ['one', 'two'] };
+    set(obj, 'data[1]', 'three');
+    expect(obj.data[1]).toBe('three');
+  });
+
+  test('should set a value in an array using an array path', () => {
+    const obj = { data: ['one', 'two'] };
+    set(obj, ['data', '1'], 'three');
+    expect(obj.data[1]).toBe('three');
+  });
+
+  test('should handle setting a value on a null or undefined root object', () => {
+    let obj = null;
+    obj = set({}, 'a.b.c', 1); // setは元のオブジェクトを返すので、新しいオブジェクトを代入
+    expect(obj.a.b.c).toBe(1);
+
+    obj = undefined;
+    obj = set({}, 'x.y.z', 2);
+    expect(obj.x.y.z).toBe(2);
+  });
+
+  test('should overwrite existing non-object values in path', () => {
+    const obj = { a: { b: 1 } };
+    set(obj, 'a.b.c', 2);
+    expect(obj.a.b.c).toBe(2);
   });
 });
