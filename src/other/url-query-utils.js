@@ -1,75 +1,40 @@
 /**
- * Converts an object to a URL query string.
- * @param {object} params The object to convert.
- * @returns {string} The resulting query string.
+ * Parses the query string of a URL and returns an object with the parameters.
+ * If a key appears multiple times, its values are collected into an array.
+ * This implementation uses the built-in URLSearchParams for robust parsing.
+ *
+ * @param {string} url The URL or query string to parse.
+ * @returns {Object} An object containing the query parameters.
  */
-export const objectToQueryString = (params) => {
-  if (!params || typeof params !== 'object') {
-    return '';
-  }
-  return Object.keys(params)
-    .map(key => {
-      const value = params[key];
-      if (value === undefined) {
-        return '';
-      }
-      if (value === null) {
-        return encodeURIComponent(key);
-      }
-      if (Array.isArray(value)) {
-        return value
-          .map(v => `${encodeURIComponent(key)}[]=${encodeURIComponent(v)}`)
-          .join('&');
-      }
-      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-    })
-    .filter(p => p.length > 0)
-    .join('&');
+const getQueryParams = (url) => {
+    const params = {};
+    let queryString = '';
+
+    const queryStringIndex = url.indexOf('?');
+    if (queryStringIndex > -1) {
+        queryString = url.substring(queryStringIndex + 1);
+    } else if (!url.includes('=')) {
+        // If no '?' and no '=', it's not a query string.
+        return params;
+    } else {
+        // Assumes the whole string is a query string if no '?' but '=' is present.
+        queryString = url;
+    }
+
+    if (!queryString) {
+        return params;
+    }
+
+    const searchParams = new URLSearchParams(queryString);
+
+    for (const key of new Set(searchParams.keys())) {
+        const values = searchParams.getAll(key);
+        params[key] = values.length > 1 ? values : values[0];
+    }
+
+    return params;
 };
 
-/**
- * Converts a URL query string to an object.
- * @param {string} queryString The query string to convert.
- * @returns {object} The resulting object.
- */
-export const queryStringToObject = (queryString) => {
-    const params = {};
-    if (!queryString || typeof queryString !== 'string') {
-        return params;
-    }
-
-    const searchStr = queryString.startsWith('?') ? queryString.substring(1) : queryString;
-    if (!searchStr) {
-        return params;
-    }
-
-    searchStr.split('&').forEach(part => {
-        const [key, value] = part.split('=');
-        if (!key) return;
-
-        const decodedKey = decodeURIComponent(key);
-        const decodedValue = value !== undefined ? decodeURIComponent(value.replace(/\+/g, ' ')) : null;
-
-        if (decodedKey.endsWith('[]')) {
-            const cleanKey = decodedKey.slice(0, -2);
-            if (!params[cleanKey]) {
-                params[cleanKey] = [];
-            }
-            if (decodedValue !== null) {
-                params[cleanKey].push(decodedValue);
-            }
-        } else {
-            if (params[decodedKey]) {
-                if (!Array.isArray(params[decodedKey])) {
-                    params[decodedKey] = [params[decodedKey]];
-                }
-                if (decodedValue !== null) {
-                    params[decodedKey].push(decodedValue);
-                }
-            } else {
-                params[decodedKey] = decodedValue;
-            }
-        }
-    });
-    return params;
+module.exports = {
+    getQueryParams,
 };
