@@ -1,4 +1,4 @@
-const { deepGet, mapValues, invert } = require('./object-enhancements.js');
+const { deepGet, mapValues, invert, isEqual } = require('./object-enhancements.js');
 
 describe('Object Enhancements', () => {
   describe('deepGet', () => {
@@ -49,6 +49,46 @@ describe('Object Enhancements', () => {
     test('should handle objects with non-unique values (last one wins)', () => {
       const objWithDuplicates = { a: '1', b: '2', c: '1' };
       expect(invert(objWithDuplicates)).toEqual({ '1': 'c', '2': 'b' });
+    });
+  });
+
+  describe('isEqual', () => {
+    test('should return true for equal primitives', () => {
+      expect(isEqual(1, 1)).toBe(true);
+      expect(isEqual('a', 'a')).toBe(true);
+      expect(isEqual(true, true)).toBe(true);
+    });
+
+    test('should return false for unequal primitives', () => {
+      expect(isEqual(1, 2)).toBe(false);
+      expect(isEqual('a', 'b')).toBe(false);
+      expect(isEqual(true, false)).toBe(false);
+    });
+
+    test('should return true for equal objects', () => {
+      expect(isEqual({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 2 } })).toBe(true);
+    });
+
+    test('should return false for unequal objects', () => {
+      expect(isEqual({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 3 } })).toBe(false);
+      expect(isEqual({ a: 1, b: { c: 2 } }, { a: 1, d: { c: 2 } })).toBe(false);
+    });
+
+    test('should return true for equal arrays', () => {
+      expect(isEqual([1, [2, 3]], [1, [2, 3]])).toBe(true);
+    });
+
+    test('should return false for unequal arrays', () => {
+      expect(isEqual([1, [2, 3]], [1, [2, 4]])).toBe(false);
+      expect(isEqual([1, [2, 3]], [1, 2, 3])).toBe(false);
+    });
+
+    test('should handle null and undefined', () => {
+      expect(isEqual(null, null)).toBe(true);
+      expect(isEqual(undefined, undefined)).toBe(true);
+      expect(isEqual(null, undefined)).toBe(false);
+      expect(isEqual({ a: null }, { a: null })).toBe(true);
+      expect(isEqual({ a: undefined }, { a: undefined })).toBe(true);
     });
   });
 });
