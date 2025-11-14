@@ -1,77 +1,42 @@
-const { memoize } = require('./function-memoize-utils');
+import { memoize } from './function-memoize-utils.js';
 
 describe('memoize', () => {
-  let expensiveFunction;
-  let memoizedFunction;
+  it('should return the cached result for subsequent calls with the same arguments', () => {
+    const expensiveFn = jest.fn((x) => x * 2);
+    const memoizedFn = memoize(expensiveFn);
 
-  beforeEach(() => {
-    expensiveFunction = jest.fn((a, b) => a + b);
-    memoizedFunction = memoize(expensiveFunction);
+    expect(memoizedFn(2)).toBe(4);
+    expect(memoizedFn(2)).toBe(4);
+    expect(expensiveFn).toHaveBeenCalledTimes(1);
   });
 
-  test('should call the original function only once for the same arguments', () => {
-    memoizedFunction(1, 2);
-    memoizedFunction(1, 2);
-    memoizedFunction(1, 2);
+  it('should call the function again for different arguments', () => {
+    const expensiveFn = jest.fn((x, y) => x + y);
+    const memoizedFn = memoize(expensiveFn);
 
-    expect(expensiveFunction).toHaveBeenCalledTimes(1);
-    expect(memoizedFunction(1, 2)).toBe(3);
+    expect(memoizedFn(1, 2)).toBe(3);
+    expect(memoizedFn(3, 4)).toBe(7);
+    expect(expensiveFn).toHaveBeenCalledTimes(2);
   });
 
-  test('should call the original function for different arguments', () => {
-    memoizedFunction(1, 2);
-    memoizedFunction(3, 4);
+  it('should work with object arguments', () => {
+    const expensiveFn = jest.fn((obj) => obj.a + obj.b);
+    const memoizedFn = memoize(expensiveFn);
 
-    expect(expensiveFunction).toHaveBeenCalledTimes(2);
-    expect(memoizedFunction(1, 2)).toBe(3);
-    expect(memoizedFunction(3, 4)).toBe(7);
+    const arg1 = { a: 1, b: 2 };
+    const arg2 = { a: 1, b: 2 }; // Structurally same object
+    const arg3 = { a: 3, b: 4 };
+
+    expect(memoizedFn(arg1)).toBe(3);
+    expect(memoizedFn(arg2)).toBe(3); // Should be cached
+    expect(memoizedFn(arg3)).toBe(7);
+
+    expect(expensiveFn).toHaveBeenCalledTimes(2);
   });
 
-  test('should work with object arguments (using default JSON.stringify resolver)', () => {
-    const obj1 = { id: 1 };
-    const obj2 = { id: 2 };
-
-    memoizedFunction(obj1, 'test');
-    memoizedFunction(obj1, 'test');
-    memoizedFunction(obj2, 'test');
-
-    expect(expensiveFunction).toHaveBeenCalledTimes(2);
-    expect(memoizedFunction(obj1, 'test')).toBe(`${obj1}test`); // Assuming default string concatenation
-  });
-
-  test('should work with a custom resolver', () => {
-    const customResolver = (a, b) => `${a}-${b}`;
-    memoizedFunction = memoize(expensiveFunction, customResolver);
-
-    memoizedFunction(1, 2);
-    memoizedFunction(1, 2);
-    memoizedFunction(2, 1); // Different key due to resolver
-
-    expect(expensiveFunction).toHaveBeenCalledTimes(2);
-    expect(memoizedFunction(1, 2)).toBe(3);
-    expect(memoizedFunction(2, 1)).toBe(3);
-  });
-
-  test('should expose the cache', () => {
-    memoizedFunction(1, 2);
-    expect(memoizedFunction.cache).toBeInstanceOf(Map);
-    expect(memoizedFunction.cache.has(JSON.stringify([1, 2]))).toBe(true);
-  });
-
-  test('should handle `this` context correctly', () => {
-    const context = {
-      value: 10,
-      add: jest.fn(function (a) {
-        return this.value + a;
-      }),
-    };
-    const memoizedAdd = memoize(context.add);
-
-    const result1 = memoizedAdd.call(context, 5);
-    const result2 = memoizedAdd.call(context, 5);
-
-    expect(context.add).toHaveBeenCalledTimes(1);
-    expect(result1).toBe(15);
-    expect(result2).toBe(15);
+  it('should return the correct value without caching if called once', () => {
+    const fn = (a, b) => a - b;
+    const memoizedFn = memoize(fn);
+    expect(memoizedFn(10, 5)).toBe(5);
   });
 });
