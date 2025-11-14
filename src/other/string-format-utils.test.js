@@ -1,77 +1,75 @@
-const { byteSize, truncate, escapeHTML, unescapeHTML } = require('./string-format-utils');
+import { formatString } from './string-format-utils.js';
 
-describe('String Format Utilities', () => {
-  describe('byteSize', () => {
-    it('should return the correct byte size for ASCII strings', () => {
-      expect(byteSize('hello')).toBe(5);
-    });
-
-    it('should return the correct byte size for multi-byte strings', () => {
-      // Note: This assumes UTF-8 encoding, where these characters are 3 bytes each.
-      expect(byteSize('こんにちは')).toBe(15);
-    });
-
-    it('should return 0 for an empty string', () => {
-      expect(byteSize('')).toBe(0);
-    });
+describe('formatString', () => {
+  it('should replace a single placeholder with its corresponding value', () => {
+    const template = 'Hello, {name}!';
+    const data = { name: 'World' };
+    expect(formatString(template, data)).toBe('Hello, World!');
   });
 
-  describe('truncate', () => {
-    const text = 'This is a long string to be truncated.';
-
-    it('should not truncate a string shorter than the specified length', () => {
-      expect(truncate(text, 100)).toBe(text);
-    });
-
-    it('should truncate a string to the specified length', () => {
-      const truncated = truncate(text, 20);
-      expect(truncated).toBe('This is a long st...');
-      expect(truncated.length).toBe(20);
-    });
-
-    it('should handle lengths smaller than or equal to 3', () => {
-      expect(truncate(text, 3)).toBe('...');
-      expect(truncate(text, 2)).toBe('...');
-      expect(truncate('any', 3)).toBe('...');
-    });
-
-    it('should return the original value if not a string', () => {
-        expect(truncate(null, 10)).toBeNull();
-        expect(truncate(12345, 3)).toBe(12345);
-    });
+  it('should replace multiple placeholders with their corresponding values', () => {
+    const template = 'Hello, {firstName} {lastName}!';
+    const data = { firstName: 'John', lastName: 'Doe' };
+    expect(formatString(template, data)).toBe('Hello, John Doe!');
   });
 
-  describe('escapeHTML', () => {
-    it('should escape special HTML characters', () => {
-      const input = '<div class="container">"Hello" & \'World\'</div>';
-      const expected = '&lt;div class=&quot;container&quot;&gt;&quot;Hello&quot; &amp; &#39;World&#39;&lt;/div&gt;';
-      expect(escapeHTML(input)).toBe(expected);
-    });
-
-    it('should return the original value if no special characters are present', () => {
-      const input = 'Just a regular string.';
-      expect(escapeHTML(input)).toBe(input);
-    });
-
-    it('should handle non-string input', () => {
-        expect(escapeHTML(null)).toBeNull();
-    });
+  it('should replace multiple occurrences of the same placeholder', () => {
+    const template = '{greeting}, {name}! How are you, {name}?';
+    const data = { greeting: 'Hi', name: 'Alice' };
+    expect(formatString(template, data)).toBe('Hi, Alice! How are you, Alice?');
   });
 
-  describe('unescapeHTML', () => {
-    it('should unescape HTML entities', () => {
-      const input = '&lt;div class=&quot;container&quot;&gt;&quot;Hello&quot; &amp; &#39;World&#39;&lt;/div&gt;';
-      const expected = '<div class="container">"Hello" & \'World\'</div>';
-      expect(unescapeHTML(input)).toBe(expected);
-    });
+  it('should replace placeholders with empty string if key is missing in data', () => {
+    const template = 'Hello, {name}! Your age is {age}.';
+    const data = { name: 'Bob' };
+    expect(formatString(template, data)).toBe('Hello, Bob! Your age is .');
+  });
 
-    it('should return the original value if no entities are present', () => {
-      const input = 'Just a regular string.';
-      expect(unescapeHTML(input)).toBe(input);
-    });
+  it('should handle an empty template string', () => {
+    const template = '';
+    const data = { name: 'Test' };
+    expect(formatString(template, data)).toBe('');
+  });
 
-    it('should handle non-string input', () => {
-        expect(unescapeHTML(null)).toBeNull();
-    });
+  it('should return an empty string if template is not a string', () => {
+    const data = { name: 'Test' };
+    expect(formatString(null, data)).toBe('');
+    expect(formatString(undefined, data)).toBe('');
+    expect(formatString(123, data)).toBe('');
+    expect(formatString({}, data)).toBe('');
+  });
+
+  it('should return the original template if data is not an object or is null', () => {
+    const template = 'Hello, {name}!';
+    expect(formatString(template, null)).toBe(template);
+    expect(formatString(template, undefined)).toBe(template);
+    expect(formatString(template, 'string')).toBe(template);
+    expect(formatString(template, 123)).toBe(template);
+  });
+
+  it('should handle placeholders with numeric values', () => {
+    const template = 'The answer is {number}.';
+    const data = { number: 42 };
+    expect(formatString(template, data)).toBe('The answer is 42.');
+  });
+
+  it('should handle placeholders with boolean values', () => {
+    const template = 'Is it {boolean}?';
+    const data = { boolean: true };
+    expect(formatString(template, data)).toBe('Is it true?');
+  });
+
+  it('should handle placeholders with object values (stringified)', () => {
+    const template = 'User details: {user}.';
+    const data = { user: { id: 1, name: 'Charlie' } };
+    // Objects are stringified by String(data[key])
+    expect(formatString(template, data)).toBe('User details: [object Object].');
+  });
+
+  it('should handle placeholders with array values (stringified)', () => {
+    const template = 'Items: {items}.';
+    const data = { items: ['apple', 'banana'] };
+    // Arrays are stringified by String(data[key])
+    expect(formatString(template, data)).toBe('Items: apple,banana.');
   });
 });

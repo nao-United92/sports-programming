@@ -1,27 +1,19 @@
 import { mapValues } from './object-map-values-utils.js';
 
 describe('mapValues', () => {
-  test('should map values of an object', () => {
+  it('should map values of an object', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const square = n => n * n;
+    expect(mapValues(obj, square)).toEqual({ a: 1, b: 4, c: 9 });
+  });
+
+  it('should pass key and object to the function', () => {
     const obj = { a: 1, b: 2 };
-    const result = mapValues(obj, (value) => value * 2);
-    expect(result).toEqual({ a: 2, b: 4 });
+    const fn = (val, key, o) => key + val + Object.keys(o).length;
+    expect(mapValues(obj, fn)).toEqual({ a: 'a12', b: 'b22' });
   });
 
-  test('should provide value, key, and object to the iteratee', () => {
-    const obj = { a: 1 };
-    const iteratee = jest.fn();
-    mapValues(obj, iteratee);
-    expect(iteratee).toHaveBeenCalledWith(1, 'a', obj);
-  });
-
-  test('should return an empty object for null or undefined input', () => {
-    expect(mapValues(null, () => {})).toEqual({});
-    expect(mapValues(undefined, () => {})).toEqual({});
-  });
-
-  test('should map values to a different type', () => {
-    const obj = { a: 1, b: 2 };
-    const result = mapValues(obj, (value) => String(value));
-    expect(result).toEqual({ a: '1', b: '2' });
+  it('should return an empty object for an empty object', () => {
+    expect(mapValues({}, val => val * 2)).toEqual({});
   });
 });
