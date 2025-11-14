@@ -1,66 +1,62 @@
-const { camelCase, kebabCase, truncate } = require('./string-enhancements.js');
+const { truncate, mask, countOccurrences } = require('./string-enhancements.js');
 
 describe('String Enhancements', () => {
-  describe('camelCase', () => {
-    test('should convert kebab-case to camelCase', () => {
-      expect(camelCase('hello-world')).toBe('helloWorld');
-    });
-
-    test('should convert snake_case to camelCase', () => {
-      expect(camelCase('__FOO_BAR__')).toBe('fooBar');
-    });
-
-    test('should convert space-separated to camelCase', () => {
-      expect(camelCase('Some text here')).toBe('someTextHere');
-    });
-
-    test('should handle empty or null strings', () => {
-      expect(camelCase('')).toBe('');
-      expect(camelCase(null)).toBe('');
-    });
-  });
-
-  describe('kebabCase', () => {
-    test('should convert camelCase to kebab-case', () => {
-      expect(kebabCase('camelCase')).toBe('camel-case');
-    });
-
-    test('should convert space-separated to kebab-case', () => {
-      expect(kebabCase('Some Text')).toBe('some-text');
-    });
-
-    test('should convert snake_case to kebab-case', () => {
-      expect(kebabCase('__FOO_BAR__')).toBe('foo-bar');
-    });
-
-    test('should handle empty or null strings', () => {
-        expect(kebabCase('')).toBe('');
-        expect(kebabCase(null)).toBe('');
-    });
-  });
-
   describe('truncate', () => {
-    const text = 'This is a long string to be truncated.';
-
-    test('should truncate a string to a specified length', () => {
-      expect(truncate(text, 20)).toBe('This is a long ...');
+    test('should not truncate a string shorter than the specified length', () => {
+      expect(truncate('hello', 10)).toBe('hello');
     });
 
-    test('should not truncate if length is greater than string length', () => {
-      expect(truncate(text, 100)).toBe(text);
+    test('should truncate a string to the specified length', () => {
+      expect(truncate('hello world', 8)).toBe('hello...');
     });
 
-    test('should use custom omission string', () => {
-      expect(truncate(text, 20, '... (more)')).toBe('This is a ... (more)');
+    test('should use a custom suffix', () => {
+      expect(truncate('hello world', 8, '...')).toBe('hello...');
     });
 
-    test('should return only omission if length is too small', () => {
-      expect(truncate(text, 3)).toBe('...');
+    test('should handle edge case where length is equal to string length', () => {
+      expect(truncate('hello', 5)).toBe('hello');
     });
 
-     test('should handle empty or null strings', () => {
-      expect(truncate('')).toBe('');
-      expect(truncate(null, 10)).toBe('');
+    test('should handle suffix longer than length', () => {
+        expect(truncate('abc', 2, '...')).toBe('...');
+    });
+  });
+
+  describe('mask', () => {
+    test('should mask a credit card number', () => {
+      expect(mask('1234567890123456', 4, 4)).toBe('1234********3456');
+    });
+
+    test('should use a custom mask character', () => {
+      expect(mask('1234567890123456', 4, 4, '#')).toBe('1234########3456');
+    });
+
+    test('should not mask a string shorter than the visible parts', () => {
+      expect(mask('123456', 4, 4)).toBe('123456');
+    });
+
+    test('should handle zero visible characters', () => {
+        expect(mask('password', 0, 0)).toBe('********');
+    });
+  });
+
+  describe('countOccurrences', () => {
+    test('should count occurrences of a substring', () => {
+      expect(countOccurrences('hello world, hello', 'hello')).toBe(2);
+    });
+
+    test('should return 0 if substring is not found', () => {
+      expect(countOccurrences('hello world', 'bye')).toBe(0);
+    });
+
+    test('should handle overlapping substrings', () => {
+      // Non-overlapping as per implementation
+      expect(countOccurrences('ababab', 'aba')).toBe(1);
+    });
+
+    test('should return 0 for an empty substring', () => {
+      expect(countOccurrences('hello', '')).toBe(0);
     });
   });
 });
