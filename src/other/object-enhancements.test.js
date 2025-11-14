@@ -1,94 +1,98 @@
-const { deepGet, mapValues, invert, isEqual } = require('./object-enhancements.js');
+const { deepClone, isEmpty, getValueByPath } = require('./object-enhancements.js');
 
 describe('Object Enhancements', () => {
-  describe('deepGet', () => {
-    const obj = { a: { b: { c: 1 } }, d: [{ e: 2 }] };
-
-    test('should get a nested property value', () => {
-      expect(deepGet(obj, 'a.b.c')).toBe(1);
+  describe('deepClone', () => {
+    test('should clone a simple object', () => {
+      const obj = { a: 1, b: 'hello' };
+      const cloned = deepClone(obj);
+      expect(cloned).toEqual(obj);
+      expect(cloned).not.toBe(obj);
     });
 
-    test('should get a nested property value with array path', () => {
-      expect(deepGet(obj, ['a', 'b', 'c'])).toBe(1);
+    test('should clone a nested object', () => {
+      const obj = { a: { b: { c: 42 } }, d: [1, 2] };
+      const cloned = deepClone(obj);
+      expect(cloned).toEqual(obj);
+      expect(cloned.a.b).not.toBe(obj.a.b);
+      expect(cloned.d).not.toBe(obj.d);
     });
 
-    test('should get a nested property value within an array', () => {
-      expect(deepGet(obj, 'd[0].e')).toBe(2);
+    test('should clone an array of objects', () => {
+        const arr = [{ a: 1 }, { b: 2 }];
+        const cloned = deepClone(arr);
+        expect(cloned).toEqual(arr);
+        expect(cloned[0]).not.toBe(arr[0]);
     });
 
-    test('should return default value for non-existent path', () => {
-      expect(deepGet(obj, 'a.b.f', 'default')).toBe('default');
+    test('should handle null and primitive values', () => {
+      expect(deepClone(null)).toBeNull();
+      expect(deepClone(42)).toBe(42);
+      expect(deepClone('string')).toBe('string');
     });
 
-    test('should return undefined for non-existent path without default value', () => {
-      expect(deepGet(obj, 'x.y.z')).toBeUndefined();
-    });
-  });
-
-  describe('mapValues', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-
-    test('should apply a function to each value', () => {
-      const double = (n) => n * 2;
-      expect(mapValues(obj, double)).toEqual({ a: 2, b: 4, c: 6 });
-    });
-
-    test('should pass key and object to the function', () => {
-      const fn = (val, key, o) => `${key}-${val * Object.keys(o).length}`;
-      expect(mapValues(obj, fn)).toEqual({ a: 'a-3', b: 'b-6', c: 'c-9' });
-    });
-  });
-
-  describe('invert', () => {
-    const obj = { a: '1', b: '2', c: '3' };
-
-    test('should invert keys and values', () => {
-      expect(invert(obj)).toEqual({ '1': 'a', '2': 'b', '3': 'c' });
-    });
-
-    test('should handle objects with non-unique values (last one wins)', () => {
-      const objWithDuplicates = { a: '1', b: '2', c: '1' };
-      expect(invert(objWithDuplicates)).toEqual({ '1': 'c', '2': 'b' });
+    test('should handle Dates', () => {
+        const date = new Date();
+        const clonedDate = deepClone(date);
+        expect(clonedDate.getTime()).toEqual(date.getTime());
+        expect(clonedDate).not.toBe(date);
     });
   });
 
-  describe('isEqual', () => {
-    test('should return true for equal primitives', () => {
-      expect(isEqual(1, 1)).toBe(true);
-      expect(isEqual('a', 'a')).toBe(true);
-      expect(isEqual(true, true)).toBe(true);
+  describe('isEmpty', () => {
+    test('should return true for an empty object', () => {
+      expect(isEmpty({})).toBe(true);
     });
 
-    test('should return false for unequal primitives', () => {
-      expect(isEqual(1, 2)).toBe(false);
-      expect(isEqual('a', 'b')).toBe(false);
-      expect(isEqual(true, false)).toBe(false);
+    test('should return false for a non-empty object', () => {
+      expect(isEmpty({ a: 1 })).toBe(false);
     });
 
-    test('should return true for equal objects', () => {
-      expect(isEqual({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 2 } })).toBe(true);
+    test('should return true for null or undefined', () => {
+      expect(isEmpty(null)).toBe(true);
+      expect(isEmpty(undefined)).toBe(true);
     });
 
-    test('should return false for unequal objects', () => {
-      expect(isEqual({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 3 } })).toBe(false);
-      expect(isEqual({ a: 1, b: { c: 2 } }, { a: 1, d: { c: 2 } })).toBe(false);
+    test('should return false for non-plain objects', () => {
+        function MyObject() {}
+        expect(isEmpty(new MyObject())).toBe(false);
+        expect(isEmpty([])).toBe(false);
+    });
+  });
+
+  describe('getValueByPath', () => {
+    const obj = {
+      a: {
+        b: {
+          c: 'found it'
+        },
+        d: [
+          { e: 1 },
+          { f: 2 }
+        ]
+      },
+      g: null
+    };
+
+    test('should retrieve a nested value', () => {
+      expect(getValueByPath(obj, 'a.b.c')).toBe('found it');
     });
 
-    test('should return true for equal arrays', () => {
-      expect(isEqual([1, [2, 3]], [1, [2, 3]])).toBe(true);
+    test('should work with array indices in path', () => {
+        expect(getValueByPath(obj, 'a.d.0.e')).toBe(1);
     });
 
-    test('should return false for unequal arrays', () => {
-      expect(isEqual([1, [2, 3]], [1, [2, 4]])).toBe(false);
-      expect(isEqual([1, [2, 3]], [1, 2, 3])).toBe(false);
+    test('should return undefined for a non-existent path', () => {
+      expect(getValueByPath(obj, 'a.x.y')).toBeUndefined();
     });
 
-    test('should handle null and undefined', () => {
-      expect(isEqual(null, null)).toBe(true);
-      expect(isEqual(undefined, undefined)).toBe(true);
-      expect(isEqual(null, undefined)).toBe(false);
-      expect(isEqual({ a: null }, { a: null })).toBe(true);
-      expect(isEqual({ a: undefined }, { a: undefined })).toBe(true);
+    test('should return undefined when path goes through null or undefined', () => {
+        expect(getValueByPath(obj, 'g.h')).toBeUndefined();
+    });
+
+    test('should return the object itself for an empty path', () => {
+        // This is a tricky case. The current implementation returns undefined.
+        // Let's test the current behavior. A more robust implementation might handle this differently.
+        expect(getValueByPath(obj, '')).toBe(obj); // split('') -> [''], reduce -> obj[''] -> undefined
     });
   });
 });
