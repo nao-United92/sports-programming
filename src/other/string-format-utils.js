@@ -1,33 +1,44 @@
 /**
- * Masks a portion of a string with a given character.
- * @param {string} str The input string.
- * @param {string} maskChar The character to use for masking.
- * @param {number} unmaskedLength The number of characters to leave unmasked from the end.
- * @returns {string} The masked string.
+ * Formats a number with grouped thousands.
+ *
+ * @param {number} number The number to format.
+ * @param {number} [decimals=0] The number of decimal points.
+ * @param {string} [dec_point='.'] The separator for the decimal point.
+ * @param {string} [thousands_sep=','] The thousands separator.
+ * @returns {string} The formatted number.
  */
-const mask = (str, maskChar = '*', unmaskedLength = 4) => {
-  if (str.length <= unmaskedLength) {
-    return str;
+export const formatNumber = (number, decimals = 0, dec_point = '.', thousands_sep = ',') => {
+  number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
+  const n = !isFinite(+number) ? 0 : +number;
+  const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
+  const sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep;
+  const dec = (typeof dec_point === 'undefined') ? '.' : dec_point;
+  let s = '';
+
+  const toFixedFix = (n, prec) => {
+    const k = Math.pow(10, prec);
+    return '' + Math.round(n * k) / k;
+  };
+
+  s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+  if (s[0].length > 3) {
+    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
   }
-  const maskedPart = str.slice(0, -unmaskedLength).replace(/./g, maskChar);
-  const unmaskedPart = str.slice(-unmaskedLength);
-  return maskedPart + unmaskedPart;
+  if ((s[1] || '').length < prec) {
+    s[1] = s[1] || '';
+    s[1] += new Array(prec - s[1].length + 1).join('0');
+  }
+  return s.join(dec);
 };
 
 /**
- * Converts a camelCase string to snake_case.
- * @param {string} str The input string.
- * @returns {string} The snake_cased string.
+ * Formats a string using placeholders.
+ *
+ * @param {string} format The format string (e.g., "Hello %s").
+ * @param {...any} args The values to insert into the format string.
+ * @returns {string} The formatted string.
  */
-const toSnakeCase = (str) =>
-  str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-
-/**
- * Converts a snake_case string to camelCase.
- * @param {string} str The input string.
- * @returns {string} The camelCased string.
- */
-const toCamelCase = (str) =>
-  str.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
-
-module.exports = { mask, toSnakeCase, toCamelCase };
+export const sprintf = (format, ...args) => {
+  let i = 0;
+  return format.replace(/%s/g, () => args[i++]);
+};
