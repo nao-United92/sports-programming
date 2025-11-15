@@ -1,21 +1,33 @@
 /**
- * Formats a string by replacing placeholders with corresponding values from a data object.
- * Placeholders are in the format `{key}`.
- * If a key is not found in the data object, its placeholder will be replaced with an empty string.
- *
- * @param {string} template The template string with placeholders.
- * @param {object} data The object containing values for the placeholders.
- * @returns {string} The formatted string.
+ * Masks a portion of a string with a given character.
+ * @param {string} str The input string.
+ * @param {string} maskChar The character to use for masking.
+ * @param {number} unmaskedLength The number of characters to leave unmasked from the end.
+ * @returns {string} The masked string.
  */
-export const formatString = (template, data) => {
-  if (typeof template !== 'string') {
-    return '';
+const mask = (str, maskChar = '*', unmaskedLength = 4) => {
+  if (str.length <= unmaskedLength) {
+    return str;
   }
-  if (typeof data !== 'object' || data === null) {
-    return template; // If data is not an object, no replacements can be made
-  }
-
-  return template.replace(/\{(\w+)\}/g, (match, key) => {
-    return Object.prototype.hasOwnProperty.call(data, key) ? String(data[key]) : '';
-  });
+  const maskedPart = str.slice(0, -unmaskedLength).replace(/./g, maskChar);
+  const unmaskedPart = str.slice(-unmaskedLength);
+  return maskedPart + unmaskedPart;
 };
+
+/**
+ * Converts a camelCase string to snake_case.
+ * @param {string} str The input string.
+ * @returns {string} The snake_cased string.
+ */
+const toSnakeCase = (str) =>
+  str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+
+/**
+ * Converts a snake_case string to camelCase.
+ * @param {string} str The input string.
+ * @returns {string} The camelCased string.
+ */
+const toCamelCase = (str) =>
+  str.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+
+module.exports = { mask, toSnakeCase, toCamelCase };
