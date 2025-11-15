@@ -1,31 +1,32 @@
 /**
- * Get all sibling elements of an element.
+ * Gets the parent element of a given element.
  *
- * @param {Element} element The element to get the siblings of.
- * @returns {Array<Element>} An array of sibling elements.
+ * @param {Element} element The child element.
+ * @returns {Element|null} The parent element or null if it doesn't exist.
  */
-export function siblings(element) {
-  if (!element || !element.parentNode) {
-    return [];
-  }
-  return Array.from(element.parentNode.children).filter(child => child !== element);
-}
+export const getParent = (element) => {
+  return element ? element.parentElement : null;
+};
 
 /**
- * Get all parent elements of an element that match a selector.
+ * Gets the children of a given element.
  *
- * @param {Element} element The element to get the parents of.
- * @param {string} selector The selector to match the parents against.
- * @returns {Array<Element>} An array of parent elements that match the selector.
+ * @param {Element} element The parent element.
+ * @returns {Element[]} An array of child elements.
  */
-export function parents(element, selector) {
-  const parents = [];
-  let parent = element.parentElement;
-  while (parent) {
-    if (parent.matches(selector)) {
-      parents.push(parent);
-    }
-    parent = parent.parentElement;
+export const getChildren = (element) => {
+  return element ? Array.from(element.children) : [];
+};
+
+/**
+ * Gets the siblings of a given element.
+ *
+ * @param {Element} element The element to find siblings for.
+ * @returns {Element[]} An array of sibling elements.
+ */
+export const getSiblings = (element) => {
+  if (!element || !element.parentElement) {
+    return [];
   }
-  return parents;
-}
+  return Array.from(element.parentElement.children).filter(child => child !== element);
+};
