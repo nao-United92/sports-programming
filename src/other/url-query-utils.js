@@ -1,40 +1,59 @@
-/**
- * Parses the query string of a URL and returns an object with the parameters.
- * If a key appears multiple times, its values are collected into an array.
- * This implementation uses the built-in URLSearchParams for robust parsing.
- *
- * @param {string} url The URL or query string to parse.
- * @returns {Object} An object containing the query parameters.
- */
-const getQueryParams = (url) => {
-    const params = {};
-    let queryString = '';
+function parseQuery(queryString) {
+  const query = {};
+  if (!queryString) {
+    return query;
+  }
 
-    const queryStringIndex = url.indexOf('?');
-    if (queryStringIndex > -1) {
-        queryString = url.substring(queryStringIndex + 1);
-    } else if (!url.includes('=')) {
-        // If no '?' and no '=', it's not a query string.
-        return params;
+  const pairs = (queryString.startsWith('?') ? queryString.substring(1) : queryString).split('&');
+
+  for (const pair of pairs) {
+    if (!pair) continue;
+    const parts = pair.split('=');
+    const key = decodeURIComponent(parts[0]);
+    const value = parts.length > 1 ? decodeURIComponent(parts[1].replace(/\+/g, ' ')) : true;
+
+    if (key in query) {
+      if (!Array.isArray(query[key])) {
+        query[key] = [query[key]];
+      }
+      query[key].push(value);
     } else {
-        // Assumes the whole string is a query string if no '?' but '=' is present.
-        queryString = url;
+      query[key] = value;
     }
+  }
+  return query;
+}
 
-    if (!queryString) {
-        return params;
+function stringifyQuery(queryObject) {
+  if (!queryObject) {
+    return '';
+  }
+
+  const params = [];
+  for (const key in queryObject) {
+    if (Object.prototype.hasOwnProperty.call(queryObject, key)) {
+      const value = queryObject[key];
+      const encodedKey = encodeURIComponent(key);
+
+      if (value === null || value === undefined) {
+        continue;
+      }
+
+      if (Array.isArray(value)) {
+        value.forEach(val => {
+          if (val !== null && val !== undefined) {
+            params.push(`${encodedKey}=${encodeURIComponent(val)}`);
+          }
+        });
+      } else {
+        params.push(`${encodedKey}=${encodeURIComponent(value)}`);
+      }
     }
-
-    const searchParams = new URLSearchParams(queryString);
-
-    for (const key of new Set(searchParams.keys())) {
-        const values = searchParams.getAll(key);
-        params[key] = values.length > 1 ? values : values[0];
-    }
-
-    return params;
-};
+  }
+  return params.join('&');
+}
 
 module.exports = {
-    getQueryParams,
+  parseQuery,
+  stringifyQuery,
 };
