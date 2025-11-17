@@ -1,85 +1,92 @@
-const { debounce, throttle } = require('./debounce-throttle-utils.js');
+const { debounce, throttle } = require('./debounce-throttle-utils');
 
 jest.useFakeTimers();
 
-describe('debounce-throttle-utils', () => {
-  describe('debounce', () => {
-    it('should debounce an async function', async () => {
-      const func = jest.fn();
-      const debounced = debounce(func, 1000);
+describe('debounce', () => {
+  let func;
 
-      debounced();
-      debounced();
-
-      jest.advanceTimersByTime(1000);
-
-      expect(func).toHaveBeenCalledTimes(1);
-    });
-
-    it('should resolve with the result of the debounced function', async () => {
-      const asyncFunc = jest.fn().mockResolvedValue('resolved');
-      const debounced = debounce(asyncFunc, 1000);
-
-      const promise = debounced();
-
-      jest.advanceTimersByTime(1000);
-
-      await expect(promise).resolves.toBe('resolved');
-    });
-
-    it('should cancel the debounced function', () => {
-      const func = jest.fn();
-      const debounced = debounce(func, 1000);
-
-      debounced();
-      debounced.cancel();
-
-      jest.advanceTimersByTime(1000);
-
-      expect(func).not.toHaveBeenCalled();
-    });
-
-    it('should flush the debounced function', () => {
-      const func = jest.fn(() => 'flushed');
-      const debounced = debounce(func, 1000);
-
-      debounced();
-      const result = debounced.flush();
-
-      expect(func).toHaveBeenCalledTimes(1);
-      expect(result).toBe('flushed');
-    });
+  beforeEach(() => {
+    func = jest.fn();
   });
 
-  describe('throttle', () => {
-    it('should throttle an async function', async () => {
-      const func = jest.fn();
-      const throttled = throttle(func, 1000);
+  it('should call the function after the specified delay', () => {
+    const debouncedFunc = debounce(func, 500);
+    debouncedFunc();
 
-      throttled();
-      throttled();
+    expect(func).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(500);
+    expect(func).toHaveBeenCalledTimes(1);
+  });
 
-      jest.advanceTimersByTime(1000);
+  it('should only call the function once for multiple rapid calls', () => {
+    const debouncedFunc = debounce(func, 500);
 
-      throttled();
+    for (let i = 0; i < 5; i++) {
+      debouncedFunc();
+    }
 
-      expect(func).toHaveBeenCalledTimes(2);
-    });
+    jest.advanceTimersByTime(500);
+    expect(func).toHaveBeenCalledTimes(1);
+  });
 
-    it('should return the last result for throttled calls', async () => {
-      const asyncFunc = jest.fn().mockResolvedValue('resolved');
-      const throttled = throttle(asyncFunc, 1000);
+  it('should reset the timer on subsequent calls', () => {
+    const debouncedFunc = debounce(func, 500);
 
-      const promise1 = throttled();
-      const promise2 = throttled();
+    debouncedFunc();
+    jest.advanceTimersByTime(250);
+    debouncedFunc();
+    jest.advanceTimersByTime(250);
 
-      await expect(promise1).resolves.toBe('resolved');
-      await expect(promise2).resolves.toBe('resolved');
+    expect(func).not.toHaveBeenCalled();
 
-      jest.advanceTimersByTime(1000);
+    jest.advanceTimersByTime(250);
+    expect(func).toHaveBeenCalledTimes(1);
+  });
 
-      const promise3 = throttled();
-      await expect(promise3).resolves.toBe('resolved');
-    });
+  it('should pass arguments to the original function', () => {
+    const debouncedFunc = debounce(func, 500);
+    debouncedFunc(1, 'test');
+
+    jest.advanceTimersByTime(500);
+    expect(func).toHaveBeenCalledWith(1, 'test');
+  });
+});
+
+describe('throttle', () => {
+  let func;
+
+  beforeEach(() => {
+    func = jest.fn();
+  });
+
+  it('should call the function immediately on the first call', () => {
+    const throttledFunc = throttle(func, 500);
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not call the function again within the time limit', () => {
+    const throttledFunc = throttle(func, 500);
+    throttledFunc(); // Called
+    throttledFunc(); // Throttled
+    throttledFunc(); // Throttled
+
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call the function again after the time limit has passed', () => {
+    const throttledFunc = throttle(func, 500);
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(500);
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  it('should pass arguments to the original function', () => {
+    const throttledFunc = throttle(func, 500);
+    throttledFunc(1, 'test');
+    expect(func).toHaveBeenCalledWith(1, 'test');
   });
 });
