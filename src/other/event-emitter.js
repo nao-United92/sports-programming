@@ -1,59 +1,75 @@
-/**
- * A simple event emitter implementation.
- */
-export class EventEmitter {
+class EventEmitter {
   constructor() {
-    this.events = {};
+    this._events = {};
   }
 
   /**
-   * Subscribes to an event.
-   * @param {string} eventName The name of the event.
+   * Adds a listener for a given event.
+   * @param {string} eventName The name of the event to listen for.
    * @param {Function} listener The callback function.
-   * @returns {Function} An unsubscribe function.
+   * @returns {this}
    */
   on(eventName, listener) {
-    if (!this.events[eventName]) {
-      this.events[eventName] = [];
+    if (!this._events[eventName]) {
+      this._events[eventName] = [];
     }
-    this.events[eventName].push(listener);
-    return () => this.off(eventName, listener);
+    this._events[eventName].push(listener);
+    return this;
   }
 
   /**
-   * Unsubscribes from an event.
+   * Removes a listener for a given event.
    * @param {string} eventName The name of the event.
-   * @param {Function} listener The callback function to remove.
+   * @param {Function} listener The listener function to remove.
+   * @returns {this}
    */
   off(eventName, listener) {
-    if (!this.events[eventName]) {
-      return;
+    if (!this._events[eventName]) {
+      return this;
     }
-    this.events[eventName] = this.events[eventName].filter(l => l !== listener);
+    const index = this._events[eventName].indexOf(listener);
+    if (index > -1) {
+      this._events[eventName].splice(index, 1);
+    }
+    return this;
   }
 
   /**
-   * Emits an event, calling all subscribed listeners.
+   * Emits an event, calling all registered listeners with the provided arguments.
    * @param {string} eventName The name of the event to emit.
    * @param  {...any} args Arguments to pass to the listeners.
+   * @returns {boolean} True if the event had listeners, false otherwise.
    */
   emit(eventName, ...args) {
-    if (!this.events[eventName]) {
-      return;
+    if (!this._events[eventName]) {
+      return false;
     }
-    this.events[eventName].forEach(listener => listener(...args));
+    // Create a copy in case a listener modifies the original array (e.g., by calling off())
+    const listeners = [...this._events[eventName]];
+    listeners.forEach(listener => {
+      listener(...args);
+    });
+    return true;
   }
 
   /**
-   * Subscribes to an event for a single emission.
+   * Adds a one-time listener for an event.
    * @param {string} eventName The name of the event.
    * @param {Function} listener The callback function.
+   * @returns {this}
    */
   once(eventName, listener) {
-    const onceListener = (...args) => {
+    const onceWrapper = (...args) => {
       listener(...args);
-      this.off(eventName, onceListener);
+      this.off(eventName, onceWrapper);
     };
-    this.on(eventName, onceListener);
+    // Store a reference to the original listener for easier removal if needed
+    onceWrapper.originalListener = listener;
+    this.on(eventName, onceWrapper);
+    return this;
   }
 }
+
+module.exports = {
+  EventEmitter,
+};
