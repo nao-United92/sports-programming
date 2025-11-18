@@ -1,32 +1,55 @@
-import { truncate } from './string-truncate-utils.js';
+import { truncate, truncateMiddle } from './string-truncate-utils.js';
 
 describe('truncate', () => {
-  const longString = 'This is a very long string that needs to be truncated.';
-
-  it('should not truncate a string shorter than the specified length', () => {
-    expect(truncate('short', 10)).toBe('short');
+  test('should not truncate if string is shorter than or equal to length', () => {
+    expect(truncate('hello', 10)).toBe('hello');
+    expect(truncate('hello', 5)).toBe('hello');
   });
 
-  it('should truncate a string longer than the specified length', () => {
-    expect(truncate(longString, 20)).toBe('This is a very lo...');
+  test('should truncate string to the specified length', () => {
+    expect(truncate('hello world', 8)).toBe('hello...');
   });
 
-  it('should use the default suffix', () => {
-    expect(truncate(longString, 20)).toContain('...');
+  test('should use custom omission string', () => {
+    expect(truncate('hello world', 8, '...')).toBe('hello...');
+    expect(truncate('hello world', 9, '---')).toBe('hello ---');
   });
 
-  it('should use a custom suffix', () => {
-    expect(truncate(longString, 20, '---')).toBe('This is a very---');
+  test('should handle edge cases', () => {
+    expect(truncate('abc', 2, '...')).toBe('...');
+    expect(truncate('abcdef', 6)).toBe('abcdef');
   });
 
-  it('should return the original string if input is not a string', () => {
-    expect(truncate(null, 10)).toBe(null);
-    expect(truncate(undefined, 10)).toBe(undefined);
-    expect(truncate(12345, 10)).toBe(12345);
+  test('should return an empty string for non-string input', () => {
+    expect(truncate(null, 10)).toBe('');
+    expect(truncate(undefined, 10)).toBe('');
+    expect(truncate(123, 10)).toBe('');
+  });
+});
+
+describe('truncateMiddle', () => {
+  test('should not truncate if string is shorter than or equal to length', () => {
+    expect(truncateMiddle('hello', 10)).toBe('hello');
+    expect(truncateMiddle('hello', 5)).toBe('hello');
   });
 
-  it('should handle edge case where length is equal to string length', () => {
-    const str = 'exact length';
-    expect(truncate(str, str.length)).toBe(str);
+  test('should truncate string in the middle', () => {
+    expect(truncateMiddle('hello world', 9)).toBe('hel...rld');
+    expect(truncateMiddle('abcdefghijkl', 10)).toBe('abcd...ijkl');
+  });
+
+  test('should use custom omission string', () => {
+    expect(truncateMiddle('hello world', 10, '---')).toBe('hel---orld');
+  });
+
+  test('should handle edge cases where length is very small', () => {
+    expect(truncateMiddle('abcdefgh', 3)).toBe('...');
+    expect(truncateMiddle('abcdefgh', 4)).toBe('a...h');
+  });
+
+  test('should return an empty string for non-string input', () => {
+    expect(truncateMiddle(null, 10)).toBe('');
+    expect(truncateMiddle(undefined, 10)).toBe('');
+    expect(truncateMiddle(123, 10)).toBe('');
   });
 });
