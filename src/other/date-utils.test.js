@@ -1,41 +1,65 @@
-import { formatDate, isLeapYear } from './date-utils.js';
+import { daysBetween, isWeekend, addDays } from './date-utils';
 
-describe('Date Utilities', () => {
-  describe('formatDate', () => {
-    it('should format a date object into YYYY-MM-DD format', () => {
-      const date = new Date('2024-01-05T12:00:00.000Z');
-      expect(formatDate(date)).toBe('2024-01-05');
+describe('Date Utils', () => {
+  describe('daysBetween', () => {
+    it('should return the correct number of days between two dates', () => {
+      const date1 = new Date('2024-01-01');
+      const date2 = new Date('2024-01-11');
+      expect(daysBetween(date1, date2)).toBe(10);
     });
 
-    it('should handle single-digit months and days', () => {
-      const date = new Date('2023-03-04T00:00:00.000Z');
-      expect(formatDate(date)).toBe('2023-03-04');
+    it('should return 0 for the same date', () => {
+      const date = new Date('2024-01-01');
+      expect(daysBetween(date, date)).toBe(0);
     });
 
-    it('should return an empty string for an invalid date', () => {
-      expect(formatDate(new Date('invalid-date'))).toBe('');
-      expect(formatDate(null)).toBe('');
-      expect(formatDate(undefined)).toBe('');
+    it('should return a negative number if the first date is later', () => {
+      const date1 = new Date('2024-01-11');
+      const date2 = new Date('2024-01-01');
+      expect(daysBetween(date1, date2)).toBe(-10);
     });
   });
 
-  describe('isLeapYear', () => {
-    it('should return true for leap years', () => {
-      expect(isLeapYear(2000)).toBe(true);
-      expect(isLeapYear(2020)).toBe(true);
-      expect(isLeapYear(2400)).toBe(true);
+  describe('isWeekend', () => {
+    it('should return true for a Saturday', () => {
+      const date = new Date('2024-11-23'); // Saturday
+      expect(isWeekend(date)).toBe(true);
     });
 
-    it('should return false for common years', () => {
-      expect(isLeapYear(1900)).toBe(false);
-      expect(isLeapYear(2021)).toBe(false);
-      expect(isLeapYear(2100)).toBe(false);
+    it('should return true for a Sunday', () => {
+      const date = new Date('2024-11-24'); // Sunday
+      expect(isWeekend(date)).toBe(true);
     });
 
-    it('should return false for non-number inputs', () => {
-        expect(isLeapYear('2020')).toBe(false);
-        expect(isLeapYear(null)).toBe(false);
-        expect(isLeapYear(undefined)).toBe(false);
+    it('should return false for a weekday', () => {
+      const date = new Date('2024-11-25'); // Monday
+      expect(isWeekend(date)).toBe(false);
+    });
+  });
+
+  describe('addDays', () => {
+    it('should add days to a date', () => {
+      const date = new Date('2024-01-01');
+      const newDate = addDays(date, 10);
+      expect(newDate.toISOString().split('T')[0]).toBe('2024-01-11');
+    });
+
+    it('should subtract days from a date', () => {
+      const date = new Date('2024-01-11');
+      const newDate = addDays(date, -10);
+      expect(newDate.toISOString().split('T')[0]).toBe('2024-01-01');
+    });
+
+    it('should handle month changes', () => {
+      const date = new Date('2024-01-30');
+      const newDate = addDays(date, 5);
+      expect(newDate.toISOString().split('T')[0]).toBe('2024-02-04');
+    });
+
+    it('should handle year changes', () => {
+        const date = new Date('2023-12-30');
+        const newDate = addDays(date, 5);
+        expect(newDate.toISOString().split('T')[0]).toBe('2024-01-04');
     });
   });
 });
