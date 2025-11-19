@@ -1,4 +1,4 @@
-import { deepClone, get, set } from './object-utils';
+import { deepClone, get, set, isEmptyObject } from './object-utils';
 
 describe('object-utils', () => {
   describe('deepClone', () => {
@@ -87,6 +87,46 @@ describe('object-utils', () => {
         const result = set(obj, 'a.b', 5);
         expect(result).toBe(obj);
         expect(result.a.b).toBe(5);
+    });
+  });
+
+  describe('isEmptyObject', () => {
+    test('should return true for an empty object', () => {
+      expect(isEmptyObject({})).toBe(true);
+    });
+
+    test('should return false for a non-empty object', () => {
+      expect(isEmptyObject({ a: 1 })).toBe(false);
+    });
+
+    test('should return false for an object with inherited properties but no own properties', () => {
+      function Parent() {}
+      Parent.prototype.a = 1;
+      const child = new Parent();
+      expect(isEmptyObject(child)).toBe(true); // Object.keys only considers own enumerable properties
+    });
+
+    test('should return false for an array', () => {
+      expect(isEmptyObject([])).toBe(false);
+      expect(isEmptyObject([1, 2])).toBe(false);
+    });
+
+    test('should return false for null', () => {
+      expect(isEmptyObject(null)).toBe(false);
+    });
+
+    test('should return false for undefined', () => {
+      expect(isEmptyObject(undefined)).toBe(false);
+    });
+
+    test('should return false for primitive values', () => {
+      expect(isEmptyObject(1)).toBe(false);
+      expect(isEmptyObject('string')).toBe(false);
+      expect(isEmptyObject(true)).toBe(false);
+    });
+
+    test('should return false for a function', () => {
+      expect(isEmptyObject(() => {})).toBe(false);
     });
   });
 });

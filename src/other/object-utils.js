@@ -64,3 +64,16 @@ export const set = (obj, path, value) => {
   current[pathArray[pathArray.length - 1]] = value;
   return obj;
 };
+
+/**
+ * Checks if an object is empty (has no enumerable own properties).
+ *
+ * @param {object} obj The object to check.
+ * @returns {boolean} Returns `true` if the object is empty, `false` otherwise.
+ */
+export const isEmptyObject = (obj) => {
+  if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {
+    return false; // Arrays are not considered empty objects by this definition
+  }
+  return Object.keys(obj).length === 0;
+};
