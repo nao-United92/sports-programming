@@ -11,3 +11,16 @@ export const unique = (array) => {
   }
   return [...new Set(array)];
 };
+
+/**
+ * Removes duplicate values from an array.
+ *
+ * @param {Array} arr The array to process.
+ * @returns {Array} A new array with duplicate values removed.
+ */
+export const removeDuplicates = (arr) => {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return [...new Set(arr)];
+};
