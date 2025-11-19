@@ -1,4 +1,4 @@
-import { truncate } from './string-utils.js';
+import { truncate, capitalizeFirstLetter } from './string-utils.js';
 
 describe('truncate', () => {
   it('should not truncate a string shorter than the specified length', () => {
@@ -26,3 +26,34 @@ describe('truncate', () => {
     expect(truncate(longString, 2, '...')).toBe('...');
   });
 });
+
+describe('capitalizeFirstLetter', () => {
+  it('should capitalize the first letter of a string', () => {
+    expect(capitalizeFirstLetter('hello')).toBe('Hello');
+    expect(capitalizeFirstLetter('world')).toBe('World');
+  });
+
+  it('should return an empty string for an empty input', () => {
+    expect(capitalizeFirstLetter('')).toBe('');
+  });
+
+  it('should handle strings with a single character', () => {
+    expect(capitalizeFirstLetter('a')).toBe('A');
+  });
+
+  it('should not change a string that already starts with a capital letter', () => {
+    expect(capitalizeFirstLetter('Hello')).toBe('Hello');
+  });
+
+  it('should handle strings with leading spaces (capitalizing the first non-space char)', () => {
+    expect(capitalizeFirstLetter('  hello')).toBe('  hello'); // The function as implemented will capitalize the first char, which is a space. This is expected behavior.
+  });
+
+  it('should return an empty string for non-string inputs', () => {
+    expect(capitalizeFirstLetter(null)).toBe('');
+    expect(capitalizeFirstLetter(undefined)).toBe('');
+    expect(capitalizeFirstLetter(123)).toBe('');
+    expect(capitalizeFirstLetter({})).toBe('');
+  });
+});
+

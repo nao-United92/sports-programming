@@ -14,3 +14,15 @@ export const truncate = (str, length, suffix = '...') => {
   }
   return str.slice(0, length - suffix.length) + suffix;
 };
+
+/**
+ * Capitalizes the first letter of a string.
+ * @param {string} str The input string.
+ * @returns {string} The string with the first letter capitalized.
+ */
+export const capitalizeFirstLetter = (str) => {
+  if (typeof str !== 'string' || str.length === 0) {
+    return '';
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
