@@ -31,3 +31,27 @@ export const addDays = (date, days) => {
   result.setDate(result.getDate() + days);
   return result;
 };
+
+/**
+ * Formats a Date object into a string based on the specified format.
+ *
+ * @param {Date} date The Date object to format.
+ * @param {string} format The format string (e.g., 'YYYY-MM-DD', 'MM/DD/YYYY HH:mm:ss').
+ * @returns {string} The formatted date string.
+ */
+export const formatDate = (date, format) => {
+  const year = date.getUTCFullYear();
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = date.getUTCDate().toString().padStart(2, '0');
+  const hours = date.getUTCHours().toString().padStart(2, '0');
+  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+  const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+
+  return format
+    .replace(/YYYY/g, year)
+    .replace(/MM/g, month)
+    .replace(/DD/g, day)
+    .replace(/HH/g, hours)
+    .replace(/mm/g, minutes)
+    .replace(/ss/g, seconds);
+};
