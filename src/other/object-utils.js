@@ -77,3 +77,41 @@ export const isEmptyObject = (obj) => {
   }
   return Object.keys(obj).length === 0;
 };
+
+/**
+ * Deeply merges two or more objects.
+ * Properties in later objects overwrite properties in earlier objects.
+ *
+ * @param {object} target The target object to merge into.
+ * @param {...object} sources The source objects to merge.
+ * @returns {object} The merged object.
+ */
+export const deepMerge = (target, ...sources) => {
+  if (target === null || typeof target !== 'object') {
+    return target;
+  }
+
+  for (const source of sources) {
+    if (source === null || typeof source !== 'object') {
+      continue;
+    }
+
+    for (const key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        if (Object.prototype.hasOwnProperty.call(target, key) && typeof target[key] === 'object' && target[key] !== null && typeof source[key] === 'object' && source[key] !== null) {
+          if (Array.isArray(target[key]) && Array.isArray(source[key])) {
+            target[key] = [...target[key], ...source[key]];
+          } else if (Array.isArray(target[key]) || Array.isArray(source[key])) {
+            // If one is an array and the other is an object, overwrite
+            target[key] = source[key];
+          } else {
+            target[key] = deepMerge(target[key], source[key]);
+          }
+        } else {
+          target[key] = source[key];
+        }
+      }
+    }
+  }
+  return target;
+};
