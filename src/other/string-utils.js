@@ -39,3 +39,17 @@ export const reverseString = (str) => {
   }
   return str.split('').reverse().join('');
 };
+
+/**
+ * Counts the number of words in a string.
+ * Words are separated by one or more whitespace characters.
+ *
+ * @param {string} str The input string.
+ * @returns {number} The number of words in the string.
+ */
+export const countWords = (str) => {
+  if (typeof str !== 'string' || str.trim().length === 0) {
+    return 0;
+  }
+  return str.trim().split(/\s+/).length;
+};

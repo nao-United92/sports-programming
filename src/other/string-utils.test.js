@@ -1,4 +1,4 @@
-import { truncate, capitalizeFirstLetter, reverseString } from './string-utils.js';
+import { truncate, capitalizeFirstLetter, reverseString, countWords } from './string-utils.js';
 
 describe('truncate', () => {
   it('should not truncate a string shorter than the specified length', () => {
@@ -79,6 +79,39 @@ describe('reverseString', () => {
     expect(reverseString(undefined)).toBe('');
     expect(reverseString(123)).toBe('');
     expect(reverseString({})).toBe('');
+  });
+});
+
+describe('countWords', () => {
+  it('should count words in a simple sentence', () => {
+    expect(countWords('Hello world')).toBe(2);
+  });
+
+  it('should handle multiple spaces between words', () => {
+    expect(countWords('Hello   world')).toBe(2);
+  });
+
+  it('should trim leading and trailing spaces', () => {
+    expect(countWords('  Hello world  ')).toBe(2);
+  });
+
+  it('should return 0 for an empty string', () => {
+    expect(countWords('')).toBe(0);
+  });
+
+  it('should return 0 for a string with only spaces', () => {
+    expect(countWords('   ')).toBe(0);
+  });
+
+  it('should count words in a single word string', () => {
+    expect(countWords('word')).toBe(1);
+  });
+
+  it('should return 0 for non-string inputs', () => {
+    expect(countWords(null)).toBe(0);
+    expect(countWords(undefined)).toBe(0);
+    expect(countWords(123)).toBe(0);
+    expect(countWords({})).toBe(0);
   });
 });
 
