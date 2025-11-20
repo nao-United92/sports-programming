@@ -1,4 +1,4 @@
-import { truncate, capitalizeFirstLetter } from './string-utils.js';
+import { truncate, capitalizeFirstLetter, reverseString } from './string-utils.js';
 
 describe('truncate', () => {
   it('should not truncate a string shorter than the specified length', () => {
@@ -54,6 +54,31 @@ describe('capitalizeFirstLetter', () => {
     expect(capitalizeFirstLetter(undefined)).toBe('');
     expect(capitalizeFirstLetter(123)).toBe('');
     expect(capitalizeFirstLetter({})).toBe('');
+  });
+});
+
+describe('reverseString', () => {
+  it('should reverse a simple string', () => {
+    expect(reverseString('hello')).toBe('olleh');
+  });
+
+  it('should reverse a string with spaces', () => {
+    expect(reverseString('hello world')).toBe('dlrow olleh');
+  });
+
+  it('should return an empty string for an empty input', () => {
+    expect(reverseString('')).toBe('');
+  });
+
+  it('should handle a string with a single character', () => {
+    expect(reverseString('a')).toBe('a');
+  });
+
+  it('should return an empty string for non-string inputs', () => {
+    expect(reverseString(null)).toBe('');
+    expect(reverseString(undefined)).toBe('');
+    expect(reverseString(123)).toBe('');
+    expect(reverseString({})).toBe('');
   });
 });
 

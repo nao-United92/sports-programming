@@ -26,3 +26,16 @@ export const capitalizeFirstLetter = (str) => {
   }
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+/**
+ * Reverses a given string.
+ *
+ * @param {string} str The input string.
+ * @returns {string} The reversed string.
+ */
+export const reverseString = (str) => {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.split('').reverse().join('');
+};
