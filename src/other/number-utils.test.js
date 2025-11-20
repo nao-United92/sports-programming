@@ -1,4 +1,4 @@
-import { clamp, inRange, randomInt } from './number-utils';
+import { clamp, inRange, randomInt, isEven } from './number-utils';
 
 describe('Number Utilities', () => {
   describe('clamp', () => {
@@ -53,6 +53,31 @@ describe('Number Utilities', () => {
     it('should work with a range of a single number', () => {
       const result = randomInt(5, 5);
       expect(result).toBe(5);
+    });
+  });
+
+  describe('isEven', () => {
+    it('should return true for even numbers', () => {
+      expect(isEven(2)).toBe(true);
+      expect(isEven(0)).toBe(true);
+      expect(isEven(-4)).toBe(true);
+    });
+
+    it('should return false for odd numbers', () => {
+      expect(isEven(1)).toBe(false);
+      expect(isEven(-3)).toBe(false);
+    });
+
+    it('should return false for non-integer numbers', () => {
+      expect(isEven(2.5)).toBe(false);
+      expect(isEven(0.001)).toBe(false);
+    });
+
+    it('should return false for non-numeric inputs', () => {
+      expect(isEven(null)).toBe(false);
+      expect(isEven(undefined)).toBe(false);
+      expect(isEven('2')).toBe(false);
+      expect(isEven({})).toBe(false);
     });
   });
 });

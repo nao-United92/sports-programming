@@ -1,4 +1,4 @@
-import { daysBetween, isWeekend, addDays } from './date-utils';
+import { daysBetween, isWeekend, addDays, formatDate } from './date-utils';
 
 describe('Date Utils', () => {
   describe('daysBetween', () => {
@@ -60,6 +60,33 @@ describe('Date Utils', () => {
         const date = new Date('2023-12-30');
         const newDate = addDays(date, 5);
         expect(newDate.toISOString().split('T')[0]).toBe('2024-01-04');
+    });
+  });
+
+  describe('formatDate', () => {
+    const testDate = new Date('2024-01-02T14:05:06.789Z'); // January 2, 2024, 2:05:06 PM UTC
+
+    it('should format date to YYYY-MM-DD', () => {
+      expect(formatDate(testDate, 'YYYY-MM-DD')).toBe('2024-01-02');
+    });
+
+    it('should format date to MM/DD/YYYY', () => {
+      expect(formatDate(testDate, 'MM/DD/YYYY')).toBe('01/02/2024');
+    });
+
+    it('should format date to HH:mm:ss', () => {
+      // Note: This test assumes the local timezone is UTC or handles timezone conversion correctly.
+      // For robust testing, consider mocking Date or using a library that handles timezones.
+      // For simplicity, assuming the test environment runs in UTC or the output matches.
+      expect(formatDate(testDate, 'HH:mm:ss')).toBe('14:05:06');
+    });
+
+    it('should format date to YYYY-MM-DD HH:mm:ss', () => {
+      expect(formatDate(testDate, 'YYYY-MM-DD HH:mm:ss')).toBe('2024-01-02 14:05:06');
+    });
+
+    it('should handle custom formats', () => {
+      expect(formatDate(testDate, 'DD-MM-YYYY at HHh mmm sss')).toBe('02-01-2024 at 14h 05m 06s');
     });
   });
 });

@@ -39,3 +39,16 @@ export const inRange = (number, start, end) => {
 export const randomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+
+/**
+ * Checks if the given number is even.
+ *
+ * @param {number} num The number to check.
+ * @returns {boolean} Returns `true` if the number is even, `false` otherwise.
+ */
+export const isEven = (num) => {
+  if (typeof num !== 'number' || !Number.isFinite(num)) {
+    return false;
+  }
+  return num % 2 === 0;
+};

@@ -18,4 +18,23 @@ function chunk(array, size = 1) {
   return result;
 }
 
-module.exports = { chunk };
+/**
+ * Chunks an array into smaller arrays of a specified size.
+ * If the array cannot be split evenly, the last chunk will contain the remaining elements.
+ *
+ * @param {Array} arr The array to chunk.
+ * @param {number} size The size of each chunk.
+ * @returns {Array<Array>} A new array containing the chunks.
+ */
+function chunkArrayInGroups(arr, size) {
+  if (!Array.isArray(arr) || size <= 0) {
+    return [];
+  }
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+module.exports = { chunk, chunkArrayInGroups };

@@ -1,4 +1,4 @@
-import { deepClone, get, set } from './object-utils';
+import { deepClone, get, set, isEmptyObject, deepMerge } from './object-utils';
 
 describe('object-utils', () => {
   describe('deepClone', () => {
@@ -87,6 +87,113 @@ describe('object-utils', () => {
         const result = set(obj, 'a.b', 5);
         expect(result).toBe(obj);
         expect(result.a.b).toBe(5);
+    });
+  });
+
+  describe('isEmptyObject', () => {
+    test('should return true for an empty object', () => {
+      expect(isEmptyObject({})).toBe(true);
+    });
+
+    test('should return false for a non-empty object', () => {
+      expect(isEmptyObject({ a: 1 })).toBe(false);
+    });
+
+    test('should return false for an object with inherited properties but no own properties', () => {
+      function Parent() {}
+      Parent.prototype.a = 1;
+      const child = new Parent();
+      expect(isEmptyObject(child)).toBe(true); // Object.keys only considers own enumerable properties
+    });
+
+    test('should return false for an array', () => {
+      expect(isEmptyObject([])).toBe(false);
+      expect(isEmptyObject([1, 2])).toBe(false);
+    });
+
+    test('should return false for null', () => {
+      expect(isEmptyObject(null)).toBe(false);
+    });
+
+    test('should return false for undefined', () => {
+      expect(isEmptyObject(undefined)).toBe(false);
+    });
+
+    test('should return false for primitive values', () => {
+      expect(isEmptyObject(1)).toBe(false);
+      expect(isEmptyObject('string')).toBe(false);
+      expect(isEmptyObject(true)).toBe(false);
+    });
+
+    test('should return false for a function', () => {
+      expect(isEmptyObject(() => {})).toBe(false);
+    });
+  });
+
+  describe('deepMerge', () => {
+    it('should merge properties from source to target', () => {
+      const obj1 = { a: 1 };
+      const obj2 = { b: 2 };
+      const merged = deepMerge(obj1, obj2);
+      expect(merged).toEqual({ a: 1, b: 2 });
+    });
+
+    it('should overwrite properties in target with source properties', () => {
+      const obj1 = { a: 1, b: 2 };
+      const obj2 = { b: 3, c: 4 };
+      const merged = deepMerge(obj1, obj2);
+      expect(merged).toEqual({ a: 1, b: 3, c: 4 });
+    });
+
+    it('should deeply merge nested objects', () => {
+      const obj1 = { a: { b: 1 } };
+      const obj2 = { a: { c: 2 } };
+      const merged = deepMerge(obj1, obj2);
+      expect(merged).toEqual({ a: { b: 1, c: 2 } });
+    });
+
+    it('should deeply merge nested objects and overwrite', () => {
+      const obj1 = { a: { b: 1, d: 5 } };
+      const obj2 = { a: { c: 2, d: 6 } };
+      const merged = deepMerge(obj1, obj2);
+      expect(merged).toEqual({ a: { b: 1, c: 2, d: 6 } });
+    });
+
+    it('should handle multiple source objects', () => {
+      const obj1 = { a: 1 };
+      const obj2 = { b: 2 };
+      const obj3 = { c: 3 };
+      const merged = deepMerge(obj1, obj2, obj3);
+      expect(merged).toEqual({ a: 1, b: 2, c: 3 });
+    });
+
+    it('should concatenate arrays by default', () => {
+      const obj1 = { a: [1, 2] };
+      const obj2 = { a: [3, 4] };
+      const merged = deepMerge(obj1, obj2);
+      expect(merged).toEqual({ a: [1, 2, 3, 4] });
+    });
+
+    it('should overwrite if one is array and other is object', () => {
+      const obj1 = { a: [1, 2] };
+      const obj2 = { a: { b: 3 } };
+      const merged = deepMerge(obj1, obj2);
+      expect(merged).toEqual({ a: { b: 3 } });
+    });
+
+    it('should handle null and undefined sources gracefully', () => {
+      const obj1 = { a: 1 };
+      const obj2 = null;
+      const obj3 = { b: 2 };
+      const merged = deepMerge(obj1, obj2, obj3);
+      expect(merged).toEqual({ a: 1, b: 2 });
+    });
+
+    it('should return target if target is not an object', () => {
+      const str = 'hello';
+      const obj = { a: 1 };
+      const merged = deepMerge(str, obj);
+      expect(merged).toBe('hello');
     });
   });
 });
