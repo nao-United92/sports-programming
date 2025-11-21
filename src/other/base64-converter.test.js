@@ -1,43 +1,53 @@
 const { encode, decode } = require('./base64-converter');
 
 describe('Base64 Converter', () => {
-  const testCases = [
-    { name: 'ASCII string', value: 'Hello, World!' },
-    { name: 'String with spaces and symbols', value: 'test=1&query=some value' },
-    { name: 'Japanese string', value: 'こんにちは、世界！' },
-    { name: 'Emoji string', value: '😊👍🎉' },
-    { name: 'Empty string', value: '' },
-  ];
+  describe('encode', () => {
+    test('should encode a simple ASCII string', () => {
+      expect(encode('hello world')).toBe('aGVsbG8gd29ybGQ=');
+    });
 
-  testCases.forEach(({ name, value }) => {
-    it(`should correctly encode and decode a ${name}`, () => {
-      const encoded = encode(value);
-      const decoded = decode(encoded);
-      expect(decoded).toBe(value);
-      if (value) {
-        expect(encoded).not.toBe(value);
-      }
+    test('should encode a string with special characters', () => {
+      expect(encode('node.js & javascript')).toBe('bm9kZS5qcyAmIGphdmFzY3JpcHQ=');
+    });
+
+    test('should encode a string with Unicode characters', () => {
+      expect(encode('こんにちは世界')).toBe('44GT44KT44Gr44Gh44Gv5LiW55WM');
+    });
+
+    test('should handle an empty string', () => {
+      expect(encode('')).toBe('');
+    });
+
+    test('should handle non-string input by converting it to a string', () => {
+      expect(encode(12345)).toBe('MTIzNDU=');
     });
   });
 
-  it('should return an empty string for non-string input', () => {
-    expect(encode(null)).toBe('');
-    expect(encode(undefined)).toBe('');
-    expect(encode(123)).toBe('');
-    expect(decode(null)).toBe('');
-    expect(decode(undefined)).toBe('');
-    expect(decode(123)).toBe('');
-  });
+  describe('decode', () => {
+    test('should decode a simple Base64 string', () => {
+      expect(decode('aGVsbG8gd29ybGQ=')).toBe('hello world');
+    });
 
-  it('should handle invalid Base64 input in decode gracefully', () => {
-    // Node's Buffer.from with 'base64' silently ignores invalid characters.
-    // We test that it doesn't throw and returns a result (often partially decoded or empty).
-    const invalidBase64 = 'this is not base64!!';
-    let decoded;
-    expect(() => {
-      decoded = decode(invalidBase64);
-    }).not.toThrow();
-    // The exact output can vary, but it should not be the original invalid string.
-    expect(decoded).not.toBe(invalidBase64);
+    test('should decode a string with special characters', () => {
+      expect(decode('bm9kZS5qcyAmIGphdmFzY3JpcHQ=')).toBe('node.js & javascript');
+    });
+
+    test('should decode a string with Unicode characters', () => {
+      expect(decode('44GT44KT44Gr44Gh44Gv5LiW55WM')).toBe('こんにちは世界');
+    });
+
+    test('should handle an empty string', () => {
+      expect(decode('')).toBe('');
+    });
+
+    test('should return an empty string for invalid input type', () => {
+      expect(decode(null)).toBe('');
+      expect(decode(undefined)).toBe('');
+      expect(decode(123)).toBe('');
+    });
+
+    test('should return an empty string for an invalid Base64 string', () => {
+      expect(decode('not-a-base64-string')).toBe('');
+    });
   });
 });
