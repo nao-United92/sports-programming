@@ -1,4 +1,4 @@
-import { toCamelCase, toSnakeCase } from './string-case-utils.js';
+import { toCamelCase, toSnakeCase, toPascalCase } from './string-case-utils.js';
 
 describe('String Case Converters', () => {
   describe('toCamelCase', () => {
@@ -15,7 +15,7 @@ describe('String Case Converters', () => {
     });
 
     it('should handle strings with leading and trailing underscores', () => {
-      expect(toCamelCase('_hello_world_')).toBe('HelloWorld');
+      expect(toCamelCase('_hello_world_')).toBe('helloWorld');
     });
 
     it('should return an empty string if input is not a string or is empty', () => {
@@ -49,5 +49,34 @@ describe('String Case Converters', () => {
       expect(toSnakeCase('')).toBe('');
       expect(toSnakeCase(123)).toBe('');
     });
+  });
+});
+
+describe('toPascalCase', () => {
+  it('should convert snake_case to PascalCase', () => {
+    expect(toPascalCase('hello_world')).toBe('HelloWorld');
+  });
+
+  it('should convert kebab-case to PascalCase', () => {
+    expect(toPascalCase('hello-world')).toBe('HelloWorld');
+  });
+
+  it('should convert camelCase to PascalCase', () => {
+    expect(toPascalCase('helloWorld')).toBe('HelloWorld');
+  });
+
+  it('should handle strings with leading and trailing underscores', () => {
+    expect(toPascalCase('_hello_world_')).toBe('HelloWorld');
+  });
+
+  it('should handle single word strings', () => {
+    expect(toPascalCase('hello')).toBe('Hello');
+  });
+
+  it('should return an empty string if input is not a string or is empty', () => {
+    expect(toPascalCase(null)).toBe('');
+    expect(toPascalCase(undefined)).toBe('');
+    expect(toPascalCase('')).toBe('');
+    expect(toPascalCase(123)).toBe('');
   });
 });
