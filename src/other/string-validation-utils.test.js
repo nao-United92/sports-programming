@@ -1,4 +1,4 @@
-import { isValidEmail, isStrongPassword } from './string-validation-utils';
+import { isValidEmail, isStrongPassword, isPalindrome } from './string-validation-utils';
 
 describe('isValidEmail', () => {
   test('should return true for a valid email address', () => {
@@ -63,5 +63,43 @@ describe('isStrongPassword', () => {
 
   test('should return false for empty string', () => {
     expect(isStrongPassword('')).toBe(false);
+  });
+});
+
+describe('isPalindrome', () => {
+  test('should return true for a valid palindrome', () => {
+    expect(isPalindrome('madam')).toBe(true);
+    expect(isPalindrome('A man, a plan, a canal: Panama')).toBe(true);
+    expect(isPalindrome('racecar')).toBe(true);
+    expect(isPalindrome('No lemon, no melon')).toBe(true);
+    expect(isPalindrome('Was it a car or a cat I saw?')).toBe(true);
+  });
+
+  test('should return false for a non-palindrome', () => {
+    expect(isPalindrome('hello')).toBe(false);
+    expect(isPalindrome('world')).toBe(false);
+    expect(isPalindrome('not a palindrome')).toBe(false);
+  });
+
+  test('should handle empty string', () => {
+    expect(isPalindrome('')).toBe(true);
+  });
+
+  test('should handle single character string', () => {
+    expect(isPalindrome('a')).toBe(true);
+  });
+
+  test('should handle strings with numbers and special characters', () => {
+    expect(isPalindrome('12321')).toBe(true);
+    expect(isPalindrome('A-b-c-b-A')).toBe(true);
+    expect(isPalindrome('1 eye for of 1 eye')).toBe(false);
+  });
+
+  test('should return false for non-string inputs', () => {
+    expect(isPalindrome(null)).toBe(false);
+    expect(isPalindrome(undefined)).toBe(false);
+    expect(isPalindrome(123)).toBe(false);
+    expect(isPalindrome({})).toBe(false);
+    expect(isPalindrome([])).toBe(false);
   });
 });
