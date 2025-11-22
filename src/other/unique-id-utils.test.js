@@ -1,4 +1,4 @@
-import { uniqueId } from './unique-id-utils.js';
+import { uniqueId, uuid } from './unique-id-utils.js';
 
 describe('uniqueId', () => {
   // Note: idCounter is module-scoped and persists across test runs within the same Jest worker.
@@ -35,5 +35,23 @@ describe('uniqueId', () => {
     const id2 = uniqueId('');
     expect(id1).not.toBe(id2);
     expect(id1).toMatch(/^\d+$/);
+  });
+});
+
+describe('uuid', () => {
+  it('should generate a valid UUID v4', () => {
+    const id = uuid();
+    // UUID v4 regex: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+    // where x is any hexadecimal digit and y is one of 8, 9, A, or B.
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    expect(id).toMatch(uuidRegex);
+  });
+
+  it('should generate unique UUIDs', () => {
+    const ids = new Set();
+    for (let i = 0; i < 1000; i++) {
+      ids.add(uuid());
+    }
+    expect(ids.size).toBe(1000);
   });
 });
