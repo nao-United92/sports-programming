@@ -1,37 +1,39 @@
 /**
- * Deeply merges two or more objects into a new object.
- * Properties in later objects overwrite properties in earlier objects.
- * Arrays are overwritten, not merged.
+ * Recursively merges properties of two or more objects.
  *
- * @param {object} target The target object to merge into. If not an object, a new empty object is used.
- * @param {...object} sources The source objects to merge.
- * @returns {object} A new object with merged properties.
+ * @param {Object} target The target object to merge into.
+ * @param {...Object} sources The source objects to merge from.
+ * @returns {Object} The merged object.
  */
-function deepMerge(target, ...sources) {
-  if (target === null || typeof target !== 'object') {
-    target = {};
+export function deepMerge(target, ...sources) {
+  if (!sources.length) {
+    return target;
   }
 
-  for (const source of sources) {
-    if (source === null || typeof source !== 'object') {
-      continue;
-    }
+  const isObject = (item) => item && typeof item === 'object' && !Array.isArray(item);
 
+  const source = sources.shift();
+
+  if (isObject(target) && isObject(source)) {
     for (const key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        if (Object.prototype.hasOwnProperty.call(target, key) &&
-            typeof target[key] === 'object' && target[key] !== null &&
-            typeof source[key] === 'object' && source[key] !== null &&
-            !Array.isArray(target[key]) && !Array.isArray(source[key])) {
-          target[key] = deepMerge(target[key], source[key]);
-        } else {
-          target[key] = source[key];
+      if (isObject(source[key])) {
+        if (!target[key]) {
+          Object.assign(target, { [key]: {} });
         }
+        deepMerge(target[key], source[key]);
+      } else if (Array.isArray(source[key])) {
+        // For arrays, we replace the target array with the source array
+        // or concatenate if target also has an array for the same key.
+        if (Array.isArray(target[key])) {
+          target[key] = [...target[key], ...source[key]];
+        } else {
+          Object.assign(target, { [key]: source[key] });
+        }
+      } else {
+        Object.assign(target, { [key]: source[key] });
       }
     }
   }
 
-  return target;
+  return deepMerge(target, ...sources);
 }
-
-module.exports = { deepMerge };
