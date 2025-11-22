@@ -8,7 +8,12 @@
  * @returns {*} Returns the resolved value.
  */
 export const get = (object, path, defaultValue) => {
-  const pathArray = Array.isArray(path) ? path : path.replace(/\\[(\\d+)\]/g, '.$1').split('.').filter(Boolean);
+  const pathArray = Array.isArray(path)
+    ? path
+    : path
+        .replace(/\[(\d+)\]/g, '.$1') // convert indexes to properties (e.g., 'a[0]' becomes 'a.0')
+        .split('.')
+        .filter(Boolean); // split by dot and remove empty strings
 
   if (pathArray.length === 0) {
     return defaultValue;

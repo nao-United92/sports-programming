@@ -49,3 +49,18 @@ export function isStrongPassword(password) {
   }
   return true;
 }
+
+/**
+ * Checks if a string is a palindrome (reads the same forwards and backwards),
+ * ignoring non-alphanumeric characters and case.
+ * @param {string} str The string to check.
+ * @returns {boolean} True if the string is a palindrome, false otherwise.
+ */
+export function isPalindrome(str) {
+  if (typeof str !== 'string') {
+    return false;
+  }
+  const cleanedStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const reversedStr = cleanedStr.split('').reverse().join('');
+  return cleanedStr === reversedStr;
+}

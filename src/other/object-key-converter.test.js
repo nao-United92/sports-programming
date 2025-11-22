@@ -1,75 +1,70 @@
-const { keysToCamel, keysToSnake } = require('./object-key-converter');
+import { keysToSnakeCase } from './object-key-converter.js';
 
-describe('Object Key Case Converter', () => {
-  describe('keysToCamel', () => {
-    it('should convert snake_case keys to camelCase in a simple object', () => {
-      const obj = { first_name: 'John', last_name: 'Doe' };
-      const expected = { firstName: 'John', lastName: 'Doe' };
-      expect(keysToCamel(obj)).toEqual(expected);
-    });
-
-    it('should convert kebab-case keys to camelCase', () => {
-      const obj = { 'user-id': 1, 'account-type': 'premium' };
-      const expected = { userId: 1, accountType: 'premium' };
-      expect(keysToCamel(obj)).toEqual(expected);
-    });
-
-    it('should convert keys in a nested object', () => {
-      const obj = { user_info: { first_name: 'Jane', last_name: 'Doe' } };
-      const expected = { userInfo: { firstName: 'Jane', lastName: 'Doe' } };
-      expect(keysToCamel(obj)).toEqual(expected);
-    });
-
-    it('should convert keys in an array of objects', () => {
-      const obj = { users: [{ user_id: 1 }, { user_id: 2 }] };
-      const expected = { users: [{ userId: 1 }, { userId: 2 }] };
-      expect(keysToCamel(obj)).toEqual(expected);
-    });
-
-    it('should handle a top-level array', () => {
-        const arr = [{ user_id: 1, contact_info: { email_address: 'test@test.com' } }, { user_id: 2 }];
-        const expected = [{ userId: 1, contactInfo: { emailAddress: 'test@test.com' } }, { userId: 2 }];
-        expect(keysToCamel(arr)).toEqual(expected);
-    });
-
-    it('should handle non-object values gracefully', () => {
-      expect(keysToCamel(null)).toBeNull();
-      expect(keysToCamel(undefined)).toBeUndefined();
-      expect(keysToCamel(123)).toBe(123);
-      expect(keysToCamel('a_string')).toBe('a_string');
-    });
+describe('keysToSnakeCase', () => {
+  test('should convert keys of a simple object to snake_case', () => {
+    const obj = { firstName: 'John', lastName: 'Doe' };
+    const expected = { first_name: 'John', last_name: 'Doe' };
+    expect(keysToSnakeCase(obj)).toEqual(expected);
   });
 
-  describe('keysToSnake', () => {
-    it('should convert camelCase keys to snake_case in a simple object', () => {
-      const obj = { firstName: 'John', lastName: 'Doe' };
-      const expected = { first_name: 'John', last_name: 'Doe' };
-      expect(keysToSnake(obj)).toEqual(expected);
-    });
+  test('should convert keys of a nested object to snake_case', () => {
+    const obj = {
+      personData: { firstName: 'Jane', lastName: 'Doe' },
+      contactInfo: { emailAddress: 'jane.doe@example.com' },
+    };
+    const expected = {
+      person_data: { first_name: 'Jane', last_name: 'Doe' },
+      contact_info: { email_address: 'jane.doe@example.com' },
+    };
+    expect(keysToSnakeCase(obj)).toEqual(expected);
+  });
 
-    it('should convert keys in a nested object', () => {
-      const obj = { userInfo: { firstName: 'Jane', lastName: 'Doe' } };
-      const expected = { user_info: { first_name: 'Jane', last_name: 'Doe' } };
-      expect(keysToSnake(obj)).toEqual(expected);
-    });
+  test('should handle an array of objects', () => {
+    const arr = [
+      { userProfile: { userId: 1 } },
+      { userProfile: { userId: 2 } },
+    ];
+    const expected = [
+      { user_profile: { user_id: 1 } },
+      { user_profile: { user_id: 2 } },
+    ];
+    expect(keysToSnakeCase(arr)).toEqual(expected);
+  });
 
-    it('should convert keys in an array of objects', () => {
-      const obj = { users: [{ userId: 1 }, { userId: 2 }] };
-      const expected = { users: [{ user_id: 1 }, { user_id: 2 }] };
-      expect(keysToSnake(obj)).toEqual(expected);
-    });
+  test('should not change values that are not objects or arrays', () => {
+    expect(keysToSnakeCase('a string')).toBe('a string');
+    expect(keysToSnakeCase(123)).toBe(123);
+    expect(keysToSnakeCase(null)).toBe(null);
+  });
 
-    it('should handle a top-level array', () => {
-        const arr = [{ userId: 1, contactInfo: { emailAddress: 'test@test.com' } }, { userId: 2 }];
-        const expected = [{ user_id: 1, contact_info: { email_address: 'test@test.com' } }, { user_id: 2 }];
-        expect(keysToSnake(arr)).toEqual(expected);
-    });
+  test('should handle empty objects and arrays', () => {
+    expect(keysToSnakeCase({})).toEqual({});
+    expect(keysToSnakeCase([])).toEqual([]);
+  });
 
-    it('should handle non-object values gracefully', () => {
-        expect(keysToSnake(null)).toBeNull();
-        expect(keysToSnake(undefined)).toBeUndefined();
-        expect(keysToSnake(123)).toBe(123);
-        expect(keysToSnake('aString')).toBe('aString');
-    });
+  test('should handle complex nested structures', () => {
+    const obj = {
+      dataApi: {
+        usersList: [
+          {
+            userInfo: { userId: 'user1', displayName: 'User One' },
+            userRoles: ['admin', 'editor'],
+          },
+        ],
+        paginationDetails: { currentPage: 1, itemsPerPage: 10 },
+      },
+    };
+    const expected = {
+      data_api: {
+        users_list: [
+          {
+            user_info: { user_id: 'user1', display_name: 'User One' },
+            user_roles: ['admin', 'editor'],
+          },
+        ],
+        pagination_details: { current_page: 1, items_per_page: 10 },
+      },
+    };
+    expect(keysToSnakeCase(obj)).toEqual(expected);
   });
 });
