@@ -1,41 +1,39 @@
 /**
- * Checks if the item is a plain object.
- * @param {*} item The item to check.
- * @returns {boolean} True if the item is a plain object, false otherwise.
- */
-const isObject = (item) => {
-  return item && typeof item === 'object' && !Array.isArray(item);
-};
-
-/**
- * Recursively merges sources objects into the target object.
+ * Recursively merges own enumerable string keyed properties of source objects
+ * into the destination object. Source properties that resolve to `undefined`
+ * are skipped if a destination value exists. Array and plain object properties
+ * are merged recursively. Other objects and value types are overridden.
  *
- * @param {object} target The target object to merge into.
- * @param {...object} sources The source objects to merge from.
- * @returns {object} The merged object.
+ * @param {Object} object The destination object.
+ * @param {...Object} sources The source objects.
+ * @returns {Object} Returns `object`.
  */
-const deepMerge = (target, ...sources) => {
-  if (!sources.length) {
-    return target;
+export const merge = (object, ...sources) => {
+  if (object == null || typeof object !== 'object') {
+    return object;
   }
-  const source = sources.shift();
-  const output = { ...target };
 
-  if (isObject(output) && isObject(source)) {
-    Object.keys(source).forEach((key) => {
-      if (isObject(source[key])) {
-        if (!(key in output)) {
-          Object.assign(output, { [key]: source[key] });
-        } else {
-          output[key] = deepMerge(output[key], source[key]);
+  for (const source of sources) {
+    if (source != null && typeof source === 'object') {
+      for (const key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          if (Object.prototype.hasOwnProperty.call(object, key) &&
+              typeof object[key] === 'object' && object[key] !== null &&
+              typeof source[key] === 'object' && source[key] !== null &&
+              !Array.isArray(object[key]) && !Array.isArray(source[key])) {
+            // Both are objects, merge recursively
+            merge(object[key], source[key]);
+          } else if (Object.prototype.hasOwnProperty.call(object, key) &&
+                     Array.isArray(object[key]) && Array.isArray(source[key])) {
+            // Both are arrays, concatenate
+            object[key] = object[key].concat(source[key]);
+          } else {
+            // Overwrite or set new property
+            object[key] = source[key];
+          }
         }
-      } else {
-        Object.assign(output, { [key]: source[key] });
       }
-    });
+    }
   }
-
-  return deepMerge(output, ...sources);
+  return object;
 };
-
-module.exports = { deepMerge };
