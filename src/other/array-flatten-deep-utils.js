@@ -1,13 +1,20 @@
 /**
- * Recursively flattens a nested array.
+ * Recursively flattens `array`.
  *
  * @param {Array} array The array to flatten.
  * @returns {Array} Returns the new flattened array.
  */
-export function flattenDeep(array) {
+export const flattenDeep = (array) => {
   if (!Array.isArray(array)) {
-    return [array];
+    return [];
   }
-
-  return array.reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
-}
+  let result = [];
+  for (let i = 0; i < array.length; i++) {
+    if (Array.isArray(array[i])) {
+      result = result.concat(flattenDeep(array[i]));
+    } else {
+      result.push(array[i]);
+    }
+  }
+  return result;
+};

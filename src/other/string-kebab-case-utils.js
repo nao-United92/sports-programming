@@ -1,16 +1,17 @@
 /**
- * Converts `string` to kebab case.
+ * Converts `string` to [kebab case](https://en.wikipedia.org/wiki/Letter_case#Kebab_case).
  *
- * @param {string} str The string to convert.
+ * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the kebab cased string.
  */
-export const kebabCase = (str) => {
-  if (typeof str !== 'string') {
+export const kebabCase = (string) => {
+  if (typeof string !== 'string' || !string) {
     return '';
   }
-
-  return str
-    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2')
-    .replace(/[^a-zA-Z0-9]+/g, '-')
-    .toLowerCase();
+  return string
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase()
+    .replace(/^-+|-+$/g, '');
 };

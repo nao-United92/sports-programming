@@ -1,50 +1,52 @@
-import { set } from './object-set-utils.js';
+import { set } from './object-set-utils';
 
 describe('set', () => {
-  test('should set a value at a simple path', () => {
-    const obj = { a: 1 };
-    set(obj, 'b', 2);
-    expect(obj).toEqual({ a: 1, b: 2 });
+  it('should set a value at a given path', () => {
+    const object = { 'a': { 'b': 2 } };
+    set(object, 'a.b', 3);
+    expect(object.a.b).toBe(3);
   });
 
-  test('should set a value at a nested path', () => {
-    const obj = { a: { b: 1 } };
-    set(obj, 'a.c', 2);
-    expect(obj).toEqual({ a: { b: 1, c: 2 } });
+  it('should create intermediate objects if they do not exist', () => {
+    const object = {};
+    set(object, 'a.b.c', 1);
+    expect(object.a.b.c).toBe(1);
   });
 
-  test('should create intermediate objects if they do not exist', () => {
-    const obj = {};
-    set(obj, 'a.b.c', 3);
-    expect(obj).toEqual({ a: { b: { c: 3 } } });
+  it('should create intermediate arrays for integer-keyed paths', () => {
+    const object = {};
+    set(object, 'a[0].b', 2);
+    expect(object.a[0].b).toBe(2);
+    expect(Array.isArray(object.a)).toBe(true);
   });
 
-  test('should create intermediate arrays for integer-keyed paths', () => {
-    const obj = {};
-    set(obj, 'a[0].b', 4);
-    expect(obj).toEqual({ a: [{ b: 4 }] });
+  it('should handle array paths', () => {
+    const object = { 'a': [{ 'b': 2 }] };
+    set(object, ['a', '0', 'b'], 3);
+    expect(object.a[0].b).toBe(3);
   });
 
-  test('should overwrite existing values', () => {
-    const obj = { a: 1 };
-    set(obj, 'a', 2);
-    expect(obj).toEqual({ a: 2 });
+  it('should return the modified object', () => {
+    const object = {};
+    const result = set(object, 'x', 1);
+    expect(result).toBe(object);
   });
 
-  test('should handle array paths', () => {
-    const obj = { a: [{ b: 1 }] };
-    set(obj, ['a', '0', 'c'], 2);
-    expect(obj).toEqual({ a: [{ b: 1, c: 2 }] });
+  it('should not modify non-object inputs', () => {
+    const str = 'hello';
+    set(str, 'length', 10);
+    expect(str.length).toBe(5); // Should remain unchanged
   });
 
-  test('should return the original object', () => {
-    const obj = {};
-    const result = set(obj, 'a', 1);
-    expect(result).toBe(obj);
+  it('should handle setting a value at the root', () => {
+    const object = {};
+    set(object, 'a', 1);
+    expect(object.a).toBe(1);
   });
 
-  test('should not modify null or undefined objects', () => {
-    expect(set(null, 'a', 1)).toBeNull();
-    expect(set(undefined, 'a', 1)).toBeUndefined();
+  it('should overwrite existing values', () => {
+    const object = { 'a': 1 };
+    set(object, 'a', 2);
+    expect(object.a).toBe(2);
   });
 });

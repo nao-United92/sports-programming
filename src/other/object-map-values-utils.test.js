@@ -1,19 +1,38 @@
-import { mapValues } from './object-map-values-utils.js';
+import { mapValues } from './object-map-values-utils';
 
 describe('mapValues', () => {
-  it('should map values of an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    const square = n => n * n;
-    expect(mapValues(obj, square)).toEqual({ a: 1, b: 4, c: 9 });
+  it('should map values of an object using an iteratee function', () => {
+    const users = {
+      'fred': { 'user': 'fred', 'age': 40 },
+      'pebbles': { 'user': 'pebbles', 'age': 1 },
+    };
+    expect(mapValues(users, o => o.age)).toEqual({ 'fred': 40, 'pebbles': 1 });
   });
 
-  it('should pass key and object to the function', () => {
-    const obj = { a: 1, b: 2 };
-    const fn = (val, key, o) => key + val + Object.keys(o).length;
-    expect(mapValues(obj, fn)).toEqual({ a: 'a12', b: 'b22' });
+  it('should pass value, key, and object to the iteratee', () => {
+    const object = { 'a': 1, 'b': 2 };
+    const iteratee = jest.fn((value, key, obj) => `${key}-${value}`);
+    const result = mapValues(object, iteratee);
+
+    expect(iteratee).toHaveBeenCalledWith(1, 'a', object);
+    expect(iteratee).toHaveBeenCalledWith(2, 'b', object);
+    expect(result).toEqual({ 'a': 'a-1', 'b': 'b-2' });
   });
 
-  it('should return an empty object for an empty object', () => {
-    expect(mapValues({}, val => val * 2)).toEqual({});
+  it('should handle empty objects', () => {
+    expect(mapValues({}, x => x)).toEqual({});
+  });
+
+  it('should handle null or undefined objects', () => {
+    expect(mapValues(null, x => x)).toEqual({});
+    expect(mapValues(undefined, x => x)).toEqual({});
+  });
+
+  it('should not include inherited properties', () => {
+    function Foo() {
+      this.a = 1;
+    }
+    Foo.prototype.b = 2;
+    expect(mapValues(new Foo(), x => x)).toEqual({ 'a': 1 });
   });
 });

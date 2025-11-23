@@ -1,32 +1,37 @@
+const castPath = (path) => {
+  if (Array.isArray(path)) {
+    return path;
+  }
+  return path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+};
+
 /**
  * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
- * it's created. Arrays are created for integer-keyed paths.
+ * it's created. Arrays are created for integer-keyed paths and objects for
+ * all other parts.
  *
- * @param {object} object The object to modify.
- * @param {string|Array<string>} path The path of the property to set.
+ * @param {Object} object The object to modify.
+ * @param {Array|string} path The path of the property to set.
  * @param {*} value The value to set.
- * @returns {object} Returns `object`.
+ * @returns {Object} Returns `object`.
  */
 export const set = (object, path, value) => {
-  if (object == null) {
+  if (object == null || typeof object !== 'object') {
     return object;
   }
 
-  const pathArray = Array.isArray(path) ? path : path.replace(/\\[(\\d+)\\]/g, '.$1').split('.').filter(Boolean);
+  const pathParts = castPath(path);
   let current = object;
 
-  for (let i = 0; i < pathArray.length; i++) {
-    const key = pathArray[i];
-
-    if (i === pathArray.length - 1) {
-      current[key] = value;
+  for (let i = 0; i < pathParts.length; i++) {
+    const part = pathParts[i];
+    if (i === pathParts.length - 1) {
+      current[part] = value;
     } else {
-      if (current[key] === null || current[key] === undefined) {
-        // Determine if the next key is an array index
-        const nextKey = pathArray[i + 1];
-        current[key] = String(Number(nextKey)) === nextKey && Number.isInteger(Number(nextKey)) ? [] : {};
+      if (current[part] === undefined) {
+        current[part] = /^\d+$/.test(pathParts[i + 1]) ? [] : {};
       }
-      current = current[key];
+      current = current[part];
     }
   }
   return object;

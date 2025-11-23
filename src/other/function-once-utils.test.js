@@ -1,57 +1,50 @@
-import { once } from './function-once-utils.js';
+import { once } from './function-once-utils';
 
 describe('once', () => {
   it('should invoke the function only once', () => {
-    let count = 0;
-    const increment = once(() => {
-      count++;
-      return count;
-    });
+    const myFunc = jest.fn();
+    const onceFunc = once(myFunc);
 
-    expect(increment()).toBe(1);
-    expect(increment()).toBe(1);
-    expect(increment()).toBe(1);
-    expect(count).toBe(1);
+    onceFunc();
+    onceFunc();
+    onceFunc();
+
+    expect(myFunc).toHaveBeenCalledTimes(1);
   });
 
-  it('should return the same result on subsequent calls', () => {
-    const getValue = once((val) => val * 2);
+  it('should return the value of the first invocation', () => {
+    let i = 0;
+    const onceFunc = once(() => ++i);
 
-    expect(getValue(5)).toBe(10);
-    expect(getValue(10)).toBe(10); // Should still return 10 from the first call
-    expect(getValue(20)).toBe(10);
+    const result1 = onceFunc();
+    const result2 = onceFunc();
+    const result3 = onceFunc();
+
+    expect(result1).toBe(1);
+    expect(result2).toBe(1);
+    expect(result3).toBe(1);
   });
 
-  it('should preserve the `this` context', () => {
-    const obj = {
-      value: 1,
-      getValueOnce: once(function() {
-        return this.value;
-      })
+  it('should pass arguments to the original function', () => {
+    const myFunc = jest.fn();
+    const onceFunc = once(myFunc);
+
+    onceFunc(1, 2, 3);
+    onceFunc(4, 5, 6);
+
+    expect(myFunc).toHaveBeenCalledWith(1, 2, 3);
+    expect(myFunc).not.toHaveBeenCalledWith(4, 5, 6);
+  });
+
+  it('should maintain the `this` context', () => {
+    const myObj = {
+      myMethod: jest.fn(),
+      onceMethod: once(function() { this.myMethod() }),
     };
 
-    expect(obj.getValueOnce()).toBe(1);
-    obj.value = 2; // Change value after first call
-    expect(obj.getValueOnce()).toBe(1); // Should still return 1
-  });
+    myObj.onceMethod();
+    myObj.onceMethod();
 
-  it('should pass arguments correctly on the first call', () => {
-    const sumOnce = once((a, b) => a + b);
-
-    expect(sumOnce(1, 2)).toBe(3);
-    expect(sumOnce(10, 20)).toBe(3); // Arguments from subsequent calls are ignored
-  });
-
-  it('should work with functions that return undefined', () => {
-    let called = false;
-    const doSomethingOnce = once(() => {
-      called = true;
-    });
-
-    expect(doSomethingOnce()).toBeUndefined();
-    expect(called).toBe(true);
-    called = false; // Reset for next call
-    expect(doSomethingOnce()).toBeUndefined();
-    expect(called).toBe(false); // Should not have been called again
+    expect(myObj.myMethod).toHaveBeenCalledTimes(1);
   });
 });
