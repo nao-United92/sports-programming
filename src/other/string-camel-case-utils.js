@@ -1,13 +1,20 @@
 /**
- * Converts `string` to camel case.
+ * Converts `string` to [camel case](https://en.wikipedia.org/wiki/Camel_case).
  *
- * @param {string} str The string to convert.
+ * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the camel cased string.
  */
-export const camelCase = (str) => {
-  if (typeof str !== 'string') {
+export const camelCase = (string) => {
+  if (typeof string !== 'string' || !string) {
     return '';
   }
-
-  return str.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
+  const words = string.match(/[a-zA-Z0-9]+/g) || [];
+  return words
+    .map((word, index) => {
+      if (index === 0) {
+        return word.toLowerCase();
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join('');
 };
