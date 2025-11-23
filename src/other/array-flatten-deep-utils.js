@@ -1,5 +1,5 @@
 /**
- * Recursively flattens array a single level deep.
+ * Recursively flattens `array`.
  *
  * @param {Array} array The array to flatten.
  * @returns {Array} Returns the new flattened array.
