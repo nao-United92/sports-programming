@@ -1,10 +1,31 @@
+const castPath = (path) => {
+  if (Array.isArray(path)) {
+    return path;
+  }
+  return path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+};
+
 /**
- * Checks if `key` is a direct property of `object`.
+ * Checks if `path` is a direct property of `object`.
  *
- * @param {object} object The object to query.
- * @param {string} key The key to check.
- * @returns {boolean} Returns `true` if `key` exists, else `false`.
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path to check.
+ * @returns {boolean} Returns `true` if `path` exists, else `false`.
  */
-export const has = (object, key) => {
-  return object != null && Object.prototype.hasOwnProperty.call(object, key);
+export const has = (object, path) => {
+  if (object == null) {
+    return false;
+  }
+
+  const pathParts = castPath(path);
+  let current = object;
+
+  for (let i = 0; i < pathParts.length; i++) {
+    const part = pathParts[i];
+    if (current === null || typeof current !== 'object' || !Object.prototype.hasOwnProperty.call(current, part)) {
+      return false;
+    }
+    current = current[part];
+  }
+  return true;
 };

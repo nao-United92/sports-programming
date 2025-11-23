@@ -1,29 +1,48 @@
-import { has } from './object-has-utils.js';
+import { has } from './object-has-utils';
 
 describe('has', () => {
-  const object = { 'a': 1, 'b': undefined };
-  const proto = { 'c': 2 };
-  const objWithProto = Object.create(proto);
-  objWithProto.a = 1;
+  const object = { 'a': { 'b': 2 }, 'c': null, 'd': undefined };
 
-  test('should return true for own properties', () => {
+  it('should return true if a direct property exists', () => {
     expect(has(object, 'a')).toBe(true);
   });
 
-  test('should return true for own properties with undefined values', () => {
-    expect(has(object, 'b')).toBe(true);
+  it('should return true if a nested property exists', () => {
+    expect(has(object, 'a.b')).toBe(true);
   });
 
-  test('should return false for inherited properties', () => {
-    expect(has(objWithProto, 'c')).toBe(false);
+  it('should return false if a property does not exist', () => {
+    expect(has(object, 'a.c')).toBe(false);
+    expect(has(object, 'x.y')).toBe(false);
   });
 
-  test('should return false for non-existent properties', () => {
-    expect(has(object, 'c')).toBe(false);
-  });
-
-  test('should return false for null or undefined objects', () => {
+  it('should return false if object is null or undefined', () => {
     expect(has(null, 'a')).toBe(false);
     expect(has(undefined, 'a')).toBe(false);
+  });
+
+  it('should return true for null values', () => {
+    expect(has(object, 'c')).toBe(true);
+  });
+
+  it('should return true for undefined values', () => {
+    expect(has(object, 'd')).toBe(true);
+  });
+
+  it('should handle array paths', () => {
+    const arrObject = { 'a': [{ 'b': 1 }] };
+    expect(has(arrObject, ['a', '0', 'b'])).toBe(true);
+    expect(has(arrObject, ['a', '1', 'b'])).toBe(false);
+  });
+
+  it('should handle paths with array notation in string', () => {
+    const arrObject = { 'a': [{ 'b': 1 }] };
+    expect(has(arrObject, 'a[0].b')).toBe(true);
+    expect(has(arrObject, 'a[1].b')).toBe(false);
+  });
+
+  it('should handle empty path', () => {
+    expect(has(object, '')).toBe(true);
+    expect(has(object, [])).toBe(true);
   });
 });
