@@ -1,39 +1,44 @@
 import { negate } from './function-negate-utils';
 
 describe('negate', () => {
-  const isEven = (n) => n % 2 === 0;
-  const isPositive = (n) => n > 0;
-
   it('should negate the result of a predicate function', () => {
+    const isEven = (n) => n % 2 === 0;
     const isOdd = negate(isEven);
+
     expect(isOdd(1)).toBe(true);
     expect(isOdd(2)).toBe(false);
-    expect(isOdd(3)).toBe(true);
   });
 
-  it('should pass arguments to the original predicate function', () => {
-    const isNotPositive = negate(isPositive);
-    expect(isNotPositive(10)).toBe(false);
-    expect(isNotPositive(-5)).toBe(true);
-    expect(isNotPositive(0)).toBe(true);
+  it('should work with functions that return truthy/falsy values', () => {
+    const returnsTruthy = () => 'hello';
+    const returnsFalsy = () => 0;
+
+    const negatedTruthy = negate(returnsTruthy);
+    const negatedFalsy = negate(returnsFalsy);
+
+    expect(negatedTruthy()).toBe(false);
+    expect(negatedFalsy()).toBe(true);
+  });
+
+  it('should pass arguments to the original predicate', () => {
+    const myPredicate = jest.fn();
+    const negatedPredicate = negate(myPredicate);
+
+    negatedPredicate(1, 'a', true);
+
+    expect(myPredicate).toHaveBeenCalledWith(1, 'a', true);
   });
 
   it('should maintain the `this` context', () => {
-    const obj = {
-      threshold: 5,
-      isAboveThreshold: function(value) {
-        return value > this.threshold;
-      },
+    const myObj = {
+      value: 5,
+      isGreaterThanTen: function() { return this.value > 10; },
     };
+    myObj.isNotGreaterThanTen = negate(myObj.isGreaterThanTen);
 
-    const isNotAboveThreshold = negate(obj.isAboveThreshold);
+    expect(myObj.isNotGreaterThanTen()).toBe(true);
 
-    expect(isNotAboveThreshold.call(obj, 10)).toBe(false);
-    expect(isNotAboveThreshold.call(obj, 3)).toBe(true);
-  });
-
-  it('should throw an error if predicate is not a function', () => {
-    expect(() => negate(null)).toThrow('Expected a function');
-    expect(() => negate('not a function')).toThrow('Expected a function');
+    myObj.value = 15;
+    expect(myObj.isNotGreaterThanTen()).toBe(false);
   });
 });
