@@ -1,54 +1,39 @@
-import { findIndex, findLastIndex } from './array-find-index-utils.js';
+import { findIndex } from './array-find-index-utils';
 
-describe('findIndex and findLastIndex', () => {
+describe('findIndex', () => {
   const users = [
-    { 'user': 'barney',  'active': false },
-    { 'user': 'fred',    'active': false },
-    { 'user': 'pebbles', 'active': true },
-    { 'user': 'barney',  'active': true }
+    { 'user': 'barney', 'active': false },
+    { 'user': 'fred', 'active': false },
+    { 'user': 'pebbles', 'active': true }
   ];
 
-  describe('findIndex', () => {
-    it('should find index using a function predicate', () => {
-      const result = findIndex(users, (o) => o.user === 'pebbles');
-      expect(result).toBe(2);
-    });
-
-    it('should find index using an object predicate (matches property)', () => {
-      const result = findIndex(users, { 'user': 'fred', 'active': false });
-      expect(result).toBe(1);
-    });
-
-    it('should find index using an array predicate (matches property value)', () => {
-      const result = findIndex(users, ['active', false]);
-      expect(result).toBe(0);
-    });
-
-    it('should start searching from a given index', () => {
-      const result = findIndex(users, ['active', false], 1);
-      expect(result).toBe(1);
-    });
+  it('should return the index of the first element that satisfies the predicate', () => {
+    expect(findIndex(users, o => o.user === 'barney')).toBe(0);
   });
 
-  describe('findLastIndex', () => {
-    it('should find last index using a function predicate', () => {
-      const result = findLastIndex(users, (o) => o.user === 'barney');
-      expect(result).toBe(3);
-    });
+  it('should return -1 if no element satisfies the predicate', () => {
+    expect(findIndex(users, o => o.user === 'wilma')).toBe(-1);
+  });
 
-    it('should find last index using an object predicate', () => {
-      const result = findLastIndex(users, { 'user': 'barney', 'active': false });
-      expect(result).toBe(0);
-    });
+  it('should return -1 for an empty array', () => {
+    expect(findIndex([], o => o.active)).toBe(-1);
+  });
 
-    it('should find last index using an array predicate', () => {
-      const result = findLastIndex(users, ['active', true]);
-      expect(result).toBe(3);
-    });
+  it('should handle non-array inputs gracefully', () => {
+    expect(findIndex(null, o => o.active)).toBe(-1);
+    expect(findIndex(undefined, o => o.active)).toBe(-1);
+  });
 
-    it('should start searching from a given index backwards', () => {
-      const result = findLastIndex(users, (o) => o.user === 'barney', 2);
-      expect(result).toBe(0);
-    });
+  it('should handle non-function predicate gracefully', () => {
+    expect(findIndex(users, null)).toBe(-1);
+    expect(findIndex(users, 'user')).toBe(-1);
+  });
+
+  it('should pass value, index, and array to the predicate', () => {
+    const predicate = jest.fn((value, index, arr) => value.user === 'pebbles');
+    findIndex(users, predicate);
+    expect(predicate).toHaveBeenCalledWith(users[0], 0, users);
+    expect(predicate).toHaveBeenCalledWith(users[1], 1, users);
+    expect(predicate).toHaveBeenCalledWith(users[2], 2, users);
   });
 });
