@@ -1,6 +1,6 @@
 // src/other/string-utils.test.js
 
-import { capitalize, toKebabCase } from './string-utils';
+import { capitalize, toKebabCase, isPalindrome } from './string-utils';
 
 describe('capitalize', () => {
   test('should capitalize the first letter of a single word', () => {
@@ -86,3 +86,46 @@ describe('toKebabCase', () => {
     expect(toKebabCase('XMLHTTPRequest')).toBe('xml-http-request');
   });
 });
+
+describe('isPalindrome', () => {
+  test('should return true for a simple palindrome', () => {
+    expect(isPalindrome('madam')).toBe(true);
+  });
+
+  test('should return true for a palindrome with different casing', () => {
+    expect(isPalindrome('Madam')).toBe(true);
+  });
+
+  test('should return true for a palindrome with spaces', () => {
+    expect(isPalindrome('A man a plan a canal Panama')).toBe(true);
+  });
+
+  test('should return true for a palindrome with punctuation', () => {
+    expect(isPalindrome('No lemon, no melon.')).toBe(true);
+  });
+
+  test('should return true for an empty string', () => {
+    expect(isPalindrome('')).toBe(true);
+  });
+
+  test('should return true for a single character string', () => {
+    expect(isPalindrome('a')).toBe(true);
+  });
+
+  test('should return false for a non-palindrome', () => {
+    expect(isPalindrome('hello')).toBe(false);
+  });
+
+  test('should return false for non-string input like null', () => {
+    expect(isPalindrome(null)).toBe(false);
+  });
+
+  test('should return false for non-string input like undefined', () => {
+    expect(isPalindrome(undefined)).toBe(false);
+  });
+
+  test('should return false for non-string input like a number', () => {
+    expect(isPalindrome(123)).toBe(false);
+  });
+});
+
