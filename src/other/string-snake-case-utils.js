@@ -1,15 +1,16 @@
 /**
- * 文字列をスネークケースに変換します。
- * @param {string} str - 変換する文字列。
- * @returns {string} スネークケースに変換された文字列。
+ * Converts a string to snake_case.
+ * @param {string} str The string to convert.
+ * @returns {string} The snake_cased string.
  */
-export const snakeCase = (str) => {
-  if (typeof str !== 'string') {
+export function snakeCase(str) {
+  if (typeof str !== 'string' || str.length === 0) {
     return '';
   }
+
   return str
-    .replace(/([a-z])([A-Z])/g, '$1_$2') // camelCase to snake_case
-    .replace(/[^a-zA-Z0-9]+/g, '_') // Replace non-alphanumeric with underscore
-    .toLowerCase() // Convert to lowercase
-    .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
-};
+    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1_$2')
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9_]+/g, '_')
+    .replace(/^_+|_+$|(?<=_)(?=_+)/g, '');
+}

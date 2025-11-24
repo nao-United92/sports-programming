@@ -1,4 +1,4 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy, isEqualArray, xor, differenceBy, intersectionBy } from './array-utils.js';
+import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy, isEqualArray, xor, differenceBy, intersectionBy, compactObject } from './array-utils.js';
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -569,6 +569,46 @@ describe('array-utils', () => {
     it('should handle non-array inputs gracefully', () => {
       expect(intersectionBy(null, [{ 'x': 1 }], o => o.x)).toEqual([]);
       expect(intersectionBy([{ 'x': 1 }], undefined, o => o.x)).toEqual([]);
+    });
+  });
+
+  describe('compactObject', () => {
+    test('should remove null, undefined, and empty string properties from an object', () => {
+      const obj = {
+        a: 1,
+        b: null,
+        c: undefined,
+        d: '',
+        e: 'hello',
+        f: 0,
+        g: false,
+      };
+      expect(compactObject(obj)).toEqual({ a: 1, e: 'hello', f: 0, g: false });
+    });
+
+    test('should return an empty object if all properties are falsy', () => {
+      const obj = {
+        a: null,
+        b: undefined,
+        c: '',
+      };
+      expect(compactObject(obj)).toEqual({});
+    });
+
+    test('should return an empty object for non-object inputs', () => {
+      expect(compactObject(null)).toEqual({});
+      expect(compactObject(undefined)).toEqual({});
+      expect(compactObject(123)).toEqual({});
+      expect(compactObject('string')).toEqual({});
+      expect(compactObject([])).toEqual({});
+    });
+
+    test('should handle nested objects (shallow copy)', () => {
+      const obj = {
+        a: 1,
+        b: { c: null, d: 'test' },
+      };
+      expect(compactObject(obj)).toEqual({ a: 1, b: { c: null, d: 'test' } });
     });
   });
 });

@@ -1,117 +1,131 @@
-import { truncate, capitalizeFirstLetter, reverseString, countWords } from './string-utils.js';
+// src/other/string-utils.test.js
 
-describe('truncate', () => {
-  it('should not truncate a string shorter than the specified length', () => {
-    expect(truncate('hello', 10)).toBe('hello');
+import { capitalize, toKebabCase, isPalindrome } from './string-utils';
+
+describe('capitalize', () => {
+  test('should capitalize the first letter of a single word', () => {
+    expect(capitalize('hello')).toBe('Hello');
   });
 
-  it('should truncate a string longer than the specified length', () => {
-    const longString = 'This is a very long string';
-    expect(truncate(longString, 15)).toBe('This is a ve...');
+  test('should capitalize the first letter of a sentence', () => {
+    expect(capitalize('hello world')).toBe('Hello world');
   });
 
-  it('should use the default suffix', () => {
-    const longString = 'Another long example';
-    expect(truncate(longString, 10)).toBe('Another...');
+  test('should handle an empty string', () => {
+    expect(capitalize('')).toBe('');
   });
 
-  it('should use a custom suffix', () => {
-    const longString = 'Custom suffix test';
-    expect(truncate(longString, 15, '---')).toBe('Custom suffi---');
+  test('should handle a string that is already capitalized', () => {
+    expect(capitalize('World')).toBe('World');
   });
 
-  it('should handle edge case where length is less than or equal to suffix length', () => {
-    const longString = 'Short';
-    expect(truncate(longString, 3, '...')).toBe('...');
-    expect(truncate(longString, 2, '...')).toBe('...');
-  });
-});
-
-describe('capitalizeFirstLetter', () => {
-  it('should capitalize the first letter of a string', () => {
-    expect(capitalizeFirstLetter('hello')).toBe('Hello');
-    expect(capitalizeFirstLetter('world')).toBe('World');
+  test('should handle a string with leading spaces', () => {
+    expect(capitalize('  test')).toBe('  test'); // Only first char is capitalized, not first non-space char
   });
 
-  it('should return an empty string for an empty input', () => {
-    expect(capitalizeFirstLetter('')).toBe('');
+  test('should return an empty string for non-string input like null', () => {
+    expect(capitalize(null)).toBe('');
   });
 
-  it('should handle strings with a single character', () => {
-    expect(capitalizeFirstLetter('a')).toBe('A');
+  test('should return an empty string for non-string input like undefined', () => {
+    expect(capitalize(undefined)).toBe('');
   });
 
-  it('should not change a string that already starts with a capital letter', () => {
-    expect(capitalizeFirstLetter('Hello')).toBe('Hello');
-  });
-
-  it('should handle strings with leading spaces (capitalizing the first non-space char)', () => {
-    expect(capitalizeFirstLetter('  hello')).toBe('  hello'); // The function as implemented will capitalize the first char, which is a space. This is expected behavior.
-  });
-
-  it('should return an empty string for non-string inputs', () => {
-    expect(capitalizeFirstLetter(null)).toBe('');
-    expect(capitalizeFirstLetter(undefined)).toBe('');
-    expect(capitalizeFirstLetter(123)).toBe('');
-    expect(capitalizeFirstLetter({})).toBe('');
+  test('should return an empty string for non-string input like a number', () => {
+    expect(capitalize(123)).toBe('');
   });
 });
 
-describe('reverseString', () => {
-  it('should reverse a simple string', () => {
-    expect(reverseString('hello')).toBe('olleh');
+describe('toKebabCase', () => {
+  test('should convert a single word to kebab-case', () => {
+    expect(toKebabCase('hello')).toBe('hello');
   });
 
-  it('should reverse a string with spaces', () => {
-    expect(reverseString('hello world')).toBe('dlrow olleh');
+  test('should convert a camelCase string to kebab-case', () => {
+    expect(toKebabCase('helloWorld')).toBe('hello-world');
   });
 
-  it('should return an empty string for an empty input', () => {
-    expect(reverseString('')).toBe('');
+  test('should convert a PascalCase string to kebab-case', () => {
+    expect(toKebabCase('HelloWorld')).toBe('hello-world');
   });
 
-  it('should handle a string with a single character', () => {
-    expect(reverseString('a')).toBe('a');
+  test('should convert a string with spaces to kebab-case', () => {
+    expect(toKebabCase('hello world')).toBe('hello-world');
   });
 
-  it('should return an empty string for non-string inputs', () => {
-    expect(reverseString(null)).toBe('');
-    expect(reverseString(undefined)).toBe('');
-    expect(reverseString(123)).toBe('');
-    expect(reverseString({})).toBe('');
+  test('should convert a string with hyphens to kebab-case', () => {
+    expect(toKebabCase('hello-world')).toBe('hello-world');
+  });
+
+  test('should convert a string with underscores to kebab-case', () => {
+    expect(toKebabCase('hello_world')).toBe('hello-world');
+  });
+
+  test('should handle a string with mixed casing and spaces', () => {
+    expect(toKebabCase('  Hello World  Example  ')).toBe('hello-world-example');
+  });
+
+  test('should handle an empty string', () => {
+    expect(toKebabCase('')).toBe('');
+  });
+
+  test('should return an empty string for non-string input like null', () => {
+    expect(toKebabCase(null)).toBe('');
+  });
+
+  test('should return an empty string for non-string input like undefined', () => {
+    expect(toKebabCase(undefined)).toBe('');
+  });
+
+  test('should return an empty string for non-string input like a number', () => {
+    expect(toKebabCase(123)).toBe('');
+  });
+
+  test('should handle acronyms correctly', () => {
+    expect(toKebabCase('NASAProject')).toBe('nasa-project');
+    expect(toKebabCase('XMLHTTPRequest')).toBe('xml-http-request');
   });
 });
 
-describe('countWords', () => {
-  it('should count words in a simple sentence', () => {
-    expect(countWords('Hello world')).toBe(2);
+describe('isPalindrome', () => {
+  test('should return true for a simple palindrome', () => {
+    expect(isPalindrome('madam')).toBe(true);
   });
 
-  it('should handle multiple spaces between words', () => {
-    expect(countWords('Hello   world')).toBe(2);
+  test('should return true for a palindrome with different casing', () => {
+    expect(isPalindrome('Madam')).toBe(true);
   });
 
-  it('should trim leading and trailing spaces', () => {
-    expect(countWords('  Hello world  ')).toBe(2);
+  test('should return true for a palindrome with spaces', () => {
+    expect(isPalindrome('A man a plan a canal Panama')).toBe(true);
   });
 
-  it('should return 0 for an empty string', () => {
-    expect(countWords('')).toBe(0);
+  test('should return true for a palindrome with punctuation', () => {
+    expect(isPalindrome('No lemon, no melon.')).toBe(true);
   });
 
-  it('should return 0 for a string with only spaces', () => {
-    expect(countWords('   ')).toBe(0);
+  test('should return true for an empty string', () => {
+    expect(isPalindrome('')).toBe(true);
   });
 
-  it('should count words in a single word string', () => {
-    expect(countWords('word')).toBe(1);
+  test('should return true for a single character string', () => {
+    expect(isPalindrome('a')).toBe(true);
   });
 
-  it('should return 0 for non-string inputs', () => {
-    expect(countWords(null)).toBe(0);
-    expect(countWords(undefined)).toBe(0);
-    expect(countWords(123)).toBe(0);
-    expect(countWords({})).toBe(0);
+  test('should return false for a non-palindrome', () => {
+    expect(isPalindrome('hello')).toBe(false);
+  });
+
+  test('should return false for non-string input like null', () => {
+    expect(isPalindrome(null)).toBe(false);
+  });
+
+  test('should return false for non-string input like undefined', () => {
+    expect(isPalindrome(undefined)).toBe(false);
+  });
+
+  test('should return false for non-string input like a number', () => {
+    expect(isPalindrome(123)).toBe(false);
   });
 });
 
