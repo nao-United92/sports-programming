@@ -1,13 +1,11 @@
 /**
- * Converts the first character of `string` to upper case and the remaining
- * to lower case.
- *
- * @param {string} [string=''] The string to capitalize.
- * @returns {string} Returns the capitalized string.
+ * Capitalizes the first letter of a string.
+ * @param {string} str The string to capitalize.
+ * @returns {string} The capitalized string.
  */
-export const capitalize = (string) => {
-  if (typeof string !== 'string' || string.length === 0) {
+export function capitalize(str) {
+  if (typeof str !== 'string' || str.length === 0) {
     return '';
   }
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-};
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
