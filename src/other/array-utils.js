@@ -310,7 +310,28 @@ export function intersection(arr1, arr2) {
     return [];
   }
   const set1 = new Set(arr1);
-  return arr2.filter(element => set1.has(element));
+  return arr2.filter(element => set1.has(iteratee(element)));
+}
+
+/**
+ * Creates an object with all null, undefined, and empty string properties removed.
+ * @param {Object} obj The object to compact.
+ * @returns {Object} Returns the new compacted object.
+ */
+export function compactObject(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return {};
+  }
+  const newObj = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (value !== null && value !== undefined && value !== '') {
+        newObj[key] = value;
+      }
+    }
+  }
+  return newObj;
 }
 
 export function difference(arr1, arr2) {
