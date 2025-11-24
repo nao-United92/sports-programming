@@ -1,26 +1,21 @@
-export const toCamelCase = (str) => {
-  if (typeof str !== 'string' || !str) {
+const toCamelCase = (str) => {
+  if (str === null || str === undefined) {
     return '';
   }
-  // Remove all non-alphanumeric characters and convert to camelCase
-  return str
-    .replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => (chr ? chr.toUpperCase() : ''))
-    .replace(/^./, (match) => match.toLowerCase());
+  return String(str)
+    .replace(/^[^A-Za-z0-9]*|[^A-Za-z0-9]*$/g, '')
+    .replace(/([_.\- ]+)([a-zA-Z0-9])/g, (m, p1, p2) => p2.toUpperCase())
+    .replace(/^[A-Z]/, (m) => m.toLowerCase());
 };
 
-export const toSnakeCase = (str) => {
-  if (typeof str !== 'string' || !str) {
+const toSnakeCase = (str) => {
+  if (str === null || str === undefined) {
     return '';
   }
-  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+  return String(str)
+    .replace(/([A-Z])/g, '_$1')
+    .toLowerCase()
+    .replace(/^_/, '');
 };
 
-export const toPascalCase = (str) => {
-  if (typeof str !== 'string' || !str) {
-    return '';
-  }
-  // Remove all non-alphanumeric characters and convert to PascalCase
-  return str
-    .replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => (chr ? chr.toUpperCase() : ''))
-    .replace(/^./, (match) => match.toUpperCase());
-};
+module.exports = { toCamelCase, toSnakeCase };
