@@ -1,5 +1,5 @@
 
-import { delay, retry, withTimeout, asyncPool } from './async-advanced-utils';
+import { delay, retry, withTimeout, asyncPool, promiseAllSeries } from './async-advanced-utils';
 
 describe('delay', () => {
   jest.useFakeTimers();
@@ -170,5 +170,45 @@ describe('asyncPool', () => {
     jest.runAllTimers();
     const results = await promise;
     expect(results).toEqual([1, 2]);
+  });
+});
+
+describe('promiseAllSeries', () => {
+  jest.useFakeTimers();
+
+  test('should execute promises in series', async () => {
+    const results = [];
+    const tasks = [
+      () => delay(100).then(() => results.push(1)),
+      () => delay(50).then(() => results.push(2)),
+    ];
+
+    const seriesPromise = promiseAllSeries(tasks);
+
+    // At time 0, no task should be complete
+    expect(results).toEqual([]);
+
+    // Advance time to 100ms, first task should complete
+    jest.advanceTimersByTime(100);
+    await Promise.resolve(); // let microtasks run
+    expect(results).toEqual([1]);
+
+    // Advance time by another 50ms, second task should complete
+    jest.advanceTimersByTime(50);
+    await Promise.resolve(); // let microtasks run
+    expect(results).toEqual([1, 2]);
+
+    await seriesPromise;
+  });
+
+  test('should return results in order of execution', async () => {
+    const tasks = [
+      () => delay(100).then(() => 'a'),
+      () => delay(50).then(() => 'b'),
+    ];
+    const promise = promiseAllSeries(tasks);
+    jest.runAllTimers();
+    const results = await promise;
+    expect(results).toEqual(['a', 'b']);
   });
 });

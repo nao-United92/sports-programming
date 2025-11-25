@@ -71,3 +71,14 @@ export async function asyncPool(poolLimit, iterable) {
   }
   return Promise.all(results);
 }
+
+/**
+ * Executes an array of promise-returning functions in series.
+ * @param {Array<Function>} promises An array of functions that return a promise.
+ * @returns {Promise<Array<*>>} A promise that resolves with an array of the results.
+ */
+export const promiseAllSeries = promises =>
+  promises.reduce(
+    (p, next) => p.then(results => next().then(result => [...results, result])),
+    Promise.resolve([])
+  );
