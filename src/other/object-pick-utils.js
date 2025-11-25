@@ -1,20 +1,20 @@
 /**
  * Creates an object composed of the picked object properties.
  *
- * @param {Object} object The source object.
- * @param {string|string[]} paths The property paths to pick.
+ * @param {Object} obj The source object.
+ * @param {string[]} keys The property keys to pick.
  * @returns {Object} Returns the new object.
  */
-export const pick = (object, paths) => {
-  if (object == null) {
+const pick = (obj, keys) => {
+  if (obj === null || obj === undefined) {
     return {};
   }
-  const props = Array.isArray(paths) ? paths : [paths];
-  const result = {};
-  for (const prop of props) {
-    if (Object.prototype.hasOwnProperty.call(object, prop)) {
-      result[prop] = object[prop];
+  return keys.reduce((acc, key) => {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      acc[key] = obj[key];
     }
-  }
-  return result;
+    return acc;
+  }, {});
 };
+
+module.exports = { pick };

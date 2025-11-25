@@ -1,32 +1,23 @@
 /**
- * Recursively clones `value`.
- *
- * @param {*} value The value to deep clone.
- * @returns {*} Returns the deep cloned value.
+ * Performs a deep clone of an object, handling nested objects, arrays, and circular references.
+ * @param {*} obj The object to clone.
+ * @param {WeakMap} hash The map of already cloned objects to prevent infinite loops in circular references.
+ * @returns {*} The cloned object.
  */
-const cloneDeep = (value) => {
-  if (value === null || typeof value !== 'object') {
-    return value;
-  }
+function deepClone(obj, hash = new WeakMap()) {
+  if (Object(obj) !== obj) return obj; // Primitives
+  if (hash.has(obj)) return hash.get(obj); // Circular reference
 
-  if (Array.isArray(value)) {
-    return value.map((item) => cloneDeep(item));
-  }
+  const result = obj instanceof Date ? new Date(obj)
+               : obj instanceof RegExp ? new RegExp(obj.source, obj.flags)
+               : obj.constructor ? new obj.constructor()
+               : Object.create(null);
 
-  if (value.constructor === Object) {
-    const newObject = {};
-    for (const key in value) {
-      if (Object.prototype.hasOwnProperty.call(value, key)) {
-        newObject[key] = cloneDeep(value[key]);
-      }
-    }
-    return newObject;
-  }
+  hash.set(obj, result);
 
-  // For other object types (e.g., Date, RegExp, custom classes),
-  // return a shallow copy or the original object depending on desired behavior.
-  // For simplicity, we'll return the original object for now.
-  return value;
-};
+  return Object.assign(result, ...Object.keys(obj).map(
+    key => ({ [key]: deepClone(obj[key], hash) })
+  ));
+}
 
-module.exports = { cloneDeep };
+module.exports = { deepClone };

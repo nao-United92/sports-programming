@@ -1,21 +1,19 @@
 /**
- * The opposite of `pick`; this method creates an object composed of the
- * own and inherited enumerable property paths of `object` that are not omitted.
+ * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
  *
- * @param {Object} object The source object.
- * @param {string|string[]} paths The property paths to omit.
+ * @param {Object} obj The source object.
+ * @param {string[]} keys The property keys to omit.
  * @returns {Object} Returns the new object.
  */
-export const omit = (object, paths) => {
-  if (object == null) {
+const omit = (obj, keys) => {
+  if (obj === null || obj === undefined) {
     return {};
   }
-  const propsToOmit = new Set(Array.isArray(paths) ? paths : [paths]);
-  const result = {};
-  for (const key in object) {
-    if (Object.prototype.hasOwnProperty.call(object, key) && !propsToOmit.has(key)) {
-      result[key] = object[key];
-    }
-  }
-  return result;
+  const newObj = { ...obj };
+  keys.forEach(key => {
+    delete newObj[key];
+  });
+  return newObj;
 };
+
+module.exports = { omit };
