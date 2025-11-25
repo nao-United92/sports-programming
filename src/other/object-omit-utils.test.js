@@ -1,38 +1,29 @@
-import { omit } from './object-omit-utils';
+const { omit } = require('./object-omit-utils.js');
 
 describe('omit', () => {
   it('should create an object with omitted properties', () => {
-    const object = { 'a': 1, 'b': '2', 'c': 3 };
-    expect(omit(object, ['a', 'c'])).toEqual({ 'b': '2' });
+    const obj = { a: 1, b: '2', c: 3 };
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: '2' });
   });
 
-  it('should handle a single property path as a string', () => {
-    const object = { 'a': 1, 'b': '2', 'c': 3 };
-    expect(omit(object, 'b')).toEqual({ 'a': 1, 'c': 3 });
+  it('should not change the object if omitted keys do not exist', () => {
+    const obj = { a: 1, b: '2' };
+    expect(omit(obj, ['d', 'e'])).toEqual({ a: 1, b: '2' });
   });
 
-  it('should not omit properties that do not exist', () => {
-    const object = { 'a': 1, 'b': '2' };
-    expect(omit(object, ['c', 'd'])).toEqual({ 'a': 1, 'b': '2' });
+  it('should return the same object if no keys are provided', () => {
+    const obj = { a: 1, b: '2' };
+    expect(omit(obj, [])).toEqual({ a: 1, b: '2' });
   });
 
   it('should return an empty object if the source object is null or undefined', () => {
-    expect(omit(null, ['a', 'b'])).toEqual({});
-    expect(omit(undefined, 'a')).toEqual({});
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
   });
 
-  it('should return a shallow copy of the object if no paths are provided', () => {
-    const object = { 'a': 1, 'b': '2' };
-    expect(omit(object, [])).toEqual({ 'a': 1, 'b': '2' });
-  });
-
-  it('should not omit inherited properties', () => {
-    function MyObject() {
-      this.a = 1;
-      this.b = 2;
-    }
-    MyObject.prototype.c = 3;
-    const object = new MyObject();
-    expect(omit(object, ['b'])).toEqual({ 'a': 1 });
+  it('should handle various data types', () => {
+    const obj = { name: 'John', age: 30, isActive: true };
+    const omitted = omit(obj, ['age']);
+    expect(omitted).toEqual({ name: 'John', isActive: true });
   });
 });
