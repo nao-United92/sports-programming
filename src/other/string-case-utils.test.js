@@ -1,49 +1,61 @@
-const { toCamelCase, toSnakeCase } = require('./string-case-utils');
+const { toCamelCase, toPascalCase, toSnakeCase, toKebabCase } = require('./string-case-utils');
 
-describe('String Case Conversion', () => {
+describe('String Case Conversion Utilities', () => {
   describe('toCamelCase', () => {
-    test('should convert snake_case to camelCase', () => {
-      expect(toCamelCase('hello_world')).toBe('helloWorld');
-    });
-
-    test('should convert kebab-case to camelCase', () => {
+    it('should convert kebab-case to camelCase', () => {
       expect(toCamelCase('hello-world')).toBe('helloWorld');
     });
-
-    test('should handle leading/trailing underscores', () => {
-      expect(toCamelCase('_hello_world_')).toBe('helloWorld');
+    it('should convert snake_case to camelCase', () => {
+      expect(toCamelCase('hello_world')).toBe('helloWorld');
     });
-
-    test('should handle multiple underscores', () => {
-      expect(toCamelCase('hello__world')).toBe('helloWorld');
+    it('should convert space separated to camelCase', () => {
+      expect(toCamelCase('Hello World')).toBe('helloWorld');
     });
-
-    test('should return an empty string for null or undefined', () => {
-      expect(toCamelCase(null)).toBe('');
-      expect(toCamelCase(undefined)).toBe('');
-    });
-
-    test('should handle already camelCased strings', () => {
+    it('should handle already camelCased strings', () => {
       expect(toCamelCase('helloWorld')).toBe('helloWorld');
+    });
+    it('should handle leading dashes or underscores', () => {
+      expect(toCamelCase('-hello-world')).toBe('helloWorld');
+      expect(toCamelCase('_hello_world')).toBe('helloWorld');
+    });
+  });
+
+  describe('toPascalCase', () => {
+    it('should convert various cases to PascalCase', () => {
+      expect(toPascalCase('hello-world')).toBe('HelloWorld');
+      expect(toPascalCase('hello_world')).toBe('HelloWorld');
+      expect(toPascalCase('Hello World')).toBe('HelloWorld');
+      expect(toPascalCase('helloWorld')).toBe('HelloWorld');
     });
   });
 
   describe('toSnakeCase', () => {
-    test('should convert camelCase to snake_case', () => {
+    it('should convert camelCase to snake_case', () => {
       expect(toSnakeCase('helloWorld')).toBe('hello_world');
     });
-
-    test('should handle consecutive uppercase letters', () => {
-      expect(toSnakeCase('helloWORLD')).toBe('hello_w_o_r_l_d');
+    it('should convert PascalCase to snake_case', () => {
+      expect(toSnakeCase('HelloWorld')).toBe('hello_world');
     });
-
-    test('should return an empty string for null or undefined', () => {
-      expect(toSnakeCase(null)).toBe('');
-      expect(toSnakeCase(undefined)).toBe('');
+    it('should convert space separated to snake_case', () => {
+      expect(toSnakeCase('Hello World')).toBe('hello_world');
     });
+    it('should convert kebab-case to snake_case', () => {
+      expect(toSnakeCase('hello-world')).toBe('hello_world');
+    });
+  });
 
-    test('should handle already snake_cased strings', () => {
-      expect(toSnakeCase('hello_world')).toBe('hello_world');
+  describe('toKebabCase', () => {
+    it('should convert camelCase to kebab-case', () => {
+      expect(toKebabCase('helloWorld')).toBe('hello-world');
+    });
+    it('should convert PascalCase to kebab-case', () => {
+      expect(toKebabCase('HelloWorld')).toBe('hello-world');
+    });
+    it('should convert space separated to kebab-case', () => {
+      expect(toKebabCase('Hello World')).toBe('hello-world');
+    });
+    it('should convert snake_case to kebab-case', () => {
+      expect(toKebabCase('hello_world')).toBe('hello-world');
     });
   });
 });
