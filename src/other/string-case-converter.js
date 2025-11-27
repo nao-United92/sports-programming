@@ -1,26 +1,33 @@
-const words = (str) => {
-  str = str.replace(/([a-z])([A-Z])/g, '$1 $2');
-  str = str.replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
-  str = str.replace(/[_-]/g, ' ');
-  return str.toLowerCase().split(' ').filter(Boolean);
+/**
+ * Converts a string to snake_case.
+ * Handles camelCase, PascalCase, and strings with acronyms.
+ *
+ * @param {string} str The input string.
+ * @returns {string} The snake_cased string.
+ */
+const toSnakeCase = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+    .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+    .toLowerCase();
 };
 
-const camelCase = (str) => {
-  const parts = words(str);
-  if (parts.length === 0) return '';
-  const first = parts[0];
-  const rest = parts.slice(1);
-  return first + rest.map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
+/**
+ * Converts a string to camelCase.
+ * Handles snake_case and kebab-case.
+ *
+ * @param {string} str The input string.
+ * @returns {string} The camelCased string.
+ */
+const toCamelCase = (str) => {
+  if (!str) return '';
+  return str.replace(/([-_])([a-z])/ig, (match, delimiter, char, offset) => {
+    if (offset === 0) {
+      return `${delimiter}${char}`;
+    }
+    return char.toUpperCase();
+  });
 };
 
-const kebabCase = (str) => {
-  const parts = words(str);
-  return parts.join('-');
-};
-
-const snakeCase = (str) => {
-  const parts = words(str);
-  return parts.join('_');
-};
-
-module.exports = { camelCase, kebabCase, snakeCase };
+module.exports = { toSnakeCase, toCamelCase };

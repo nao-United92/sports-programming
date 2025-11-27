@@ -1,76 +1,46 @@
-
-const loadedScripts = new Map();
-
 /**
- * Dynamically loads a script from a given URL.
- * Caches the script to prevent reloading.
+ * Dynamically loads a script by creating and appending a <script> tag to the document.
+ * It returns a Promise that resolves on successful load and rejects on error.
+ *
  * @param {string} url The URL of the script to load.
- * @param {object} [options] - Optional attributes for the script tag.
- * @param {boolean} [options.async=true] - Sets the async attribute.
- * @param {boolean} [options.defer=false] - Sets the defer attribute.
- * @param {string} [options.id] - An ID for the script element.
- * @param {object} [options.attributes] - Other custom attributes (e.g., data-*).
- * @returns {Promise<HTMLScriptElement>} A promise that resolves with the script element on success, or rejects on error.
+ * @param {object} [options={}] Optional configuration for the script tag.
+ * @param {boolean} [options.async=true] Sets the async attribute.
+ * @param {boolean} [options.defer=false] Sets the defer attribute.
+ * @param {string|null} [options.id=null] The ID to set for the script element.
+ * @param {HTMLElement} [options.parent=document.body] The parent element to append the script to.
+ * @returns {Promise<void>} A promise that resolves when the script is loaded, or rejects on failure.
  */
-export function loadScript(url, options = {}) {
-  if (loadedScripts.has(url)) {
-    return loadedScripts.get(url);
-  }
-
-  const promise = new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = url;
-
-    // Set attributes from options
-    script.async = options.async !== false; // default to true
-    script.defer = !!options.defer;
-    if (options.id) {
-      script.id = options.id;
+function loadScript(url, options = {}) {
+  return new Promise((resolve, reject) => {
+    // If a script with the same URL already exists, assume it's loaded or loading.
+    if (document.querySelector(`script[src="${url}"]`)) {
+      // A more robust implementation might check the loading state, but this is a common approach.
+      resolve();
+      return;
     }
-    if (options.attributes) {
-      for (const [key, value] of Object.entries(options.attributes)) {
-        script.setAttribute(key, value);
-      }
+
+    const script = document.createElement('script');
+    const { async = true, defer = false, id = null, parent = document.body } = options;
+
+    script.src = url;
+    script.async = async;
+    script.defer = defer;
+    if (id) {
+      script.id = id;
     }
 
     script.onload = () => {
-      resolve(script);
+      resolve();
     };
 
     script.onerror = () => {
-      // Clean up on error
-      loadedScripts.delete(url);
-      script.remove();
+      // Clean up the failed script tag
+      parent.removeChild(script);
       reject(new Error(`Failed to load script: ${url}`));
     };
 
-    (document.head || document.getElementsByTagName('head')[0]).appendChild(script);
+    parent.appendChild(script);
   });
-
-  loadedScripts.set(url, promise);
-  return promise;
 }
 
-/**
- * Loads multiple scripts in a specified order (serially).
- * @param {string[]} urls An array of script URLs to load in order.
- * @returns {Promise<HTMLScriptElement[]>} A promise that resolves with an array of script elements.
- */
-export async function loadScriptsInOrder(urls) {
-  const scripts = [];
-  for (const url of urls) {
-    const script = await loadScript(url);
-    scripts.push(script);
-  }
-  return scripts;
-}
-
-/**
- * Loads multiple scripts in parallel.
- * @param {string[]} urls An array of script URLs to load.
- * @returns {Promise<HTMLScriptElement[]>} A promise that resolves with an array of script elements when all have loaded.
- */
-export function loadScriptsInParallel(urls) {
-  const promises = urls.map(url => loadScript(url));
-  return Promise.all(promises);
-}
+module.exports = { loadScript };
