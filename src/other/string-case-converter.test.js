@@ -1,60 +1,55 @@
-const { camelCase, kebabCase, snakeCase } = require('./string-case-converter');
+const { toSnakeCase, toCamelCase } = require('./string-case-converter');
 
 describe('String Case Converters', () => {
-  describe('camelCase', () => {
-    test('should convert space-separated strings', () => {
-      expect(camelCase('foo bar')).toBe('fooBar');
+  describe('toSnakeCase', () => {
+    test('should convert camelCase to snake_case', () => {
+      expect(toSnakeCase('camelCase')).toBe('camel_case');
     });
-    test('should convert kebab-case strings', () => {
-      expect(camelCase('foo-bar')).toBe('fooBar');
+
+    test('should convert PascalCase to snake_case', () => {
+      expect(toSnakeCase('PascalCase')).toBe('pascal_case');
     });
-    test('should convert snake_case strings', () => {
-      expect(camelCase('foo_bar')).toBe('fooBar');
+
+    test('should handle strings with acronyms', () => {
+      expect(toSnakeCase('someHTTPRequest')).toBe('some_http_request');
     });
-    test('should handle already camelCased strings', () => {
-      expect(camelCase('fooBar')).toBe('fooBar');
+
+    test('should handle strings with numbers', () => {
+      expect(toSnakeCase('version123Update')).toBe('version123_update');
     });
-    test('should handle PascalCase strings', () => {
-      expect(camelCase('FooBar')).toBe('fooBar');
+
+    test('should not change already snake_cased strings', () => {
+      expect(toSnakeCase('already_snake_case')).toBe('already_snake_case');
     });
-    test('should handle strings with leading/trailing separators', () => {
-      expect(camelCase('__FOO_BAR__')).toBe('fooBar');
+
+    test('should return an empty string for empty input', () => {
+      expect(toSnakeCase('')).toBe('');
     });
   });
 
-  describe('kebabCase', () => {
-    test('should convert space-separated strings', () => {
-      expect(kebabCase('foo bar')).toBe('foo-bar');
+  describe('toCamelCase', () => {
+    test('should convert snake_case to camelCase', () => {
+      expect(toCamelCase('snake_case')).toBe('snakeCase');
     });
-    test('should convert camelCase strings', () => {
-      expect(kebabCase('fooBar')).toBe('foo-bar');
-    });
-    test('should convert snake_case strings', () => {
-      expect(kebabCase('foo_bar')).toBe('foo-bar');
-    });
-    test('should handle PascalCase strings', () => {
-      expect(kebabCase('FooBar')).toBe('foo-bar');
-    });
-    test('should handle strings with leading/trailing separators', () => {
-      expect(kebabCase('__FOO_BAR__')).toBe('foo-bar');
-    });
-  });
 
-  describe('snakeCase', () => {
-    test('should convert space-separated strings', () => {
-      expect(snakeCase('foo bar')).toBe('foo_bar');
+    test('should convert kebab-case to camelCase', () => {
+      expect(toCamelCase('kebab-case')).toBe('kebabCase');
     });
-    test('should convert camelCase strings', () => {
-      expect(snakeCase('fooBar')).toBe('foo_bar');
+
+    test('should handle multiple delimiters', () => {
+      expect(toCamelCase('some_http_request')).toBe('someHttpRequest');
     });
-    test('should convert kebab-case strings', () => {
-      expect(snakeCase('foo-bar')).toBe('foo_bar');
+
+    test('should handle leading underscores', () => {
+      expect(toCamelCase('_private_variable')).toBe('_privateVariable');
     });
-    test('should handle PascalCase strings', () => {
-      expect(snakeCase('FooBar')).toBe('foo_bar');
+
+    test('should not change already camelCased strings', () => {
+      expect(toCamelCase('alreadyCamelCase')).toBe('alreadyCamelCase');
     });
-    test('should handle strings with leading/trailing separators', () => {
-      expect(snakeCase('__FOO_BAR__')).toBe('foo_bar');
+
+    test('should return an empty string for empty input', () => {
+      expect(toCamelCase('')).toBe('');
     });
   });
 });
