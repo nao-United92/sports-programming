@@ -1,22 +1,21 @@
 /**
- * Creates a debounced function that delays invoking `func` until after `wait`
- * milliseconds have elapsed since the last time the debounced function was
- * invoked.
+ * Creates a function that is restricted to invoking fn once. Repeat calls to the function return the value of the first invocation.
+ * The fn is invoked with the this binding and arguments of the created function.
  *
- * @param {Function} func The function to debounce.
- * @param {number} wait The number of milliseconds to delay.
- * @returns {Function} Returns the new debounced function.
+ * @param {Function} fn The function to restrict.
+ * @returns {Function} Returns the new restricted function.
  */
-export const debounce = (func, wait) => {
-  let timeout;
+const once = (fn) => {
+  let hasBeenCalled = false;
+  let result;
 
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+  return function(...args) {
+    if (!hasBeenCalled) {
+      hasBeenCalled = true;
+      result = fn.apply(this, args);
+    }
+    return result;
   };
 };
+
+module.exports = { once };

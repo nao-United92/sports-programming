@@ -1,47 +1,61 @@
-import { debounce } from './function-utils.js';
+const { once } = require('./function-utils');
 
-describe('debounce', () => {
-  jest.useFakeTimers();
+describe('once', () => {
+  test('should ensure the original function is called only once', () => {
+    const mockFn = jest.fn();
+    const onceFn = once(mockFn);
 
-  it('should only call the function after the wait time has passed', () => {
-    const func = jest.fn();
-    const debouncedFunc = debounce(func, 1000);
+    onceFn();
+    onceFn();
+    onceFn();
 
-    debouncedFunc();
-    expect(func).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(500);
-    debouncedFunc();
-    expect(func).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(999);
-    expect(func).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(1);
-    expect(func).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
-  it('should pass arguments to the debounced function', () => {
-    const func = jest.fn();
-    const debouncedFunc = debounce(func, 1000);
+  test('should return the result of the first call on subsequent calls', () => {
+    let counter = 0;
+    const increment = () => ++counter;
+    const onceIncrement = once(increment);
 
-    debouncedFunc(1, 'test');
-    jest.advanceTimersByTime(1000);
+    const result1 = onceIncrement();
+    const result2 = onceIncrement();
+    const result3 = onceIncrement();
 
-    expect(func).toHaveBeenCalledWith(1, 'test');
+    expect(result1).toBe(1);
+    expect(result2).toBe(1);
+    expect(result3).toBe(1);
   });
 
-  it('should reset the timer if called again within the wait time', () => {
-    const func = jest.fn();
-    const debouncedFunc = debounce(func, 1000);
+  test('should pass arguments to the original function', () => {
+    const mockFn = jest.fn((a, b) => a + b);
+    const onceFn = once(mockFn);
 
-    debouncedFunc();
-    jest.advanceTimersByTime(500);
-    debouncedFunc();
-    jest.advanceTimersByTime(500);
-    expect(func).not.toHaveBeenCalled();
+    const result = onceFn(3, 4);
 
-    jest.advanceTimersByTime(500);
-    expect(func).toHaveBeenCalledTimes(1);
+    expect(mockFn).toHaveBeenCalledWith(3, 4);
+    expect(result).toBe(7);
+
+    // Subsequent call with different arguments should not affect the result
+    const result2 = onceFn(5, 6);
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(result2).toBe(7);
+  });
+
+  test('should preserve the `this` context', () => {
+    const mockFn = jest.fn(function() {
+      return this.value;
+    });
+    const onceFn = once(mockFn);
+
+    const context = { value: 'test', onceFn };
+    const result = context.onceFn();
+
+    expect(result).toBe('test');
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    // Change context and call again, should not change result
+    const context2 = { value: 'test2', onceFn };
+    const result2 = context2.onceFn();
+    expect(result2).toBe('test');
   });
 });
