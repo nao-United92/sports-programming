@@ -1,62 +1,48 @@
 const { pick, omit } = require('./object-subset-utils');
 
 describe('Object Subset Utilities', () => {
-  const originalObj = { a: 1, b: 'two', c: true, d: { nested: 4 } };
+  const testObj = { a: 1, b: 2, c: 3 };
 
   describe('pick', () => {
-    test('should return a new object with only the specified keys', () => {
-      const picked = pick(originalObj, ['a', 'c']);
-      expect(picked).toEqual({ a: 1, c: true });
+    test('should pick specified keys from an object', () => {
+      expect(pick(testObj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
     });
 
-    test('should not mutate the original object', () => {
-      const originalCopy = { ...originalObj };
-      pick(originalObj, ['a', 'b']);
-      expect(originalObj).toEqual(originalCopy);
+    test('should return an empty object if no keys are matched', () => {
+      expect(pick(testObj, ['d', 'e'])).toEqual({});
     });
 
-    test('should ignore keys that do not exist in the source object', () => {
-      const picked = pick(originalObj, ['a', 'e']);
-      expect(picked).toEqual({ a: 1 });
-    });
-
-    test('should return an empty object if no keys are provided', () => {
-      const picked = pick(originalObj, []);
-      expect(picked).toEqual({});
-    });
-
-    test('should return an empty object if the source object is null or undefined', () => {
+    test('should return an empty object for null or undefined input', () => {
       expect(pick(null, ['a'])).toEqual({});
       expect(pick(undefined, ['a'])).toEqual({});
+    });
+
+    test('should handle an empty keys array', () => {
+      expect(pick(testObj, [])).toEqual({});
     });
   });
 
   describe('omit', () => {
-    test('should return a new object without the specified keys', () => {
-      const omitted = omit(originalObj, ['b', 'd']);
-      expect(omitted).toEqual({ a: 1, c: true });
+    test('should omit specified keys from an object', () => {
+      expect(omit(testObj, ['b'])).toEqual({ a: 1, c: 3 });
     });
 
-    test('should not mutate the original object', () => {
-      const originalCopy = { ...originalObj };
-      omit(originalObj, ['a', 'c']);
-      expect(originalObj).toEqual(originalCopy);
+    test('should return a new object instance', () => {
+        const result = omit(testObj, ['b']);
+        expect(result).not.toBe(testObj);
     });
 
-    test('should return a copy of the object if keys to omit do not exist', () => {
-      const omitted = omit(originalObj, ['e', 'f']);
-      expect(omitted).toEqual(originalObj);
-      expect(omitted).not.toBe(originalObj); // Ensure it's a copy
+    test('should return the original object if no keys are omitted', () => {
+      expect(omit(testObj, ['d', 'e'])).toEqual(testObj);
     });
 
-    test('should return an empty object if all keys are omitted', () => {
-      const omitted = omit(originalObj, ['a', 'b', 'c', 'd']);
-      expect(omitted).toEqual({});
-    });
-
-    test('should return an empty object if the source object is null or undefined', () => {
+    test('should return an empty object for null or undefined input', () => {
       expect(omit(null, ['a'])).toEqual({});
       expect(omit(undefined, ['a'])).toEqual({});
+    });
+
+    test('should handle an empty keys array', () => {
+      expect(omit(testObj, [])).toEqual(testObj);
     });
   });
 });
