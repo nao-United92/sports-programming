@@ -1,27 +1,33 @@
+// src/other/object-utils.js
+
 /**
- * Creates a deep copy of an object.
+ * Performs a deep clone of an object or array.
  *
- * @param {any} obj The object to deep clone.
- * @returns {any} The deep cloned object.
+ * @param {any} obj The object or array to clone.
+ * @returns {any} The deep cloned object or array.
  */
-export const deepClone = (obj) => {
+const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
 
-  if (obj instanceof Date) {
-    return new Date(obj.getTime());
-  }
-
   if (Array.isArray(obj)) {
-    return obj.map(deepClone);
+    const arrCopy = [];
+    for (let i = 0; i < obj.length; i++) {
+      arrCopy[i] = deepClone(obj[i]);
+    }
+    return arrCopy;
   }
 
-  const clone = {};
+  const objCopy = {};
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      clone[key] = deepClone(obj[key]);
+      objCopy[key] = deepClone(obj[key]);
     }
   }
-  return clone;
+  return objCopy;
+};
+
+module.exports = {
+  deepClone,
 };
