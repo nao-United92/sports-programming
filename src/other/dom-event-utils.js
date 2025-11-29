@@ -1,36 +1,30 @@
-/**
- * Attaches an event listener to an element.
- * @param {EventTarget} element The element to attach the listener to.
- * @param {string} eventName The name of the event to listen for.
- * @param {Function} handler The event handler function.
- * @param {object} [options] An options object that specifies characteristics about the event listener.
- */
-export const on = (element, eventName, handler, options) => {
-  element.addEventListener(eventName, handler, options);
-};
+// src/other/dom-event-utils.js
 
 /**
- * Removes an event listener from an element.
- * @param {EventTarget} element The element to remove the listener from.
- * @param {string} eventName The name of the event.
- * @param {Function} handler The event handler function to remove.
- * @param {object} [options] An options object that specifies characteristics about the event listener.
+ * Safely attaches an event listener to a DOM element.
+ *
+ * @param {EventTarget} element The DOM element to attach the listener to.
+ * @param {string} eventType The type of event to listen for (e.g., 'click', 'mouseover').
+ * @param {Function} listener The function to call when the event occurs.
+ * @param {boolean | Object} [options] An options object that specifies characteristics about the event listener.
  */
-export const off = (element, eventName, handler, options) => {
-  element.removeEventListener(eventName, handler, options);
+const addEventListener = (element, eventType, listener, options) => {
+  if (!element || typeof element.addEventListener !== 'function') {
+    console.warn('Invalid element or element does not support addEventListener:', element);
+    return;
+  }
+  if (typeof eventType !== 'string' || eventType === '') {
+    console.warn('Invalid eventType:', eventType);
+    return;
+  }
+  if (typeof listener !== 'function') {
+    console.warn('Invalid listener:', listener);
+    return;
+  }
+
+  element.addEventListener(eventType, listener, options);
 };
 
-/**
- * Attaches an event listener to an element that will be invoked at most once.
- * @param {EventTarget} element The element to attach the listener to.
- * @param {string} eventName The name of the event to listen for.
- * @param {Function} handler The event handler function.
- * @param {object} [options] An options object that specifies characteristics about the event listener.
- */
-export const once = (element, eventName, handler, options) => {
-  const onceHandler = (event) => {
-    handler(event);
-    off(element, eventName, onceHandler, options);
-  };
-  on(element, eventName, onceHandler, options);
+module.exports = {
+  addEventListener,
 };

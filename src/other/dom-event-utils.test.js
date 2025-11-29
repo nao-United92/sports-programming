@@ -1,82 +1,77 @@
-import { on, off, once } from './dom-event-utils.js';
+// src/other/dom-event-utils.test.js
 
-describe('DOM Event Utilities', () => {
+const { addEventListener } = require('./dom-event-utils');
+
+describe('DOM Event Utils', () => {
   let mockElement;
-  let mockHandler;
+  let mockListener;
+  let consoleWarnSpy;
 
   beforeEach(() => {
-    mockHandler = jest.fn();
     mockElement = {
       addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn((event) => {
-        // Simulate event dispatching by calling registered listeners
-        const listeners = mockElement.addEventListener.mock.calls.filter(
-          (call) => call[0] === event.type
-        ).map((call) => call[1]);
-        listeners.forEach((listener) => listener(event));
-      }),
+      removeEventListener: jest.fn(), // Also mock remove for completeness, though not used in addEventListener
     };
+    mockListener = jest.fn();
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
-  describe('on', () => {
-    it('should add an event listener', () => {
-      on(mockElement, 'click', mockHandler);
-      expect(mockElement.addEventListener).toHaveBeenCalledWith('click', mockHandler, undefined);
-    });
-
-    it('should add an event listener with options', () => {
-      const options = { capture: true };
-      on(mockElement, 'click', mockHandler, options);
-      expect(mockElement.addEventListener).toHaveBeenCalledWith('click', mockHandler, options);
-    });
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
   });
 
-  describe('off', () => {
-    it('should remove an event listener', () => {
-      off(mockElement, 'click', mockHandler);
-      expect(mockElement.removeEventListener).toHaveBeenCalledWith('click', mockHandler, undefined);
-    });
-
-    it('should remove an event listener with options', () => {
-      const options = { capture: true };
-      off(mockElement, 'click', mockHandler, options);
-      expect(mockElement.removeEventListener).toHaveBeenCalledWith('click', mockHandler, options);
-    });
+  test('should attach an event listener to a valid element', () => {
+    addEventListener(mockElement, 'click', mockListener);
+    expect(mockElement.addEventListener).toHaveBeenCalledTimes(1);
+    expect(mockElement.addEventListener).toHaveBeenCalledWith('click', mockListener, undefined);
+    expect(consoleWarnSpy).not.toHaveBeenCalled();
   });
 
-  describe('once', () => {
-    it('should call the handler once and then remove the listener', () => {
-      once(mockElement, 'click', mockHandler);
+  test('should attach an event listener with options', () => {
+    const options = { once: true, capture: true };
+    addEventListener(mockElement, 'mouseover', mockListener, options);
+    expect(mockElement.addEventListener).toHaveBeenCalledTimes(1);
+    expect(mockElement.addEventListener).toHaveBeenCalledWith('mouseover', mockListener, options);
+    expect(consoleWarnSpy).not.toHaveBeenCalled();
+  });
 
-      // Simulate first click
-      const clickEvent1 = new Event('click');
-      mockElement.dispatchEvent(clickEvent1);
-      expect(mockHandler).toHaveBeenCalledTimes(1);
-      expect(mockElement.removeEventListener).toHaveBeenCalledTimes(1);
+  test('should not attach a listener if element is null or undefined', () => {
+    addEventListener(null, 'click', mockListener);
+    expect(mockElement.addEventListener).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
 
-      // Simulate second click - handler should not be called again
-      const clickEvent2 = new Event('click');
-      mockElement.dispatchEvent(clickEvent2);
-      expect(mockHandler).toHaveBeenCalledTimes(1);
-      expect(mockElement.removeEventListener).toHaveBeenCalledTimes(2);
-    });
+    consoleWarnSpy.mockClear();
+    addEventListener(undefined, 'click', mockListener);
+    expect(mockElement.addEventListener).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+  });
 
-    it('should pass event object to the handler', () => {
-      once(mockElement, 'click', mockHandler);
-      const clickEvent = new Event('click');
-      mockElement.dispatchEvent(clickEvent);
-      expect(mockHandler).toHaveBeenCalledWith(clickEvent);
-    });
+  test('should not attach a listener if element does not have addEventListener method', () => {
+    const invalidElement = {};
+    addEventListener(invalidElement, 'click', mockListener);
+    expect(mockElement.addEventListener).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+  });
 
-    it('should pass options to addEventListener and removeEventListener', () => {
-      const options = { capture: true };
-      once(mockElement, 'click', mockHandler, options);
-      expect(mockElement.addEventListener).toHaveBeenCalledWith('click', expect.any(Function), options);
+  test('should not attach a listener if eventType is invalid', () => {
+    addEventListener(mockElement, null, mockListener);
+    expect(mockElement.addEventListener).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
 
-      const clickEvent = new Event('click');
-      mockElement.dispatchEvent(clickEvent);
-      expect(mockElement.removeEventListener).toHaveBeenCalledWith('click', expect.any(Function), options);
-    });
+    consoleWarnSpy.mockClear();
+    addEventListener(mockElement, '', mockListener);
+    expect(mockElement.addEventListener).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test('should not attach a listener if listener is invalid', () => {
+    addEventListener(mockElement, 'click', null);
+    expect(mockElement.addEventListener).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+
+    consoleWarnSpy.mockClear();
+    addEventListener(mockElement, 'click', 'not a function');
+    expect(mockElement.addEventListener).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
   });
 });
