@@ -1,39 +1,42 @@
+// src/other/storage-utils.js
+
 /**
- * Stores a value in localStorage, automatically serializing it to JSON.
- * @param {string} key The key to store the value under.
+ * Sets an item in localStorage, automatically converting objects to JSON strings.
+ *
+ * @param {string} key The key under which to store the item.
  * @param {any} value The value to store.
  */
-export const setLocalStorage = (key, value) => {
+const setLocalStorageItem = (key, value) => {
+  if (typeof localStorage === 'undefined' || typeof key !== 'string') {
+    return;
+  }
   try {
-    const serializedValue = JSON.stringify(value);
-    localStorage.setItem(key, serializedValue);
+    localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.error('Error saving to localStorage', error);
+    console.error('Error setting localStorage item:', error);
   }
 };
 
 /**
- * Retrieves a value from localStorage, automatically deserializing it from JSON.
- * @param {string} key The key of the value to retrieve.
- * @returns {any|null} The retrieved value, or null if not found or on error.
+ * Retrieves an item from localStorage, automatically converting JSON strings to objects.
+ *
+ * @param {string} key The key of the item to retrieve.
+ * @returns {any | null} The retrieved value, or null if not found or an error occurs.
  */
-export const getLocalStorage = (key) => {
+const getLocalStorageItem = (key) => {
+  if (typeof localStorage === 'undefined' || typeof key !== 'string') {
+    return null;
+  }
   try {
-    const serializedValue = localStorage.getItem(key);
-    if (serializedValue === null) {
-      return null;
-    }
-    return JSON.parse(serializedValue);
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : null;
   } catch (error) {
-    console.error('Error reading from localStorage', error);
+    console.error('Error getting localStorage item:', error);
     return null;
   }
 };
 
-/**
- * Removes a value from localStorage.
- * @param {string} key The key of the value to remove.
- */
-export const removeLocalStorage = (key) => {
-  localStorage.removeItem(key);
+module.exports = {
+  setLocalStorageItem,
+  getLocalStorageItem,
 };
