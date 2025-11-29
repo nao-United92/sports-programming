@@ -1,31 +1,18 @@
+// src/other/string-manipulation-utils.js
 
 /**
- * Truncates a string to a maximum length, including the suffix.
+ * Reverses a given string.
  *
- * @param {string} str The string to truncate.
- * @param {number} maxLength The maximum length of the output string.
- * @param {string} [suffix='...'] The suffix to append if truncation occurs.
- * @returns {string} The truncated string.
+ * @param {string} str The string to reverse.
+ * @returns {string} The reversed string.
  */
-export const truncate = (str, maxLength, suffix = '...') => {
-  if (str.length <= maxLength) {
-    return str;
+const reverseString = (str) => {
+  if (typeof str !== 'string') {
+    return '';
   }
-
-  if (maxLength <= suffix.length) {
-    return suffix.slice(0, maxLength);
-  }
-
-  return str.slice(0, maxLength - suffix.length) + suffix;
+  return str.split('').reverse().join('');
 };
 
-/**
- * Repeats a string a specified number of times.
- *
- * @param {string} str The string to repeat.
- * @param {number} times The number of times to repeat the string.
- * @returns {string} The repeated string.
- */
-export const repeat = (str, times) => {
-  return str.repeat(times);
+module.exports = {
+  reverseString,
 };

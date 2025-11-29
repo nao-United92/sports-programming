@@ -1,50 +1,35 @@
+// src/other/string-manipulation-utils.test.js
 
-import { truncate, repeat } from './string-manipulation-utils.js';
+const { reverseString } = require('./string-manipulation-utils');
 
-describe('truncate', () => {
-  test('should not truncate if string is shorter than or equal to maxLength', () => {
-    expect(truncate('test', 10)).toBe('test');
-    expect(truncate('test', 4)).toBe('test');
-  });
+describe('String Manipulation Utils', () => {
+  describe('reverseString', () => {
+    test('should reverse a simple string', () => {
+      expect(reverseString('hello')).toBe('olleh');
+    });
 
-  test('should truncate string and add default suffix', () => {
-    expect(truncate('hello world', 8)).toBe('hello...');
-  });
+    test('should reverse a string with spaces', () => {
+      expect(reverseString('hello world')).toBe('dlrow olleh');
+    });
 
-  test('should truncate string and add custom suffix', () => {
-    expect(truncate('hello world', 8, '..')).toBe('hello ..');
-  });
+    test('should reverse an empty string', () => {
+      expect(reverseString('')).toBe('');
+    });
 
-  test('should return only a truncated suffix if maxLength is too small', () => {
-    expect(truncate('hello world', 3)).toBe('...');
-    expect(truncate('hello world', 2)).toBe('..');
-  });
+    test('should reverse a single character string', () => {
+      expect(reverseString('a')).toBe('a');
+    });
 
-  test('should return an empty string if maxLength is 0', () => {
-    expect(truncate('hello world', 0)).toBe('');
-  });
+    test('should reverse a string with special characters', () => {
+      expect(reverseString('!@#$')).toBe('$#@!');
+    });
 
-  test('should handle empty string input', () => {
-    expect(truncate('', 5)).toBe('');
-  });
-});
-
-describe('repeat', () => {
-  test('should repeat the string a specified number of times', () => {
-    expect(repeat('abc', 3)).toBe('abcabcabc');
-  });
-
-  test('should return an empty string if times is 0', () => {
-    expect(repeat('abc', 0)).toBe('');
-  });
-
-  test('should handle empty string input', () => {
-    expect(repeat('', 5)).toBe('');
-  });
-
-  test('should handle negative times (though String.prototype.repeat handles this by throwing an error)', () => {
-    // JavaScript's String.prototype.repeat throws a RangeError for negative counts.
-    // Our wrapper simply calls it, so it should also throw.
-    expect(() => repeat('abc', -1)).toThrow(RangeError);
+    test('should return an empty string for non-string inputs', () => {
+      expect(reverseString(null)).toBe('');
+      expect(reverseString(undefined)).toBe('');
+      expect(reverseString(123)).toBe('');
+      expect(reverseString({})).toBe('');
+      expect(reverseString([])).toBe('');
+    });
   });
 });
