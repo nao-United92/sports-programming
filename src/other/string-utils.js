@@ -28,7 +28,24 @@ const truncate = (str, maxLength) => {
   return str.slice(0, maxLength) + '...';
 };
 
+/**
+ * Converts a string to snake_case.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} The snake_cased string.
+ */
+const toSnakeCase = (str) => {
+  if (typeof str !== 'string' || str.length === 0) {
+    return '';
+  }
+  return str
+    .replace(/\s+/g, '_') // Replace spaces with underscores
+    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1_$2') // Add underscore before uppercase letters
+    .toLowerCase(); // Convert to lowercase
+};
+
 module.exports = {
   capitalize,
   truncate,
+  toSnakeCase,
 };

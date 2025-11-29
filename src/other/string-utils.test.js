@@ -1,4 +1,4 @@
-const { capitalize, truncate } = require('./string-utils');
+const { capitalize, truncate, toSnakeCase } = require('./string-utils');
 
 describe('String Utils', () => {
   describe('capitalize', () => {
@@ -47,6 +47,42 @@ describe('String Utils', () => {
 
     test('should handle maxLength of 0', () => {
       expect(truncate('hello', 0)).toBe('...');
+    });
+  });
+
+  describe('toSnakeCase', () => {
+    test('should convert a single word to snake_case', () => {
+      expect(toSnakeCase('hello')).toBe('hello');
+    });
+
+    test('should convert camelCase to snake_case', () => {
+      expect(toSnakeCase('helloWorld')).toBe('hello_world');
+    });
+
+    test('should convert PascalCase to snake_case', () => {
+      expect(toSnakeCase('HelloWorld')).toBe('hello_world');
+    });
+
+    test('should convert a string with spaces to snake_case', () => {
+      expect(toSnakeCase('hello world')).toBe('hello_world');
+    });
+
+    test('should convert a string with hyphens to snake_case', () => {
+      expect(toSnakeCase('hello-world')).toBe('hello_world');
+    });
+
+    test('should handle multiple spaces and special characters', () => {
+      expect(toSnakeCase('  Hello   World!  ')).toBe('hello_world!');
+    });
+
+    test('should handle empty string', () => {
+      expect(toSnakeCase('')).toBe('');
+    });
+
+    test('should handle non-string inputs gracefully', () => {
+      expect(toSnakeCase(null)).toBe('');
+      expect(toSnakeCase(undefined)).toBe('');
+      expect(toSnakeCase(123)).toBe('');
     });
   });
 });
