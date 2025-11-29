@@ -1,44 +1,48 @@
+// src/other/object-comparison-utils.js
+
 /**
  * Performs a deep comparison between two values to determine if they are equivalent.
+ * Handles primitives, arrays, and plain objects.
  *
- * @param {*} value The value to compare.
- * @param {*} other The other value to compare.
- * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @param {any} a The first value to compare.
+ * @param {any} b The second value to compare.
+ * @returns {boolean} True if the values are deeply equal, false otherwise.
  */
-const isEqual = (value, other) => {
-  if (value === other) {
+const deepEqual = (a, b) => {
+  if (a === b) {
     return true;
   }
 
-  if (value == null || other == null || typeof value !== 'object' || typeof other !== 'object') {
+  if (a === null || typeof a !== 'object' ||
+      b === null || typeof b !== 'object') {
     return false;
   }
 
-  if (Array.isArray(value) && Array.isArray(other)) {
-    if (value.length !== other.length) {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) {
       return false;
     }
-    for (let i = 0; i < value.length; i++) {
-      if (!isEqual(value[i], other[i])) {
+    for (let i = 0; i < a.length; i++) {
+      if (!deepEqual(a[i], b[i])) {
         return false;
       }
     }
     return true;
   }
 
-  if (Object.prototype.toString.call(value) !== Object.prototype.toString.call(other)) {
+  if (Array.isArray(a) !== Array.isArray(b)) {
     return false;
   }
 
-  const keysValue = Object.keys(value);
-  const keysOther = Object.keys(other);
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
 
-  if (keysValue.length !== keysOther.length) {
+  if (keysA.length !== keysB.length) {
     return false;
   }
 
-  for (const key of keysValue) {
-    if (!keysOther.includes(key) || !isEqual(value[key], other[key])) {
+  for (const key of keysA) {
+    if (!keysB.includes(key) || !deepEqual(a[key], b[key])) {
       return false;
     }
   }
@@ -46,4 +50,6 @@ const isEqual = (value, other) => {
   return true;
 };
 
-module.exports = { isEqual };
+module.exports = {
+  deepEqual,
+};
