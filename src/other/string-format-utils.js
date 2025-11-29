@@ -1,44 +1,26 @@
+// src/other/string-format-utils.js
+
 /**
- * Formats a number with grouped thousands.
+ * Formats a number into a currency string.
  *
- * @param {number} number The number to format.
- * @param {number} [decimals=0] The number of decimal points.
- * @param {string} [dec_point='.'] The separator for the decimal point.
- * @param {string} [thousands_sep=','] The thousands separator.
- * @returns {string} The formatted number.
+ * @param {number} amount The number to format.
+ * @param {string} currency The currency symbol (e.g., '$', '€', '¥').
+ * @param {string} locale The locale to use for formatting (e.g., 'en-US', 'ja-JP').
+ * @returns {string} The formatted currency string.
  */
-export const formatNumber = (number, decimals = 0, dec_point = '.', thousands_sep = ',') => {
-  number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
-  const n = !isFinite(+number) ? 0 : +number;
-  const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
-  const sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep;
-  const dec = (typeof dec_point === 'undefined') ? '.' : dec_point;
-  let s = '';
-
-  const toFixedFix = (n, prec) => {
-    const k = Math.pow(10, prec);
-    return '' + Math.round(n * k) / k;
-  };
-
-  s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-  if (s[0].length > 3) {
-    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+const formatCurrency = (amount, currency = '$', locale = 'en-US') => {
+  if (typeof amount !== 'number' || isNaN(amount)) {
+    return '';
   }
-  if ((s[1] || '').length < prec) {
-    s[1] = s[1] || '';
-    s[1] += new Array(prec - s[1].length + 1).join('0');
-  }
-  return s.join(dec);
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency, // This expects an ISO 4217 currency code, but we're using it for symbol here.
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
 };
 
-/**
- * Formats a string using placeholders.
- *
- * @param {string} format The format string (e.g., "Hello %s").
- * @param {...any} args The values to insert into the format string.
- * @returns {string} The formatted string.
- */
-export const sprintf = (format, ...args) => {
-  let i = 0;
-  return format.replace(/%s/g, () => args[i++]);
+module.exports = {
+  formatCurrency,
 };
