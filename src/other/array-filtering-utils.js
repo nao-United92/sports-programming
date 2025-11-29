@@ -1,31 +1,20 @@
-/**
- * Filters an array of objects by a key-value pair.
- *
- * @param {Array<object>} array The array to filter.
- * @param {string} key The key to filter by.
- * @param {any} value The value to filter for.
- * @returns {Array<object>} The filtered array.
- */
-export const filterBy = (array, key, value) => {
-  return array.filter(item => item[key] === value);
-};
+// src/other/array-filtering-utils.js
 
 /**
- * Filters an array of objects by a search query.
- * The query is matched against all string values in each object.
+ * Filters an array of objects based on a specific property's value.
  *
- * @param {Array<object>} array The array to filter.
- * @param {string} query The search query.
- * @returns {Array<object>} The filtered array.
+ * @param {Array<Object>} arr The array of objects to filter.
+ * @param {string} property The name of the property to check.
+ * @param {any} value The value to match against the property.
+ * @returns {Array<Object>} A new array containing only the objects that match the criteria.
  */
-export const filterByQuery = (array, query) => {
-  const lowerCaseQuery = query.toLowerCase();
-  return array.filter(item => {
-    for (const key in item) {
-      if (typeof item[key] === 'string' && item[key].toLowerCase().includes(lowerCaseQuery)) {
-        return true;
-      }
-    }
-    return false;
-  });
+const filterByProperty = (arr, property, value) => {
+  if (!Array.isArray(arr) || typeof property !== 'string' || property === '') {
+    return [];
+  }
+  return arr.filter(obj => obj && obj[property] === value);
+};
+
+module.exports = {
+  filterByProperty,
 };
