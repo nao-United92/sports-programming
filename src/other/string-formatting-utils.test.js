@@ -1,40 +1,47 @@
-import { escapeHTML, toTitleCase } from './string-formatting-utils.js';
+// src/other/string-formatting-utils.test.js
 
-describe('escapeHTML', () => {
-  test('should escape HTML special characters', () => {
-    expect(escapeHTML('<div class="test">Hello & World</div>')).toBe('&lt;div class=&quot;test&quot;&gt;Hello &amp; World&lt;&#x2F;div&gt;');
-  });
+const { padLeft } = require('./string-formatting-utils');
 
-  test('should handle empty string', () => {
-    expect(escapeHTML('')).toBe('');
-  });
+describe('String Formatting Utils', () => {
+  describe('padLeft', () => {
+    test('should pad a string with spaces on the left to reach the desired length', () => {
+      expect(padLeft('abc', 5)).toBe('  abc');
+    });
 
-  test('should handle non-string input', () => {
-    expect(escapeHTML(null)).toBe('');
-    expect(escapeHTML(undefined)).toBe('');
-    expect(escapeHTML(123)).toBe('123');
-  });
-});
+    test('should pad a string with a specified character', () => {
+      expect(padLeft('abc', 5, '0')).toBe('00abc');
+    });
 
-describe('toTitleCase', () => {
-  test('should convert a string to title case', () => {
-    expect(toTitleCase('hello world')).toBe('Hello World');
-    expect(toTitleCase('this is a test string')).toBe('This Is A Test String');
-    expect(toTitleCase('another-example-string')).toBe('Another-example-string');
-    expect(toTitleCase('already Title Case')).toBe('Already Title Case');
-  });
+    test('should not pad if the string is already long enough', () => {
+      expect(padLeft('abcdef', 5)).toBe('abcdef');
+    });
 
-  test('should handle empty string', () => {
-    expect(toTitleCase('')).toBe('');
-  });
+    test('should not pad if the string is longer than the desired length', () => {
+      expect(padLeft('abcdefg', 5)).toBe('abcdefg');
+    });
 
-  test('should handle single word string', () => {
-    expect(toTitleCase('word')).toBe('Word');
-    expect(toTitleCase('WORD')).toBe('Word');
-  });
+    test('should handle empty string input', () => {
+      expect(padLeft('', 3, '*')).toBe('***');
+    });
 
-  test('should return empty string for non-string inputs', () => {
-      expect(toTitleCase(null)).toBe('');
-      expect(toTitleCase(undefined)).toBe('');
+    test('should handle number input', () => {
+      expect(padLeft(123, 5, '0')).toBe('00123');
+    });
+
+    test('should handle single character string', () => {
+      expect(padLeft('a', 3, '-')).toBe('--a');
+    });
+
+    test('should handle zero length', () => {
+      expect(padLeft('abc', 0)).toBe('abc');
+    });
+
+    test('should handle negative length (should not pad)', () => {
+      expect(padLeft('abc', -5)).toBe('abc');
+    });
+
+    test('should use default pad character if not provided', () => {
+      expect(padLeft('1', 3)).toBe('  1');
+    });
   });
 });
