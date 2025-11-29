@@ -1,4 +1,39 @@
-import { isEmptyArray, lastElement, removeElementFromArray, shuffleArray, chunkArray, removeDuplicates, groupBy, removeAllOccurrences, getAverage, range, compact, sample, pluck, zip, uniqueBy, partition, flattenDeep, union, average, uniqueArray, flattenArray, sumArray, removeFalsy, contains, intersection, difference, filterBy, sortBy, isEqualArray, xor, differenceBy, intersectionBy, compactObject } from './array-utils.js';
+const {
+  isEmptyArray,
+  lastElement,
+  removeElementFromArray,
+  shuffleArray,
+  chunkArray,
+  removeDuplicates,
+  groupBy,
+  removeAllOccurrences,
+  getAverage,
+  range,
+  compact,
+  sample,
+  pluck,
+  zip,
+  uniqueBy,
+  partition,
+  flattenDeep,
+  union,
+  average,
+  uniqueArray,
+  flattenArray,
+  sumArray,
+  removeFalsy,
+  contains,
+  intersection,
+  difference,
+  filterBy,
+  sortBy,
+  isEqualArray,
+  xor,
+  differenceBy,
+  intersectionBy,
+  compactObject,
+  flatten,
+} = require('./array-utils');
 
 describe('array-utils', () => {
   describe('isEmptyArray', () => {
@@ -401,23 +436,6 @@ describe('array-utils', () => {
     });
   });
 
-  
-
-  describe('chunkArray', () => {
-    it('should chunk an array into smaller arrays', () => {
-      expect(chunkArray([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]]);
-      expect(chunkArray([1, 2, 3, 4, 5], 3)).toEqual([[1, 2, 3], [4, 5]]);
-      expect(chunkArray([1, 2, 3], 1)).toEqual([[1], [2], [3]]);
-    });
-
-    it('should return an empty array for invalid inputs', () => {
-      expect(chunkArray([], 2)).toEqual([]);
-      expect(chunkArray([1, 2, 3], 0)).toEqual([]);
-      expect(chunkArray(null, 2)).toEqual([]);
-      expect(chunkArray(undefined, 2)).toEqual([]);
-    });
-  });
-
   describe('average', () => {
     test('should return the average of an array of numbers', () => {
       expect(average([1, 2, 3, 4, 5])).toBe(3);
@@ -609,6 +627,26 @@ describe('array-utils', () => {
         b: { c: null, d: 'test' },
       };
       expect(compactObject(obj)).toEqual({ a: 1, b: { c: null, d: 'test' } });
+    });
+  });
+
+  describe('flatten', () => {
+    test('should flatten a nested array by one level', () => {
+      expect(flatten([1, [2, 3], [4, [5]]])).toEqual([1, 2, 3, 4, [5]]);
+    });
+
+    test('should return the same array if no nested arrays', () => {
+      expect(flatten([1, 2, 3])).toEqual([1, 2, 3]);
+    });
+
+    test('should handle empty array', () => {
+      expect(flatten([])).toEqual([]);
+    });
+
+    test('should handle non-array inputs gracefully', () => {
+      expect(flatten(null)).toEqual([]);
+      expect(flatten(undefined)).toEqual([]);
+      expect(flatten(123)).toEqual([]);
     });
   });
 });
