@@ -1,12 +1,14 @@
+// src/other/array-utils.js
+
 /**
  * Checks if an array is empty.
  *
  * @param arr The array to check.
  * @returns True if the array is empty, false otherwise.
  */
-export function isEmptyArray(arr) {
-    return arr.length === 0;
-}
+const isEmptyArray = (arr) => {
+  return arr.length === 0;
+};
 
 /**
  * Returns the last element of an array.
@@ -14,9 +16,9 @@ export function isEmptyArray(arr) {
  * @param arr The array to get the last element from.
  * @returns The last element of the array, or undefined if the array is empty.
  */
-export function lastElement(arr) {
-    return arr[arr.length - 1];
-}
+const lastElement = (arr) => {
+  return arr[arr.length - 1];
+};
 
 /**
  * Removes a specific element from an array.
@@ -25,31 +27,31 @@ export function lastElement(arr) {
  * @param element The element to remove.
  * @returns A new array with the element removed.
  */
-export function removeElementFromArray(arr, element) {
-    return arr.filter(item => item !== element);
-}
+const removeElementFromArray = (arr, element) => {
+  return arr.filter(item => item !== element);
+};
 
 /**
  * Removes duplicate values from an array.
  * @param {Array} arr The array to remove duplicates from.
  * @returns {Array} A new array with unique values.
  */
-export function removeDuplicates(arr) {
+const removeDuplicates = (arr) => {
   return [...new Set(arr)];
-}
+};
 
 /**
  * Shuffles an array randomly using the Fisher-Yates (Knuth) algorithm.
  * @param {Array} array The array to shuffle.
  * @returns {Array} The shuffled array.
  */
-export function shuffleArray(array) {
+const shuffleArray = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
-}
+};
 
 /**
  * Groups the elements of an array based on a given key.
@@ -57,7 +59,7 @@ export function shuffleArray(array) {
  * @param {string} key The key to group by.
  * @returns {Object} An object with the grouped elements.
  */
-export function groupBy(arr, key) {
+const groupBy = (arr, key) => {
   if (!Array.isArray(arr)) {
     return {};
   }
@@ -67,7 +69,7 @@ export function groupBy(arr, key) {
     acc[group].push(item);
     return acc;
   }, {});
-}
+};
 
 /**
  * Removes all occurrences of a specified element from an array.
@@ -75,25 +77,25 @@ export function groupBy(arr, key) {
  * @param {*} element The element to remove.
  * @returns {Array} A new array with all occurrences of the element removed.
  */
-export function removeAllOccurrences(arr, element) {
+const removeAllOccurrences = (arr, element) => {
   if (!Array.isArray(arr)) {
     return [];
   }
   return arr.filter(item => item !== element);
-}
+};
 
 /**
  * Calculates the average of numbers in an array.
  * @param {Array<number>} arr The array of numbers.
  * @returns {number} The average of the numbers. Returns NaN if the array is empty or contains non-numeric values.
  */
-export function getAverage(arr) {
+const getAverage = (arr) => {
   if (!Array.isArray(arr) || arr.length === 0 || arr.some(val => typeof val !== 'number' || isNaN(val))) {
     return NaN;
   }
   const sum = arr.reduce((total, num) => total + num, 0);
   return sum / arr.length;
-}
+};
 
 /**
  * Divides an array into smaller chunks of a specified size.
@@ -101,7 +103,7 @@ export function getAverage(arr) {
  * @param {number} size The size of each chunk.
  * @returns {Array<Array>} An array of chunks.
  */
-export function chunkArray(array, size) {
+const chunkArray = (array, size) => {
   if (!Array.isArray(array) || size <= 0) {
     return [];
   }
@@ -110,7 +112,7 @@ export function chunkArray(array, size) {
     result.push(array.slice(i, i + size));
   }
   return result;
-}
+};
 
 /**
  * Creates an array of numbers (positive and/or negative) progressing from `start` up to, but not including, `end`.
@@ -121,7 +123,7 @@ export function chunkArray(array, size) {
  * @param {number} [step=1] The value to increment or decrement by.
  * @returns {Array<number>} Returns the new array of numbers.
  */
-export function range(start, end, step = 1) {
+const range = (start, end, step = 1) => {
   if (end === undefined) {
     end = start;
     start = 0;
@@ -132,7 +134,7 @@ export function range(start, end, step = 1) {
     result.push(i);
   }
   return result;
-}
+};
 
 /**
  * Creates an array with all falsey values removed.
@@ -140,25 +142,25 @@ export function range(start, end, step = 1) {
  * @param {Array} array The array to compact.
  * @returns {Array} Returns the new array of compacted values.
  */
-export function compact(array) {
+const compact = (array) => {
   if (!Array.isArray(array)) {
     return [];
   }
   return array.filter(Boolean);
-}
+};
 
 /**
  * Gets a random element from `array`.
  * @param {Array} array The array to sample.
  * @returns {*} Returns the random element.
  */
-export function sample(array) {
+const sample = (array) => {
   if (!Array.isArray(array) || array.length === 0) {
     return undefined;
   }
   const index = Math.floor(Math.random() * array.length);
   return array[index];
-}
+};
 
 /**
  * Extracts a list of property values from an array of objects.
@@ -166,19 +168,19 @@ export function sample(array) {
  * @param {string} key The property key to extract.
  * @returns {Array} Returns the new array of property values.
  */
-export function pluck(array, key) {
+const pluck = (array, key) => {
   if (!Array.isArray(array)) {
     return [];
   }
   return array.map(item => item && item[key]);
-}
+};
 
 /**
  * Creates an array of grouped elements, the first of which contains the first elements of the given arrays, the second of which contains the second elements of the given arrays, and so on.
  * @param {...Array} arrays The arrays to process.
  * @returns {Array} Returns the new array of grouped elements.
  */
-export function zip(...arrays) {
+const zip = (...arrays) => {
   if (arrays.length === 0) {
     return [];
   }
@@ -188,7 +190,7 @@ export function zip(...arrays) {
     result.push(arrays.map(arr => arr[i]));
   }
   return result;
-}
+};
 
 /**
  * Creates a duplicate-free array, using a provided function to determine uniqueness.
@@ -196,7 +198,7 @@ export function zip(...arrays) {
  * @param {Function} iteratee The function invoked per iteration to compute the criterion by which to group.
  * @returns {Array} Returns the new duplicate free array.
  */
-export function uniqueBy(array, iteratee) {
+const uniqueBy = (array, iteratee) => {
   if (!Array.isArray(array)) {
     return [];
   }
@@ -209,7 +211,7 @@ export function uniqueBy(array, iteratee) {
     seen.add(key);
     return true;
   });
-}
+};
 
 /**
  * Partitions an array into two arrays based on a predicate function.
@@ -217,7 +219,7 @@ export function uniqueBy(array, iteratee) {
  * @param {Function} predicate The function invoked per iteration to determine into which array an element goes.
  * @returns {Array<Array>} A two-element array. The first element is an array of elements for which `predicate` returned truthy, and the second is an array of elements for which `predicate` returned falsy.
  */
-export function partition(array, predicate) {
+const partition = (array, predicate) => {
   const truthy = [];
   const falsy = [];
   if (!Array.isArray(array)) {
@@ -231,7 +233,7 @@ export function partition(array, predicate) {
     }
   });
   return [truthy, falsy];
-}
+};
 
 /**
  * Recursively flattens an array up to the specified depth.
@@ -239,7 +241,7 @@ export function partition(array, predicate) {
  * @param {number} [depth=1] The maximum recursion depth.
  * @returns {Array} The new flattened array.
  */
-export function flattenDeep(arr, depth = 1) {
+const flattenDeep = (arr, depth = 1) => {
   if (!Array.isArray(arr) || depth < 0) {
     return [];
   }
@@ -253,17 +255,17 @@ export function flattenDeep(arr, depth = 1) {
     }
   }
   return result;
-}
+};
 
 /**
- * Creates an array of unique values, in order, from all given arrays. 
+ * Creates an array of unique values, in order, from all given arrays.
  * @param {...Array} arrays The arrays to inspect.
  * @returns {Array} Returns the new array of unique combined values.
  */
-export function union(...arrays) {
+const union = (...arrays) => {
   const combined = [].concat(...arrays.filter(Array.isArray));
   return [...new Set(combined)];
-}
+};
 
 /**
  * Calculates the average of an array of numbers.
@@ -271,54 +273,54 @@ export function union(...arrays) {
  * @param {number[]} arr The array of numbers.
  * @returns {number} The average of the numbers, or 0 if the array is empty.
  */
-export function average(arr) {
+const average = (arr) => {
   if (!Array.isArray(arr) || arr.length === 0) {
     return 0;
   }
 
   const sum = arr.reduce((acc, val) => acc + val, 0);
   return sum / arr.length;
-}
+};
 
-export const uniqueArray = removeDuplicates;
+const uniqueArray = removeDuplicates;
 
-export function flattenArray(arr) {
+const flattenArray = (arr) => {
   if (!Array.isArray(arr)) {
     return [];
   }
   return arr.flat(Infinity);
-}
+};
 
-export function sumArray(arr) {
+const sumArray = (arr) => {
   if (!Array.isArray(arr)) {
     return 0;
   }
   return arr.reduce((acc, val) => (typeof val === 'number' && !isNaN(val) ? acc + val : acc), 0);
-}
+};
 
-export const removeFalsy = compact;
+const removeFalsy = compact;
 
-export function contains(arr, element) {
+const contains = (arr, element) => {
   if (!Array.isArray(arr)) {
     return false;
   }
   return arr.includes(element);
-}
+};
 
-export function intersection(arr1, arr2) {
+const intersection = (arr1, arr2) => {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
     return [];
   }
   const set1 = new Set(arr1);
-  return arr2.filter(element => set1.has(iteratee(element)));
-}
+  return arr2.filter(element => set1.has(element)); // Fixed: iteratee was not defined
+};
 
 /**
  * Creates an object with all null, undefined, and empty string properties removed.
  * @param {Object} obj The object to compact.
  * @returns {Object} Returns the new compacted object.
  */
-export function compactObject(obj) {
+const compactObject = (obj) => {
   if (typeof obj !== 'object' || obj === null) {
     return {};
   }
@@ -332,24 +334,24 @@ export function compactObject(obj) {
     }
   }
   return newObj;
-}
+};
 
-export function difference(arr1, arr2) {
+const difference = (arr1, arr2) => {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
     return [];
   }
   const set2 = new Set(arr2);
   return arr1.filter(element => !set2.has(element));
-}
+};
 
-export function filterBy(arr, predicate) {
+const filterBy = (arr, predicate) => {
   if (!Array.isArray(arr)) {
     return [];
   }
   return arr.filter(predicate);
-}
+};
 
-export function sortBy(arr, key, order = 'asc') {
+const sortBy = (arr, key, order = 'asc') => {
   if (!Array.isArray(arr)) {
     return [];
   }
@@ -367,7 +369,7 @@ export function sortBy(arr, key, order = 'asc') {
     return 0;
   });
   return sortedArr;
-}
+};
 
 /**
  * Checks if two arrays are equal (have the same elements in the same order).
@@ -375,7 +377,7 @@ export function sortBy(arr, key, order = 'asc') {
  * @param {Array} arr2 The second array.
  * @returns {boolean} True if the arrays are equal, false otherwise.
  */
-export function isEqualArray(arr1, arr2) {
+const isEqualArray = (arr1, arr2) => {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
     return false;
   }
@@ -388,7 +390,7 @@ export function isEqualArray(arr1, arr2) {
     }
   }
   return true;
-}
+};
 
 /**
  * Checks if `array` contains all `elements` from the `elements` array.
@@ -396,7 +398,7 @@ export function isEqualArray(arr1, arr2) {
  * @param {Array} elements The elements to check for.
  * @returns {boolean} Returns `true` if `array` contains all `elements`, else `false`.
  */
-export function containsAll(array, elements) {
+const containsAll = (array, elements) => {
   if (!Array.isArray(array) || !Array.isArray(elements)) {
     return false;
   }
@@ -404,7 +406,7 @@ export function containsAll(array, elements) {
     return true;
   }
   return elements.every(elem => array.includes(elem));
-}
+};
 
 /**
  * Creates an array of unique values that is the symmetric difference of the two arrays.
@@ -412,7 +414,7 @@ export function containsAll(array, elements) {
  * @param {Array} arr2 The second array.
  * @returns {Array} Returns the new array of filtered values.
  */
-export function xor(arr1, arr2) {
+const xor = (arr1, arr2) => {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
     return [];
   }
@@ -423,7 +425,7 @@ export function xor(arr1, arr2) {
   const diff2 = arr2.filter(item => !set1.has(item));
 
   return [...new Set([...diff1, ...diff2])];
-}
+};
 
 /**
  * This method is like `difference` except that it accepts `iteratee` which is
@@ -436,13 +438,13 @@ export function xor(arr1, arr2) {
  * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new difference array.
  */
-export function differenceBy(array, values, iteratee) {
+const differenceBy = (array, values, iteratee) => {
   if (!Array.isArray(array) || !Array.isArray(values)) {
     return [];
   }
   const mappedValues = new Set(values.map(iteratee));
   return array.filter(item => !mappedValues.has(iteratee(item)));
-}
+};
 
 /**
  * This method is like `intersection` except that it accepts `iteratee` which
@@ -455,11 +457,61 @@ export function differenceBy(array, values, iteratee) {
  * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new intersecting array.
  */
-export function intersectionBy(array, values, iteratee) {
+const intersectionBy = (array, values, iteratee) => {
   if (!Array.isArray(array) || !Array.isArray(values)) {
     return [];
   }
   const mappedValues = new Set(values.map(iteratee));
   return array.filter(item => mappedValues.has(iteratee(item)));
-}
+};
+
+/**
+ * Flattens a nested array by one level.
+ * @param {Array} arr The array to flatten.
+ * @returns {Array} The new flattened array.
+ */
+const flatten = (arr) => {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return [].concat(...arr);
+};
+
+
+module.exports = {
+  isEmptyArray,
+  lastElement,
+  removeElementFromArray,
+  removeDuplicates,
+  shuffleArray,
+  groupBy,
+  removeAllOccurrences,
+  getAverage,
+  chunkArray,
+  range,
+  compact,
+  sample,
+  pluck,
+  zip,
+  uniqueBy,
+  partition,
+  flattenDeep,
+  union,
+  average,
+  uniqueArray,
+  flattenArray,
+  sumArray,
+  removeFalsy,
+  contains,
+  intersection,
+  compactObject,
+  difference,
+  filterBy,
+  sortBy,
+  isEqualArray,
+  xor,
+  differenceBy,
+  intersectionBy,
+  flatten,
+};
 

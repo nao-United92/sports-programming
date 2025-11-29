@@ -1,19 +1,27 @@
-/**
- * Returns the first element that is a descendant of node that matches selectors.
- * @param {string} selector The CSS selector string.
- * @param {HTMLElement|Document} [parent=document] The element or document to search within.
- * @returns {HTMLElement|null} The first matching element, or null if not found.
- */
-export const querySelector = (selector, parent = document) => {
-  return parent.querySelector(selector);
-};
+// src/other/dom-query-utils.js
 
 /**
- * Returns a static (not live) NodeList representing a list of the document's elements that match the specified group of selectors.
+ * Safely retrieves a single DOM element matching a CSS selector.
+ *
  * @param {string} selector The CSS selector string.
- * @param {HTMLElement|Document} [parent=document] The element or document to search within.
- * @returns {NodeList} A NodeList containing all matching elements.
+ * @param {Document | HTMLElement} [context=document] The context element to search within.
+ * @returns {HTMLElement | null} The first matching element, or null if not found.
  */
-export const querySelectorAll = (selector, parent = document) => {
-  return parent.querySelectorAll(selector);
+const querySelector = (selector, context = document) => {
+  if (typeof selector !== 'string' || selector === '') {
+    return null;
+  }
+  if (!context || typeof context.querySelector !== 'function') {
+    return null;
+  }
+  try {
+    return context.querySelector(selector);
+  } catch (error) {
+    console.error('Error querying selector:', selector, error);
+    return null;
+  }
+};
+
+module.exports = {
+  querySelector,
 };

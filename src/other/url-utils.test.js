@@ -1,52 +1,70 @@
-import { parseUrl } from './url-utils.js';
+// src/other/url-utils.test.js
 
-describe('parseUrl', () => {
-  it('should parse a full URL into its components', () => {
-    const url = 'https://www.example.com:8080/path/to/page?query=string&another=param#section';
-    const parsed = parseUrl(url);
-    expect(parsed).toEqual({
-      href: 'https://www.example.com:8080/path/to/page?query=string&another=param#section',
-      protocol: 'https:',
-      hostname: 'www.example.com',
-      port: '8080',
-      pathname: '/path/to/page',
-      search: '?query=string&another=param',
-      hash: '#section',
-      params: {
-        query: 'string',
-        another: 'param',
-      },
+const { getQueryParams } = require('./url-utils');
+
+describe('URL Utils', () => {
+  describe('getQueryParams', () => {
+    test('should parse query parameters from a URL string', () => {
+      const url = 'https://example.com/path?name=Alice&age=30&city=New%20York';
+      const params = getQueryParams(url);
+      expect(params).toEqual({
+        name: 'Alice',
+        age: '30',
+        city: 'New York',
+      });
     });
-  });
 
-  it('should handle URLs without a port', () => {
-    const url = 'http://example.com/page';
-    const parsed = parseUrl(url);
-    expect(parsed.port).toBe('');
-  });
+    test('should handle URLs with no query parameters', () => {
+      const url = 'https://example.com/path';
+      const params = getQueryParams(url);
+      expect(params).toEqual({});
+    });
 
-  it('should handle URLs without a path', () => {
-    const url = 'https://example.com';
-    const parsed = parseUrl(url);
-    expect(parsed.pathname).toBe('/');
-  });
+    test('should handle URLs with empty query string', () => {
+      const url = 'https://example.com/path?';
+      const params = getQueryParams(url);
+      expect(params).toEqual({});
+    });
 
-  it('should handle URLs with no query string', () => {
-    const url = 'https://example.com/page';
-    const parsed = parseUrl(url);
-    expect(parsed.search).toBe('');
-    expect(parsed.params).toEqual({});
-  });
+    test('should handle query parameters with no values', () => {
+      const url = 'https://example.com/path?param1&param2=value2';
+      const params = getQueryParams(url);
+      expect(params).toEqual({
+        param1: '',
+        param2: 'value2',
+      });
+    });
 
-  it('should handle URLs with no hash', () => {
-    const url = 'https://example.com/page?query=string';
-    const parsed = parseUrl(url);
-    expect(parsed.hash).toBe('');
-  });
+    test('should handle duplicate query parameters (last one wins)', () => {
+      const url = 'https://example.com/path?name=Alice&name=Bob';
+      const params = getQueryParams(url);
+      expect(params).toEqual({
+        name: 'Bob',
+      });
+    });
 
-  it('should return null for an invalid URL', () => {
-    const url = 'not a valid url';
-    const parsed = parseUrl(url);
-    expect(parsed).toBeNull();
+    test('should handle special characters in query parameters', () => {
+      const url = 'https://example.com/path?q=hello+world%21&filter=a%26b';
+      const params = getQueryParams(url);
+      expect(params).toEqual({
+        q: 'hello world!',
+        filter: 'a&b',
+      });
+    });
+
+    test('should return an empty object for non-string inputs', () => {
+      expect(getQueryParams(null)).toEqual({});
+      expect(getQueryParams(undefined)).toEqual({});
+      expect(getQueryParams(123)).toEqual({});
+      expect(getQueryParams({})).toEqual({});
+    });
+
+    test('should handle URL with hash', () => {
+      const url = 'https://example.com/path?name=Alice#section1';
+      const params = getQueryParams(url);
+      expect(params).toEqual({
+        name: 'Alice',
+      });
+    });
   });
 });

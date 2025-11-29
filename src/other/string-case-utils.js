@@ -1,33 +1,18 @@
+// src/other/string-case-utils.js
+
+/**
+ * Converts a string to camelCase.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} The camelCased string.
+ */
 const toCamelCase = (str) => {
-  if (!str) return '';
-  return str.replace(/([-_.\s])+(.)?/g, (_match, _separator, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
-};
-
-const toPascalCase = (str) => {
-    if (!str) return '';
-    const camelCase = toCamelCase(str);
-    return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
-};
-
-const toSnakeCase = (str) => {
-  if (!str) return '';
-  return toPascalCase(str)
-    .replace(/([A-Z])/g, '_$1')
-    .toLowerCase()
-    .replace(/^_/, '');
-};
-
-const toKebabCase = (str) => {
-  if (!str) return '';
-  return toPascalCase(str)
-    .replace(/([A-Z])/g, '-$1')
-    .toLowerCase()
-    .replace(/^-/, '');
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
 };
 
 module.exports = {
   toCamelCase,
-  toPascalCase,
-  toSnakeCase,
-  toKebabCase,
 };

@@ -1,15 +1,32 @@
+// src/other/url-utils.js
+
 /**
- * Parses a URL into its components.
+ * Parses the query parameters from a URL string and returns them as an object.
  *
- * @param {string} url The URL to parse.
- * @returns {object|null} An object containing the URL components, or null if the URL is invalid.
+ * @param {string} url The URL string to parse.
+ * @returns {Object} An object containing the query parameters.
  */
-export const parseUrl = (url) => {
-  try {
-    const { href, protocol, hostname, port, pathname, search, hash } = new URL(url);
-    const params = Object.fromEntries(new URLSearchParams(search));
-    return { href, protocol, hostname, port, pathname, search, hash, params };
-  } catch (error) {
-    return null;
+const getQueryParams = (url) => {
+  if (typeof url !== 'string') {
+    return {};
   }
+
+  const queryString = url.split('?')[1];
+  if (!queryString) {
+    return {};
+  }
+
+  const params = {};
+  queryString.split('&').forEach(pair => {
+    const [key, value] = pair.split('=').map(decodeURIComponent);
+    if (key) {
+      params[key] = value || '';
+    }
+  });
+
+  return params;
+};
+
+module.exports = {
+  getQueryParams,
 };

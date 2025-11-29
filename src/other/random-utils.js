@@ -1,17 +1,21 @@
+// src/other/random-utils.js
+
 /**
- * Produces a random number between the inclusive `lower` and `upper` bounds.
+ * Generates a random integer within a specified range (inclusive).
  *
- * @param {number} lower The lower bound.
- * @param {number} upper The upper bound.
- * @param {boolean} [floating=false] Specify returning a floating-point number.
- * @returns {number} Returns the random number.
+ * @param {number} min The minimum value (inclusive).
+ * @param {number} max The maximum value (inclusive).
+ * @returns {number} A random integer between min and max.
  */
-export const random = (lower, upper, floating = false) => {
-  if (lower > upper) {
-    [lower, upper] = [upper, lower];
+const getRandomInt = (min, max) => {
+  if (typeof min !== 'number' || typeof max !== 'number' || isNaN(min) || isNaN(max)) {
+    return NaN;
   }
-  if (floating) {
-    return Math.random() * (upper - lower) + lower;
-  }
-  return Math.floor(Math.random() * (upper - lower + 1)) + lower;
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+module.exports = {
+  getRandomInt,
 };

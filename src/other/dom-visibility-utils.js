@@ -1,25 +1,18 @@
-const originalDisplay = new WeakMap();
+// src/other/dom-visibility-utils.js
 
 /**
- * Toggles the visibility of a DOM element.
- * If the element is currently visible, it will be hidden (display: 'none').
- * If the element is currently hidden, it will be shown using its original display style.
+ * Hides a DOM element by setting its display style to 'none'.
  *
- * @param {HTMLElement} element The DOM element to toggle visibility for.
+ * @param {HTMLElement} element The DOM element to hide.
  */
-export const toggleVisibility = (element) => {
-  if (!(element instanceof HTMLElement)) {
-    console.warn('toggleVisibility: Invalid element provided.', element);
+const hideElement = (element) => {
+  if (!element || !element.style) {
+    console.warn('Invalid element or element has no style property:', element);
     return;
   }
+  element.style.display = 'none';
+};
 
-  if (element.style.display === 'none') {
-    // Element is hidden, show it
-    element.style.display = originalDisplay.get(element) || ''; // Restore original or default
-    originalDisplay.delete(element);
-  } else {
-    // Element is visible, hide it
-    originalDisplay.set(element, element.style.display); // Store original display
-    element.style.display = 'none';
-  }
+module.exports = {
+  hideElement,
 };

@@ -1,103 +1,91 @@
-const { isEqual } = require('./object-comparison-utils');
+// src/other/object-comparison-utils.test.js
 
-describe('isEqual', () => {
-  // Primitive values
-  test('should return true for identical primitive values', () => {
-    expect(isEqual(1, 1)).toBe(true);
-    expect(isEqual('hello', 'hello')).toBe(true);
-    expect(isEqual(true, true)).toBe(true);
-    expect(isEqual(null, null)).toBe(true);
-    expect(isEqual(undefined, undefined)).toBe(true);
-  });
+const { deepEqual } = require('./object-comparison-utils');
 
-  test('should return false for different primitive values', () => {
-    expect(isEqual(1, 2)).toBe(false);
-    expect(isEqual('hello', 'world')).toBe(false);
-    expect(isEqual(true, false)).toBe(false);
-    expect(isEqual(null, undefined)).toBe(false);
-  });
+describe('Object Comparison Utils', () => {
+  describe('deepEqual', () => {
+    test('should return true for identical primitive values', () => {
+      expect(deepEqual(1, 1)).toBe(true);
+      expect(deepEqual('hello', 'hello')).toBe(true);
+      expect(deepEqual(true, true)).toBe(true);
+      expect(deepEqual(null, null)).toBe(true);
+      expect(deepEqual(undefined, undefined)).toBe(true);
+    });
 
-  // Objects
-  test('should return true for identical empty objects', () => {
-    expect(isEqual({}, {})).toBe(true);
-  });
+    test('should return false for different primitive values', () => {
+      expect(deepEqual(1, 2)).toBe(false);
+      expect(deepEqual('hello', 'world')).toBe(false);
+      expect(deepEqual(true, false)).toBe(false);
+      expect(deepEqual(null, undefined)).toBe(false);
+    });
 
-  test('should return true for objects with same properties and values', () => {
-    const obj1 = { a: 1, b: 'test' };
-    const obj2 = { a: 1, b: 'test' };
-    expect(isEqual(obj1, obj2)).toBe(true);
-  });
+    test('should return true for identical shallow objects', () => {
+      const obj1 = { a: 1, b: 'test' };
+      const obj2 = { a: 1, b: 'test' };
+      expect(deepEqual(obj1, obj2)).toBe(true);
+    });
 
-  test('should return false for objects with different properties', () => {
-    const obj1 = { a: 1, b: 'test' };
-    const obj2 = { a: 1, c: 'test' };
-    expect(isEqual(obj1, obj2)).toBe(false);
-  });
+    test('should return false for different shallow objects', () => {
+      const obj1 = { a: 1, b: 'test' };
+      const obj2 = { a: 1, b: 'different' };
+      expect(deepEqual(obj1, obj2)).toBe(false);
+      const obj3 = { a: 1 };
+      const obj4 = { a: 1, b: 2 };
+      expect(deepEqual(obj3, obj4)).toBe(false);
+    });
 
-  test('should return false for objects with same properties but different values', () => {
-    const obj1 = { a: 1, b: 'test' };
-    const obj2 = { a: 1, b: 'different' };
-    expect(isEqual(obj1, obj2)).toBe(false);
-  });
+    test('should return true for identical nested objects', () => {
+      const obj1 = { a: 1, b: { c: 2, d: 'nested' } };
+      const obj2 = { a: 1, b: { c: 2, d: 'nested' } };
+      expect(deepEqual(obj1, obj2)).toBe(true);
+    });
 
-  // Nested Objects
-  test('should return true for identical nested objects', () => {
-    const obj1 = { a: 1, b: { c: 2, d: 'nested' } };
-    const obj2 = { a: 1, b: { c: 2, d: 'nested' } };
-    expect(isEqual(obj1, obj2)).toBe(true);
-  });
+    test('should return false for different nested objects', () => {
+      const obj1 = { a: 1, b: { c: 2, d: 'nested' } };
+      const obj2 = { a: 1, b: { c: 2, d: 'different' } };
+      expect(deepEqual(obj1, obj2)).toBe(false);
+    });
 
-  test('should return false for different nested objects', () => {
-    const obj1 = { a: 1, b: { c: 2, d: 'nested' } };
-    const obj2 = { a: 1, b: { c: 2, d: 'different' } };
-    expect(isEqual(obj1, obj2)).toBe(false);
-  });
+    test('should return true for identical arrays', () => {
+      expect(deepEqual([1, 2, 3], [1, 2, 3])).toBe(true);
+      expect(deepEqual(['a', { b: 1 }], ['a', { b: 1 }])).toBe(true);
+    });
 
-  // Arrays
-  test('should return true for identical empty arrays', () => {
-    expect(isEqual([], [])).toBe(true);
-  });
+    test('should return false for different arrays', () => {
+      expect(deepEqual([1, 2, 3], [1, 2, 4])).toBe(false);
+      expect(deepEqual([1, 2], [1, 2, 3])).toBe(false);
+      expect(deepEqual(['a', { b: 1 }], ['a', { b: 2 }])).toBe(false);
+    });
 
-  test('should return true for identical arrays of primitives', () => {
-    expect(isEqual([1, 2, 3], [1, 2, 3])).toBe(true);
-  });
+    test('should handle mixed nested structures', () => {
+      const val1 = { a: 1, b: [2, { c: 3 }] };
+      const val2 = { a: 1, b: [2, { c: 3 }] };
+      expect(deepEqual(val1, val2)).toBe(true);
 
-  test('should return false for arrays with different lengths', () => {
-    expect(isEqual([1, 2], [1, 2, 3])).toBe(false);
-  });
+      const val3 = { a: 1, b: [2, { c: 4 }] };
+      expect(deepEqual(val1, val3)).toBe(false);
+    });
 
-  test('should return false for arrays with different values', () => {
-    expect(isEqual([1, 2, 3], [1, 2, 4])).toBe(false);
-  });
+    test('should handle empty objects and arrays', () => {
+      expect(deepEqual({}, {})).toBe(true);
+      expect(deepEqual([], [])).toBe(true);
+      expect(deepEqual({}, [])).toBe(false);
+    });
 
-  // Nested Arrays and Objects
-  test('should return true for identical nested arrays and objects', () => {
-    const arr1 = [1, { a: 2, b: [3, 4] }, 5];
-    const arr2 = [1, { a: 2, b: [3, 4] }, 5];
-    expect(isEqual(arr1, arr2)).toBe(true);
-  });
+    test('should handle objects with different keys', () => {
+      expect(deepEqual({ a: 1 }, { b: 1 })).toBe(false);
+    });
 
-  test('should return false for different nested arrays and objects', () => {
-    const arr1 = [1, { a: 2, b: [3, 4] }, 5];
-    const arr2 = [1, { a: 2, b: [3, 5] }, 5];
-    expect(isEqual(arr1, arr2)).toBe(false);
-  });
+    test('should handle objects with undefined properties', () => {
+      expect(deepEqual({ a: 1, b: undefined }, { a: 1 })).toBe(false);
+      expect(deepEqual({ a: 1, b: undefined }, { a: 1, b: undefined })).toBe(true);
+    });
 
-  // Mixed types
-  test('should return false for different types', () => {
-    expect(isEqual(1, '1')).toBe(false);
-    expect(isEqual({}, [])).toBe(false);
-    expect(isEqual(null, {})).toBe(false);
-    expect(isEqual(undefined, [])).toBe(false);
-  });
-
-  // Functions and Symbols (not deeply compared, just reference)
-  test('should return true for identical function references', () => {
-    const func = () => {};
-    expect(isEqual(func, func)).toBe(true);
-  });
-
-  test('should return false for different function references', () => {
-    expect(isEqual(() => {}, () => {})).toBe(false);
+    test('should handle functions (by reference)', () => {
+      const func1 = () => {};
+      const func2 = () => {};
+      expect(deepEqual(func1, func1)).toBe(true);
+      expect(deepEqual(func1, func2)).toBe(false);
+    });
   });
 });

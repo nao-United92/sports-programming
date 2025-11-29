@@ -1,33 +1,21 @@
-/**
- * Escapes HTML special characters in a string.
- *
- * @param {string} str The string to escape.
- * @returns {string} The escaped string.
- */
-export const escapeHTML = (str) => {
-  if (str === null || str === undefined) {
-    return '';
-  }
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/\//g, '&#x2F;');
-};
+// src/other/string-formatting-utils.js
 
 /**
- * Converts a string to title case.
+ * Pads a string on the left side with a specified character until it reaches a desired length.
  *
- * @param {string} str The string to convert.
- * @returns {string} The title cased string.
+ * @param {string | number} value The string or number to pad.
+ * @param {number} length The desired length of the string.
+ * @param {string} [padChar=' '] The character to use for padding.
+ * @returns {string} The padded string.
  */
-export const toTitleCase = (str) => {
-  if (str === null || str === undefined) {
-    return '';
+const padLeft = (value, length, padChar = ' ') => {
+  let str = String(value);
+  if (str.length >= length) {
+    return str;
   }
-  return String(str).replace(/\w\S*/g, (txt) => {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-  });
+  return str.padStart(length, padChar);
+};
+
+module.exports = {
+  padLeft,
 };

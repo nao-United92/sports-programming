@@ -1,83 +1,40 @@
-import { clamp, inRange, randomInt, isEven } from './number-utils';
+// src/other/number-utils.test.js
 
-describe('Number Utilities', () => {
+const { clamp } = require('./number-utils');
+
+describe('Number Utils', () => {
   describe('clamp', () => {
-    it('should not change the number if it is within the range', () => {
-      expect(clamp(5, 0, 10)).toBe(5);
+    test('should clamp a number within the specified range', () => {
+      expect(clamp(10, 0, 5)).toBe(5);
+      expect(clamp(-5, 0, 5)).toBe(0);
+      expect(clamp(3, 0, 5)).toBe(3);
     });
 
-    it('should clamp to the lower bound if the number is smaller', () => {
-      expect(clamp(-5, 0, 10)).toBe(0);
+    test('should handle cases where lower and upper bounds are equal', () => {
+      expect(clamp(10, 5, 5)).toBe(5);
+      expect(clamp(0, 5, 5)).toBe(5);
+      expect(clamp(5, 5, 5)).toBe(5);
     });
 
-    it('should clamp to the upper bound if the number is larger', () => {
-      expect(clamp(15, 0, 10)).toBe(10);
+    test('should handle negative numbers for bounds', () => {
+      expect(clamp(-10, -5, -2)).toBe(-5);
+      expect(clamp(0, -5, -2)).toBe(-2);
+      expect(clamp(-3, -5, -2)).toBe(-3);
     });
 
-    it('should work with negative numbers', () => {
-      expect(clamp(-15, -10, 0)).toBe(-10);
-      expect(clamp(5, -10, 0)).toBe(0);
-    });
-  });
-
-  describe('inRange', () => {
-    it('should return true if the number is within the range', () => {
-      expect(inRange(5, 0, 10)).toBe(true);
+    test('should return NaN for non-numeric inputs', () => {
+      expect(clamp('abc', 0, 5)).toBeNaN();
+      expect(clamp(10, 'def', 5)).toBeNaN();
+      expect(clamp(10, 0, 'ghi')).toBeNaN();
+      expect(clamp(null, 0, 5)).toBeNaN();
+      expect(clamp(10, null, 5)).toBeNaN();
+      expect(clamp(10, 0, null)).toBeNaN();
     });
 
-    it('should return false if the number is outside the range', () => {
-      expect(inRange(15, 0, 10)).toBe(false);
-      expect(inRange(-5, 0, 10)).toBe(false);
-    });
-
-    it('should handle the case where end is not specified', () => {
-      expect(inRange(5, 10)).toBe(true);
-      expect(inRange(15, 10)).toBe(false);
-    });
-
-    it('should automatically swap start and end if start is greater than end', () => {
-      expect(inRange(5, 10, 0)).toBe(true);
-    });
-  });
-
-  describe('randomInt', () => {
-    it('should generate a random integer within the specified range', () => {
-      const min = 1;
-      const max = 10;
-      const result = randomInt(min, max);
-      expect(result).toBeGreaterThanOrEqual(min);
-      expect(result).toBeLessThanOrEqual(max);
-      expect(Number.isInteger(result)).toBe(true);
-    });
-
-    it('should work with a range of a single number', () => {
-      const result = randomInt(5, 5);
-      expect(result).toBe(5);
-    });
-  });
-
-  describe('isEven', () => {
-    it('should return true for even numbers', () => {
-      expect(isEven(2)).toBe(true);
-      expect(isEven(0)).toBe(true);
-      expect(isEven(-4)).toBe(true);
-    });
-
-    it('should return false for odd numbers', () => {
-      expect(isEven(1)).toBe(false);
-      expect(isEven(-3)).toBe(false);
-    });
-
-    it('should return false for non-integer numbers', () => {
-      expect(isEven(2.5)).toBe(false);
-      expect(isEven(0.001)).toBe(false);
-    });
-
-    it('should return false for non-numeric inputs', () => {
-      expect(isEven(null)).toBe(false);
-      expect(isEven(undefined)).toBe(false);
-      expect(isEven('2')).toBe(false);
-      expect(isEven({})).toBe(false);
+    test('should handle floating point numbers', () => {
+      expect(clamp(3.14, 0.5, 2.5)).toBe(2.5);
+      expect(clamp(1.2, 0.5, 2.5)).toBe(1.2);
+      expect(clamp(-1.0, -0.5, 0.5)).toBe(-0.5);
     });
   });
 });

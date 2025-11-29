@@ -1,39 +1,40 @@
-import { formatNumber, sprintf } from './string-format-utils';
+// src/other/string-format-utils.test.js
 
-describe('string-format-utils', () => {
-  describe('formatNumber', () => {
-    test('should format a number with default settings', () => {
-      expect(formatNumber(1234567.89)).toBe('1,234,568');
+const { formatCurrency } = require('./string-format-utils');
+
+describe('String Format Utils', () => {
+  describe('formatCurrency', () => {
+    test('should format a number as USD currency by default', () => {
+      expect(formatCurrency(1234.56)).toBe('$1,234.56');
+      expect(formatCurrency(100)).toBe('$100.00');
+      expect(formatCurrency(0)).toBe('$0.00');
+      expect(formatCurrency(-123.45)).toBe('-$123.45');
     });
 
-    test('should format a number with specified decimals', () => {
-      expect(formatNumber(1234567.89, 2)).toBe('1,234,567.89');
+    test('should format with a specified currency symbol', () => {
+      expect(formatCurrency(1234.56, 'EUR', 'de-DE')).toBe('1.234,56 €');
+      expect(formatCurrency(789.01, 'JPY', 'ja-JP')).toBe('￥789'); // JPY has no decimal places
     });
 
-    test('should format a number with custom separators', () => {
-      expect(formatNumber(1234567.89, 2, ',', '.')).toBe('1.234.567,89');
+    test('should handle different locales', () => {
+      expect(formatCurrency(1234.56, 'USD', 'en-GB')).toBe('US$1,234.56');
+      expect(formatCurrency(1234.56, 'USD', 'fr-FR')).toBe('1 234,56 $US');
     });
 
-    test('should handle negative numbers', () => {
-      expect(formatNumber(-12345.67, 2, '.', ',')).toBe('-12,345.67');
+    test('should return an empty string for non-numeric inputs', () => {
+      expect(formatCurrency(null)).toBe('');
+      expect(formatCurrency(undefined)).toBe('');
+      expect(formatCurrency('abc')).toBe('');
+      expect(formatCurrency({})).toBe('');
     });
 
-    test('should handle zero', () => {
-      expect(formatNumber(0, 2)).toBe('0.00');
-    });
-  });
-
-  describe('sprintf', () => {
-    test('should replace placeholders with arguments', () => {
-      expect(sprintf('Hello %s, welcome to %s!', 'World', 'our app')).toBe('Hello World, welcome to our app!');
+    test('should handle large numbers', () => {
+      expect(formatCurrency(123456789.123, 'USD')).toBe('$123,456,789.12');
     });
 
-    test('should handle multiple placeholders', () => {
-      expect(sprintf('%s %s %s', 'one', 'two', 'three')).toBe('one two three');
-    });
-
-    test('should return the format string if no arguments are provided', () => {
-      expect(sprintf('Hello %s')).toBe('Hello undefined');
+    test('should handle numbers with more than two decimal places', () => {
+      expect(formatCurrency(123.456, 'USD')).toBe('$123.46');
+      expect(formatCurrency(123.454, 'USD')).toBe('$123.45');
     });
   });
 });

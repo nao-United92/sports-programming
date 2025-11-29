@@ -1,105 +1,51 @@
-import { isValidEmail, isStrongPassword, isPalindrome } from './string-validation-utils';
+// src/other/string-validation-utils.test.js
 
-describe('isValidEmail', () => {
-  test('should return true for a valid email address', () => {
-    expect(isValidEmail('test@example.com')).toBe(true);
-    expect(isValidEmail('john.doe123@sub.domain.co.uk')).toBe(true);
-    expect(isValidEmail('user+tag@domain.net')).toBe(true);
-  });
+const { isUUID } = require('./string-validation-utils');
 
-  test('should return false for an invalid email address', () => {
-    expect(isValidEmail('invalid-email')).toBe(false);
-    expect(isValidEmail('invalid@.com')).toBe(false);
-    expect(isValidEmail('@domain.com')).toBe(false);
-    expect(isValidEmail('user@domain')).toBe(false);
-    expect(isValidEmail('user@domain.c')).toBe(false);
-  });
+describe('String Validation Utils', () => {
+  describe('isUUID', () => {
+    test('should return true for a valid UUID v4', () => {
+      expect(isUUID('f47ac10b-58cc-4372-a567-0e02b2c3d479')).toBe(true);
+    });
 
-  test('should return false for non-string inputs', () => {
-    expect(isValidEmail(null)).toBe(false);
-    expect(isValidEmail(undefined)).toBe(false);
-    expect(isValidEmail(123)).toBe(false);
-    expect(isValidEmail({})).toBe(false);
-  });
+    test('should return true for a valid UUID v1', () => {
+      expect(isUUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')).toBe(true);
+    });
 
-  test('should return false for empty string', () => {
-    expect(isValidEmail('')).toBe(false);
-  });
-});
+    test('should return true for a valid UUID v3', () => {
+      expect(isUUID('a8098c1a-f86e-3da3-bb91-7a0292710000')).toBe(true);
+    });
 
-describe('isStrongPassword', () => {
-  test('should return true for a strong password', () => {
-    expect(isStrongPassword('Password123!')).toBe(true);
-    expect(isStrongPassword('MyStrongP@ssw0rd')).toBe(true);
-    expect(isStrongPassword('aB1!cDeF')).toBe(true);
-  });
+    test('should return true for a valid UUID v5', () => {
+      expect(isUUID('c623e13a-3e21-5a56-973a-00c04fd430c8')).toBe(true);
+    });
 
-  test('should return false if password is too short', () => {
-    expect(isStrongPassword('Pass1!')).toBe(false);
-  });
+    test('should return true for a valid UUID with uppercase letters', () => {
+      expect(isUUID('F47AC10B-58CC-4372-A567-0E02B2C3D479')).toBe(true);
+    });
 
-  test('should return false if no uppercase letter', () => {
-    expect(isStrongPassword('password123!')).toBe(false);
-  });
+    test('should return false for an invalid UUID (incorrect format)', () => {
+      expect(isUUID('f47ac10b-58cc-4372-a567-0e02b2c3d47')).toBe(false); // Too short
+      expect(isUUID('f47ac10b-58cc-4372-a567-0e02b2c3d4799')).toBe(false); // Too long
+      expect(isUUID('f47ac10b-58cc-4372-a567-0e02b2c3d47g')).toBe(false); // Invalid character
+      expect(isUUID('f47ac10b-58cc-4372-a567-0e02b2c3d479-')).toBe(false); // Extra dash
+    });
 
-  test('should return false if no lowercase letter', () => {
-    expect(isStrongPassword('PASSWORD123!')).toBe(false);
-  });
+    test('should return false for an invalid UUID (incorrect variant/version)', () => {
+      expect(isUUID('f47ac10b-58cc-6372-a567-0e02b2c3d479')).toBe(false); // Invalid version (6)
+      expect(isUUID('f47ac10b-58cc-4372-0567-0e02b2c3d479')).toBe(false); // Invalid variant (0)
+    });
 
-  test('should return false if no number', () => {
-    expect(isStrongPassword('Password!!')).toBe(false);
-  });
+    test('should return false for an empty string', () => {
+      expect(isUUID('')).toBe(false);
+    });
 
-  test('should return false if no special character', () => {
-    expect(isStrongPassword('Password123')).toBe(false);
-  });
-
-  test('should return false for non-string inputs', () => {
-    expect(isStrongPassword(null)).toBe(false);
-    expect(isStrongPassword(undefined)).toBe(false);
-    expect(isStrongPassword(123)).toBe(false);
-    expect(isStrongPassword({})).toBe(false);
-  });
-
-  test('should return false for empty string', () => {
-    expect(isStrongPassword('')).toBe(false);
-  });
-});
-
-describe('isPalindrome', () => {
-  test('should return true for a valid palindrome', () => {
-    expect(isPalindrome('madam')).toBe(true);
-    expect(isPalindrome('A man, a plan, a canal: Panama')).toBe(true);
-    expect(isPalindrome('racecar')).toBe(true);
-    expect(isPalindrome('No lemon, no melon')).toBe(true);
-    expect(isPalindrome('Was it a car or a cat I saw?')).toBe(true);
-  });
-
-  test('should return false for a non-palindrome', () => {
-    expect(isPalindrome('hello')).toBe(false);
-    expect(isPalindrome('world')).toBe(false);
-    expect(isPalindrome('not a palindrome')).toBe(false);
-  });
-
-  test('should handle empty string', () => {
-    expect(isPalindrome('')).toBe(true);
-  });
-
-  test('should handle single character string', () => {
-    expect(isPalindrome('a')).toBe(true);
-  });
-
-  test('should handle strings with numbers and special characters', () => {
-    expect(isPalindrome('12321')).toBe(true);
-    expect(isPalindrome('A-b-c-b-A')).toBe(true);
-    expect(isPalindrome('1 eye for of 1 eye')).toBe(false);
-  });
-
-  test('should return false for non-string inputs', () => {
-    expect(isPalindrome(null)).toBe(false);
-    expect(isPalindrome(undefined)).toBe(false);
-    expect(isPalindrome(123)).toBe(false);
-    expect(isPalindrome({})).toBe(false);
-    expect(isPalindrome([])).toBe(false);
+    test('should return false for non-string inputs', () => {
+      expect(isUUID(null)).toBe(false);
+      expect(isUUID(undefined)).toBe(false);
+      expect(isUUID(123)).toBe(false);
+      expect(isUUID({})).toBe(false);
+      expect(isUUID([])).toBe(false);
+    });
   });
 });

@@ -1,51 +1,47 @@
-import { random } from './random-utils';
+// src/other/random-utils.test.js
 
-describe('random', () => {
-  const ITERATIONS = 100;
+const { getRandomInt } = require('./random-utils');
 
-  it('should return an integer within the specified range', () => {
-    for (let i = 0; i < ITERATIONS; i++) {
-      const result = random(0, 10);
-      expect(Number.isInteger(result)).toBe(true);
-      expect(result).toBeGreaterThanOrEqual(0);
-      expect(result).toBeLessThanOrEqual(10);
-    }
-  });
-
-  it('should return a floating-point number when floating is true', () => {
-    let hasFloat = false;
-    for (let i = 0; i < ITERATIONS; i++) {
-      const result = random(0, 10, true);
-      if (!Number.isInteger(result)) {
-        hasFloat = true;
+describe('Random Utils', () => {
+  describe('getRandomInt', () => {
+    test('should return an integer within the specified inclusive range', () => {
+      const min = 1;
+      const max = 10;
+      for (let i = 0; i < 100; i++) {
+        const result = getRandomInt(min, max);
+        expect(result).toBeGreaterThanOrEqual(min);
+        expect(result).toBeLessThanOrEqual(max);
+        expect(Number.isInteger(result)).toBe(true);
       }
-      expect(result).toBeGreaterThanOrEqual(0);
-      expect(result).toBeLessThanOrEqual(10);
-    }
-    // It's statistically very likely that at least one float was generated.
-    expect(hasFloat).toBe(true);
-  });
+    });
 
-  it('should handle swapped lower and upper bounds', () => {
-    for (let i = 0; i < ITERATIONS; i++) {
-      const result = random(10, 0);
+    test('should handle negative ranges', () => {
+      const min = -10;
+      const max = -1;
+      for (let i = 0; i < 100; i++) {
+        const result = getRandomInt(min, max);
+        expect(result).toBeGreaterThanOrEqual(min);
+        expect(result).toBeLessThanOrEqual(max);
+        expect(Number.isInteger(result)).toBe(true);
+      }
+    });
+
+    test('should handle range where min equals max', () => {
+      expect(getRandomInt(5, 5)).toBe(5);
+    });
+
+    test('should return NaN for non-numeric inputs', () => {
+      expect(getRandomInt('a', 10)).toBeNaN();
+      expect(getRandomInt(1, 'b')).toBeNaN();
+      expect(getRandomInt(null, 10)).toBeNaN();
+      expect(getRandomInt(1, undefined)).toBeNaN();
+    });
+
+    test('should handle floating point min/max by flooring/ceiling', () => {
+      const result = getRandomInt(1.1, 10.9);
+      expect(result).toBeGreaterThanOrEqual(2); // ceil(1.1)
+      expect(result).toBeLessThanOrEqual(10); // floor(10.9)
       expect(Number.isInteger(result)).toBe(true);
-      expect(result).toBeGreaterThanOrEqual(0);
-      expect(result).toBeLessThanOrEqual(10);
-    }
-  });
-
-  it('should handle negative ranges', () => {
-    for (let i = 0; i < ITERATIONS; i++) {
-      const result = random(-10, -5);
-      expect(Number.isInteger(result)).toBe(true);
-      expect(result).toBeGreaterThanOrEqual(-10);
-      expect(result).toBeLessThanOrEqual(-5);
-    }
-  });
-
-  it('should handle a range of a single number', () => {
-    const result = random(5, 5);
-    expect(result).toBe(5);
+    });
   });
 });
