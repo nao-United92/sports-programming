@@ -1,36 +1,36 @@
 /**
- * Performs a deep clone of an object.
+ * Creates a deep clone of a value.
  *
- * @param {any} obj The object to clone.
- * @returns {any} The cloned object.
+ * @param {*} value The value to clone.
+ * @returns {*} Returns the deep cloned value.
  */
-const deepClone = (obj) => {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
+const deepClone = (value) => {
+  if (value === null || typeof value !== 'object') {
+    return value;
   }
 
-  if (obj instanceof Date) {
-    return new Date(obj.getTime());
+  if (value instanceof Date) {
+    return new Date(value.getTime());
   }
 
-  if (Array.isArray(obj)) {
-    return obj.map(item => deepClone(item));
+  if (Array.isArray(value)) {
+    return value.map(item => deepClone(item));
   }
 
-  const clonedObj = {};
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      clonedObj[key] = deepClone(obj[key]);
+  const clonedObject = {};
+  for (const key in value) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      clonedObject[key] = deepClone(value[key]);
     }
   }
-  return clonedObj;
+  return clonedObject;
 };
 
 /**
  * Checks if an object is empty.
  *
  * @param {object} obj The object to check.
- * @returns {boolean} True if the object is empty, false otherwise.
+ * @returns {boolean} Returns `true` if the object is empty, else `false`.
  */
 const isEmpty = (obj) => {
   if (obj === null || obj === undefined) {
@@ -39,19 +39,7 @@ const isEmpty = (obj) => {
   return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
 
-/**
- * Retrieves a nested value from an object using a path string.
- *
- * @param {object} obj The object to query.
- * @param {string} path The path of the property to retrieve (e.g., 'a.b.c').
- * @returns {any} The value at the specified path, or undefined if not found.
- */
-const getValueByPath = (obj, path) => {
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
-};
-
 module.exports = {
   deepClone,
   isEmpty,
-  getValueByPath,
 };
