@@ -1,66 +1,21 @@
-/**
- * Checks if a string is a valid email address.
- * @param {string} email The email string to validate.
- * @returns {boolean} True if the email is valid, false otherwise.
- */
-export function isValidEmail(email) {
-  if (typeof email !== 'string') {
-    return false;
-  }
-  // More robust regex for email validation
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/;
-  return emailRegex.test(email);
-}
+// src/other/string-validation-utils.js
 
 /**
- * Checks if a string is a strong password.
- * A strong password must:
- * - Be at least 8 characters long
- * - Contain at least one uppercase letter
- * - Contain at least one lowercase letter
- * - Contain at least one number
- * - Contain at least one special character (e.g., !@#$%^&*)
- * @param {string} password The password string to validate.
- * @returns {boolean} True if the password is strong, false otherwise.
+ * Checks if a string is a valid UUID (Universally Unique Identifier).
+ * Supports UUID versions 1, 3, 4, and 5.
+ *
+ * @param {string} uuid The string to validate.
+ * @returns {boolean} True if the string is a valid UUID, false otherwise.
  */
-export function isStrongPassword(password) {
-  if (typeof password !== 'string') {
+const isUUID = (uuid) => {
+  if (typeof uuid !== 'string') {
     return false;
   }
-  // At least 8 characters long
-  if (password.length < 8) {
-    return false;
-  }
-  // Contains at least one uppercase letter
-  if (!/[A-Z]/.test(password)) {
-    return false;
-  }
-  // Contains at least one lowercase letter
-  if (!/[a-z]/.test(password)) {
-    return false;
-  }
-  // Contains at least one number
-  if (!/[0-9]/.test(password)) {
-    return false;
-  }
-  // Contains at least one special character
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-    return false;
-  }
-  return true;
-}
+  // Regex for UUID v1, v3, v4, v5
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+};
 
-/**
- * Checks if a string is a palindrome (reads the same forwards and backwards),
- * ignoring non-alphanumeric characters and case.
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is a palindrome, false otherwise.
- */
-export function isPalindrome(str) {
-  if (typeof str !== 'string') {
-    return false;
-  }
-  const cleanedStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const reversedStr = cleanedStr.split('').reverse().join('');
-  return cleanedStr === reversedStr;
-}
+module.exports = {
+  isUUID,
+};
