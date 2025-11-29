@@ -1,70 +1,76 @@
-import { mergeDeep, cloneDeep } from './object-manipulation-utils';
+// src/other/object-manipulation-utils.test.js
 
-describe('Object Manipulation Utilities', () => {
-  describe('mergeDeep', () => {
-    it('should deeply merge two objects', () => {
-      const obj1 = { a: 1, b: { c: 2 } };
-      const obj2 = { b: { d: 3 }, e: 4 };
-      const merged = mergeDeep(obj1, obj2);
-      expect(merged).toEqual({ a: 1, b: { c: 2, d: 3 }, e: 4 });
+const { get } = require('./object-manipulation-utils');
+
+describe('Object Manipulation Utils', () => {
+  describe('get', () => {
+    const testObject = {
+      a: 1,
+      b: {
+        c: 2,
+        d: {
+          e: 3,
+        },
+      },
+      f: [
+        { g: 4 },
+        { h: 5 },
+      ],
+      'key-with-dash': 'dashValue',
+    };
+
+    test('should retrieve a top-level property', () => {
+      expect(get(testObject, 'a')).toBe(1);
     });
 
-    it('should deeply merge multiple objects', () => {
-      const obj1 = { a: 1, b: { c: 2 } };
-      const obj2 = { b: { d: 3 } };
-      const obj3 = { e: 5, b: { f: 6 } };
-      const merged = mergeDeep(obj1, obj2, obj3);
-      expect(merged).toEqual({ a: 1, b: { c: 2, d: 3, f: 6 }, e: 5 });
+    test('should retrieve a nested property using dot notation', () => {
+      expect(get(testObject, 'b.c')).toBe(2);
+      expect(get(testObject, 'b.d.e')).toBe(3);
     });
 
-    it('should handle empty objects', () => {
-      const obj1 = { a: 1 };
-      const obj2 = {};
-      const merged = mergeDeep(obj1, obj2);
-      expect(merged).toEqual({ a: 1 });
+    test('should retrieve an array element using bracket notation', () => {
+      expect(get(testObject, 'f[0].g')).toBe(4);
+      expect(get(testObject, 'f[1].h')).toBe(5);
     });
 
-    it('should overwrite primitive values', () => {
-      const obj1 = { a: 1, b: 2 };
-      const obj2 = { b: 3, c: 4 };
-      const merged = mergeDeep(obj1, obj2);
-      expect(merged).toEqual({ a: 1, b: 3, c: 4 });
-    });
-  });
-
-  describe('cloneDeep', () => {
-    it('should deeply clone an object', () => {
-      const obj = { a: 1, b: { c: 2 }, d: [3, { e: 4 }] };
-      const cloned = cloneDeep(obj);
-      expect(cloned).toEqual(obj);
-      expect(cloned).not.toBe(obj);
-      expect(cloned.b).not.toBe(obj.b);
-      expect(cloned.d).not.toBe(obj.d);
-      expect(cloned.d[1]).not.toBe(obj.d[1]);
+    test('should return undefined if property does not exist', () => {
+      expect(get(testObject, 'b.x')).toBeUndefined();
+      expect(get(testObject, 'f[2]')).toBeUndefined();
+      expect(get(testObject, 'f[0].x')).toBeUndefined();
     });
 
-    it('should handle arrays', () => {
-      const arr = [1, { a: 2 }, [3, 4]];
-      const cloned = cloneDeep(arr);
-      expect(cloned).toEqual(arr);
-      expect(cloned).not.toBe(arr);
-      expect(cloned[1]).not.toBe(arr[1]);
-      expect(cloned[2]).not.toBe(arr[2]);
+    test('should return defaultValue if property does not exist and defaultValue is provided', () => {
+      expect(get(testObject, 'b.x', 'default')).toBe('default');
+      expect(get(testObject, 'f[2]', null)).toBeNull();
     });
 
-    it('should handle primitive values', () => {
-      expect(cloneDeep(1)).toBe(1);
-      expect(cloneDeep('test')).toBe('test');
-      expect(cloneDeep(true)).toBe(true);
-      expect(cloneDeep(null)).toBe(null);
-      expect(cloneDeep(undefined)).toBe(undefined);
+    test('should handle null or undefined intermediate paths', () => {
+      const obj = { a: { b: null } };
+      expect(get(obj, 'a.b.c')).toBeUndefined();
+      expect(get(obj, 'a.b.c', 'default')).toBe('default');
     });
 
-    it('should handle Date objects', () => {
-      const date = new Date();
-      const cloned = cloneDeep(date);
-      expect(cloned).toEqual(date);
-      expect(cloned).not.toBe(date);
+    test('should handle non-object inputs for obj', () => {
+      expect(get(null, 'a')).toBeUndefined();
+      expect(get(undefined, 'a')).toBeUndefined();
+      expect(get(123, 'a')).toBeUndefined();
+      expect(get('string', 'a')).toBeUndefined();
+    });
+
+    test('should handle non-string or empty path', () => {
+      expect(get(testObject, null)).toBeUndefined();
+      expect(get(testObject, undefined)).toBeUndefined();
+      expect(get(testObject, '')).toBeUndefined();
+      expect(get(testObject, 123)).toBeUndefined();
+    });
+
+    test('should retrieve property with dash in key', () => {
+      expect(get(testObject, 'key-with-dash')).toBe('dashValue');
+    });
+
+    test('should retrieve property with dash in key using bracket notation', () => {
+      const obj = { 'another-key': { nested: 'value' } };
+      expect(get(obj, 'another-key.nested')).toBe('value');
     });
   });
 });

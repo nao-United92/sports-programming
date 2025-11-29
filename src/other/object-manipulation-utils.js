@@ -1,61 +1,33 @@
+// src/other/object-manipulation-utils.js
 
 /**
- * Deeply merges two or more objects.
+ * Safely retrieves a nested property from an object using a path string.
  *
- * @param {object} target The target object to merge into.
- * @param {...object} sources The source objects to merge from.
- * @returns {object} The merged object.
+ * @param {Object} obj The object to query.
+ * @param {string} path The path to the property (e.g., 'a.b.c' or 'a[0].b').
+ * @param {any} [defaultValue] The value to return if the property is not found.
+ * @returns {any} The value of the property, or the defaultValue if not found.
  */
-export const mergeDeep = (target, ...sources) => {
-  if (!sources.length) return target;
-  const source = sources.shift();
+const get = (obj, path, defaultValue) => {
+  if (typeof obj !== 'object' || obj === null || typeof path !== 'string' || path === '') {
+    return defaultValue;
+  }
 
-  if (isObject(target) && isObject(source)) {
-    for (const key in source) {
-      if (isObject(source[key])) {
-        if (!target[key]) Object.assign(target, { [key]: {} });
-        mergeDeep(target[key], source[key]);
-      } else {
-        Object.assign(target, { [key]: source[key] });
-      }
+  const pathParts = path.split(/[.\[\]]/).filter(Boolean); // Split by . or [] and remove empty strings
+
+  let current = obj;
+  for (let i = 0; i < pathParts.length; i++) {
+    const part = pathParts[i];
+    if (typeof current === 'object' && current !== null && Object.prototype.hasOwnProperty.call(current, part)) {
+      current = current[part];
+    } else {
+      return defaultValue;
     }
   }
 
-  return mergeDeep(target, ...sources);
+  return current;
 };
 
-/**
- * Deeply clones an object.
- *
- * @param {object} obj The object to clone.
- * @returns {object} The cloned object.
- */
-export const cloneDeep = (obj) => {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
-  }
-
-  if (obj instanceof Date) {
-    return new Date(obj.getTime());
-  }
-
-  if (obj instanceof Array) {
-    return obj.reduce((arr, item, i) => {
-      arr[i] = cloneDeep(item);
-      return arr;
-    }, []);
-  }
-
-  if (obj instanceof Object) {
-    return Object.keys(obj).reduce((newObj, key) => {
-      newObj[key] = cloneDeep(obj[key]);
-      return newObj;
-    }, {});
-  }
-
-  return obj;
-};
-
-const isObject = (item) => {
-  return (item && typeof item === 'object' && !Array.isArray(item));
+module.exports = {
+  get,
 };
