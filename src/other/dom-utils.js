@@ -1,21 +1,28 @@
+// src/other/dom-utils.js
+
 /**
- * Creates a DOM element with given attributes and children.
- * @param {string} tag The HTML tag for the element.
- * @param {object} [attributes] An object of attributes to set on the element.
- * @param {...(string|Node)} children Child nodes or strings to append.
- * @returns {HTMLElement} The created element.
+ * Retrieves the value of a specified cookie by its name.
+ *
+ * @param {string} name The name of the cookie to retrieve.
+ * @returns {string | null} The value of the cookie, or null if not found.
  */
-export const createElement = (tag, attributes = {}, ...children) => {
-  const element = document.createElement(tag);
-  for (const [key, value] of Object.entries(attributes)) {
-    element.setAttribute(key, value);
+const getCookie = (name) => {
+  if (typeof document === 'undefined' || typeof name !== 'string' || name === '') {
+    return null;
   }
-  for (const child of children) {
-    if (typeof child === 'string') {
-      element.appendChild(document.createTextNode(child));
-    } else {
-      element.appendChild(child);
+
+  const nameEQ = name + '=';
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) {
+      return decodeURIComponent(c.substring(nameEQ.length, c.length));
     }
   }
-  return element;
+  return null;
+};
+
+module.exports = {
+  getCookie,
 };

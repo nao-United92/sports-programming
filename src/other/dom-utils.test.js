@@ -1,28 +1,64 @@
-import { createElement } from './dom-utils.js';
+// src/other/dom-utils.test.js
 
-describe('createElement', () => {
-  it('should create a simple element', () => {
-    const el = createElement('div');
-    expect(el.tagName).toBe('DIV');
-  });
+const { getCookie } = require('./dom-utils');
 
-  it('should create an element with attributes', () => {
-    const el = createElement('a', { href: '#', id: 'myLink' });
-    expect(el.getAttribute('href')).toBe('#');
-    expect(el.id).toBe('myLink');
-  });
+describe('DOM Utils', () => {
+  describe('getCookie', () => {
+    // Store original document.cookie descriptor
+    const originalCookieDescriptor = Object.getOwnPropertyDescriptor(document, 'cookie');
 
-  it('should create an element with text content', () => {
-    const el = createElement('p', {}, 'Hello world');
-    expect(el.textContent).toBe('Hello world');
-  });
+    beforeEach(() => {
+      // Mock document.cookie for each test
+      Object.defineProperty(document, 'cookie', {
+        get: jest.fn().mockReturnValue('name1=value1; name2=value2; name3=value%203'),
+        configurable: true,
+      });
+    });
 
-  it('should create an element with child elements', () => {
-    const child = createElement('span', {}, 'content');
-    const parent = createElement('div', { class: 'parent' }, child);
-    expect(parent.classList.contains('parent')).toBe(true);
-    expect(parent.children.length).toBe(1);
-    expect(parent.children[0].tagName).toBe('SPAN');
-    expect(parent.children[0].textContent).toBe('content');
+    afterEach(() => {
+      // Restore original document.cookie descriptor
+      if (originalCookieDescriptor) {
+        Object.defineProperty(document, 'cookie', originalCookieDescriptor);
+      }
+    });
+
+    test('should return the value of an existing cookie', () => {
+      expect(getCookie('name1')).toBe('value1');
+      expect(getCookie('name2')).toBe('value2');
+    });
+
+    test('should return the decoded value of an existing cookie with special characters', () => {
+      expect(getCookie('name3')).toBe('value 3');
+    });
+
+    test('should return null for a non-existent cookie', () => {
+      expect(getCookie('nonExistent')).toBeNull();
+    });
+
+    test('should return null for an empty cookie name', () => {
+      expect(getCookie('')).toBeNull();
+    });
+
+    test('should return null for non-string cookie name', () => {
+      expect(getCookie(null)).toBeNull();
+      expect(getCookie(undefined)).toBeNull();
+      expect(getCookie(123)).toBeNull();
+    });
+
+    test('should handle document.cookie being empty', () => {
+      Object.defineProperty(document, 'cookie', {
+        get: jest.fn().mockReturnValue(''),
+        configurable: true,
+      });
+      expect(getCookie('anyName')).toBeNull();
+    });
+
+    test('should handle document.cookie having only spaces', () => {
+      Object.defineProperty(document, 'cookie', {
+        get: jest.fn().mockReturnValue('   '),
+        configurable: true,
+      });
+      expect(getCookie('anyName')).toBeNull();
+    });
   });
 });
