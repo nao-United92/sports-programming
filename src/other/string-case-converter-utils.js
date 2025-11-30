@@ -1,11 +1,31 @@
-export function toCamelCase(str) {
-  return str.replace(/([-_]\w)/g, (g) => g[1].toUpperCase());
-}
+/**
+ * Converts a string to camelCase.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} The camelCased string.
+ */
+export const toCamelCase = (str) => {
+  if (str === null || str === undefined) {
+    return '';
+  }
+  return String(str)
+    .replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')
+    .replace(/([-_ ]+)([a-zA-Z0-9])/g, (g) => g.toUpperCase())
+    .replace(/[-_ ]/g, '');
+};
 
-export function toSnakeCase(str) {
-  return str.replace(/([A-Z])/g, "_" + "$1").toLowerCase();
-}
-
-export function toKebabCase(str) {
-  return str.replace(/([A-Z])/g, "-" + "$1").toLowerCase();
-}
+/**
+ * Converts a string to snake_case.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} The snake_cased string.
+ */
+export const toSnakeCase = (str) => {
+  if (str === null || str === undefined) {
+    return '';
+  }
+  return String(str)
+    .replace(/\s+/g, '_')
+    .replace(/([A-Z])/g, '_$1')
+    .toLowerCase();
+};

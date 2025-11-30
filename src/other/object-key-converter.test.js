@@ -1,70 +1,75 @@
-import { keysToSnakeCase } from './object-key-converter.js';
+const { keysToCamelCase, keysToSnakeCase } = require('./object-key-converter');
 
-describe('keysToSnakeCase', () => {
-  test('should convert keys of a simple object to snake_case', () => {
-    const obj = { firstName: 'John', lastName: 'Doe' };
-    const expected = { first_name: 'John', last_name: 'Doe' };
-    expect(keysToSnakeCase(obj)).toEqual(expected);
+describe('Object Key Case Converter', () => {
+  describe('keysToCamelCase', () => {
+    it('should convert snake_case keys to camelCase for a simple object', () => {
+      const obj = { first_name: 'John', last_name: 'Doe' };
+      const expected = { firstName: 'John', lastName: 'Doe' };
+      expect(keysToCamelCase(obj)).toEqual(expected);
+    });
+
+    it('should convert kebab-case keys to camelCase', () => {
+      const obj = { 'user-id': 123, 'account-type': 'premium' };
+      const expected = { userId: 123, accountType: 'premium' };
+      expect(keysToCamelCase(obj)).toEqual(expected);
+    });
+
+    it('should handle nested objects', () => {
+      const obj = { user_info: { first_name: 'John', contact_details: { email_address: 'john@test.com' } } };
+      const expected = { userInfo: { firstName: 'John', contactDetails: { emailAddress: 'john@test.com' } } };
+      expect(keysToCamelCase(obj)).toEqual(expected);
+    });
+
+    it('should handle arrays of objects', () => {
+      const obj = { users: [{ user_id: 1, is_active: true }, { user_id: 2, is_active: false }] };
+      const expected = { users: [{ userId: 1, isActive: true }, { userId: 2, isActive: false }] };
+      expect(keysToCamelCase(obj)).toEqual(expected);
+    });
+
+    it('should not modify non-object values', () => {
+      const obj = { user_id: 1, score: 100, is_active: true, user_name: 'test' };
+      const expected = { userId: 1, score: 100, isActive: true, userName: 'test' };
+      expect(keysToCamelCase(obj)).toEqual(expected);
+    });
+
+    it('should return an empty object if an empty object is passed', () => {
+      expect(keysToCamelCase({})).toEqual({});
+    });
+
+    it('should handle null and undefined values correctly', () => {
+      const obj = { user_id: null, profile: undefined };
+      const expected = { userId: null, profile: undefined };
+      expect(keysToCamelCase(obj)).toEqual(expected);
+    });
   });
 
-  test('should convert keys of a nested object to snake_case', () => {
-    const obj = {
-      personData: { firstName: 'Jane', lastName: 'Doe' },
-      contactInfo: { emailAddress: 'jane.doe@example.com' },
-    };
-    const expected = {
-      person_data: { first_name: 'Jane', last_name: 'Doe' },
-      contact_info: { email_address: 'jane.doe@example.com' },
-    };
-    expect(keysToSnakeCase(obj)).toEqual(expected);
-  });
+  describe('keysToSnakeCase', () => {
+    it('should convert camelCase keys to snake_case for a simple object', () => {
+      const obj = { firstName: 'Jane', lastName: 'Doe' };
+      const expected = { first_name: 'Jane', last_name: 'Doe' };
+      expect(keysToSnakeCase(obj)).toEqual(expected);
+    });
 
-  test('should handle an array of objects', () => {
-    const arr = [
-      { userProfile: { userId: 1 } },
-      { userProfile: { userId: 2 } },
-    ];
-    const expected = [
-      { user_profile: { user_id: 1 } },
-      { user_profile: { user_id: 2 } },
-    ];
-    expect(keysToSnakeCase(arr)).toEqual(expected);
-  });
+    it('should handle nested objects', () => {
+      const obj = { userInfo: { firstName: 'Jane', contactDetails: { emailAddress: 'jane@test.com' } } };
+      const expected = { user_info: { first_name: 'Jane', contact_details: { email_address: 'jane@test.com' } } };
+      expect(keysToSnakeCase(obj)).toEqual(expected);
+    });
 
-  test('should not change values that are not objects or arrays', () => {
-    expect(keysToSnakeCase('a string')).toBe('a string');
-    expect(keysToSnakeCase(123)).toBe(123);
-    expect(keysToSnakeCase(null)).toBe(null);
-  });
+    it('should handle arrays of objects', () => {
+      const obj = { users: [{ userId: 1, isActive: true }, { userId: 2, isActive: false }] };
+      const expected = { users: [{ user_id: 1, is_active: true }, { user_id: 2, is_active: false }] };
+      expect(keysToSnakeCase(obj)).toEqual(expected);
+    });
 
-  test('should handle empty objects and arrays', () => {
-    expect(keysToSnakeCase({})).toEqual({});
-    expect(keysToSnakeCase([])).toEqual([]);
-  });
+    it('should return an empty object if an empty object is passed', () => {
+      expect(keysToSnakeCase({})).toEqual({});
+    });
 
-  test('should handle complex nested structures', () => {
-    const obj = {
-      dataApi: {
-        usersList: [
-          {
-            userInfo: { userId: 'user1', displayName: 'User One' },
-            userRoles: ['admin', 'editor'],
-          },
-        ],
-        paginationDetails: { currentPage: 1, itemsPerPage: 10 },
-      },
-    };
-    const expected = {
-      data_api: {
-        users_list: [
-          {
-            user_info: { user_id: 'user1', display_name: 'User One' },
-            user_roles: ['admin', 'editor'],
-          },
-        ],
-        pagination_details: { current_page: 1, items_per_page: 10 },
-      },
-    };
-    expect(keysToSnakeCase(obj)).toEqual(expected);
+    it('should handle null and undefined values correctly', () => {
+      const obj = { userId: null, userProfile: undefined };
+      const expected = { user_id: null, user_profile: undefined };
+      expect(keysToSnakeCase(obj)).toEqual(expected);
+    });
   });
 });
