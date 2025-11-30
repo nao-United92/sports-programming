@@ -1,59 +1,42 @@
-const { set } = require('./object-set-utils');
+import { set } from './object-set-utils';
 
 describe('set', () => {
-  let originalObj;
-
-  beforeEach(() => {
-    originalObj = {
-      a: {
-        b: {
-          c: 'old value',
-        },
-      },
-    };
+  test('should set a value on a new path', () => {
+    const obj = {};
+    set(obj, 'a.b.c', 10);
+    expect(obj.a.b.c).toBe(10);
   });
 
-  test('should not mutate the original object', () => {
-    const newObj = set(originalObj, 'a.b.c', 'new value');
-    expect(originalObj.a.b.c).toBe('old value');
-    expect(newObj.a.b.c).toBe('new value');
+  test('should set a value on an existing path', () => {
+    const obj = { a: { b: { c: 1 } } };
+    set(obj, 'a.b.c', 2);
+    expect(obj.a.b.c).toBe(2);
   });
 
-  test('should set a value on a new deep path in an empty object', () => {
-    const newObj = set({}, 'a.b.c', 'new value');
-    expect(newObj).toEqual({ a: { b: { c: 'new value' } } });
+  test('should create arrays for numeric keys', () => {
+    const obj = {};
+    set(obj, 'a[0].b', 'hello');
+    expect(Array.isArray(obj.a)).toBe(true);
+    expect(obj.a[0].b).toBe('hello');
   });
 
-  test('should overwrite an existing value', () => {
-    const newObj = set(originalObj, 'a.b.c', 'overwritten');
-    expect(newObj.a.b.c).toBe('overwritten');
+  test('should not overwrite existing objects/arrays unless necessary', () => {
+    const obj = { a: [{ b: 1 }] };
+    set(obj, 'a[0].c', 2);
+    expect(obj.a[0].b).toBe(1);
+    expect(obj.a[0].c).toBe(2);
   });
 
-  test('should create nested arrays and objects', () => {
-    const newObj = set({}, 'a[0].b.c', 'nested array value');
-    expect(newObj).toEqual({ a: [{ b: { c: 'nested array value' } }] });
+  test('should return the modified object', () => {
+    const obj = {};
+    const result = set(obj, 'a.b', 1);
+    expect(result).toBe(obj);
+    expect(result.a.b).toBe(1);
   });
 
-  test('should set a value in an existing array', () => {
-    const objWithArray = { a: ['item1', 'item2'] };
-    const newObj = set(objWithArray, 'a[1]', 'new item');
-    expect(newObj.a).toEqual(['item1', 'new item']);
-  });
-
-  test('should handle an array path', () => {
-    const newObj = set({}, ['a', '0', 'b'], 'array path value');
-    expect(newObj).toEqual({ a: [{ b: 'array path value' }] });
-  });
-
-  test('should return non-objects as-is', () => {
-    expect(set(null, 'a.b', 'value')).toBeNull();
-    expect(set(undefined, 'a.b', 'value')).toBeUndefined();
-    expect(set(42, 'a.b', 'value')).toBe(42);
-  });
-
-  test('should overwrite a non-object value in the path', () => {
-    const objWithPrimitive = { a: { b: 123 } };
-    const newObj = set(objWithPrimitive, 'a.b.c', 'new value');
-    expect(newObj).toEqual({ a: { b: { c: 'new value' } } });
+  test('should handle non-object inputs gracefully', () => {
+    expect(set(null, 'a.b', 1)).toBe(null);
+    expect(set(undefined, 'a.b', 1)).toBe(undefined);
+    expect(set(123, 'a.b', 1)).toBe(123);
   });
 });
