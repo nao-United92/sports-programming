@@ -1,57 +1,41 @@
-import { uniqueId, uuid } from './unique-id-utils.js';
+// Since uniqueId maintains a module-level state, we need to use jest.isolateModules
+// to ensure each test gets a fresh instance of the module, resetting the counter.
 
 describe('uniqueId', () => {
-  // Note: idCounter is module-scoped and persists across test runs within the same Jest worker.
-  // For truly isolated tests, a mechanism to reset or inject the counter would be ideal.
-  // For this exercise, we'll rely on the incrementing nature and test uniqueness.
+  let uniqueId;
 
-  it('should generate unique IDs without a prefix', () => {
+  beforeEach(() => {
+    // Reset modules to get a fresh idCounter for each test
+    jest.resetModules();
+    uniqueId = require('./unique-id-utils').uniqueId;
+  });
+
+  test('should return a unique ID as a string each time', () => {
     const id1 = uniqueId();
     const id2 = uniqueId();
+    expect(id1).toBe('1');
+    expect(id2).toBe('2');
     expect(id1).not.toBe(id2);
-    expect(id1).toMatch(/^\d+$/); // Should be just numbers
   });
 
-  it('should generate unique IDs with a given prefix', () => {
-    const prefix = 'test_';
-    const id1 = uniqueId(prefix);
-    const id2 = uniqueId(prefix);
-    expect(id1).not.toBe(id2);
-    expect(id1).toMatch(/^test_\d+$/);
-    expect(id2).toMatch(/^test_\d+$/);
+  test('should correctly apply a prefix', () => {
+    const id1 = uniqueId('user_');
+    const id2 = uniqueId('user_');
+    expect(id1).toBe('user_1');
+    expect(id2).toBe('user_2');
   });
 
-  it('should generate different IDs even with the same prefix', () => {
-    const prefix = 'item-';
-    const ids = new Set();
-    for (let i = 0; i < 5; i++) { // Reduced loop count for faster execution in CI/CD
-      ids.add(uniqueId(prefix));
-    }
-    expect(ids.size).toBe(5);
+  test('should increment the same counter regardless of prefix', () => {
+    const id1 = uniqueId('contact_'); // counter = 1
+    const id2 = uniqueId('item_');    // counter = 2
+    const id3 = uniqueId();           // counter = 3
+
+    expect(id1).toBe('contact_1');
+    expect(id2).toBe('item_2');
+    expect(id3).toBe('3');
   });
 
-  it('should handle empty string prefix', () => {
-    const id1 = uniqueId('');
-    const id2 = uniqueId('');
-    expect(id1).not.toBe(id2);
-    expect(id1).toMatch(/^\d+$/);
-  });
-});
-
-describe('uuid', () => {
-  it('should generate a valid UUID v4', () => {
-    const id = uuid();
-    // UUID v4 regex: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
-    // where x is any hexadecimal digit and y is one of 8, 9, A, or B.
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    expect(id).toMatch(uuidRegex);
-  });
-
-  it('should generate unique UUIDs', () => {
-    const ids = new Set();
-    for (let i = 0; i < 1000; i++) {
-      ids.add(uuid());
-    }
-    expect(ids.size).toBe(1000);
+  test('should return a simple number string when no prefix is provided', () => {
+    expect(uniqueId()).toBe('1');
   });
 });

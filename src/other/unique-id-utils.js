@@ -1,18 +1,13 @@
 let idCounter = 0;
 
-export const uniqueId = (prefix = '') => {
-  idCounter++;
-  return `${prefix}${idCounter}`;
-};
-
 /**
- * Generates a UUID (Universally Unique Identifier) version 4.
- * @returns {string} A UUID v4 string.
+ * Generates a unique ID. If a prefix is given, the ID is appended to it.
+ * The uniqueness is guaranteed only for the current session.
+ *
+ * @param {string} [prefix=''] The value to prefix the ID with.
+ * @returns {string} Returns the unique ID.
  */
-export const uuid = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+export const uniqueId = (prefix = '') => {
+  idCounter += 1;
+  return `${prefix}${idCounter}`;
 };
