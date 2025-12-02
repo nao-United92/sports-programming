@@ -1,86 +1,42 @@
 /**
  * Deep clones an object.
- * @param {any} obj The object to deep clone.
- * @returns {any} The deep cloned object.
+ * @param {object} obj The object to clone.
+ * @returns {object} The cloned object.
  */
 export const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
-
-  if (obj instanceof Date) {
-    return new Date(obj.getTime());
-  }
-
-  if (Array.isArray(obj)) {
-    return obj.map(item => deepClone(item));
-  }
-
-  const clonedObj = {};
+  const clone = Array.isArray(obj) ? [] : {};
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      clonedObj[key] = deepClone(obj[key]);
+      clone[key] = deepClone(obj[key]);
     }
   }
-  return clonedObj;
+  return clone;
 };
 
 /**
- * Checks if an object is empty.
- * An object is empty if it has no own enumerable string-keyed properties.
+ * Checks if an object is empty (has no own properties).
  * @param {object} obj The object to check.
  * @returns {boolean} True if the object is empty, false otherwise.
  */
 export const isEmpty = (obj) => {
-  if (obj == null) {
+  if (obj === null || typeof obj !== 'object') {
     return true;
   }
-  return Object.keys(obj).length === 0 && obj.constructor === Object;
+  return Object.keys(obj).length === 0;
 };
 
 /**
- * Performs a deep comparison between two values to determine if they are equivalent.
- * @param {*} a The value to compare.
- * @param {*} b The other value to compare.
- * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * Safely gets a nested property from an object.
+ * @param {object} obj The object to query.
+ * @param {string|string[]} path The path of the property to retrieve.
+ * @param {*} [defaultValue] The value to return if the path is not found.
+ * @returns {*} The value at the path or the default value.
  */
-export const isEqual = (a, b) => {
-  if (a === b) {
-    return true;
-  }
-
-  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') {
-    return false;
-  }
-
-  if (a.constructor !== b.constructor) {
-    return false;
-  }
-
-  if (Array.isArray(a)) {
-    if (a.length !== b.length) {
-      return false;
-    }
-    for (let i = 0; i < a.length; i++) {
-      if (!isEqual(a[i], b[i])) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  for (const key of keysA) {
-    if (!keysB.includes(key) || !isEqual(a[key], b[key])) {
-      return false;
-    }
-  }
-
-  return true;
+export const get = (obj, path, defaultValue = undefined) => {
+  const pathArray = Array.isArray(path) ? path : path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(key => key);
+  const result = pathArray.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
+  return result === undefined ? defaultValue : result;
 };
