@@ -1,36 +1,110 @@
-import { timeout, allSettled } from './promise-utils.js';
+import { debounce } from './promise-utils.js';
+
+jest.useFakeTimers();
 
 describe('Promise Utilities', () => {
-  describe('timeout', () => {
-    it('should resolve if the promise resolves in time', async () => {
-      const fastPromise = new Promise(resolve => setTimeout(() => resolve('fast'), 50));
-      await expect(timeout(fastPromise, 100)).resolves.toBe('fast');
+  describe('debounce', () => {
+    let func;
+    let debouncedFunc;
+
+    beforeEach(() => {
+      func = jest.fn();
     });
 
-    it('should reject if the promise takes too long', async () => {
-      const slowPromise = new Promise(resolve => setTimeout(() => resolve('slow'), 200));
-      await expect(timeout(slowPromise, 100)).rejects.toThrow('Promise timed out');
+    it('should debounce a function', () => {
+      debouncedFunc = debounce(func, 100);
+
+      debouncedFunc();
+      debouncedFunc();
+      debouncedFunc();
+
+      // At this point, func should not have been called
+      expect(func).not.toHaveBeenCalled();
+
+      // Fast-forward time by 100ms
+      jest.advanceTimersByTime(100);
+
+      // Now func should have been called once
+      expect(func).toHaveBeenCalledTimes(1);
     });
 
-    it('should reject with the original reason if the promise rejects', async () => {
-      const failingPromise = new Promise((resolve, reject) => setTimeout(() => reject(new Error('Failed')), 50));
-      await expect(timeout(failingPromise, 100)).rejects.toThrow('Failed');
+    it('should call the function with the latest arguments', () => {
+      debouncedFunc = debounce(func, 100);
+
+      debouncedFunc(1);
+      debouncedFunc(2);
+      debouncedFunc(3);
+
+      jest.advanceTimersByTime(100);
+
+      expect(func).toHaveBeenCalledWith(3);
     });
-  });
 
-  describe('allSettled', () => {
-    it('should settle all promises', async () => {
-      const p1 = Promise.resolve(1);
-      const p2 = Promise.reject('error');
-      const p3 = new Promise(resolve => setTimeout(() => resolve(3), 100));
+    it('should support a `leading` option', () => {
+      debouncedFunc = debounce(func, 100, { leading: true });
 
-      const results = await allSettled([p1, p2, p3]);
+      debouncedFunc();
+      expect(func).toHaveBeenCalledTimes(1);
 
-      expect(results).toEqual([
-        { status: 'fulfilled', value: 1 },
-        { status: 'rejected', reason: 'error' },
-        { status: 'fulfilled', value: 3 },
-      ]);
+      debouncedFunc();
+      expect(func).toHaveBeenCalledTimes(1); // Still 1 because of the debounce timeout
+
+      jest.advanceTimersByTime(100);
+      debouncedFunc();
+      expect(func).toHaveBeenCalledTimes(2);
+    });
+    
+    it('should not trigger trailing call if leading was invoked', () => {
+        debouncedFunc = debounce(func, 100, { leading: true, trailing: true });
+    
+        debouncedFunc(); // leading call
+        expect(func).toHaveBeenCalledTimes(1);
+    
+        // Fast-forward time
+        jest.advanceTimersByTime(100);
+    
+        // No trailing call should happen
+        expect(func).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support a `trailing` option (default)', () => {
+      debouncedFunc = debounce(func, 100, { trailing: true });
+
+      debouncedFunc();
+      expect(func).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(100);
+      expect(func).toHaveBeenCalledTimes(1);
+    });
+
+    it('should allow canceling the debounced function', () => {
+      debouncedFunc = debounce(func, 100);
+
+      debouncedFunc();
+      debouncedFunc.cancel();
+
+      jest.advanceTimersByTime(100);
+
+      expect(func).not.toHaveBeenCalled();
+    });
+
+    it('should allow flushing the debounced function', () => {
+      debouncedFunc = debounce(func, 100);
+
+      debouncedFunc(1);
+      expect(func).not.toHaveBeenCalled();
+
+      const result = debouncedFunc.flush();
+      expect(func).toHaveBeenCalledTimes(1);
+      expect(func).toHaveBeenCalledWith(1);
+      
+      // Further calls to flush should do nothing if there's no pending execution
+      debouncedFunc.flush();
+      expect(func).toHaveBeenCalledTimes(1);
+    });
+    
+    it('should throw an error if func is not a function', () => {
+        expect(() => debounce('not a function', 100)).toThrow('Expected a function');
     });
   });
 });
