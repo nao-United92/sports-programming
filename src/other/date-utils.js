@@ -1,23 +1,23 @@
-// src/other/date-utils.js
+export const formatDate = (date, formatString = 'YYYY-MM-DD') => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  const hours = d.getHours().toString().padStart(2, '0');
+  const minutes = d.getMinutes().toString().padStart(2, '0');
+  const seconds = d.getSeconds().toString().padStart(2, '0');
 
-/**
- * Formats a Date object into a 'YYYY-MM-DD' string.
- *
- * @param {Date} date The Date object to format.
- * @returns {string} The formatted date string.
- */
-const formatDate = (date) => {
-  if (!(date instanceof Date) || isNaN(date)) {
-    return '';
-  }
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
+  return formatString
+    .replace(/YYYY/g, year)
+    .replace(/MM/g, month)
+    .replace(/DD/g, day)
+    .replace(/HH/g, hours)
+    .replace(/mm/g, minutes)
+    .replace(/ss/g, seconds);
 };
 
-module.exports = {
-  formatDate,
+export const addDays = (date, days) => {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
 };
