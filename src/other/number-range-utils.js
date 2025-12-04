@@ -1,31 +1,34 @@
-/**
- * Checks if `number` is between `start` and `end` (exclusive of `end`).
- * If `end` is not specified, it's set to `start` and `start` is set to `0`.
- * If `start` is greater than `end`, the arguments are swapped to ensure the range is always valid.
- *
- * @param {number} number The number to check.
- * @param {number} [start=0] The start of the range.
- * @param {number} [end] The end of the range.
- * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
- */
-export const inRange = (number, start = 0, end) => {
-  if (typeof number !== 'number' || isNaN(number)) {
-    return false;
+export const clamp = (number, lower, upper) => {
+  number = +number;
+  lower = +lower;
+  upper = +upper;
+  
+  lower = lower === lower ? lower : 0;
+  upper = upper === upper ? upper : 0;
+
+  if (lower > upper) {
+    [lower, upper] = [upper, lower];
   }
 
+  if (number !== number) { // if number is NaN, return NaN
+    return number;
+  }
+  if (number > upper) return upper;
+  if (number < lower) return lower;
+  return number;
+};
+
+export const inRange = (number, start, end) => {
+  number = +number;
   if (end === undefined) {
     end = start;
     start = 0;
   }
+  start = +start;
+  end = +end;
 
-  if (typeof start !== 'number' || isNaN(start) || typeof end !== 'number' || isNaN(end)) {
-    return false; // If start or end are not valid numbers after defaulting
-  }
-
-  // Ensure start is always less than or equal to end
   if (start > end) {
     [start, end] = [end, start];
   }
-
   return number >= start && number < end;
 };
