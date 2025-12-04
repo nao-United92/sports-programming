@@ -1,53 +1,39 @@
-/**
- * Gets the value at a nested path of an object. If the resolved value is
- * `undefined`, the `defaultValue` is returned in its place.
- *
- * @param {object} obj The object to query.
- * @param {string|string[]} path The path of the property to retrieve (e.g., 'a.b[0].c').
- * @param {*} [defaultValue] The value returned for `undefined` resolved values.
- * @returns {*} Returns the resolved value.
- */
-export const get = (obj, path, defaultValue) => {
-  const pathArray = Array.isArray(path) ? path : path.replace(/\[(\d+)\]/g, '.$1').split('.');
-
-  let result = obj;
-  for (const key of pathArray) {
-    result = result?.[key];
-    if (result === undefined) {
-      return defaultValue;
-    }
-  }
-  return result;
+const stringToPath = (string) => {
+  if (typeof string !== 'string') return string;
+  // This is a simple implementation. A robust one would handle brackets, quotes, etc.
+  return string.replace(/\[/g, '.').replace(/\]/g, '').split('.').filter(Boolean);
 };
 
-/**
- * Sets the value at a nested path of an object. If a portion of the path
- * doesn't exist, it's created. Arrays are created for missing index properties.
- *
- * @param {object} obj The object to modify.
- * @param {string|string[]} path The path of the property to set.
- * @param {*} value The value to set.
- * @returns {object} Returns the modified object.
- */
-export const set = (obj, path, value) => {
-  const pathArray = Array.isArray(path) ? path : path.replace(/\[(\d+)\]/g, '.$1').split('.');
+export const get = (obj, path, defaultValue) => {
+  const pathArray = Array.isArray(path) ? path : stringToPath(path);
+  let current = obj;
+  for (let i = 0; i < pathArray.length; i++) {
+    if (current === null || current === undefined) {
+      return defaultValue;
+    }
+    current = current[pathArray[i]];
+  }
+  return current === undefined ? defaultValue : current;
+};
 
+export const set = (obj, path, value) => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+  const pathArray = Array.isArray(path) ? path : stringToPath(path);
   let current = obj;
   for (let i = 0; i < pathArray.length - 1; i++) {
     const key = pathArray[i];
-    const nextKey = pathArray[i + 1];
-
-    if (current[key] === undefined || current[key] === null) {
-      // If the next key looks like an array index, create an array, otherwise an object.
-      if (/^\d+$/.test(nextKey)) {
-        current[key] = [];
-      } else {
-        current[key] = {};
-      }
+    if (current[key] === null || typeof current[key] !== 'object') {
+      const nextKey = pathArray[i + 1];
+      // Check if the next key is a number to decide between object or array
+      current[key] = /^\d+$/.test(nextKey) ? [] : {};
     }
     current = current[key];
   }
-
-  current[pathArray[pathArray.length - 1]] = value;
+  const lastKey = pathArray[pathArray.length - 1];
+  if (lastKey !== undefined) {
+    current[lastKey] = value;
+  }
   return obj;
 };
