@@ -1,39 +1,48 @@
-/**
- * Sets a cookie.
- * @param {string} name - The name of the cookie.
- * @param {string} value - The value of the cookie.
- * @param {number} [days] - The number of days until the cookie expires.
- */
-export const setCookie = (name, value, days) => {
-  let expires = '';
-  if (days) {
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = '; expires=' + date.toUTCString();
-  }
-  document.cookie = name + '=' + (value || '')  + expires + '; path=/';
-};
-
-/**
- * Gets a cookie value by name.
- * @param {string} name - The name of the cookie.
- * @returns {string|null} The cookie value or null if not found.
- */
 export const getCookie = (name) => {
+  if (typeof document === 'undefined' || !document.cookie) {
+    return null;
+  }
   const nameEQ = name + '=';
   const ca = document.cookie.split(';');
-  for(let i=0; i < ca.length; i++) {
+  for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    if (c.indexOf(nameEQ) === 0) {
+      return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
   }
   return null;
 };
 
-/**
- * Deletes a cookie by name.
- * @param {string} name - The name of the cookie to delete.
- */
-export const deleteCookie = (name) => {
-  document.cookie = name + '=; Max-Age=-99999999;';
+export const setCookie = (name, value, options = {}) => {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  let cookieString = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+
+  if (options.expires) {
+    let expires = options.expires;
+    if (typeof expires === 'number') {
+      const d = new Date();
+      d.setTime(d.getTime() + expires * 1000); // expires in seconds
+      expires = d;
+    }
+    if (expires instanceof Date) {
+      cookieString += '; expires=' + expires.toUTCString();
+    }
+  }
+  if (options.path) {
+    cookieString += '; path=' + options.path;
+  }
+  if (options.domain) {
+    cookieString += '; domain=' + options.domain;
+  }
+  if (options.secure) {
+    cookieString += '; secure';
+  }
+  if (options.samesite) {
+    cookieString += '; samesite=' + options.samesite;
+  }
+
+  document.cookie = cookieString;
 };
