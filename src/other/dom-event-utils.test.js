@@ -1,77 +1,60 @@
-// src/other/dom-event-utils.test.js
+import { on, off } from './dom-event-utils.js';
 
-const { addEventListener } = require('./dom-event-utils');
-
-describe('DOM Event Utils', () => {
-  let mockElement;
-  let mockListener;
-  let consoleWarnSpy;
+describe('DOM Event Utilities', () => {
+  let element;
+  let handler;
 
   beforeEach(() => {
-    mockElement = {
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(), // Also mock remove for completeness, though not used in addEventListener
-    };
-    mockListener = jest.fn();
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    // Create a mock DOM element for testing
+    element = document.createElement('button');
+    handler = jest.fn();
+    document.body.appendChild(element);
   });
 
   afterEach(() => {
-    consoleWarnSpy.mockRestore();
+    // Clean up the mock DOM element
+    document.body.removeChild(element);
   });
 
-  test('should attach an event listener to a valid element', () => {
-    addEventListener(mockElement, 'click', mockListener);
-    expect(mockElement.addEventListener).toHaveBeenCalledTimes(1);
-    expect(mockElement.addEventListener).toHaveBeenCalledWith('click', mockListener, undefined);
-    expect(consoleWarnSpy).not.toHaveBeenCalled();
+  describe('on', () => {
+    it('should add an event listener to the element', () => {
+      on(element, 'click', handler);
+      element.click(); // Simulate a click event
+      expect(handler).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not add an event listener if element is null/undefined', () => {
+      on(null, 'click', handler);
+      element.click();
+      expect(handler).not.toHaveBeenCalled();
+    });
+
+    it('should pass event object to the handler', () => {
+      on(element, 'click', handler);
+      element.click();
+      expect(handler).toHaveBeenCalledWith(expect.any(MouseEvent));
+    });
   });
 
-  test('should attach an event listener with options', () => {
-    const options = { once: true, capture: true };
-    addEventListener(mockElement, 'mouseover', mockListener, options);
-    expect(mockElement.addEventListener).toHaveBeenCalledTimes(1);
-    expect(mockElement.addEventListener).toHaveBeenCalledWith('mouseover', mockListener, options);
-    expect(consoleWarnSpy).not.toHaveBeenCalled();
-  });
+  describe('off', () => {
+    it('should remove an event listener from the element', () => {
+      on(element, 'click', handler);
+      element.click();
+      expect(handler).toHaveBeenCalledTimes(1);
 
-  test('should not attach a listener if element is null or undefined', () => {
-    addEventListener(null, 'click', mockListener);
-    expect(mockElement.addEventListener).not.toHaveBeenCalled();
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      off(element, 'click', handler);
+      element.click(); // Simulate another click event
+      expect(handler).toHaveBeenCalledTimes(1); // Should not be called again
+    });
 
-    consoleWarnSpy.mockClear();
-    addEventListener(undefined, 'click', mockListener);
-    expect(mockElement.addEventListener).not.toHaveBeenCalled();
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-  });
+    it('should not remove an event listener if element is null/undefined', () => {
+      on(element, 'click', handler);
+      element.click();
+      expect(handler).toHaveBeenCalledTimes(1);
 
-  test('should not attach a listener if element does not have addEventListener method', () => {
-    const invalidElement = {};
-    addEventListener(invalidElement, 'click', mockListener);
-    expect(mockElement.addEventListener).not.toHaveBeenCalled();
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-  });
-
-  test('should not attach a listener if eventType is invalid', () => {
-    addEventListener(mockElement, null, mockListener);
-    expect(mockElement.addEventListener).not.toHaveBeenCalled();
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-
-    consoleWarnSpy.mockClear();
-    addEventListener(mockElement, '', mockListener);
-    expect(mockElement.addEventListener).not.toHaveBeenCalled();
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-  });
-
-  test('should not attach a listener if listener is invalid', () => {
-    addEventListener(mockElement, 'click', null);
-    expect(mockElement.addEventListener).not.toHaveBeenCalled();
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-
-    consoleWarnSpy.mockClear();
-    addEventListener(mockElement, 'click', 'not a function');
-    expect(mockElement.addEventListener).not.toHaveBeenCalled();
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      off(null, 'click', handler);
+      element.click();
+      expect(handler).toHaveBeenCalledTimes(2); // Should still be called
+    });
   });
 });

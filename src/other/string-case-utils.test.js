@@ -1,58 +1,60 @@
-import { capitalize, toCamelCase, toKebabCase, toSnakeCase } from './string-case-utils.js';
+import { camelCase, kebabCase, snakeCase } from './string-case-utils.js';
 
 describe('String Case Utilities', () => {
-  describe('capitalize', () => {
-    it('should capitalize the first letter', () => {
-      expect(capitalize('fooBar')).toBe('FooBar');
-      expect(capitalize('hello world')).toBe('Hello world');
+  describe('camelCase', () => {
+    it('should convert kebab-case to camelCase', () => {
+      expect(camelCase('foo-bar')).toBe('fooBar');
     });
-    it('should handle empty or invalid input', () => {
-      expect(capitalize('')).toBe('');
-      expect(capitalize(null)).toBe('');
+    it('should convert snake_case to camelCase', () => {
+      expect(camelCase('__FOO_BAR__')).toBe('fooBar');
     });
-  });
-
-  describe('toCamelCase', () => {
-    it('should convert various cases to camelCase', () => {
-      expect(toCamelCase('foo-bar')).toBe('fooBar');
-      expect(toCamelCase('foo_bar')).toBe('fooBar');
-      expect(toCamelCase('Foo Bar')).toBe('fooBar');
-      expect(toCamelCase('FOO BAR')).toBe('fooBar');
-      expect(toCamelCase('--FOO-BAR--')).toBe('fooBar');
+    it('should convert space-separated to camelCase', () => {
+      expect(camelCase('Foo Bar')).toBe('fooBar');
     });
-     it('should handle empty or invalid input', () => {
-      expect(toCamelCase('')).toBe('');
-      expect(toCamelCase(null)).toBe('');
+    it('should handle already camelCased strings', () => {
+      expect(camelCase('fooBar')).toBe('fooBar');
+    });
+    it('should handle PascalCase strings', () => {
+      expect(camelCase('FooBar')).toBe('fooBar');
+    });
+    it('should return an empty string for empty input', () => {
+      expect(camelCase('')).toBe('');
     });
   });
 
-  describe('toKebabCase', () => {
-    it('should convert various cases to kebab-case', () => {
-      expect(toKebabCase('fooBar')).toBe('foo-bar');
-      expect(toKebabCase('FooBar')).toBe('foo-bar');
-      expect(toKebabCase('foo_bar')).toBe('foo-bar');
-      expect(toKebabCase('Foo Bar')).toBe('foo-bar');
-      expect(toKebabCase('FOO BAR')).toBe('foo-bar');
-      expect(toKebabCase('--FOO-BAR--')).toBe('foo-bar');
+  describe('kebabCase', () => {
+    it('should convert camelCase to kebab-case', () => {
+      expect(kebabCase('fooBar')).toBe('foo-bar');
     });
-     it('should handle empty or invalid input', () => {
-      expect(toKebabCase('')).toBe('');
-      expect(toKebabCase(null)).toBe('');
+    it('should convert snake_case to kebab-case', () => {
+      expect(kebabCase('__FOO_BAR__')).toBe('foo-bar');
+    });
+    it('should convert space-separated to kebab-case', () => {
+      expect(kebabCase('Foo Bar')).toBe('foo-bar');
+    });
+    it('should handle PascalCase strings', () => {
+      expect(kebabCase('FooBar')).toBe('foo-bar');
+    });
+    it('should return an empty string for empty input', () => {
+      expect(kebabCase('')).toBe('');
     });
   });
 
-  describe('toSnakeCase', () => {
-    it('should convert various cases to snake_case', () => {
-      expect(toSnakeCase('fooBar')).toBe('foo_bar');
-      expect(toSnakeCase('FooBar')).toBe('foo_bar');
-      expect(toSnakeCase('foo-bar')).toBe('foo_bar');
-      expect(toSnakeCase('Foo Bar')).toBe('foo_bar');
-      expect(toSnakeCase('FOO BAR')).toBe('foo_bar');
-      expect(toSnakeCase('--FOO-BAR--')).toBe('foo_bar');
+  describe('snakeCase', () => {
+    it('should convert camelCase to snake_case', () => {
+      expect(snakeCase('fooBar')).toBe('foo_bar');
     });
-     it('should handle empty or invalid input', () => {
-      expect(toSnakeCase('')).toBe('');
-      expect(toSnakeCase(null)).toBe('');
+    it('should convert kebab-case to snake_case', () => {
+      expect(snakeCase('--foo-bar--')).toBe('foo_bar');
+    });
+    it('should convert space-separated to snake_case', () => {
+      expect(snakeCase('Foo Bar')).toBe('foo_bar');
+    });
+    it('should handle PascalCase strings', () => {
+      expect(snakeCase('FooBar')).toBe('foo_bar');
+    });
+    it('should return an empty string for empty input', () => {
+      expect(snakeCase('')).toBe('');
     });
   });
 });

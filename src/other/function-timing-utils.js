@@ -1,43 +1,36 @@
-
-/**
- * Debounce function
- *
- * @param {Function} func
- * @param {number} wait
- * @param {boolean} immediate
- * @returns {Function}
- */
-export function debounce(func, wait, immediate) {
+export const debounce = (func, wait, immediate = false) => {
   let timeout;
-  return function() {
-    const context = this, args = arguments;
-    const later = function() {
+
+  return function(...args) {
+    const context = this;
+    const later = () => {
       timeout = null;
-      if (!immediate) func.apply(context, args);
+      if (!immediate) {
+        func.apply(context, args);
+      }
     };
+
     const callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-}
 
-/**
- * Throttle function
- *
- * @param {Function} func
- * @param {number} limit
- * @returns {Function}
- */
-export function throttle(func, limit) {
-  let inThrottle;
-  return function() {
-    const args = arguments;
+    if (callNow) {
+      func.apply(context, args);
+    }
+  };
+};
+
+export const throttle = (func, wait) => {
+  let inThrottle = false;
+
+  return function(...args) {
     const context = this;
     if (!inThrottle) {
       func.apply(context, args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => {
+        inThrottle = false;
+      }, wait);
     }
   };
-}
+};

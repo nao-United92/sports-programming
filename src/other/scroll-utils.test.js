@@ -1,68 +1,80 @@
-// This file is for browser environment.
-// You should run this file in browser.
-const assert = require('assert');
-const { scrollToElement } = require('./scroll-utils.js');
+import { scrollToTop, scrollToElement } from './scroll-utils.js';
 
-const runTests = async () => {
-  // Setup: Create some elements to scroll to
-  document.body.innerHTML = `
-    <div style="height: 1500px;"></div>
-    <div id="target-element" style="height: 200px; background: lightblue;">Target Element</div>
-    <div style="height: 1500px;"></div>
-  `;
+describe('Scroll Utilities', () => {
+  // Mock window.scrollTo and Element.prototype.scrollIntoView
+  const originalScrollTo = window.scrollTo;
+  const originalScrollIntoView = Element.prototype.scrollIntoView;
 
-  // Test 1: Basic scroll to element
-  await new Promise(resolve => {
-    window.scrollTo(0, 0); // Scroll to top first
-    setTimeout(() => { // Give a moment for scroll to settle
-      scrollToElement('target-element');
-      // Cannot directly assert scroll position due to 'smooth' behavior and async nature
-      // Manual verification is needed for smooth scroll.
-      // For 'auto' behavior, we could check window.pageYOffset after a short delay.
-      console.log('Test 1: Scrolled to target-element (smooth). Please verify manually.');
-      resolve();
-    }, 100);
+  beforeAll(() => {
+    window.scrollTo = jest.fn();
+    Element.prototype.scrollIntoView = jest.fn();
   });
 
-  // Test 2: Scroll with offset
-  await new Promise(resolve => {
-    window.scrollTo(0, 0);
-    setTimeout(() => {
-      scrollToElement('target-element', 50);
-      console.log('Test 2: Scrolled to target-element with 50px offset (smooth). Please verify manually.');
-      resolve();
-    }, 100);
+  afterAll(() => {
+    window.scrollTo = originalScrollTo;
+    Element.prototype.scrollIntoView = originalScrollIntoView;
   });
 
-  // Test 3: Scroll with 'auto' behavior
-  await new Promise(resolve => {
-    window.scrollTo(0, 0);
-    setTimeout(() => {
-      scrollToElement('target-element', 0, 'auto');
-      // For 'auto' behavior, we can assert more reliably
-      setTimeout(() => {
-        const targetElement = document.getElementById('target-element');
-        const expectedScrollTop = targetElement.getBoundingClientRect().top + window.pageYOffset;
-        assert.ok(Math.abs(window.pageYOffset - expectedScrollTop) < 5, 'Test 3 Failed: Auto scroll position incorrect');
-        console.log('Test 3: Scrolled to target-element (auto). Verified automatically.');
-        resolve();
-      }, 50); // Small delay for 'auto' scroll to complete
-    }, 100);
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  // Test 4: Element not found
-  const originalWarn = console.warn;
-  let warnCalled = false;
-  console.warn = (msg) => {
-    if (msg.includes('Element with ID "non-existent" not found.')) {
-      warnCalled = true;
-    }
-  };
-  scrollToElement('non-existent');
-  assert.ok(warnCalled, 'Test 4 Failed: Should warn if element not found');
-  console.warn = originalWarn; // Restore original warn
+  describe('scrollToTop', () => {
+    it('should call window.scrollTo with top: 0 and left: 0', () => {
+      scrollToTop();
+      expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, left: 0 });
+    });
 
-  console.log('All scroll-utils tests completed. Manual verification may be required for smooth behavior.');
-};
+    it('should pass options to window.scrollTo', () => {
+      const options = { behavior: 'smooth' };
+      scrollToTop(options);
+      expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'smooth' });
+    });
 
-runTests();
+    it('should not throw error if window is undefined', () => {
+      const originalWindow = global.window;
+      delete global.window;
+      expect(() => scrollToTop()).not.toThrow();
+      global.window = originalWindow;
+    });
+  });
+
+  describe('scrollToElement', () => {
+    let mockElement;
+
+    beforeEach(() => {
+      mockElement = document.createElement('div');
+      document.body.appendChild(mockElement);
+    });
+
+    afterEach(() => {
+      document.body.removeChild(mockElement);
+    });
+
+    it('should call scrollIntoView on the given element', () => {
+      scrollToElement(mockElement);
+      expect(mockElement.scrollIntoView).toHaveBeenCalledTimes(1);
+      expect(mockElement.scrollIntoView).toHaveBeenCalledWith({});
+    });
+
+    it('should pass options to scrollIntoView', () => {
+      const options = { behavior: 'smooth', block: 'center' };
+      scrollToElement(mockElement, options);
+      expect(mockElement.scrollIntoView).toHaveBeenCalledWith(options);
+    });
+
+    it('should not throw error if element is null/undefined', () => {
+      expect(() => scrollToElement(null)).not.toThrow();
+      expect(() => scrollToElement(undefined)).not.toThrow();
+      expect(mockElement.scrollIntoView).not.toHaveBeenCalled();
+    });
+
+    it('should not throw error if window is undefined', () => {
+      const originalWindow = global.window;
+      delete global.window;
+      expect(() => scrollToElement(mockElement)).not.toThrow();
+      expect(mockElement.scrollIntoView).not.toHaveBeenCalled();
+      global.window = originalWindow;
+    });
+  });
+});

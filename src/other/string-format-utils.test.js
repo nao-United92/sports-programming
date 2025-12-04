@@ -1,40 +1,55 @@
-// src/other/string-format-utils.test.js
+import { capitalize, truncate } from './string-format-utils.js';
 
-const { formatCurrency } = require('./string-format-utils');
+describe('capitalize', () => {
+  it('should capitalize the first letter of a string and lowercase the rest', () => {
+    expect(capitalize('hello world')).toBe('Hello world');
+  });
 
-describe('String Format Utils', () => {
-  describe('formatCurrency', () => {
-    test('should format a number as USD currency by default', () => {
-      expect(formatCurrency(1234.56)).toBe('$1,234.56');
-      expect(formatCurrency(100)).toBe('$100.00');
-      expect(formatCurrency(0)).toBe('$0.00');
-      expect(formatCurrency(-123.45)).toBe('-$123.45');
-    });
+  it('should handle an already capitalized string', () => {
+    expect(capitalize('Hello world')).toBe('Hello world');
+  });
 
-    test('should format with a specified currency symbol', () => {
-      expect(formatCurrency(1234.56, 'EUR', 'de-DE')).toBe('1.234,56 €');
-      expect(formatCurrency(789.01, 'JPY', 'ja-JP')).toBe('￥789'); // JPY has no decimal places
-    });
+  it('should handle a fully uppercase string', () => {
+    expect(capitalize('HELLO WORLD')).toBe('Hello world');
+  });
 
-    test('should handle different locales', () => {
-      expect(formatCurrency(1234.56, 'USD', 'en-GB')).toBe('US$1,234.56');
-      expect(formatCurrency(1234.56, 'USD', 'fr-FR')).toBe('1 234,56 $US');
-    });
+  it('should return an empty string for empty input', () => {
+    expect(capitalize('')).toBe('');
+  });
 
-    test('should return an empty string for non-numeric inputs', () => {
-      expect(formatCurrency(null)).toBe('');
-      expect(formatCurrency(undefined)).toBe('');
-      expect(formatCurrency('abc')).toBe('');
-      expect(formatCurrency({})).toBe('');
-    });
+  it('should handle non-string inputs gracefully', () => {
+    expect(capitalize(null)).toBe('');
+    expect(capitalize(undefined)).toBe('');
+    expect(capitalize(123)).toBe('');
+  });
+});
 
-    test('should handle large numbers', () => {
-      expect(formatCurrency(123456789.123, 'USD')).toBe('$123,456,789.12');
-    });
+describe('truncate', () => {
+  const str = 'hi-diddly-ho there, neighborino';
 
-    test('should handle numbers with more than two decimal places', () => {
-      expect(formatCurrency(123.456, 'USD')).toBe('$123.46');
-      expect(formatCurrency(123.454, 'USD')).toBe('$123.45');
-    });
+  it('should truncate a string to a specified length with default omission', () => {
+    expect(truncate(str, { length: 24 })).toBe('hi-diddly-ho there,...');
+  });
+
+  it('should not truncate if string is shorter than length', () => {
+    expect(truncate(str, { length: 100 })).toBe(str);
+  });
+
+  it('should use a custom omission string', () => {
+    expect(truncate(str, { length: 24, omission: ' [...]' })).toBe('hi-diddly-ho t [...]');
+  });
+
+  it('should use default length if not provided', () => {
+    // default length is 30
+    expect(truncate(str)).toBe('hi-diddly-ho there, neighbo...');
+  });
+
+  it('should handle length being smaller than omission length', () => {
+    expect(truncate(str, { length: 5, omission: '--------' })).toBe('-----');
+  });
+
+  it('should return an empty string for non-string inputs', () => {
+    expect(truncate(null)).toBe('');
+    expect(truncate(undefined)).toBe('');
   });
 });

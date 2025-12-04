@@ -1,47 +1,74 @@
-// src/other/random-utils.test.js
+import { random, shuffle } from './random-utils.js';
 
-const { getRandomInt } = require('./random-utils');
+describe('random', () => {
+  it('should generate a random integer within a specified range', () => {
+    const num = random(1, 10);
+    expect(num).toBeGreaterThanOrEqual(1);
+    expect(num).toBeLessThanOrEqual(10);
+    expect(Number.isInteger(num)).toBe(true);
+  });
 
-describe('Random Utils', () => {
-  describe('getRandomInt', () => {
-    test('should return an integer within the specified inclusive range', () => {
-      const min = 1;
-      const max = 10;
-      for (let i = 0; i < 100; i++) {
-        const result = getRandomInt(min, max);
-        expect(result).toBeGreaterThanOrEqual(min);
-        expect(result).toBeLessThanOrEqual(max);
-        expect(Number.isInteger(result)).toBe(true);
+  it('should generate a random float within a specified range', () => {
+    const num = random(1, 10, true);
+    expect(num).toBeGreaterThanOrEqual(1);
+    expect(num).toBeLessThanOrEqual(10);
+    expect(Number.isInteger(num)).toBe(false);
+  });
+
+  it('should generate a random integer between 0 and upper when lower is omitted', () => {
+    const num = random(5); // upper = 5, lower = 0
+    expect(num).toBeGreaterThanOrEqual(0);
+    expect(num).toBeLessThanOrEqual(5);
+    expect(Number.isInteger(num)).toBe(true);
+  });
+
+  it('should generate a random float between 0 and upper when lower is omitted', () => {
+    const num = random(5, true); // upper = 5, lower = 0
+    expect(num).toBeGreaterThanOrEqual(0);
+    expect(num).toBeLessThanOrEqual(5);
+    expect(Number.isInteger(num)).toBe(false);
+  });
+
+  it('should handle negative ranges', () => {
+    const num = random(-10, -5);
+    expect(num).toBeGreaterThanOrEqual(-10);
+    expect(num).toBeLessThanOrEqual(-5);
+    expect(Number.isInteger(num)).toBe(true);
+  });
+});
+
+describe('shuffle', () => {
+  it('should return a new array', () => {
+    const originalArray = [1, 2, 3, 4, 5];
+    const shuffledArray = shuffle(originalArray);
+    expect(shuffledArray).not.toBe(originalArray);
+  });
+
+  it('should contain the same elements as the original array', () => {
+    const originalArray = [1, 2, 3, 4, 5];
+    const shuffledArray = shuffle(originalArray);
+    expect(shuffledArray.sort()).toEqual(originalArray.sort());
+  });
+
+  it('should shuffle the array (order should be different most of the time)', () => {
+    const originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let isShuffled = false;
+    // Run multiple times to increase confidence, but it's still probabilistic
+    for (let i = 0; i < 10; i++) {
+      const shuffledArray = shuffle(originalArray);
+      if (JSON.stringify(shuffledArray) !== JSON.stringify(originalArray)) {
+        isShuffled = true;
+        break;
       }
-    });
+    }
+    expect(isShuffled).toBe(true);
+  });
 
-    test('should handle negative ranges', () => {
-      const min = -10;
-      const max = -1;
-      for (let i = 0; i < 100; i++) {
-        const result = getRandomInt(min, max);
-        expect(result).toBeGreaterThanOrEqual(min);
-        expect(result).toBeLessThanOrEqual(max);
-        expect(Number.isInteger(result)).toBe(true);
-      }
-    });
+  it('should handle an empty array', () => {
+    expect(shuffle([])).toEqual([]);
+  });
 
-    test('should handle range where min equals max', () => {
-      expect(getRandomInt(5, 5)).toBe(5);
-    });
-
-    test('should return NaN for non-numeric inputs', () => {
-      expect(getRandomInt('a', 10)).toBeNaN();
-      expect(getRandomInt(1, 'b')).toBeNaN();
-      expect(getRandomInt(null, 10)).toBeNaN();
-      expect(getRandomInt(1, undefined)).toBeNaN();
-    });
-
-    test('should handle floating point min/max by flooring/ceiling', () => {
-      const result = getRandomInt(1.1, 10.9);
-      expect(result).toBeGreaterThanOrEqual(2); // ceil(1.1)
-      expect(result).toBeLessThanOrEqual(10); // floor(10.9)
-      expect(Number.isInteger(result)).toBe(true);
-    });
+  it('should handle an array with one element', () => {
+    expect(shuffle([1])).toEqual([1]);
   });
 });

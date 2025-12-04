@@ -1,21 +1,33 @@
-// src/other/random-utils.js
-
-/**
- * Generates a random integer within a specified range (inclusive).
- *
- * @param {number} min The minimum value (inclusive).
- * @param {number} max The maximum value (inclusive).
- * @returns {number} A random integer between min and max.
- */
-const getRandomInt = (min, max) => {
-  if (typeof min !== 'number' || typeof max !== 'number' || isNaN(min) || isNaN(max)) {
-    return NaN;
+export const random = (lower = 0, upper = 1, floating = false) => {
+  if (upper === undefined) {
+    upper = lower;
+    lower = 0;
   }
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+
+  if (floating) {
+    return Math.random() * (upper - lower) + lower;
+  }
+
+  return Math.floor(Math.random() * (upper - lower + 1)) + lower;
 };
 
-module.exports = {
-  getRandomInt,
+export const shuffle = (array) => {
+  const shuffledArray = [...array];
+  let currentIndex = shuffledArray.length;
+  let randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex !== 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [shuffledArray[currentIndex], shuffledArray[randomIndex]] = [
+      shuffledArray[randomIndex],
+      shuffledArray[currentIndex],
+    ];
+  }
+
+  return shuffledArray;
 };

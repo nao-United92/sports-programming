@@ -1,22 +1,13 @@
-/**
- * Scrolls to a specific HTML element.
- * @param {string} elementId The ID of the element to scroll to.
- * @param {number} [offset=0] An offset from the top of the element.
- * @param {'auto'|'smooth'} [behavior='smooth'] The scroll behavior.
- */
-const scrollToElement = (elementId, offset = 0, behavior = 'smooth') => {
-  const element = document.getElementById(elementId);
-  if (element) {
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: behavior,
-    });
-  } else {
-    console.warn(`Element with ID "${elementId}" not found.`);
+export const scrollToTop = (options = {}) => {
+  if (typeof window === 'undefined') {
+    return;
   }
+  window.scrollTo({ top: 0, left: 0, ...options });
 };
 
-module.exports = { scrollToElement };
+export const scrollToElement = (element, options = {}) => {
+  if (typeof window === 'undefined' || !element || typeof element.scrollIntoView !== 'function') {
+    return;
+  }
+  element.scrollIntoView(options);
+};

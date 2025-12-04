@@ -1,3 +1,4 @@
+
 /**
  * Creates an object from an array of key-value pairs.
  *
@@ -14,3 +15,22 @@ export function fromPairs(pairs) {
   }
   return result;
 }
+
+/**
+ * Creates an object from two arrays, one of keys and one of values.
+ *
+ * @param {Array} keys The array of keys.
+ * @param {Array} values The array of values.
+ * @returns {Object} Returns the new object.
+ */
+export function zipObject(keys, values) {
+  const result = {};
+  if (keys == null) {
+    return result;
+  }
+  for (let i = 0; i < keys.length; i++) {
+    result[keys[i]] = values ? values[i] : undefined;
+  }
+  return result;
+}
+

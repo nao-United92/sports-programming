@@ -1,29 +1,22 @@
-const { omit } = require('./object-omit-utils.js');
+import { omit } from './object-omit-utils';
 
 describe('omit', () => {
-  it('should create an object with omitted properties', () => {
+  test('should create an object with omitted properties', () => {
     const obj = { a: 1, b: '2', c: 3 };
     expect(omit(obj, ['a', 'c'])).toEqual({ b: '2' });
   });
 
-  it('should not change the object if omitted keys do not exist', () => {
+  test('should return the same object if no keys are omitted', () => {
+    const obj = { a: 1, b: '2', c: 3 };
+    expect(omit(obj, [])).toEqual({ a: 1, b: '2', c: 3 });
+  });
+
+  test('should handle keys that do not exist in the object', () => {
     const obj = { a: 1, b: '2' };
-    expect(omit(obj, ['d', 'e'])).toEqual({ a: 1, b: '2' });
+    expect(omit(obj, ['c', 'd'])).toEqual({ a: 1, b: '2' });
   });
 
-  it('should return the same object if no keys are provided', () => {
-    const obj = { a: 1, b: '2' };
-    expect(omit(obj, [])).toEqual({ a: 1, b: '2' });
-  });
-
-  it('should return an empty object if the source object is null or undefined', () => {
-    expect(omit(null, ['a'])).toEqual({});
-    expect(omit(undefined, ['a'])).toEqual({});
-  });
-
-  it('should handle various data types', () => {
-    const obj = { name: 'John', age: 30, isActive: true };
-    const omitted = omit(obj, ['age']);
-    expect(omitted).toEqual({ name: 'John', isActive: true });
+  test('should return an empty object for an empty source object', () => {
+    expect(omit({}, ['a', 'b'])).toEqual({});
   });
 });

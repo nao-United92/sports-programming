@@ -1,61 +1,55 @@
-import { inRange } from './number-range-utils.js';
+import { clamp, inRange } from './number-range-utils.js';
+
+describe('clamp', () => {
+  it('should clamp a number within the given range', () => {
+    expect(clamp(-10, -5, 5)).toBe(-5);
+    expect(clamp(10, -5, 5)).toBe(5);
+  });
+
+  it('should not change a number within the range', () => {
+    expect(clamp(0, -5, 5)).toBe(0);
+  });
+
+  it('should handle the bounds correctly', () => {
+    expect(clamp(-5, -5, 5)).toBe(-5);
+    expect(clamp(5, -5, 5)).toBe(5);
+  });
+
+  it('should work with inverted bounds', () => {
+    expect(clamp(-10, 5, -5)).toBe(-5);
+    expect(clamp(10, 5, -5)).toBe(5);
+  });
+
+  it('should treat NaN bounds as 0', () => {
+    expect(clamp(10, -5, NaN)).toBe(0);
+    expect(clamp(-10, NaN, 5)).toBe(0);
+  });
+});
 
 describe('inRange', () => {
-  it('should return true if number is within the range [start, end)', () => {
-    expect(inRange(5, 0, 10)).toBe(true);
-    expect(inRange(0, 0, 10)).toBe(true); // Inclusive start
-    expect(inRange(9, 0, 10)).toBe(true);
+  it('should return true if the number is in range', () => {
+    expect(inRange(3, 2, 4)).toBe(true);
+    expect(inRange(2, 8)).toBe(true); // start=0, end=8
   });
 
-  it('should return false if number is outside the range [start, end)', () => {
-    expect(inRange(-1, 0, 10)).toBe(false);
-    expect(inRange(10, 0, 10)).toBe(false); // Exclusive end
-    expect(inRange(11, 0, 10)).toBe(false);
+  it('should return false if the number is out of range', () => {
+    expect(inRange(4, 2, 4)).toBe(false); // not inclusive of end
+    expect(inRange(8, 8)).toBe(false); // start=0, end=8
+    expect(inRange(1.2, 1.3, 3.4)).toBe(false);
   });
 
-  it('should handle cases where start is greater than end', () => {
-    expect(inRange(5, 10, 0)).toBe(true); // Effectively inRange(5, 0, 10)
-    expect(inRange(0, 10, 0)).toBe(true);
-    expect(inRange(9, 10, 0)).toBe(true);
-    expect(inRange(-1, 10, 0)).toBe(false);
-    expect(inRange(10, 10, 0)).toBe(false);
+  it('should handle the start bound correctly', () => {
+    expect(inRange(2, 2, 4)).toBe(true);
   });
 
-  it('should handle end being omitted (range [0, start))', () => {
-    expect(inRange(5, 10)).toBe(true); // Effectively inRange(5, 0, 10)
-    expect(inRange(0, 10)).toBe(true);
-    expect(inRange(9, 10)).toBe(true);
-    expect(inRange(10, 10)).toBe(false);
-    expect(inRange(-1, 10)).toBe(false);
+  it('should work with inverted bounds', () => {
+    expect(inRange(3, 4, 2)).toBe(true);
+    expect(inRange(-3, -2, -6)).toBe(true);
   });
 
-  it('should return false for non-numeric inputs for number', () => {
-    expect(inRange('5', 0, 10)).toBe(false);
-    expect(inRange(null, 0, 10)).toBe(false);
-    expect(inRange(undefined, 0, 10)).toBe(false);
-    expect(inRange(NaN, 0, 10)).toBe(false);
-  });
-
-  it('should return false for non-numeric inputs for start or end', () => {
-    expect(inRange(5, '0', 10)).toBe(false);
-    expect(inRange(5, 0, '10')).toBe(false);
-    expect(inRange(5, null, 10)).toBe(false);
-    expect(inRange(5, 0, undefined)).toBe(false);
-    expect(inRange(5, NaN, 10)).toBe(false);
-    expect(inRange(5, 0, NaN)).toBe(false);
-  });
-
-  it('should handle negative ranges', () => {
-    expect(inRange(-5, -10, 0)).toBe(true);
-    expect(inRange(-10, -10, 0)).toBe(true);
-    expect(inRange(-1, -10, 0)).toBe(true);
-    expect(inRange(0, -10, 0)).toBe(false);
-    expect(inRange(-11, -10, 0)).toBe(false);
-  });
-
-  it('should handle zero as a boundary', () => {
-    expect(inRange(0, -5, 5)).toBe(true);
-    expect(inRange(0, 0, 5)).toBe(true);
-    expect(inRange(0, -5, 0)).toBe(false);
+  it('should work with a single bound (start defaults to 0)', () => {
+    expect(inRange(2, 4)).toBe(true);
+    expect(inRange(4, 4)).toBe(false);
+    expect(inRange(-2, -1)).toBe(false);
   });
 });

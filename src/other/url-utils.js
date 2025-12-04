@@ -1,32 +1,28 @@
-// src/other/url-utils.js
-
-/**
- * Parses the query parameters from a URL string and returns them as an object.
- *
- * @param {string} url The URL string to parse.
- * @returns {Object} An object containing the query parameters.
- */
-const getQueryParams = (url) => {
-  if (typeof url !== 'string') {
+export const getQueryParams = (url) => {
+  try {
+    const urlObj = new URL(url);
+    const params = {};
+    urlObj.searchParams.forEach((value, key) => {
+      params[key] = value;
+    });
+    return params;
+  } catch (e) {
+    // Handle invalid URL gracefully, e.g., return empty object
     return {};
   }
-
-  const queryString = url.split('?')[1];
-  if (!queryString) {
-    return {};
-  }
-
-  const params = {};
-  queryString.split('&').forEach(pair => {
-    const [key, value] = pair.split('=').map(decodeURIComponent);
-    if (key) {
-      params[key] = value || '';
-    }
-  });
-
-  return params;
 };
 
-module.exports = {
-  getQueryParams,
+export const addQueryParams = (url, params) => {
+  try {
+    const urlObj = new URL(url);
+    for (const key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        urlObj.searchParams.set(key, params[key]);
+      }
+    }
+    return urlObj.toString();
+  } catch (e) {
+    // Handle invalid URL gracefully, e.g., return original url
+    return url;
+  }
 };
