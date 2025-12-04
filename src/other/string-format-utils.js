@@ -1,26 +1,26 @@
-// src/other/string-format-utils.js
+export const capitalize = (str) => {
+  if (typeof str !== 'string' || str.length === 0) {
+    return '';
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
 
-/**
- * Formats a number into a currency string.
- *
- * @param {number} amount The number to format.
- * @param {string} currency The currency symbol (e.g., '$', '€', '¥').
- * @param {string} locale The locale to use for formatting (e.g., 'en-US', 'ja-JP').
- * @returns {string} The formatted currency string.
- */
-const formatCurrency = (amount, currency = '$', locale = 'en-US') => {
-  if (typeof amount !== 'number' || isNaN(amount)) {
+export const truncate = (str, options = {}) => {
+  if (typeof str !== 'string') {
     return '';
   }
 
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: currency, // This expects an ISO 4217 currency code, but we're using it for symbol here.
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
-};
+  const { length = 30, omission = '...' } = options;
 
-module.exports = {
-  formatCurrency,
+  if (str.length <= length) {
+    return str;
+  }
+
+  const truncatedLength = length - omission.length;
+  if (truncatedLength < 0) {
+    // If omission is longer than length, just return omission truncated to length
+    return omission.slice(0, length);
+  }
+
+  return str.slice(0, truncatedLength) + omission;
 };
