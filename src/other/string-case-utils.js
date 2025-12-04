@@ -1,19 +1,21 @@
-/**
- * Converts a string to camelCase.
- *
- * @param {string} str The string to convert.
- * @returns {string} The camelCase string.
- */
-export const toCamelCase = (str) => {
-  if (!str) return "";
-  // snake_case or kebab-case to camelCase
-  let s = str.replace(/([-_][a-z])/ig, ($1) => {
-    return $1.toUpperCase()
-      .replace('-', '')
-      .replace('_', '');
-  });
-  // remove leading/trailing separators
-  s = s.replace(/^[-_]+|[-_]+$/g, '');
-  // ensure first character is lowercase
-  return s.charAt(0).toLowerCase() + s.slice(1);
+const words = (str) => {
+  if (typeof str !== 'string') return [];
+  const matches = str.match(/[A-Z]?[a-z]+|[A-Z]+(?=[A-Z][a-z]|\b)|[0-9]+/g);
+  return matches || [];
+};
+
+export const camelCase = (str) => {
+  const ws = words(str).map(w => w.toLowerCase());
+  if (ws.length === 0) return '';
+  return ws.reduce((acc, word, index) => {
+    return acc + (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1));
+  }, '');
+};
+
+export const kebabCase = (str) => {
+  return words(str).map(w => w.toLowerCase()).join('-');
+};
+
+export const snakeCase = (str) => {
+  return words(str).map(w => w.toLowerCase()).join('_');
 };
