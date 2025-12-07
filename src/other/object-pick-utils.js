@@ -1,16 +1,8 @@
-/**
- * Creates an object composed of the picked object properties.
- *
- * @param {object} obj The source object.
- * @param {string[]} keys The property keys to pick.
- * @returns {object} The new object.
- */
-export const pick = (obj, keys) => {
-  const newObj = {};
-  for (const key of keys) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      newObj[key] = obj[key];
+const pick = (obj, keys) =>
+  keys.reduce((acc, key) => {
+    if (obj && Object.prototype.hasOwnProperty.call(obj, key)) {
+      acc[key] = obj[key];
     }
-  }
-  return newObj;
-};
+    return acc;
+  }, {});
+module.exports = pick;
