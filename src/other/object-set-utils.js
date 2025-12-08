@@ -1,40 +1,40 @@
-/**
- * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
- * it's created. Arrays are created for missing index properties while objects
- * are created for all other missing properties.
- *
- * @param {Object} object The object to modify.
- * @param {Array|string} path The path of the property to set.
- * @param {*} value The value to set.
- * @returns {Object} Returns `object`.
- */
-const set = (object, path, value) => {
-  if (object === null || typeof object !== 'object') {
-    return object;
+const set = (obj, path, value) => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
   }
 
-  const pathArray = Array.isArray(path)
+  const keys = Array.isArray(path)
     ? path
-    : path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+    : path.toString().replace(/\[(\d+)\]/g, '.$1').split('.').filter(p => p);
 
-  let current = object;
-  for (let i = 0; i < pathArray.length; i++) {
-    const key = pathArray[i];
-    const isLast = i === pathArray.length - 1;
+  if (keys.length === 0) {
+    return Array.isArray(obj) ? [...obj] : { ...obj };
+  }
+
+  const newObj = Array.isArray(obj) ? [...obj] : { ...obj };
+  let current = newObj;
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const isLast = i === keys.length - 1;
 
     if (isLast) {
       current[key] = value;
     } else {
-      if (current[key] === undefined || current[key] === null) {
-        const nextKey = pathArray[i + 1];
-        const isNextKeyIndex = /^\d+$/.test(nextKey);
-        current[key] = isNextKeyIndex ? [] : {};
+      const nextKey = keys[i + 1];
+      const isNextKeyNumeric = /^\d+$/.test(nextKey);
+      
+      const currentValue = current[key];
+      if (currentValue === null || typeof currentValue !== 'object') {
+        current[key] = isNextKeyNumeric ? [] : {};
+      } else {
+        current[key] = Array.isArray(currentValue) ? [...currentValue] : { ...currentValue };
       }
       current = current[key];
     }
   }
 
-  return object;
+  return newObj;
 };
 
-export { set };
+module.exports = set;
