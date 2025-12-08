@@ -1,12 +1,12 @@
-const throttle = (func, delay) => {
-  let inThrottle;
+const throttle = (func, limit) => {
+  let inThrottle = false;
   return function(...args) {
     if (!inThrottle) {
       func.apply(this, args);
       inThrottle = true;
-      setTimeout(() => (inThrottle = false), delay);
+      setTimeout(() => inThrottle = false, limit);
     }
   };
 };
 
-module.exports = { throttle };
+module.exports = throttle;
