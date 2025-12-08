@@ -1,8 +1,17 @@
-const pick = (obj, keys) =>
-  keys.reduce((acc, key) => {
-    if (obj && Object.prototype.hasOwnProperty.call(obj, key)) {
-      acc[key] = obj[key];
+const pick = (obj, keys) => {
+  if (obj === null || obj === undefined) {
+    return {};
+  }
+  const result = {};
+  const props = Array.isArray(keys) ? keys : [keys];
+  
+  for (const key of props) {
+    if (obj.hasOwnProperty(key)) {
+      result[key] = obj[key];
     }
-    return acc;
-  }, {});
+  }
+  
+  return result;
+};
+
 module.exports = pick;
