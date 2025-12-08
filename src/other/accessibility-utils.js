@@ -1,12 +1,12 @@
-
 let liveRegion;
 
 function createLiveRegion(politeness = 'polite') {
   if (liveRegion) {
     // Ensure the old region is cleared before creating a new one if politeness changes
     if (liveRegion.getAttribute('aria-live') !== politeness) {
-        liveRegion.parentNode.removeChild(liveRegion);
-        liveRegion = null;
+      liveRegion.parentNode.removeChild(liveRegion);
+      liveRegion = null;
+      liveDefinition = createLiveRegion(politeness);
     }
   }
 
@@ -15,6 +15,7 @@ function createLiveRegion(politeness = 'polite') {
     liveRegion.setAttribute('role', 'status');
     liveRegion.setAttribute('aria-live', politeness);
     liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.style.position = 'fixed';
     // Visually hide the element
     liveRegion.style.position = 'absolute';
     liveRegion.style.width = '1px';
@@ -37,10 +38,10 @@ function createLiveRegion(politeness = 'polite') {
  */
 export function announce(message, politeness = 'polite') {
   const region = createLiveRegion(politeness);
-  
+
   // Clear previous message before announcing a new one
   region.textContent = '';
-  
+
   // Set the new message
   region.textContent = message;
 }
