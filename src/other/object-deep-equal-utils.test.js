@@ -1,56 +1,67 @@
-const { isDeepEqual } = require('./object-deep-equal-utils');
+const deepEqual = require('./object-deep-equal-utils');
 
-describe('isDeepEqual', () => {
-  test('should return true for equal primitive values', () => {
-    expect(isDeepEqual(1, 1)).toBe(true);
-    expect(isDeepEqual('hello', 'hello')).toBe(true);
-    expect(isDeepEqual(true, true)).toBe(true);
-    expect(isDeepEqual(null, null)).toBe(true);
-    expect(isDeepEqual(undefined, undefined)).toBe(true);
+describe('deepEqual', () => {
+  test('should return true for identical primitives', () => {
+    expect(deepEqual(1, 1)).toBe(true);
+    expect(deepEqual('a', 'a')).toBe(true);
+    expect(deepEqual(true, true)).toBe(true);
+    expect(deepEqual(null, null)).toBe(true);
+    expect(deepEqual(undefined, undefined)).toBe(true);
   });
 
-  test('should return false for unequal primitive values', () => {
-    expect(isDeepEqual(1, 2)).toBe(false);
-    expect(isDeepEqual('hello', 'world')).toBe(false);
-    expect(isDeepEqual(true, false)).toBe(false);
-    expect(isDeepEqual(null, undefined)).toBe(false);
-    expect(isDeepEqual(0, null)).toBe(false);
+  test('should return false for different primitives', () => {
+    expect(deepEqual(1, 2)).toBe(false);
+    expect(deepEqual('a', 'b')).toBe(false);
+    expect(deepEqual(true, false)).toBe(false);
+    expect(deepEqual(null, undefined)).toBe(false);
+    expect(deepEqual(1, '1')).toBe(false);
   });
 
-  test('should return true for equal simple objects', () => {
-    expect(isDeepEqual({ a: 1, b: 2 }, { a: 1, b: 2 })).toBe(true);
+  test('should return true for identical flat objects', () => {
+    const obj1 = { a: 1, b: '2' };
+    const obj2 = { a: 1, b: '2' };
+    const obj3 = { b: '2', a: 1 }; // Order shouldn't matter
+    expect(deepEqual(obj1, obj2)).toBe(true);
+    expect(deepEqual(obj1, obj3)).toBe(true);
   });
 
-  test('should return false for unequal simple objects', () => {
-    expect(isDeepEqual({ a: 1, b: 2 }, { a: 1, b: 3 })).toBe(false);
-    expect(isDeepEqual({ a: 1, b: 2 }, { a: 1, c: 2 })).toBe(false);
+  test('should return false for different flat objects', () => {
+    const obj1 = { a: 1, b: '2' };
+    const obj2 = { a: 1, c: '2' };
+    const obj3 = { a: 1, b: '3' };
+    const obj4 = { a: 1 };
+    expect(deepEqual(obj1, obj2)).toBe(false);
+    expect(deepEqual(obj1, obj3)).toBe(false);
+    expect(deepEqual(obj1, obj4)).toBe(false);
+  });
+  
+  test('should return true for identical nested objects', () => {
+    const obj1 = { a: { b: 2 }, c: 3 };
+    const obj2 = { a: { b: 2 }, c: 3 };
+    expect(deepEqual(obj1, obj2)).toBe(true);
+  });
+  
+  test('should return false for different nested objects', () => {
+    const obj1 = { a: { b: 2 }, c: 3 };
+    const obj2 = { a: { b: 99 }, c: 3 };
+    expect(deepEqual(obj1, obj2)).toBe(false);
   });
 
-  test('should return true for equal nested objects', () => {
-    const obj1 = { a: 1, b: { c: 3, d: [4, 5] } };
-    const obj2 = { a: 1, b: { c: 3, d: [4, 5] } };
-    expect(isDeepEqual(obj1, obj2)).toBe(true);
+  test('should return true for identical arrays', () => {
+    const arr1 = [1, '2', { a: 3 }];
+    const arr2 = [1, '2', { a: 3 }];
+    expect(deepEqual(arr1, arr2)).toBe(true);
   });
 
-  test('should return false for unequal nested objects', () => {
-    const obj1 = { a: 1, b: { c: 3, d: [4, 5] } };
-    const obj2 = { a: 1, b: { c: 3, d: [4, 6] } };
-    expect(isDeepEqual(obj1, obj2)).toBe(false);
+  test('should return false for different arrays', () => {
+    const arr1 = [1, '2', { a: 3 }];
+    const arr2 = [1, '2', { a: 4 }];
+    const arr3 = [1, '2'];
+    expect(deepEqual(arr1, arr2)).toBe(false);
+    expect(deepEqual(arr1, arr3)).toBe(false);
   });
 
-  test('should return true for equal arrays', () => {
-    expect(isDeepEqual([1, 2, 3], [1, 2, 3])).toBe(true);
-    expect(isDeepEqual([{ a: 1 }, { b: 2 }], [{ a: 1 }, { b: 2 }])).toBe(true);
-  });
-
-  test('should return false for unequal arrays', () => {
-    expect(isDeepEqual([1, 2, 3], [1, 2, 4])).toBe(false);
-    expect(isDeepEqual([1, 2, 3], [1, 2])).toBe(false);
-  });
-
-  test('should handle different types', () => {
-    expect(isDeepEqual({ a: 1 }, [1])).toBe(false);
-    expect(isDeepEqual({ a: 1 }, null)).toBe(false);
-    expect(isDeepEqual([], {})).toBe(false);
+  test('should return false when comparing object and array', () => {
+    expect(deepEqual({ '0': 1, '1': 2 }, [1, 2])).toBe(false);
   });
 });
