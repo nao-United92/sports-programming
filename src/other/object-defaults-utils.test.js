@@ -1,32 +1,60 @@
-import { defaults } from './object-defaults-utils.js';
+const defaults = require('./object-defaults-utils');
 
 describe('defaults', () => {
   test('should fill in undefined properties', () => {
-    const result = defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
-    expect(result).toEqual({ 'a': 1, 'b': 2 });
+    const obj = { a: 1 };
+    const source = { b: 2, c: 3 };
+    expect(defaults(obj, source)).toEqual({ a: 1, b: 2, c: 3 });
   });
 
-  test('should not overwrite existing properties', () => {
-    const obj = { 'a': 1, 'b': null, 'c': false };
-    const result = defaults(obj, { 'a': 10, 'b': 20, 'c': true, 'd': 40 });
-    expect(result).toEqual({ 'a': 1, 'b': null, 'c': false, 'd': 40 });
+  test('should not override existing properties', () => {
+    const obj = { a: 1, b: 'original' };
+    const source = { b: 'new', c: 3 };
+    expect(defaults(obj, source)).toEqual({ a: 1, b: 'original', c: 3 });
   });
 
+  test('should not override null properties', () => {
+    const obj = { a: null };
+    const source = { a: 1 };
+    expect(defaults(obj, source)).toEqual({ a: null });
+  });
+  
   test('should handle multiple source objects', () => {
-    const result = defaults({ 'a': undefined }, { 'a': 1, 'b': 2 }, { 'b': 3, 'c': 4 });
-    expect(result).toEqual({ 'a': 1, 'b': 2, 'c': 4 });
+    const obj = { a: 1 };
+    const source1 = { b: 2 };
+    const source2 = { c: 3, a: 99 };
+    expect(defaults(obj, source1, source2)).toEqual({ a: 1, b: 2, c: 3 });
   });
 
-  test('should modify the original object', () => {
-    const obj = { 'a': 1 };
-    defaults(obj, { 'b': 2 });
-    expect(obj).toEqual({ 'a': 1, 'b': 2 });
+  test('should apply sources from left to right', () => {
+    const obj = { a: undefined };
+    const source1 = { a: 1, b: 2 };
+    const source2 = { a: 99, b: 98 };
+    expect(defaults(obj, source1, source2)).toEqual({ a: 1, b: 2 });
   });
 
-  test('should copy inherited properties from source', () => {
-    function Foo() { this.a = 1; }
-    Foo.prototype.b = 2;
-    const result = defaults({ 'a': undefined }, new Foo());
-    expect(result.b).toBe(2);
+  test('should not mutate the original object', () => {
+    const obj = { a: 1 };
+    const source = { b: 2 };
+    const result = defaults(obj, source);
+    expect(result).not.toBe(obj);
+    expect(obj).toEqual({ a: 1 });
+  });
+  
+  test('should handle null and undefined sources', () => {
+    const obj = { a: 1 };
+    expect(defaults(obj, null, { b: 2 }, undefined, { c: 3 })).toEqual({ a: 1, b: 2, c: 3 });
+  });
+
+  test('should include inherited properties from the source', () => {
+    function Source() {
+      this.b = 2;
+    }
+    Source.prototype.c = 3;
+
+    const source = new Source();
+    const obj = { a: 1 };
+
+    expect(defaults(obj, source)).toEqual({ a: 1, b: 2, c: 3 });
   });
 });

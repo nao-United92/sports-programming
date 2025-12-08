@@ -1,5 +1,5 @@
 const zip = (...arrays) => {
-  if (arrays.length === 0) {
+  if (!arrays || arrays.length === 0) {
     return [];
   }
   const maxLength = Math.max(...arrays.map(arr => arr.length));
@@ -7,4 +7,5 @@ const zip = (...arrays) => {
     return arrays.map(arr => arr[i]);
   });
 };
+
 module.exports = zip;

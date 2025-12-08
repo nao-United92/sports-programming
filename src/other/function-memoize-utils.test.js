@@ -1,42 +1,90 @@
-import { memoize } from './function-memoize-utils.js';
+const memoize = require('./function-memoize-utils');
 
 describe('memoize', () => {
-  it('should return the cached result for subsequent calls with the same arguments', () => {
-    const expensiveFn = jest.fn((x) => x * 2);
+  test('should memoize a simple function with a primitive argument', () => {
+    let callCount = 0;
+    const expensiveFn = (x) => {
+      callCount++;
+      return x * 2;
+    };
+
     const memoizedFn = memoize(expensiveFn);
 
     expect(memoizedFn(2)).toBe(4);
+    expect(callCount).toBe(1);
+
     expect(memoizedFn(2)).toBe(4);
-    expect(expensiveFn).toHaveBeenCalledTimes(1);
+    expect(callCount).toBe(1); // Should not be called again for the same input
+
+    expect(memoizedFn(3)).toBe(6);
+    expect(callCount).toBe(2);
+
+    expect(memoizedFn(3)).toBe(6);
+    expect(callCount).toBe(2);
   });
 
-  it('should call the function again for different arguments', () => {
-    const expensiveFn = jest.fn((x, y) => x + y);
-    const memoizedFn = memoize(expensiveFn);
-
-    expect(memoizedFn(1, 2)).toBe(3);
-    expect(memoizedFn(3, 4)).toBe(7);
-    expect(expensiveFn).toHaveBeenCalledTimes(2);
-  });
-
-  it('should work with object arguments', () => {
-    const expensiveFn = jest.fn((obj) => obj.a + obj.b);
-    const memoizedFn = memoize(expensiveFn);
-
-    const arg1 = { a: 1, b: 2 };
-    const arg2 = { a: 1, b: 2 }; // Structurally same object
-    const arg3 = { a: 3, b: 4 };
-
-    expect(memoizedFn(arg1)).toBe(3);
-    expect(memoizedFn(arg2)).toBe(3); // Should be cached
-    expect(memoizedFn(arg3)).toBe(7);
-
-    expect(expensiveFn).toHaveBeenCalledTimes(2);
-  });
-
-  it('should return the correct value without caching if called once', () => {
-    const fn = (a, b) => a - b;
+  test('should work with functions that return undefined', () => {
+    const fn = jest.fn().mockReturnValue(undefined);
     const memoizedFn = memoize(fn);
-    expect(memoizedFn(10, 5)).toBe(5);
+
+    memoizedFn('a');
+    memoizedFn('a');
+
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  test('should use a custom resolver function', () => {
+    let callCount = 0;
+    const expensiveFn = (obj) => {
+      callCount++;
+      return obj.value;
+    };
+    
+    // Use a resolver that creates a cache key from the object's id property
+    const memoizedFn = memoize(expensiveFn, (obj) => obj.id);
+
+    const obj1 = { id: 'a', value: 1 };
+    const obj2 = { id: 'b', value: 2 };
+    const obj3 = { id: 'a', value: 3 }; // Same id as obj1
+
+    expect(memoizedFn(obj1)).toBe(1);
+    expect(callCount).toBe(1);
+
+    expect(memoizedFn(obj2)).toBe(2);
+    expect(callCount).toBe(2);
+
+    // This should hit the cache because the resolver will produce the same key 'a'
+    expect(memoizedFn(obj3)).toBe(1);
+    expect(callCount).toBe(2);
+  });
+
+  test('should expose the cache', () => {
+    const memoizedFn = memoize(() => {});
+    expect(memoizedFn.cache).toBeInstanceOf(Map);
+  });
+
+  test('should allow clearing the cache', () => {
+    let callCount = 0;
+    const fn = (x) => {
+      callCount++;
+      return x;
+    };
+    const memoizedFn = memoize(fn);
+
+    memoizedFn(1);
+    expect(callCount).toBe(1);
+
+    memoizedFn(1);
+    expect(callCount).toBe(1);
+
+    memoizedFn.cache.clear();
+
+    memoizedFn(1);
+    expect(callCount).toBe(2);
+  });
+  
+  test('should throw an error if the first argument is not a function', () => {
+    expect(() => memoize(null)).toThrow(TypeError);
+    expect(() => memoize({})).toThrow(TypeError);
   });
 });

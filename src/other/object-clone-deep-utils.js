@@ -1,30 +1,24 @@
-/**
- * Creates a deep clone of a value.
- *
- * @param {*} value The value to clone.
- * @returns {*} Returns the deep cloned value.
- */
-export const cloneDeep = (value) => {
-  if (value === null || typeof value !== 'object') {
-    return value;
+const cloneDeep = (obj) => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
   }
 
-  // Handle Date
-  if (value instanceof Date) {
-    return new Date(value.getTime());
+  if (Array.isArray(obj)) {
+    const arrCopy = [];
+    for (let i = 0; i < obj.length; i++) {
+      arrCopy[i] = cloneDeep(obj[i]);
+    }
+    return arrCopy;
   }
 
-  // Handle Array
-  if (Array.isArray(value)) {
-    return value.map(item => cloneDeep(item));
-  }
-
-  // Handle Object
-  const clonedObj = {};
-  for (const key in value) {
-    if (Object.prototype.hasOwnProperty.call(value, key)) {
-      clonedObj[key] = cloneDeep(value[key]);
+  const objCopy = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      objCopy[key] = cloneDeep(obj[key]);
     }
   }
-  return clonedObj;
+
+  return objCopy;
 };
+
+module.exports = cloneDeep;
