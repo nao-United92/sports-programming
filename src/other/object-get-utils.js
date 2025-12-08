@@ -1,26 +1,25 @@
-/**
- * Gets the value at `path` of `object`. If the resolved value is
- * `undefined`, the `defaultValue` is returned in its place.
- *
- * @param {Object} object The object to query.
- * @param {Array|string} path The path of the property to retrieve.
- * @param {*} [defaultValue] The value returned for `undefined` resolved values.
- * @returns {*} Returns the resolved value.
- */
-const get = (object, path, defaultValue) => {
-  const pathArray = Array.isArray(path)
+const get = (obj, path, defaultValue) => {
+  // Coerce path to an array of keys.
+  // Handles 'a.b', 'a[0].b', ['a', '0', 'b']
+  const keys = Array.isArray(path)
     ? path
-    : path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+    : path.toString().replace(/\[/g, '.').replace(/\]/g, '').split('.').filter(Boolean);
 
-  let current = object;
-  for (let i = 0; i < pathArray.length; i++) {
-    if (current === null || current === undefined) {
-      return defaultValue;
-    }
-    current = current[pathArray[i]];
+  // If path is empty, return the object or default value if object is undefined.
+  if (keys.length === 0) {
+    return obj === undefined ? defaultValue : obj;
   }
 
-  return current === undefined ? defaultValue : current;
+  let result = obj;
+  for (let i = 0; i < keys.length; i++) {
+    // If at any point the result is not an object (or is null), the path is invalid.
+    if (typeof result !== 'object' || result === null) {
+      return defaultValue;
+    }
+    result = result[keys[i]];
+  }
+
+  return result === undefined ? defaultValue : result;
 };
 
-export { get };
+module.exports = get;
