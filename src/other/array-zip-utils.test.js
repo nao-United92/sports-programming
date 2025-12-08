@@ -1,21 +1,33 @@
+const expect = require('expect');
 const zip = require('./array-zip-utils');
 
-test('zips arrays of the same length', () => {
-  expect(zip(['a', 'b'], [1, 2], [true, false])).toEqual([['a', 1, true], ['b', 2, false]]);
-});
+describe('zip', () => {
+  test('zip is a function', () => {
+    expect(typeof zip).toBe('function');
+  });
 
-test('zips arrays of different lengths', () => {
-  expect(zip(['a'], [1, 2, 3], [true, false])).toEqual([['a', 1, true], [undefined, 2, false], [undefined, 3, undefined]]);
-});
+  test('should zip together arrays of the same length', () => {
+    const result = zip(['a', 'b'], [1, 2], [true, false]);
+    expect(result).toEqual([['a', 1, true], ['b', 2, false]]);
+  });
 
-test('zips with an empty array', () => {
-  expect(zip(['a', 'b'], [], [1, 2])).toEqual([['a', undefined, 1], ['b', undefined, 2]]);
-});
+  test('should zip together arrays of different lengths', () => {
+    const result = zip(['a'], [1, 2, 3], [true, false]);
+    expect(result).toEqual([['a', 1, true], [undefined, 2, false], [undefined, 3, undefined]]);
+  });
 
-test('zips with no arguments', () => {
-  expect(zip()).toEqual([]);
-});
+  test('should return an empty array if no arrays are provided', () => {
+    const result = zip();
+    expect(result).toEqual([]);
+  });
 
-test('zips with a single array', () => {
-    expect(zip([1, 2, 3])).toEqual([[1], [2], [3]]);
+  test('should handle empty arrays', () => {
+    const result = zip([], [1, 2], []);
+    expect(result).toEqual([[undefined, 1, undefined], [undefined, 2, undefined]]);
+  });
+
+  test('should handle a single array', () => {
+    const result = zip([1, 2, 3]);
+    expect(result).toEqual([[1], [2], [3]]);
+  });
 });
