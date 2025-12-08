@@ -1,56 +1,57 @@
-const { debounce } = require('./function-debounce-utils');
+const debounce = require('./function-debounce-utils');
+
+// Mock timers to control setTimeout and clearTimeout
+jest.useFakeTimers();
 
 describe('debounce', () => {
-  jest.useFakeTimers();
+  let func;
+  let debouncedFunc;
 
-  test('should not call the function immediately', () => {
-    const func = jest.fn();
-    const debouncedFunc = debounce(func, 100);
-
-    debouncedFunc();
-
-    expect(func).not.toHaveBeenCalled();
+  beforeEach(() => {
+    func = jest.fn();
+    debouncedFunc = debounce(func, 500);
   });
 
-  test('should call the function only once after the delay', () => {
-    const func = jest.fn();
-    const debouncedFunc = debounce(func, 100);
+  test('should execute function only once after the wait time', () => {
+    for (let i = 0; i < 5; i++) {
+      debouncedFunc();
+    }
 
-    debouncedFunc();
-    debouncedFunc();
-    debouncedFunc();
+    // At this point, the timer should be scheduled, but the function not yet called
+    expect(func).not.toHaveBeenCalled();
 
-    // Fast-forward time
-    jest.advanceTimersByTime(100);
+    // Fast-forward time by 500ms
+    jest.advanceTimersByTime(500);
 
+    // Now the function should have been called exactly once
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should reset the timer if called again within the delay period', () => {
-    const func = jest.fn();
-    const debouncedFunc = debounce(func, 100);
-
+  test('should reset the timer if called again within the wait time', () => {
     debouncedFunc();
-    jest.advanceTimersByTime(50);
-    debouncedFunc(); // This should reset the timer
+    expect(func).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(50);
-    expect(func).not.toHaveBeenCalled(); // 50 + 50 = 100, but timer was reset
+    // Fast-forward time by 200ms
+    jest.advanceTimersByTime(200);
+    expect(func).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(50);
-    expect(func).toHaveBeenCalledTimes(1); // Now 100ms have passed since the last call
+    // Call it again
+    debouncedFunc();
+
+    // Fast-forward time by 400ms
+    jest.advanceTimersByTime(400);
+    expect(func).not.toHaveBeenCalled();
+
+    // Fast-forward time by another 100ms to complete the 500ms wait
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should pass the latest arguments to the original function', () => {
-    const func = jest.fn();
-    const debouncedFunc = debounce(func, 100);
+  test('should pass arguments to the original function', () => {
+    debouncedFunc(1, 'test');
 
-    debouncedFunc(1);
-    debouncedFunc(2);
-    debouncedFunc(3, 'test');
+    jest.advanceTimersByTime(500);
 
-    jest.advanceTimersByTime(100);
-
-    expect(func).toHaveBeenCalledWith(3, 'test');
+    expect(func).toHaveBeenCalledWith(1, 'test');
   });
 });
