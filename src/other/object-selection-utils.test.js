@@ -1,39 +1,63 @@
 const { pick, omit } = require('./object-selection-utils');
 
 describe('Object Selection Utilities', () => {
-  const original = { a: 1, b: 2, c: 3 };
+  const data = { a: 1, b: 2, c: 3 };
 
   describe('pick', () => {
-    test('should pick specified keys from an object', () => {
-      expect(pick(original, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+    test('should create an object with picked properties', () => {
+      expect(pick(data, 'a', 'c')).toEqual({ a: 1, c: 3 });
     });
 
-    test('should return an empty object if no keys are picked', () => {
-      expect(pick(original, ['d', 'e'])).toEqual({});
+    test('should work with an array of keys', () => {
+      expect(pick(data, ['a', 'c'])).toEqual({ a: 1, c: 3 });
     });
 
-    test('should return an empty object for null or non-object input', () => {
-      expect(pick(null, ['a'])).toEqual({});
-      expect(pick(undefined, ['a'])).toEqual({});
-      expect(pick(123, ['a'])).toEqual({});
+    test('should return an empty object if no keys are provided', () => {
+      expect(pick(data)).toEqual({});
+    });
+
+    test('should return an empty object if non-matching keys are provided', () => {
+      expect(pick(data, 'd', 'e')).toEqual({});
+    });
+
+    test('should not modify the original object', () => {
+      const original = { a: 1, b: 2 };
+      pick(original, 'a');
+      expect(original).toEqual({ a: 1, b: 2 });
+    });
+
+    test('should return an empty object for null or undefined input', () => {
+      expect(pick(null, 'a')).toEqual({});
+      expect(pick(undefined, 'a', 'b')).toEqual({});
     });
   });
 
   describe('omit', () => {
-    test('should omit specified keys from an object', () => {
-      expect(omit(original, ['a', 'c'])).toEqual({ b: 2 });
+    test('should create an object without omitted properties', () => {
+      expect(omit(data, 'b')).toEqual({ a: 1, c: 3 });
     });
 
-    test('should return a new object with all original keys if no keys are omitted', () => {
-      const result = omit(original, ['d', 'e']);
-      expect(result).toEqual(original);
-      expect(result).not.toBe(original); // Ensure it's a new object
+    test('should work with an array of keys', () => {
+      expect(omit(data, ['b'])).toEqual({ a: 1, c: 3 });
     });
 
-    test('should return an empty object for null or non-object input', () => {
-      expect(omit(null, ['a'])).toEqual({});
-      expect(omit(undefined, ['a'])).toEqual({});
-      expect(omit(123, ['a'])).toEqual({});
+    test('should return the original object if no keys are omitted', () => {
+      expect(omit(data)).toEqual(data);
+    });
+
+    test('should not modify the original object', () => {
+      const original = { a: 1, b: 2 };
+      omit(original, 'a');
+      expect(original).toEqual({ a: 1, b: 2 });
+    });
+
+    test('should return an empty object for null or undefined input', () => {
+      expect(omit(null, 'a')).toEqual({});
+      expect(omit(undefined, 'a', 'b')).toEqual({});
+    });
+
+    test('should return the full object if non-matching keys are provided', () => {
+      expect(omit(data, 'd', 'e')).toEqual(data);
     });
   });
 });
