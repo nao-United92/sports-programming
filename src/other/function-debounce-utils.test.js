@@ -1,57 +1,88 @@
-const debounce = require('./function-debounce-utils');
-
-// Mock timers to control setTimeout and clearTimeout
-jest.useFakeTimers();
+const { debounce } = require('./function-debounce-utils');
 
 describe('debounce', () => {
   let func;
   let debouncedFunc;
 
-  beforeEach(() => {
-    func = jest.fn();
-    debouncedFunc = debounce(func, 500);
+  beforeAll(() => {
+    jest.useFakeTimers();
   });
 
-  test('should execute function only once after the wait time', () => {
+  beforeEach(() => {
+    func = jest.fn();
+    debouncedFunc = debounce(func, 100);
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  test('should not execute the function immediately', () => {
+    debouncedFunc();
+    expect(func).not.toHaveBeenCalled();
+  });
+
+  test('should execute the function only once after the wait time', () => {
     for (let i = 0; i < 5; i++) {
       debouncedFunc();
     }
-
-    // At this point, the timer should be scheduled, but the function not yet called
     expect(func).not.toHaveBeenCalled();
 
-    // Fast-forward time by 500ms
-    jest.advanceTimersByTime(500);
-
-    // Now the function should have been called exactly once
-    expect(func).toHaveBeenCalledTimes(1);
-  });
-
-  test('should reset the timer if called again within the wait time', () => {
-    debouncedFunc();
-    expect(func).not.toHaveBeenCalled();
-
-    // Fast-forward time by 200ms
-    jest.advanceTimersByTime(200);
-    expect(func).not.toHaveBeenCalled();
-
-    // Call it again
-    debouncedFunc();
-
-    // Fast-forward time by 400ms
-    jest.advanceTimersByTime(400);
-    expect(func).not.toHaveBeenCalled();
-
-    // Fast-forward time by another 100ms to complete the 500ms wait
     jest.advanceTimersByTime(100);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should pass arguments to the original function', () => {
-    debouncedFunc(1, 'test');
+  test('should execute with the last arguments', () => {
+    debouncedFunc(1);
+    debouncedFunc(2);
+    debouncedFunc(3);
 
-    jest.advanceTimersByTime(500);
+    jest.advanceTimersByTime(100);
+    expect(func).toHaveBeenCalledWith(3);
+  });
 
-    expect(func).toHaveBeenCalledWith(1, 'test');
+  test('should reset the timer on subsequent calls', () => {
+    debouncedFunc();
+    expect(func).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(50);
+    debouncedFunc(); // Reset timer
+    expect(func).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(99);
+    expect(func).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(1);
+    expect(func).toHaveBeenCalledTimes(1);
+  });
+
+  describe('flush method', () => {
+    test('should execute the function immediately', () => {
+      debouncedFunc(42);
+      expect(func).not.toHaveBeenCalled();
+
+      debouncedFunc.flush();
+      expect(func).toHaveBeenCalledTimes(1);
+      expect(func).toHaveBeenCalledWith(42);
+    });
+
+    test('should not call the function again after flush', () => {
+      debouncedFunc();
+      debouncedFunc.flush();
+      expect(func).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(100);
+      expect(func).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('cancel method', () => {
+    test('should prevent the function from executing', () => {
+      debouncedFunc();
+      debouncedFunc.cancel();
+
+      jest.advanceTimersByTime(100);
+      expect(func).not.toHaveBeenCalled();
+    });
   });
 });
