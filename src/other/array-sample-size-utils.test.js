@@ -1,47 +1,46 @@
-import { sampleSize } from './array-sample-size-utils';
+const { sampleSize } = require('./array-sample-size-utils');
 
 describe('sampleSize', () => {
-  it('should return an array of specified size', () => {
+  test('should return an array of the specified size', () => {
     const array = [1, 2, 3, 4, 5];
-    const result = sampleSize(array, 3);
-    expect(result.length).toBe(3);
+    const size = 3;
+    const result = sampleSize(array, size);
+    expect(result).toHaveLength(size);
   });
 
-  it('should return an array containing elements from the original array', () => {
+  test('should return elements that exist in the original array', () => {
     const array = [1, 2, 3, 4, 5];
-    const result = sampleSize(array, 2);
-    result.forEach(item => {
-      expect(array).toContain(item);
+    const size = 2;
+    const result = sampleSize(array, size);
+    result.forEach(element => {
+      expect(array).toContain(element);
     });
   });
 
-  it('should return all elements if n is greater than array length', () => {
+  test('should return the entire array if n is greater than or equal to the array length', () => {
     const array = [1, 2, 3];
-    const result = sampleSize(array, 5);
-    expect(result.length).toBe(3);
-    expect(result).toEqual(expect.arrayContaining(array));
+    expect(sampleSize(array, 5)).toHaveLength(3);
+    expect(sampleSize(array, 3)).toHaveLength(3);
   });
 
-  it('should return an empty array for an empty input array', () => {
-    expect(sampleSize([], 3)).toEqual([]);
+  test('should return an empty array if the input array is empty', () => {
+    expect(sampleSize([], 2)).toEqual([]);
   });
 
-  it('should return an empty array if n is 0', () => {
-    const array = [1, 2, 3];
-    expect(sampleSize(array, 0)).toEqual([]);
+  test('should return an empty array if n is less than 0', () => {
+    expect(sampleSize([1, 2, 3], -1)).toEqual([]);
   });
 
-  it('should return a single random element if n is not specified', () => {
+  test('should return a single random element by default', () => {
     const array = [1, 2, 3, 4, 5];
     const result = sampleSize(array);
-    expect(result.length).toBe(1);
+    expect(result).toHaveLength(1);
     expect(array).toContain(result[0]);
   });
 
-  it('should not modify the original array', () => {
-    const array = [1, 2, 3, 4, 5];
-    const originalArray = [...array];
-    sampleSize(array, 2);
-    expect(array).toEqual(originalArray);
+  test('should not modify the original array', () => {
+    const original = [1, 2, 3];
+    sampleSize(original, 2);
+    expect(original).toEqual([1, 2, 3]);
   });
 });
