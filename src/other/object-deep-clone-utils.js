@@ -1,16 +1,14 @@
-/**
- * Performs a deep clone of an object.
- *
- * @param {any} obj The value to recursively clone.
- * @returns {any} Returns the deep cloned value.
- */
-function deepClone(obj) {
+const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
 
   if (obj instanceof Date) {
     return new Date(obj.getTime());
+  }
+
+  if (obj instanceof RegExp) {
+    return new RegExp(obj);
   }
 
   if (Array.isArray(obj)) {
@@ -27,8 +25,7 @@ function deepClone(obj) {
       objCopy[key] = deepClone(obj[key]);
     }
   }
-
   return objCopy;
-}
+};
 
 module.exports = { deepClone };

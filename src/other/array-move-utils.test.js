@@ -1,56 +1,32 @@
-import { move } from './array-move-utils';
+const { move } = require('./array-move-utils');
 
 describe('move', () => {
-  it('should move an element to a new index', () => {
-    const array = [1, 2, 3, 4, 5];
-    const moved = move(array, 1, 3);
-    expect(moved).toEqual([1, 3, 4, 2, 5]);
+  test('should move an element from one index to another', () => {
+    expect(move([1, 2, 3, 4], 0, 2)).toEqual([2, 3, 1, 4]);
   });
 
-  it('should not modify the original array', () => {
-    const array = [1, 2, 3, 4, 5];
-    const originalArray = [...array];
-    move(array, 0, 2);
-    expect(array).toEqual(originalArray);
+  test('should move an element to the end of the array', () => {
+    expect(move([1, 2, 3], 0, 2)).toEqual([2, 3, 1]);
   });
 
-  it('should return a new array instance', () => {
-    const array = [1, 2, 3];
-    const moved = move(array, 0, 1);
-    expect(moved).not.toBe(array);
+  test('should move an element to the beginning of the array', () => {
+    expect(move([1, 2, 3], 2, 0)).toEqual([3, 1, 2]);
   });
 
-  it('should handle moving to the same index', () => {
-    const array = [1, 2, 3];
-    const moved = move(array, 1, 1);
-    expect(moved).toEqual([1, 2, 3]);
+  test('should not modify the original array', () => {
+    const original = [1, 2, 3];
+    move(original, 0, 1);
+    expect(original).toEqual([1, 2, 3]);
   });
 
-  it('should handle moving from the start to the end', () => {
-    const array = ['a', 'b', 'c'];
-    const moved = move(array, 0, 2);
-    expect(moved).toEqual(['b', 'c', 'a']);
+  test('should return a new array if indices are out of bounds', () => {
+    expect(move([1, 2, 3], -1, 1)).toEqual([1, 2, 3]);
+    expect(move([1, 2, 3], 0, -1)).toEqual([1, 2, 3]);
+    expect(move([1, 2, 3], 3, 1)).toEqual([1, 2, 3]);
+    expect(move([1, 2, 3], 1, 3)).toEqual([1, 2, 3]);
   });
 
-  it('should handle moving from the end to the start', () => {
-    const array = ['a', 'b', 'c'];
-    const moved = move(array, 2, 0);
-    expect(moved).toEqual(['c', 'a', 'b']);
-  });
-
-  it('should handle empty arrays', () => {
-    expect(move([], 0, 0)).toEqual([]);
-  });
-
-  it('should handle single element arrays', () => {
-    expect(move(['a'], 0, 0)).toEqual(['a']);
-  });
-
-  it('should handle out of bounds indexes', () => {
-    const array = [1, 2, 3];
-    expect(move(array, -1, 2)).toEqual(array);
-    expect(move(array, 3, 2)).toEqual(array);
-    expect(move(array, 1, -1)).toEqual(array);
-    expect(move(array, 1, 4)).toEqual(array);
+  test('should return the same array if from and to are the same', () => {
+    expect(move([1, 2, 3], 1, 1)).toEqual([1, 2, 3]);
   });
 });

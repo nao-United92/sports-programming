@@ -1,17 +1,20 @@
-export const sampleSize = (array, n = 1) => {
-  const length = array == null ? 0 : array.length;
-  if (!length || n < 1) {
+const sampleSize = (arr, n = 1) => {
+  if (!Array.isArray(arr) || n < 0) {
     return [];
   }
-  n = n > length ? length : n;
-  let index = -1;
-  const lastIndex = length - 1;
-  const result = [...array];
-  while (++index < n) {
-    const rand = index + Math.floor(Math.random() * (lastIndex - index + 1));
-    const value = result[rand];
-    result[rand] = result[index];
-    result[index] = value;
+  const len = arr.length;
+  if (n >= len) {
+    return [...arr];
   }
-  return result.slice(0, n);
+
+  const result = [];
+  const copiedArr = [...arr]; // Create a copy to avoid modifying the original array
+  while (result.length < n) {
+    const randomIndex = Math.floor(Math.random() * copiedArr.length);
+    result.push(copiedArr[randomIndex]);
+    copiedArr.splice(randomIndex, 1); // Remove selected element to avoid duplicates
+  }
+  return result;
 };
+
+module.exports = { sampleSize };

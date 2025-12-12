@@ -1,7 +1,14 @@
 const clamp = (number, lower, upper) => {
-  const min = Math.min(lower, upper);
-  const max = Math.max(lower, upper);
-  return Math.min(Math.max(number, min), max);
+  if (number === undefined) {
+    return;
+  }
+  if (number >= lower && number <= upper) {
+    return number;
+  }
+  if (number < lower) {
+    return lower;
+  }
+  return upper;
 };
 
-module.exports = clamp;
+module.exports = { clamp };

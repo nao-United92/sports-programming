@@ -1,9 +1,11 @@
-export const move = (array, from, to) => {
-  const newArray = [...array];
-  if (from < 0 || from >= newArray.length || to < 0 || to > newArray.length) {
-    return newArray;
+const move = (arr, from, to) => {
+  if (!Array.isArray(arr) || from < 0 || to < 0 || from >= arr.length || to >= arr.length) {
+    return [...arr];
   }
-  const [item] = newArray.splice(from, 1);
-  newArray.splice(to, 0, item);
-  return newArray;
+  const newArr = [...arr];
+  const [removed] = newArr.splice(from, 1);
+  newArr.splice(to, 0, removed);
+  return newArr;
 };
+
+module.exports = { move };

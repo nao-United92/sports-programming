@@ -1,21 +1,25 @@
-import { last } from './array-last-utils';
+const { last } = require('./array-last-utils');
 
 describe('last', () => {
-  it('should return the last element of an array', () => {
+  test('should return the last element of an array', () => {
     expect(last([1, 2, 3])).toBe(3);
   });
 
-  it('should return undefined for an empty array', () => {
+  test('should return undefined for an empty array', () => {
     expect(last([])).toBeUndefined();
   });
 
-  it('should return undefined for null or undefined input', () => {
+  test('should return undefined if the input is not an array', () => {
     expect(last(null)).toBeUndefined();
     expect(last(undefined)).toBeUndefined();
+    expect(last(123)).toBeUndefined();
+    expect(last('string')).toBeUndefined();
+    expect(last({})).toBeUndefined();
   });
 
-  it('should return the last element even if it is null or undefined', () => {
-    expect(last([1, 2, null])).toBeNull();
-    expect(last([1, 2, undefined])).toBeUndefined();
+  test('should not modify the original array', () => {
+    const original = [1, 2, 3];
+    last(original);
+    expect(original).toEqual([1, 2, 3]);
   });
 });

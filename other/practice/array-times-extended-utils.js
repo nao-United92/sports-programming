@@ -1,13 +1,12 @@
 const times = (n, iteratee) => {
-  if (n < 0 || !Number.isInteger(n)) {
+  if (n < 1) {
     return [];
   }
-
-  const result = Array(n);
+  const result = new Array(n);
   for (let i = 0; i < n; i++) {
-    result[i] = typeof iteratee === 'function' ? iteratee(i) : undefined;
+    result[i] = iteratee(i);
   }
   return result;
 };
 
-module.exports = times;
+module.exports = { times };
