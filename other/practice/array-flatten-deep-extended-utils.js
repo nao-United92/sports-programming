@@ -1,18 +1,8 @@
-const flattenDeep = (array) => {
-  if (!Array.isArray(array)) {
-    return array;
+const flattenDeep = (arr) => {
+  if (!Array.isArray(arr)) {
+    return arr;
   }
-
-  let result = [];
-  for (let i = 0; i < array.length; i++) {
-    const item = array[i];
-    if (Array.isArray(item)) {
-      result.push(...flattenDeep(item));
-    } else {
-      result.push(item);
-    }
-  }
-  return result;
+  return arr.reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
 };
 
-module.exports = flattenDeep;
+module.exports = { flattenDeep };
