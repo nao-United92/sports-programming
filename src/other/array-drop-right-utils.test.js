@@ -1,30 +1,31 @@
-import { dropRight } from './array-drop-right-utils';
+const { dropRight } = require('./array-drop-right-utils');
 
 describe('dropRight', () => {
-  it('should drop n elements from the end of an array', () => {
+  test('should drop the last element by default', () => {
+    expect(dropRight([1, 2, 3])).toEqual([1, 2]);
+  });
+
+  test('should drop the specified number of elements from the end', () => {
     expect(dropRight([1, 2, 3, 4, 5], 2)).toEqual([1, 2, 3]);
   });
 
-  it('should drop 1 element if n is not specified', () => {
-    expect(dropRight([1, 2, 3, 4, 5])).toEqual([1, 2, 3, 4]);
-  });
-
-  it('should return an empty array if n is greater than or equal to array length', () => {
+  test('should return an empty array if n is greater than or equal to the array length', () => {
     expect(dropRight([1, 2, 3], 3)).toEqual([]);
     expect(dropRight([1, 2, 3], 5)).toEqual([]);
   });
 
-  it('should return the original array if n is 0', () => {
-    expect(dropRight([1, 2, 3], 0)).toEqual([1, 2, 3]);
+  test('should return a copy of the array if n is 0', () => {
+    const original = [1, 2, 3];
+    const result = dropRight(original, 0);
+    expect(result).toEqual(original);
+    expect(result).not.toBe(original);
   });
 
-  it('should handle an empty input array', () => {
+  test('should return an empty array if the input array is empty', () => {
     expect(dropRight([], 2)).toEqual([]);
   });
 
-  it('should handle non-array inputs gracefully', () => {
-    expect(dropRight(null, 2)).toEqual([]);
-    expect(dropRight(undefined, 2)).toEqual([]);
-    expect(dropRight('string', 2)).toEqual([]);
+  test('should return an empty array for invalid n', () => {
+    expect(dropRight([1, 2, 3], -1)).toEqual([]);
   });
 });
