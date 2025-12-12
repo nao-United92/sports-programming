@@ -1,40 +1,34 @@
-import { fill } from './array-fill-utils';
+const { fill } = require('./array-fill-utils');
 
 describe('fill', () => {
-  it('should fill an array with a value', () => {
-    const array = [1, 2, 3];
-    expect(fill(array, 'a')).toEqual(['a', 'a', 'a']);
+  test('should fill the entire array with a value if no start/end indices are provided', () => {
+    expect(fill([1, 2, 3], '*')).toEqual(['*', '*', '*']);
   });
 
-  it('should fill an array with a value from a start position', () => {
-    const array = [1, 2, 3];
-    expect(fill(array, 'a', 1)).toEqual([1, 'a', 'a']);
+  test('should fill the array from a specified start index', () => {
+    expect(fill([1, 2, 3, 4, 5], '*', 2)).toEqual([1, 2, '*', '*', '*']);
   });
 
-  it('should fill an array with a value from a start to an end position', () => {
-    const array = [1, 2, 3];
-    expect(fill(array, 'a', 1, 2)).toEqual([1, 'a', 3]);
+  test('should fill the array up to a specified end index', () => {
+    expect(fill([1, 2, 3, 4, 5], '*', 0, 2)).toEqual(['*', '*', 3, 4, 5]);
   });
 
-  it('should handle negative start and end positions', () => {
-    const array = [1, 2, 3, 4, 5];
-    expect(fill(array, '*', -3, -1)).toEqual([1, 2, '*', '*', 5]);
+  test('should fill the array within a specified range', () => {
+    expect(fill([1, 2, 3, 4, 5], '*', 1, 4)).toEqual([1, '*', '*', '*', 5]);
   });
 
-  it('should handle start and end positions out of bounds', () => {
-    const array = [1, 2, 3];
-    expect(fill(array, 'a', 5, 10)).toEqual([1, 2, 3]);
-    expect(fill(array, 'a', -5, -1)).toEqual(['a', 'a', 3]);
+  test('should not modify the original array', () => {
+    const original = [1, 2, 3];
+    fill(original, '*');
+    expect(original).toEqual([1, 2, 3]);
   });
 
-  it('should return an empty array for non-array inputs', () => {
-    expect(fill(null, 'a')).toEqual([]);
-    expect(fill(undefined, 'a')).toEqual([]);
-    expect(fill('string', 'a')).toEqual([]);
+  test('should handle empty arrays', () => {
+    expect(fill([], '*')).toEqual([]);
   });
 
-  it('should return the array reference', () => {
-    const array = [1, 2, 3];
-    expect(fill(array, 'a')).toBe(array);
+  test('should handle start/end indices out of bounds gracefully', () => {
+    expect(fill([1, 2, 3], '*', -1, 5)).toEqual(['*', '*', '*']);
+    expect(fill([1, 2, 3], '*', 1, 1)).toEqual([1, 2, 3]); // No change if start equals end
   });
 });

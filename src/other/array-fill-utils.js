@@ -1,23 +1,15 @@
-/**
- * Fills elements of `array` with `value` from `start` up to, but not
- * including, `end`.
- *
- * @param {Array} array The array to fill.
- * @param {*} value The value to fill `array` with.
- * @param {number} [start=0] The start position.
- * @param {number} [end=array.length] The end position.
- * @returns {Array} Returns `array`.
- */
-export const fill = (array, value, start = 0, end) => {
-  if (!Array.isArray(array)) {
+const fill = (arr, value, start = 0, end = arr.length) => {
+  if (!Array.isArray(arr)) {
     return [];
   }
-  const length = array.length;
-  const actualStart = start < 0 ? Math.max(length + start, 0) : Math.min(start, length);
-  const actualEnd = end === undefined || end > length ? length : (end < 0 ? Math.max(length + end, 0) : Math.min(end, length));
+  const newArr = [...arr];
+  const normalizedStart = Math.max(0, start);
+  const normalizedEnd = Math.min(newArr.length, end);
 
-  for (let i = actualStart; i < actualEnd; i++) {
-    array[i] = value;
+  for (let i = normalizedStart; i < normalizedEnd; i++) {
+    newArr[i] = value;
   }
-  return array;
+  return newArr;
 };
+
+module.exports = { fill };
