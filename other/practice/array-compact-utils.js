@@ -1,5 +1,3 @@
-const compact = (arr) => {
-  return arr.filter(Boolean);
-};
+const compact = (arr) => arr.filter(Boolean);
 
-export default compact;
+module.exports = compact;
