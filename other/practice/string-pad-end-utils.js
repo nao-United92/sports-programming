@@ -1,5 +1,13 @@
-const padEnd = (str, length, char = ' ') => {
-  return str + char.repeat(Math.max(0, length - str.length));
+const padEnd = (str, length, chars = ' ') => {
+  const strLength = str.length;
+  if (strLength >= length) {
+    return str;
+  }
+
+  const padLength = length - strLength;
+  const padding = chars.repeat(padLength);
+  
+  return str + padding.slice(0, padLength);
 };
 
-export default padEnd;
+module.exports = padEnd;
