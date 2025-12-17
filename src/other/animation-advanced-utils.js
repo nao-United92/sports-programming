@@ -1,4 +1,3 @@
-
 /**
  * Applies a CSS animation to an element and executes a callback upon completion.
  * Requires CSS classes defining the animation (e.g., from animate.css).
@@ -74,7 +73,7 @@ export function fadeOut(element, duration = 400) {
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
-      element.style.display = 'none'; // Hide element after fade out
+      element.style.display = 'none';
     }
   };
 
@@ -107,27 +106,35 @@ export function slideToggle(element, duration = 400) {
  * @param {number} [duration=500] The duration of one pulse cycle in milliseconds.
  * @param {number} [iterations=Infinity] The number of times to repeat the pulse. Use Infinity for continuous.
  */
-export function pulse(element, scale = 1.1, duration = 500, iterations = Infinity) {
+export function pulse(
+  element,
+  scale = 1.1,
+  duration = 500,
+  iterations = Infinity
+) {
   if (!element) {
     console.warn('pulse: Invalid element provided.');
     return;
   }
 
-  element.animate([
-    { transform: 'scale(1)' },
-    { transform: `scale(${scale})` },
-    { transform: 'scale(1)' }
-  ], {
-    duration: duration,
-    iterations: iterations,
-    easing: 'ease-in-out'
-  });
+  element.animate(
+    [
+      { transform: 'scale(1)' },
+      { transform: `scale(${scale})` },
+      { transform: 'scale(1)' },
+    ],
+    {
+      duration: duration,
+      iterations: iterations,
+      easing: 'ease-in-out',
+    }
+  );
 }
 
 // Helper functions for slideToggle (assuming they are defined elsewhere or imported)
 // These are simplified versions for demonstration. In a real scenario, you'd import them.
 function slideDown(element, duration) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     element.style.height = '0';
     element.style.overflow = 'hidden';
     element.style.display = 'block';
@@ -137,16 +144,23 @@ function slideDown(element, duration) {
     const animate = (currentTime) => {
       if (!start) start = currentTime;
       const progress = (currentTime - start) / duration;
-      const currentHeight = startHeight + (endHeight - startHeight) * Math.min(progress, 1);
+      const currentHeight =
+        startHeight + (endHeight - startHeight) * Math.min(progress, 1);
       element.style.height = currentHeight + 'px';
-      if (progress < 1) { requestAnimationFrame(animate); } else { element.style.height = ''; element.style.overflow = ''; resolve(); }
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        element.style.height = '';
+        element.style.overflow = '';
+        resolve();
+      }
     };
     requestAnimationFrame(animate);
   });
 }
 
 function slideUp(element, duration) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     element.style.height = element.scrollHeight + 'px';
     element.style.overflow = 'hidden';
     const startHeight = element.scrollHeight;
@@ -155,9 +169,17 @@ function slideUp(element, duration) {
     const animate = (currentTime) => {
       if (!start) start = currentTime;
       const progress = (currentTime - start) / duration;
-      const currentHeight = startHeight + (endHeight - startHeight) * Math.min(progress, 1);
+      const currentHeight =
+        startHeight + (endHeight - startHeight) * Math.min(progress, 1);
       element.style.height = currentHeight + 'px';
-      if (progress < 1) { requestAnimationFrame(animate); } else { element.style.display = 'none'; element.style.height = ''; element.style.overflow = ''; resolve(); }
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        element.style.display = 'none';
+        element.style.height = '';
+        element.style.overflow = '';
+        resolve();
+      }
     };
     requestAnimationFrame(animate);
   });
