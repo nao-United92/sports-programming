@@ -22,11 +22,16 @@ const isEqual = (arr1, arr2) => {
     const val2 = arr2[i];
 
     if (Array.isArray(val1) && Array.isArray(val2)) {
-      if (!isEqual(val1, val2)) { // Recursive call for nested arrays
+      if (!isEqual(val1, val2)) {
+        // Recursive call for nested arrays
         return false;
       }
-    } else if (typeof val1 === 'object' && val1 !== null &&
-               typeof val2 === 'object' && val2 !== null) {
+    } else if (
+      typeof val1 === 'object' &&
+      val1 !== null &&
+      typeof val2 === 'object' &&
+      val2 !== null
+    ) {
       // Simple object comparison (shallow for now, could be deep if needed)
       // For true deep object comparison, a separate deepEqual function for objects would be needed.
       if (JSON.stringify(val1) !== JSON.stringify(val2)) {
