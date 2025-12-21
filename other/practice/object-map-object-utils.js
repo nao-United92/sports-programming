@@ -1,18 +1,16 @@
-const pick = (obj, keys) => {
+const mapObject = (obj, iteratee) => {
   if (typeof obj !== 'object' || obj === null) {
     return {};
   }
 
   const result = {};
-  const keysToPick = Array.isArray(keys) ? keys : [keys];
-
-  for (const key of keysToPick) {
+  for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      result[key] = obj[key];
+      result[key] = iteratee(obj[key], key, obj);
     }
   }
 
   return result;
 };
 
-module.exports = pick;
+module.exports = mapObject;

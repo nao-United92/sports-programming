@@ -1,12 +1,8 @@
-const kebabCase = (str) => {
-  if (typeof str !== 'string' || !str) {
-    return '';
-  }
-
-  return str
+const kebabCase = str =>
+  str
     .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
-    .toLowerCase();
-};
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
-module.exports = kebabCase;
+export default kebabCase;
