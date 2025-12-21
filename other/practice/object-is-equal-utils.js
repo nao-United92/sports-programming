@@ -1,21 +1,22 @@
-const isEqual = (value, other) => {
-  if (value === other) {
-    return true;
-  }
+const isEqual = (obj1, obj2) => {
+  if (obj1 === obj2) return true;
 
-  if (value == null || other == null || typeof value !== 'object' || typeof other !== 'object') {
-    return value !== value && other !== other; // Handle NaN
-  }
-
-  const keysA = Object.keys(value);
-  const keysB = Object.keys(other);
-
-  if (keysA.length !== keysB.length) {
+  if (
+    typeof obj1 !== 'object' ||
+    obj1 === null ||
+    typeof obj2 !== 'object' ||
+    obj2 === null
+  ) {
     return false;
   }
 
-  for (const key of keysA) {
-    if (!keysB.includes(key) || !isEqual(value[key], other[key])) {
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) return false;
+
+  for (const key of keys1) {
+    if (!keys2.includes(key) || !isEqual(obj1[key], obj2[key])) {
       return false;
     }
   }
