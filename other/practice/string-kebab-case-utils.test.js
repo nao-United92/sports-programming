@@ -1,28 +1,32 @@
-const kebabCase = require('./string-kebab-case-utils');
+import { kebabCase } from './string-kebab-case-utils';
 
 describe('kebabCase', () => {
-  it('should convert a camelCase string to kebab-case', () => {
-    expect(kebabCase('helloWorld')).toBe('hello-world');
+  it('should convert camelCase to kebab-case', () => {
+    expect(kebabCase('camelCase')).toBe('camel-case');
   });
 
-  // it('should convert a string with spaces to kebab-case', () => {
-  //   expect(kebabCase('Hello World')).toBe('hello-world');
-  // });
-
-  it('should convert a snake_case string to kebab-case', () => {
-    expect(kebabCase('hello_world')).toBe('hello-world');
+  it('should convert PascalCase to kebab-case', () => {
+    expect(kebabCase('PascalCase')).toBe('pascal-case');
   });
 
-  // it('should handle special characters', () => {
-  //   expect(kebabCase('--FOO-BAR--')).toBe('foo-bar');
-  // });
-    
-  // it('should handle numbers in the string', () => {
-  //   expect(kebabCase('helloWorld123')).toBe('hello-world-123');
-  // });
+  it('should convert snake_case to kebab-case', () => {
+    expect(kebabCase('snake_case')).toBe('snake-case');
+  });
 
-  it('should return an empty string for non-string inputs', () => {
+  it('should convert sentences to kebab-case', () => {
+    expect(kebabCase('A new post')).toBe('a-new-post');
+  });
+
+  it('should handle empty strings', () => {
+    expect(kebabCase('')).toBe('');
+  });
+
+  it('should handle null and undefined', () => {
     expect(kebabCase(null)).toBe('');
     expect(kebabCase(undefined)).toBe('');
+  });
+
+  it('should handle strings with numbers', () => {
+    expect(kebabCase('myFunction2')).toBe('my-function2');
   });
 });
