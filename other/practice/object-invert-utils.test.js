@@ -1,29 +1,17 @@
-const invert = require('./object-invert-utils');
+import { invert } from './object-invert-utils';
 
 describe('invert', () => {
-  test('should invert an object with unique values', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    expect(invert(obj)).toEqual({ 1: ['a'], 2: ['b'], 3: ['c'] });
+  it('should invert keys and values of an object', () => {
+    const object = { 'a': 1, 'b': 2, 'c': 1 };
+    expect(invert(object)).toEqual({ '1': 'c', '2': 'b' });
   });
 
-  test('should group keys for duplicate values', () => {
-    const obj = { a: 1, b: 2, c: 1 };
-    expect(invert(obj)).toEqual({ 1: ['a', 'c'], 2: ['b'] });
-  });
-
-  test('should handle an empty object', () => {
+  it('should handle an empty object', () => {
     expect(invert({})).toEqual({});
   });
 
-  test('should handle an object with non-string keys', () => {
-    const obj = { 1: 'a', 2: 'b' };
-    expect(invert(obj)).toEqual({ a: ['1'], b: ['2'] });
-  });
-
-  test('should return an empty object for null or non-object inputs', () => {
-    expect(invert(null)).toEqual({});
-    expect(invert(undefined)).toEqual({});
-    expect(invert(123)).toEqual({});
-    expect(invert('string')).toEqual({});
+  it('should handle an object with non-string values', () => {
+    const object = { 'a': 1, 'b': 'hello', 'c': true };
+    expect(invert(object)).toEqual({ '1': 'a', 'hello': 'b', 'true': 'c' });
   });
 });

@@ -1,9 +1,6 @@
-const isPlainObject = (obj) => {
-  if (obj === null || typeof obj !== 'object') {
+export const isPlainObject = (value) => {
+  if (value === null || typeof value !== 'object' || value.nodeType || (value.constructor && !Object.prototype.hasOwnProperty.call(value.constructor.prototype, 'isPrototypeOf'))) {
     return false;
   }
-  const proto = Object.getPrototypeOf(obj);
-  return proto === Object.prototype || proto === null;
+  return true;
 };
-
-export default isPlainObject;

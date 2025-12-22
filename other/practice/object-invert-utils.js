@@ -1,17 +1,9 @@
-const invert = (obj) => {
-  if (typeof obj !== 'object' || obj === null) {
-    return {};
-  }
-
-  return Object.keys(obj).reduce((acc, key) => {
-    const value = obj[key];
-    if (acc[value]) {
-      acc[value].push(key);
-    } else {
-      acc[value] = [key];
+export const invert = (obj) => {
+  const newObj = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      newObj[obj[key]] = key;
     }
-    return acc;
-  }, {});
+  }
+  return newObj;
 };
-
-module.exports = invert;

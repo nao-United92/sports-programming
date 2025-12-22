@@ -1,8 +1,10 @@
-const snakeCase = str =>
-  str
-    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1_$2')
+export const snakeCase = (str) => {
+  if (str === null || str === undefined) {
+    return '';
+  }
+  return str
+    .replace(/([A-Z])/g, '_$1')
+    .replace(/[\s-]+/g, '_')
     .toLowerCase()
-    .replace(/[^a-zA-Z0-9_]+/g, '_')
-    .replace(/^_|_$/g, '');
-
-export default snakeCase;
+    .replace(/^_/, '');
+};

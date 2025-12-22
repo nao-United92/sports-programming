@@ -1,18 +1,12 @@
-const pick = (obj, keys) => {
-  if (typeof obj !== 'object' || obj === null) {
+export const pick = (obj, props) => {
+  if (obj === null || obj === undefined) {
     return {};
   }
-
-  const result = {};
-  const keysToPick = Array.isArray(keys) ? keys : [keys];
-
-  for (const key of keysToPick) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      result[key] = obj[key];
+  const newObj = {};
+  props.forEach(prop => {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      newObj[prop] = obj[prop];
     }
-  }
-
-  return result;
+  });
+  return newObj;
 };
-
-module.exports = pick;

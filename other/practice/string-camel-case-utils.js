@@ -1,5 +1,11 @@
-const camelCase = str => {
-  return str.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, match => match.toLowerCase());
+export const camelCase = (str) => {
+  if (str === null || str === undefined) {
+    return '';
+  }
+  let s = str.replace(/([-_][a-z])/ig, ($1) => {
+    return $1.toUpperCase()
+      .replace('-', '')
+      .replace('_', '');
+  });
+  return s.charAt(0).toLowerCase() + s.slice(1);
 };
-
-export default camelCase;

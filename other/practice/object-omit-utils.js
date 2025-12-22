@@ -1,16 +1,7 @@
-const omit = (obj, keys) => {
-  if (typeof obj !== 'object' || obj === null) {
-    return {};
-  }
-
-  const result = { ...obj };
-  const keysToRemove = Array.isArray(keys) ? keys : [keys];
-
-  for (const key of keysToRemove) {
-    delete result[key];
-  }
-
-  return result;
+export const omit = (obj, props) => {
+  const newObj = { ...obj };
+  props.forEach(prop => {
+    delete newObj[prop];
+  });
+  return newObj;
 };
-
-module.exports = omit;
