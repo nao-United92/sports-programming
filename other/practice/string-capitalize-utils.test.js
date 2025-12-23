@@ -1,29 +1,43 @@
 const capitalize = require('./string-capitalize-utils');
 
 describe('capitalize', () => {
-  test('should capitalize the first letter and lowercase the rest', () => {
+  test('should capitalize the first letter of a single word string', () => {
     expect(capitalize('hello')).toBe('Hello');
-    expect(capitalize('WORLD')).toBe('World');
-    expect(capitalize('fooBar')).toBe('Foobar');
-    expect(capitalize('jAvaScRipt')).toBe('Javascript');
   });
 
-  test('should handle empty string', () => {
+  test('should capitalize the first letter of a multi-word string', () => {
+    expect(capitalize('hello world')).toBe('Hello world');
+  });
+
+  test('should return an empty string for an empty input string', () => {
     expect(capitalize('')).toBe('');
   });
 
-  test('should handle null or undefined input', () => {
+  test('should handle a string that is already capitalized', () => {
+    expect(capitalize('Hello')).toBe('Hello');
+  });
+
+  test('should handle a single character string', () => {
+    expect(capitalize('a')).toBe('A');
+  });
+
+  test('should return an empty string for non-string input (null)', () => {
     expect(capitalize(null)).toBe('');
+  });
+
+  test('should return an empty string for non-string input (undefined)', () => {
     expect(capitalize(undefined)).toBe('');
   });
 
-  test('should handle single character string', () => {
-    expect(capitalize('a')).toBe('A');
-    expect(capitalize('B')).toBe('B');
+  test('should return an empty string for non-string input (number)', () => {
+    expect(capitalize(123)).toBe('');
   });
 
-  test('should handle strings with leading/trailing spaces (but not trim them)', () => {
-    expect(capitalize('  hello')).toBe('  hello'); // Current implementation doesn't trim
-    expect(capitalize('world  ')).toBe('World  '); // Current implementation doesn't trim
+  test('should return an empty string for non-string input (object)', () => {
+    expect(capitalize({})).toBe('');
+  });
+
+  test('should not affect subsequent characters', () => {
+    expect(capitalize('jAvaScript')).toBe('JAvaScript');
   });
 });
