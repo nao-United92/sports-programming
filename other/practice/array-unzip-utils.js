@@ -1,9 +1,16 @@
-const unzip = arr =>
-  arr.reduce(
-    (acc, val) => (val.forEach((v, i) => acc[i].push(v)), acc),
-    Array.from({
-      length: Math.max(...arr.map(x => x.length))
-    }).map(x => [])
-  );
+const unzip = (arr) => {
+  if (!arr || arr.length === 0) {
+    return [];
+  }
 
-export default unzip;
+  const maxLength = Math.max(...arr.map(subArray => subArray.length));
+  const result = [];
+
+  for (let i = 0; i < maxLength; i++) {
+    result.push(arr.map(subArray => subArray[i]));
+  }
+
+  return result;
+};
+
+module.exports = unzip;
