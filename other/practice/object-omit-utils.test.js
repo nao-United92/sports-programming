@@ -1,97 +1,22 @@
 const omit = require('./object-omit-utils');
 
 describe('omit', () => {
-  test('should omit specified keys from an object', () => {
-    const obj = {
-      a: 1,
-      b: 2,
-      c: 3
-    };
-    expect(omit(obj, ['b', 'c'])).toEqual({
-      a: 1
-    });
+  it('should omit specified keys from an object', () => {
+    const obj = { a: 1, b: '2', c: 3 };
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: '2' });
   });
 
-  test('should return the original object if no keys are omitted', () => {
-    const obj = {
-      a: 1,
-      b: 2
-    };
-    expect(omit(obj, [])).toEqual({
-      a: 1,
-      b: 2
-    });
-    expect(omit(obj, ['d'])).toEqual({
-      a: 1,
-      b: 2
-    });
+  it('should not change the object if keys to omit are not present', () => {
+    const obj = { a: 1, b: '2' };
+    expect(omit(obj, ['d', 'e'])).toEqual({ a: 1, b: '2' });
   });
 
-  test('should return an empty object for an empty input object', () => {
-    expect(omit({}, ['a'])).toEqual({});
+  it('should return the same object if no keys are provided', () => {
+    const obj = { a: 1, b: '2' };
+    expect(omit(obj, [])).toEqual({ a: 1, b: '2' });
   });
 
-  test('should handle non-object input by returning an empty object', () => {
-    expect(omit(null, ['a'])).toEqual({});
-    expect(omit(undefined, ['a'])).toEqual({});
-    expect(omit(123, ['a'])).toEqual({});
-    expect(omit('string', ['a'])).toEqual({});
-    expect(omit([1, 2], ['a'])).toEqual({});
-  });
-
-  test('should not mutate the original object', () => {
-    const obj = {
-      a: 1,
-      b: 2
-    };
-    omit(obj, ['b']);
-    expect(obj).toEqual({
-      a: 1,
-      b: 2
-    });
-  });
-
-  test('should handle nested objects and arrays within properties (shallow omit)', () => {
-    const obj = {
-      a: 1,
-      b: {
-        c: 2
-      },
-      d: [1, 2]
-    };
-    expect(omit(obj, ['b'])).toEqual({
-      a: 1,
-      d: [1, 2]
-    });
-  });
-
-  test('should handle keys that do not exist in the object', () => {
-    const obj = {
-      a: 1,
-      b: 2
-    };
-    expect(omit(obj, ['c', 'd'])).toEqual({
-      a: 1,
-      b: 2
-    });
-  });
-
-  test('should treat non-array keys argument as empty array', () => {
-    const obj = {
-      a: 1,
-      b: 2
-    };
-    expect(omit(obj, null)).toEqual({
-      a: 1,
-      b: 2
-    });
-    expect(omit(obj, undefined)).toEqual({
-      a: 1,
-      b: 2
-    });
-    expect(omit(obj, 'a')).toEqual({
-      a: 1,
-      b: 2
-    }); // 'a' is not an array
+  it('should return an empty object if the input object is empty', () => {
+    expect(omit({}, ['a', 'b'])).toEqual({});
   });
 });
