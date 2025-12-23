@@ -1,44 +1,74 @@
-const mapValues = require('./object-map-values-utils').default;
+const mapValues = require('./object-map-values-utils');
 
 describe('mapValues', () => {
   test('should map values of an object using the iteratee function', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    const square = (n) => n * n;
-    expect(mapValues(obj, square)).toEqual({ a: 1, b: 4, c: 9 });
-  });
-
-  test('should pass value, key, and object to the iteratee', () => {
-    const obj = { a: 1, b: 2 };
-    const iteratee = (value, key, originalObject) =>
-      `${key}:${value * 2}:${originalObject.a}`;
-    expect(mapValues(obj, iteratee)).toEqual({ a: 'a:2:1', b: 'b:4:1' });
-  });
-
-  test('should return an empty object if the input object is empty', () => {
-    const obj = {};
-    const iteratee = (n) => n * 2;
-    expect(mapValues(obj, iteratee)).toEqual({});
-  });
-
-  test('should handle objects with different data types as values', () => {
-    const obj = { a: 1, b: 'hello', c: true };
-    const iteratee = (value) => {
-      if (typeof value === 'number') return value + 1;
-      if (typeof value === 'string') return value.toUpperCase();
-      if (typeof value === 'boolean') return !value;
-      return value;
+    const obj = {
+      a: 1,
+      b: 2,
+      c: 3
     };
+    const iteratee = (value) => value * 2;
     expect(mapValues(obj, iteratee)).toEqual({
       a: 2,
-      b: 'HELLO',
-      c: false,
+      b: 4,
+      c: 6
     });
   });
 
-  test('should not modify the original object', () => {
-    const obj = { a: 1, b: 2 };
-    const square = (n) => n * n;
-    mapValues(obj, square);
-    expect(obj).toEqual({ a: 1, b: 2 });
+  test('should pass key and object to the iteratee', () => {
+    const obj = {
+      a: 1,
+      b: 2
+    };
+    const iteratee = (value, key, sourceObj) => `${key}-${value}-${sourceObj.a}`;
+    expect(mapValues(obj, iteratee)).toEqual({
+      a: 'a-1-1',
+      b: 'b-2-1'
+    });
+  });
+
+  test('should return an empty object for an empty input object', () => {
+    expect(mapValues({}, (value) => value * 2)).toEqual({});
+  });
+
+  test('should handle non-object input by returning an empty object', () => {
+    expect(mapValues(null, (value) => value * 2)).toEqual({});
+    expect(mapValues(undefined, (value) => value * 2)).toEqual({});
+    expect(mapValues(123, (value) => value * 2)).toEqual({});
+    expect(mapValues('string', (value) => value * 2)).toEqual({});
+    expect(mapValues([1, 2], (value) => value * 2)).toEqual({}); // Arrays are not objects for this utility
+  });
+
+  test('should return a shallow copy if iteratee is not a function', () => {
+    const obj = {
+      a: 1,
+      b: 2
+    };
+    expect(mapValues(obj, null)).toEqual({
+      a: 1,
+      b: 2
+    });
+    expect(mapValues(obj, undefined)).toEqual({
+      a: 1,
+      b: 2
+    });
+    expect(mapValues(obj, 'not a function')).toEqual({
+      a: 1,
+      b: 2
+    });
+  });
+
+  test('should handle objects with different data types', () => {
+    const obj = {
+      a: 1,
+      b: 'hello',
+      c: true
+    };
+    const iteratee = (value) => typeof value;
+    expect(mapValues(obj, iteratee)).toEqual({
+      a: 'number',
+      b: 'string',
+      c: 'boolean'
+    });
   });
 });

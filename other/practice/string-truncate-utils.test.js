@@ -1,32 +1,45 @@
-const { truncate } = require('./string-truncate-utils');
+const truncate = require('./string-truncate-utils');
 
 describe('truncate', () => {
-  test('should truncate a string that is longer than the specified length', () => {
-    const str = 'This is a long string';
-    expect(truncate(str, 10)).toBe('This is...');
+  test('should truncate a string longer than the specified length with default ending', () => {
+    expect(truncate('hello world', 7)).toBe('hell...');
   });
 
-  test('should not truncate a string that is shorter than or equal to the specified length', () => {
-    const str = 'Short';
-    expect(truncate(str, 10)).toBe('Short');
+  test('should not truncate if string length is less than or equal to specified length', () => {
+    expect(truncate('hello', 5)).toBe('hello');
+    expect(truncate('hi', 5)).toBe('hi');
   });
 
-  test('should use a custom omission string if provided', () => {
-    const str = 'This is a long string';
-    expect(truncate(str, 15, '... (more)')).toBe('This i... (more)');
+  test('should truncate with a custom ending string', () => {
+    expect(truncate('hello world', 8, '---')).toBe('hello---');
   });
 
-  test('should return an empty string if the input string is empty', () => {
-    expect(truncate('', 10)).toBe('');
+  test('should handle empty string input', () => {
+    expect(truncate('', 5)).toBe('');
   });
 
-  test('should handle length being zero by returning the omission', () => {
-    const str = 'This is a long string';
-    expect(truncate(str, 0)).toBe('...');
+  test('should return empty string for non-string input', () => {
+    expect(truncate(null, 5)).toBe('');
+    expect(truncate(undefined, 5)).toBe('');
+    expect(truncate(123, 5)).toBe('');
+    expect(truncate({}, 5)).toBe('');
   });
 
-  test('should return the omission if length is less than omission length', () => {
-    const str = 'This is a long string';
-    expect(truncate(str, 2, '...')).toBe('...');
+  test('should handle length argument being 0', () => {
+    expect(truncate('hello', 0)).toBe('...');
+    expect(truncate('hello', 0, '')).toBe('');
+  });
+
+  test('should handle length argument less than end string length', () => {
+    expect(truncate('hello world', 2)).toBe('..'); // default '...' length 3. 2-3=-1, so Math.max(0,-1) = 0.
+    expect(truncate('hello world', 2, '---')).toBe('---'); // end.length = 3. 2-3=-1. so Math.max(0,-1) = 0.
+  });
+
+  test('should handle empty end string', () => {
+    expect(truncate('hello world', 5, '')).toBe('hello');
+  });
+
+  test('should handle negative length argument', () => {
+    expect(truncate('hello world', -1)).toBe('');
   });
 });

@@ -1,28 +1,48 @@
-import { camelCase } from './string-camel-case-utils';
+const camelCase = require('./string-camel-case-utils');
 
 describe('camelCase', () => {
-  it('should convert kebab-case to camelCase', () => {
-    expect(camelCase('kebab-case')).toBe('kebabCase');
+  test('should convert a dash-separated string to camel case', () => {
+    expect(camelCase('foo-bar')).toBe('fooBar');
   });
 
-  it('should convert snake_case to camelCase', () => {
-    expect(camelCase('snake_case')).toBe('snakeCase');
+  test('should convert a space-separated string to camel case', () => {
+    expect(camelCase('foo bar')).toBe('fooBar');
   });
 
-  it('should handle already camelCased strings', () => {
-    expect(camelCase('camelCase')).toBe('camelCase');
+  test('should convert an underscore-separated string to camel case', () => {
+    expect(camelCase('foo_bar')).toBe('fooBar');
   });
 
-  it('should handle PascalCase strings', () => {
-    expect(camelCase('PascalCase')).toBe('pascalCase');
+  test('should convert a mixed-separated string to camel case', () => {
+    expect(camelCase('Foo Bar-baz_qux')).toBe('fooBarBazQux');
   });
 
-  it('should handle empty strings', () => {
+  test('should handle already camel cased strings', () => {
+    expect(camelCase('fooBar')).toBe('fooBar');
+  });
+
+  test('should handle empty string input', () => {
     expect(camelCase('')).toBe('');
   });
 
-  it('should handle null and undefined', () => {
+  test('should handle single word strings', () => {
+    expect(camelCase('foo')).toBe('foo');
+  });
+
+  test('should handle strings with leading/trailing separators', () => {
+    expect(camelCase('-foo-bar-')).toBe('fooBar');
+    expect(camelCase('_foo_bar_')).toBe('fooBar');
+    expect(camelCase(' foo bar ')).toBe('fooBar');
+  });
+
+  test('should handle non-string input', () => {
     expect(camelCase(null)).toBe('');
     expect(camelCase(undefined)).toBe('');
+    expect(camelCase(123)).toBe('');
+    expect(camelCase({})).toBe('');
+  });
+
+  test('should convert PascalCase to camelCase', () => {
+    expect(camelCase('FooBar')).toBe('fooBar');
   });
 });
