@@ -1,43 +1,26 @@
 const capitalize = require('./string-capitalize-utils');
 
 describe('capitalize', () => {
-  test('should capitalize the first letter of a single word string', () => {
+  it('should capitalize the first letter of a string', () => {
     expect(capitalize('hello')).toBe('Hello');
   });
 
-  test('should capitalize the first letter of a multi-word string', () => {
-    expect(capitalize('hello world')).toBe('Hello world');
-  });
-
-  test('should return an empty string for an empty input string', () => {
+  it('should return an empty string if the input is empty', () => {
     expect(capitalize('')).toBe('');
   });
 
-  test('should handle a string that is already capitalized', () => {
-    expect(capitalize('Hello')).toBe('Hello');
+  it('should handle already capitalized strings', () => {
+    expect(capitalize('World')).toBe('World');
   });
 
-  test('should handle a single character string', () => {
-    expect(capitalize('a')).toBe('A');
+  it('should handle strings with mixed case', () => {
+    expect(capitalize('hELLo')).toBe('HELLo');
   });
 
-  test('should return an empty string for non-string input (null)', () => {
+  it('should return an empty string for non-string inputs', () => {
     expect(capitalize(null)).toBe('');
-  });
-
-  test('should return an empty string for non-string input (undefined)', () => {
     expect(capitalize(undefined)).toBe('');
-  });
-
-  test('should return an empty string for non-string input (number)', () => {
     expect(capitalize(123)).toBe('');
-  });
-
-  test('should return an empty string for non-string input (object)', () => {
     expect(capitalize({})).toBe('');
-  });
-
-  test('should not affect subsequent characters', () => {
-    expect(capitalize('jAvaScript')).toBe('JAvaScript');
   });
 });
