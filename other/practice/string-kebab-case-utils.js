@@ -1,18 +1,12 @@
-/**
- * Converts `string` to kebab case.
- *
- * @param {string} str The string to convert.
- * @returns {string} Returns the kebab cased string.
- */
-function kebabCase(str) {
-  if (typeof str !== 'string') {
+const toKebabCase = (str) => {
+  if (typeof str !== 'string' || str.length === 0) {
     return '';
   }
-  return str
-    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2') // Add hyphen between lower/upper case
-    .replace(/[^a-zA-Z0-9]+/g, '-') // Replace non-alphanumeric with hyphen
-    .toLowerCase() // Convert to lower case
-    .replace(/^-+|-+$/g, ''); // Trim leading/trailing hyphens
-}
+  const match = str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+  if (!match) return ''
+  return match
+    .map(x => x.toLowerCase())
+    .join('-');
+};
 
-module.exports = kebabCase;
+module.exports = toKebabCase;
