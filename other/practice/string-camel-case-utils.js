@@ -1,11 +1,14 @@
-export const camelCase = (str) => {
-  if (str === null || str === undefined) {
+/**
+ * Converts `string` to camel case.
+ *
+ * @param {string} str The string to convert.
+ * @returns {string} Returns the camel cased string.
+ */
+function camelCase(str) {
+  if (typeof str !== 'string') {
     return '';
   }
-  let s = str.replace(/([-_][a-z])/ig, ($1) => {
-    return $1.toUpperCase()
-      .replace('-', '')
-      .replace('_', '');
-  });
-  return s.charAt(0).toLowerCase() + s.slice(1);
-};
+  return str.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
+}
+
+module.exports = camelCase;
