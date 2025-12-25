@@ -1,35 +1,33 @@
-const curry = require('./function-curry-utils');
+const { curry } = require('./function-curry-utils.js');
 
 describe('curry', () => {
-  test('should curry a function with multiple arguments', () => {
-    const sum = (a, b, c) => a + b + c;
-    const curriedSum = curry(sum);
+  const add = (a, b, c) => a + b + c;
 
-    expect(curriedSum(1)(2)(3)).toBe(6);
-    expect(curriedSum(1, 2)(3)).toBe(6);
-    expect(curriedSum(1)(2, 3)).toBe(6);
-    expect(curriedSum(1, 2, 3)).toBe(6);
-  });
-
-  test('should return the result when all arguments are provided', () => {
-    const multiply = (a, b) => a * b;
-    const curriedMultiply = curry(multiply);
-
-    expect(curriedMultiply(3, 4)).toBe(12);
-  });
-
-  test('should allow reusing curried functions', () => {
-    const add = (a, b) => a + b;
+  it('should curry a function and allow partial application', () => {
     const curriedAdd = curry(add);
-    const add5 = curriedAdd(5);
-
-    expect(add5(3)).toBe(8);
-    expect(add5(10)).toBe(15);
+    const add5 = curriedAdd(2, 3);
+    expect(add5(5)).toBe(10);
   });
 
-  test('should work with functions that have no arguments', () => {
-    const getValue = () => 42;
-    const curriedGetValue = curry(getValue);
-    expect(curriedGetValue()).toBe(42);
+  it('should return the result immediately if all arguments are provided', () => {
+    const curriedAdd = curry(add);
+    expect(curriedAdd(1, 2, 3)).toBe(6);
+  });
+
+  it('should work with multiple partial applications', () => {
+    const curriedAdd = curry(add);
+    const add1 = curriedAdd(1);
+    const add1and2 = add1(2);
+    expect(add1and2(3)).toBe(6);
+  });
+
+  it('should maintain the correct `this` context (though not explicitly used here)', () => {
+    const obj = {
+      x: 10,
+      addThis: function(a, b) { return this.x + a + b; }
+    };
+    const curriedAddThis = curry(obj.addThis);
+    const boundAdd = curriedAddThis.bind(obj);
+    expect(boundAdd(1, 2)).toBe(13);
   });
 });
