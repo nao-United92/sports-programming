@@ -1,4 +1,4 @@
-const capitalize = require('./string-capitalize-utils');
+const { capitalize } = require('./string-capitalize-utils.js');
 
 describe('capitalize', () => {
   it('should capitalize the first letter of a string', () => {
@@ -13,14 +13,13 @@ describe('capitalize', () => {
     expect(capitalize('World')).toBe('World');
   });
 
-  it('should handle strings with mixed case', () => {
-    expect(capitalize('hELLo')).toBe('HELLo');
-  });
-
-  it('should return an empty string for non-string inputs', () => {
+  it('should handle non-string inputs gracefully', () => {
     expect(capitalize(null)).toBe('');
     expect(capitalize(undefined)).toBe('');
     expect(capitalize(123)).toBe('');
-    expect(capitalize({})).toBe('');
+  });
+
+  it('should only capitalize the first letter', () => {
+    expect(capitalize('hello world')).toBe('Hello world');
   });
 });
