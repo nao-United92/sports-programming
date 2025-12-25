@@ -8,4 +8,4 @@ const invert = (obj) => {
   }, {});
 };
 
-module.exports = invert;
+module.exports = { invert };

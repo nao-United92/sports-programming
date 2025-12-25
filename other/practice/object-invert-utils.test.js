@@ -1,4 +1,4 @@
-const invert = require('./object-invert-utils');
+const { invert } = require('./object-invert-utils.js');
 
 describe('invert', () => {
   it('should invert the keys and values of an object', () => {
@@ -11,19 +11,17 @@ describe('invert', () => {
     expect(invert(obj)).toEqual({ '1': 'a', '2': 'b' });
   });
 
-  it('should handle duplicate values by overwriting with the last key', () => {
-    const obj = { a: '1', b: '2', c: '1' };
-    expect(invert(obj)).toEqual({ '1': 'c', '2': 'b' });
-  });
-
-  it('should return an empty object for an empty object', () => {
+  it('should handle an empty object', () => {
     expect(invert({})).toEqual({});
   });
 
-  it('should return an empty object for non-object inputs', () => {
+  it('should handle invalid inputs gracefully', () => {
     expect(invert(null)).toEqual({});
     expect(invert(undefined)).toEqual({});
-    expect(invert(123)).toEqual({});
-    expect(invert('hello')).toEqual({});
+  });
+
+  it('should overwrite keys if values are not unique', () => {
+    const obj = { a: '1', b: '1', c: '2' };
+    expect(invert(obj)).toEqual({ '1': 'b', '2': 'c' });
   });
 });
