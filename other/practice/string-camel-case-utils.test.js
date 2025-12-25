@@ -1,35 +1,40 @@
-const toCamelCase = require('./string-camel-case-utils');
+const { camelCase } = require('./string-camel-case-utils.js');
 
-describe('toCamelCase', () => {
-  it('should convert a kebab-cased string to camelCase', () => {
-    expect(toCamelCase('hello-world')).toBe('helloWorld');
+describe('camelCase', () => {
+  it('should convert kebab-case to camelCase', () => {
+    expect(camelCase('foo-bar-baz')).toBe('fooBarBaz');
   });
 
-  it('should convert a snake_cased string to camelCase', () => {
-    expect(toCamelCase('hello_world')).toBe('helloWorld');
+  it('should convert snake_case to camelCase', () => {
+    expect(camelCase('foo_bar_baz')).toBe('fooBarBaz');
   });
 
-  it('should convert a space-separated string to camelCase', () => {
-    expect(toCamelCase('hello world')).toBe('helloWorld');
+  it('should convert space-separated string to camelCase', () => {
+    expect(camelCase('foo bar baz')).toBe('fooBarBaz');
   });
 
-  it('should handle strings that are already camelCased', () => {
-    expect(toCamelCase('helloWorld')).toBe('helloworld'); // This is expected with the new logic
+  it('should handle mixed delimiters', () => {
+    expect(camelCase('foo-bar_baz test')).toBe('fooBarBazTest');
   });
 
-  it('should handle leading dashes, underscores or spaces', () => {
-    expect(toCamelCase('-hello-world')).toBe('helloWorld');
-    expect(toCamelCase('_hello_world')).toBe('helloWorld');
-    expect(toCamelCase(' hello world')).toBe('helloWorld');
-  });
-  
-  it('should handle multiple delimiters and caps', () => {
-    expect(toCamelCase('__FOO_BAR__')).toBe('fooBar');
+  it('should handle PascalCase', () => {
+    expect(camelCase('PascalCaseString')).toBe('pascalCaseString');
   });
 
-  it('should return an empty string for non-string inputs', () => {
-    expect(toCamelCase(null)).toBe('');
-    expect(toCamelCase(undefined)).toBe('');
-    expect(toCamelCase(123)).toBe('');
+  it('should handle an empty string', () => {
+    expect(camelCase('')).toBe('');
+  });
+
+  it('should handle a single word string', () => {
+    expect(camelCase('word')).toBe('word');
+  });
+
+  it('should handle strings starting with an uppercase letter correctly', () => {
+    expect(camelCase('FooBar')).toBe('fooBar');
+  });
+
+  it('should handle numbers within the string', () => {
+    expect(camelCase('foo-bar-123')).toBe('fooBar123');
+    expect(camelCase('foo_bar_1_2_3')).toBe('fooBar123');
   });
 });
