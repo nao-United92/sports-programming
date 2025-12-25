@@ -1,12 +1,9 @@
-const toKebabCase = (str) => {
-  if (typeof str !== 'string' || str.length === 0) {
-    return '';
-  }
-  const match = str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-  if (!match) return ''
-  return match
-    .map(x => x.toLowerCase())
-    .join('-');
+const kebabCase = (str) => {
+  return str
+    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2') // camelCase to kebab-case
+    .replace(/[_ ]+/g, '-') // snake_case and spaces to kebab-case
+    .toLowerCase()
+    .replace(/^-+|-+$/g, ''); // trim leading/trailing hyphens
 };
 
-module.exports = toKebabCase;
+module.exports = { kebabCase };
