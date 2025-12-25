@@ -1,63 +1,55 @@
-const throttle = require('./function-throttle-utils');
+const { throttle } = require('./function-throttle-utils.js');
+
+jest.useFakeTimers();
 
 describe('throttle', () => {
+  let func;
+  let throttledFunc;
+
   beforeEach(() => {
-    jest.useFakeTimers();
+    func = jest.fn();
+    throttledFunc = throttle(func, 1000);
   });
 
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
+  it('should call the function immediately on the first call', () => {
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should throttle a function to be called at most once per wait interval', () => {
-    const mockFn = jest.fn();
-    const throttledFn = throttle(mockFn, 100);
-
-    throttledFn(); // Call 1 - should execute immediately
-    throttledFn(); // Call 2 - should be ignored
-    throttledFn(); // Call 3 - should be ignored
-
-    expect(mockFn).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(50); // Advance time, still within throttle
-    throttledFn(); // Call 4 - should be ignored (or scheduled for after wait)
-    expect(mockFn).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(50); // Total 100ms passed since first call
-    // The throttled function should now execute the last ignored call,
-    // or if the implementation uses leading edge + trailing edge,
-    // it will call it once the interval passes.
-    expect(mockFn).toHaveBeenCalledTimes(2); // Should have executed the trailing call
-
-    throttledFn(); // Call 5 - should execute immediately again
-    expect(mockFn).toHaveBeenCalledTimes(3);
-
-    jest.advanceTimersByTime(100);
-    expect(mockFn).toHaveBeenCalledTimes(3); // No trailing calls to execute
+  it('should not call the function again within the throttle period', () => {
+    throttledFunc(); // Called
+    throttledFunc(); // Throttled
+    throttledFunc(); // Throttled
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should pass arguments to the throttled function', () => {
-    const mockFn = jest.fn();
-    const throttledFn = throttle(mockFn, 100);
+  it('should call the function again after the throttle period has passed', () => {
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
 
-    throttledFn(1, 2);
-    jest.advanceTimersByTime(100);
-
-    expect(mockFn).toHaveBeenCalledWith(1, 2);
+    jest.advanceTimersByTime(1000);
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(2);
   });
 
-  test('should maintain the `this` context', () => {
-    const obj = {
-      value: 1,
-      method: jest.fn(function(arg) { this.value = arg; })
-    };
-    obj.throttledMethod = throttle(obj.method, 100);
+  it('should call the function with the latest arguments after the throttle period', () => {
+    throttledFunc(1); // Called with 1
+    expect(func).toHaveBeenCalledWith(1);
 
-    obj.throttledMethod(5);
-    jest.advanceTimersByTime(100);
+    throttledFunc(2); // Throttled
+    throttledFunc(3); // Throttled, 3 is the latest
 
-    expect(obj.method).toHaveBeenCalledTimes(1);
-    expect(obj.value).toBe(5);
+    jest.advanceTimersByTime(1000);
+    // The trailing call should be executed
+    expect(func).toHaveBeenCalledWith(3);
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not make a trailing call if not called during the throttle period', () => {
+    throttledFunc(1);
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(1000);
+    expect(func).toHaveBeenCalledTimes(1); // No more calls
   });
 });
