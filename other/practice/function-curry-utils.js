@@ -1,13 +1,13 @@
 const curry = (fn) => {
-  const arity = fn.length;
-
   return function curried(...args) {
-    if (args.length >= arity) {
-      return fn(...args);
+    if (args.length >= fn.length) {
+      return fn.apply(this, args);
+    } else {
+      return function(...args2) {
+        return curried.apply(this, args.concat(args2));
+      }
     }
-
-    return curried.bind(null, ...args);
   };
 };
 
-module.exports = curry;
+module.exports = { curry };

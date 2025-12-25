@@ -1,19 +1,8 @@
-const toCamelCase = (str) => {
-  if (typeof str !== 'string' || str.length === 0) {
-    return '';
-  }
-  // Convert the string to a sequence of words
-  const words = str.match(/[a-zA-Z0-9]+/g) || [];
-  
-  // Lowercase the first word, and capitalize the first letter of subsequent words
-  return words
-    .map((word, index) => {
-      if (index === 0) {
-        return word.toLowerCase();
-      }
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    })
-    .join('');
+const camelCase = (str) => {
+  return str.replace(/^([A-Z])|[\s-_]+(\w)/g, (match, p1, p2) => {
+    if (p2) return p2.toUpperCase();
+    return p1.toLowerCase();
+  });
 };
 
-module.exports = toCamelCase;
+module.exports = { camelCase };

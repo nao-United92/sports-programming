@@ -1,33 +1,38 @@
-const toKebabCase = require('./string-kebab-case-utils');
+const { kebabCase } = require('./string-kebab-case-utils.js');
 
-describe('toKebabCase', () => {
-  it('should convert a camelCased string to kebab-case', () => {
-    expect(toKebabCase('helloWorld')).toBe('hello-world');
+describe('kebabCase', () => {
+  it('should convert a camelCase string to kebab-case', () => {
+    expect(kebabCase('camelCaseString')).toBe('camel-case-string');
   });
 
-  it('should convert a snake_cased string to kebab-case', () => {
-    expect(toKebabCase('hello_world')).toBe('hello-world');
+  it('should convert a PascalCase string to kebab-case', () => {
+    expect(kebabCase('PascalCaseString')).toBe('pascal-case-string');
   });
 
-  it('should convert a space-separated string to kebab-case', () => {
-    expect(toKebabCase('hello world')).toBe('hello-world');
+  it('should convert a snake_case string to kebab-case', () => {
+    expect(kebabCase('snake_case_string')).toBe('snake-case-string');
   });
 
-  it('should handle strings that are already kebab-cased', () => {
-    expect(toKebabCase('hello-world')).toBe('hello-world');
+  it('should handle a string with spaces', () => {
+    expect(kebabCase('string with spaces')).toBe('string-with-spaces');
   });
 
-  it('should handle strings with multiple uppercase letters', () => {
-    expect(toKebabCase('FooBarBaz')).toBe('foo-bar-baz');
+  it('should handle an empty string', () => {
+    expect(kebabCase('')).toBe('');
   });
 
-  it('should handle leading and trailing spaces by trimming them', () => {
-    expect(toKebabCase('  hello world  ')).toBe('hello-world');
+  it('should handle a single word string', () => {
+    expect(kebabCase('word')).toBe('word');
   });
 
-  it('should return an empty string for non-string inputs', () => {
-    expect(toKebabCase(null)).toBe('');
-    expect(toKebabCase(undefined)).toBe('');
-    expect(toKebabCase(123)).toBe('');
+  it('should handle mixed cases and delimiters', () => {
+    expect(kebabCase('  Foo Bar   Baz  ')).toBe('foo-bar-baz');
+    expect(kebabCase('foo_bar-baz')).toBe('foo-bar-baz');
+    expect(kebabCase('XMLHttpRequest')).toBe('xml-http-request');
+  });
+
+  it('should handle numbers', () => {
+    expect(kebabCase('version1Point0')).toBe('version1-point0');
+    expect(kebabCase('version-1-0')).toBe('version-1-0');
   });
 });

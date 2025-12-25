@@ -1,5 +1,3 @@
-const isObject = (obj) => obj && typeof obj === 'object';
-
 const deepMerge = (target, ...sources) => {
   if (!sources.length) {
     return target;
@@ -22,4 +20,8 @@ const deepMerge = (target, ...sources) => {
   return deepMerge(target, ...sources);
 };
 
-module.exports = deepMerge;
+const isObject = (item) => {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+};
+
+module.exports = { deepMerge };
