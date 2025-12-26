@@ -1,9 +1,15 @@
-const omit = (obj, keys) =>
-  Object.keys(obj)
-    .filter(k => !keys.includes(k))
-    .reduce((acc, key) => {
-      acc[key] = obj[key];
-      return acc;
-    }, {});
+const omit = (obj, keys) => {
+  if (obj == null) {
+    return {};
+  }
+  const newObj = { ...obj
+  };
+  keys.forEach(key => {
+    delete newObj[key];
+  });
+  return newObj;
+};
 
-module.exports = { omit };
+module.exports = {
+  omit
+};
