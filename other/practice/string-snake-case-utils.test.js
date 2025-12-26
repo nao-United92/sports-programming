@@ -1,28 +1,27 @@
-import { snakeCase } from './string-snake-case-utils';
+const {
+  snakeCase
+} = require('./string-snake-case-utils');
 
 describe('snakeCase', () => {
-  it('should convert camelCase to snake_case', () => {
+  test('should convert a string to snake case', () => {
     expect(snakeCase('camelCase')).toBe('camel_case');
+    expect(snakeCase('some-string')).toBe('some_string');
+    expect(snakeCase('some string')).toBe('some_string');
+    expect(snakeCase('some_string_with_a_dash')).toBe('some_string_with_a_dash');
+    expect(snakeCase('XMLHttpRequest')).toBe('xml_http_request');
   });
 
-  it('should convert PascalCase to snake_case', () => {
-    expect(snakeCase('PascalCase')).toBe('pascal_case');
-  });
-
-  it('should convert kebab-case to snake_case', () => {
-    expect(snakeCase('kebab-case')).toBe('kebab_case');
-  });
-
-  it('should handle sentences', () => {
-    expect(snakeCase('a new post')).toBe('a_new_post');
-  });
-
-  it('should handle empty strings', () => {
+  test('should handle an empty string', () => {
     expect(snakeCase('')).toBe('');
   });
 
-  it('should handle null and undefined', () => {
+  test('should handle non-string inputs', () => {
     expect(snakeCase(null)).toBe('');
     expect(snakeCase(undefined)).toBe('');
+    expect(snakeCase(123)).toBe('');
+  });
+
+  test('should handle strings with multiple spaces', () => {
+    expect(snakeCase('  foo   bar  ')).toBe('foo_bar');
   });
 });
