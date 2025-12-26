@@ -1,11 +1,18 @@
 const unzip = (arr) => {
-  if (!arr || arr.length === 0) {
+  if (!Array.isArray(arr) || arr.length === 0) {
     return [];
   }
-  const maxLength = Math.max(...arr.map(subArr => subArr.length));
-  return Array.from({ length: maxLength }).map((_, i) => {
-    return arr.map(subArr => subArr[i]);
-  });
+
+  const maxLength = Math.max(...arr.map(subArray => subArray.length));
+  const result = [];
+
+  for (let i = 0; i < maxLength; i++) {
+    result.push(arr.map(subArray => subArray[i]));
+  }
+
+  return result;
 };
 
-module.exports = { unzip };
+module.exports = {
+  unzip
+};

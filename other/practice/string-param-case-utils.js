@@ -1,4 +1,4 @@
-const kebabCase = (str) => {
+const paramCase = (str) => {
   if (typeof str !== 'string' || str.length === 0) {
     return '';
   }
@@ -12,5 +12,5 @@ const kebabCase = (str) => {
 };
 
 module.exports = {
-  kebabCase
+  paramCase
 };

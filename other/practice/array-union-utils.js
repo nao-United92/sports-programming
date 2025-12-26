@@ -1,6 +1,7 @@
 const union = (...arrays) => {
-  const flat = arrays.flat();
-  return [...new Set(flat)];
+  return [...new Set(arrays.flat())];
 };
 
-export default union;
+module.exports = {
+  union
+};

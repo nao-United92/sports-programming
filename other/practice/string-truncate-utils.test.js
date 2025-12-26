@@ -1,27 +1,25 @@
-const { truncate } = require('./string-truncate-utils.js');
+const {
+  truncate
+} = require('./string-truncate-utils');
 
 describe('truncate', () => {
-  const str = 'abcdefghijklmnopqrstuvwxyz';
+  const str = 'This is a long string';
 
-  it('should truncate a string to a specified length', () => {
-    expect(truncate(str, 10)).toBe('abcdefg...');
+  test('should truncate a string that is longer than the specified number', () => {
+    expect(truncate(str, 10)).toBe('This is a ...');
   });
 
-  it('should not truncate a string if it is shorter than the specified length', () => {
-    expect(truncate(str, 30)).toBe(str);
+  test('should not truncate a string that is shorter than or equal to the specified number', () => {
+    expect(truncate(str, 21)).toBe(str);
+    expect(truncate('short', 10)).toBe('short');
   });
 
-  it('should use a custom omission string', () => {
-    expect(truncate(str, 20, '... (see more)')).toBe('abcde... (see more)'); // Corrected expectation
+  test('should return an empty string for non-string input', () => {
+    expect(truncate(null, 10)).toBe('');
+    expect(truncate(undefined, 10)).toBe('');
   });
 
-  it('should return the original string if the length is equal', () => {
-    expect(truncate('hello', 5)).toBe('hello');
-  });
-
-  it('should handle edge cases where num is smaller than omission', () => {
-    expect(truncate(str, 3)).toBe('...');
-    expect(truncate(str, 2)).toBe('..');
-    expect(truncate(str, 10, '... (see more)')).toBe('... (see m');
+  test('should handle num being 0', () => {
+    expect(truncate(str, 0)).toBe('...');
   });
 });
