@@ -1,6 +1,11 @@
-const xor = (arr1, arr2) => {
-  const s = new Set(arr2);
-  return arr1.filter(x => !s.has(x));
+const xor = (...arrays) => {
+  return arrays.reduce((acc, arr) => {
+    const other = arrays.filter(a => a !== arr).flat();
+    const unique = arr.filter(item => !other.includes(item));
+    return acc.concat(unique);
+  }, []);
 };
 
-export default xor;
+module.exports = {
+  xor
+};
