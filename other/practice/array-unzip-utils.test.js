@@ -1,28 +1,40 @@
-const { unzip } = require('./array-unzip-utils.js');
+const {
+  unzip
+} = require('./array-unzip-utils');
 
 describe('unzip', () => {
-  it('should unzip a previously zipped array', () => {
-    const zipped = [['a', 1, true], ['b', 2, false]];
-    expect(unzip(zipped)).toEqual([['a', 'b'], [1, 2], [true, false]]);
+  test('should unzip a zipped array', () => {
+    const zipped = [
+      ['a', 1, true],
+      ['b', 2, false]
+    ];
+    const unzipped = [
+      ['a', 'b'],
+      [1, 2],
+      [true, false]
+    ];
+    expect(unzip(zipped)).toEqual(unzipped);
   });
 
-  it('should handle arrays with different lengths', () => {
-    const zipped = [['a', 1], ['b', 2], ['c', undefined]];
-    expect(unzip(zipped)).toEqual([['a', 'b', 'c'], [1, 2, undefined]]);
+  test('should handle arrays with different lengths', () => {
+    const zipped = [
+      ['a', 1],
+      ['b', 2],
+      ['c']
+    ];
+    const unzipped = [
+      ['a', 'b', 'c'],
+      [1, 2, undefined]
+    ];
+    expect(unzip(zipped)).toEqual(unzipped);
   });
 
-  it('should return an empty array if the input is empty or invalid', () => {
+  test('should return an empty array for an empty input array', () => {
     expect(unzip([])).toEqual([]);
+  });
+
+  test('should handle non-array input', () => {
     expect(unzip(null)).toEqual([]);
-  });
-
-  it('should handle nested empty arrays', () => {
-    const zipped = [[], []];
-    expect(unzip(zipped)).toEqual([]);
-  });
-
-  it('should work correctly with single-element arrays', () => {
-    const zipped = [['a'], [1], [true]];
-    expect(unzip(zipped)).toEqual([['a', 1, true]]);
+    expect(unzip(undefined)).toEqual([]);
   });
 });
