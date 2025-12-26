@@ -1,36 +1,27 @@
-const { pascalCase } = require('./string-pascal-case-utils.js');
+const {
+  pascalCase
+} = require('./string-pascal-case-utils');
 
 describe('pascalCase', () => {
-  it('should convert kebab-case to PascalCase', () => {
-    expect(pascalCase('foo-bar-baz')).toBe('FooBarBaz');
+  test('should convert a string to pascal case', () => {
+    expect(pascalCase('camelCase')).toBe('CamelCase');
+    expect(pascalCase('some-string')).toBe('SomeString');
+    expect(pascalCase('some string')).toBe('SomeString');
+    expect(pascalCase('some_string')).toBe('SomeString');
+    expect(pascalCase('XMLHttpRequest')).toBe('XmlHttpRequest');
   });
 
-  it('should convert snake_case to PascalCase', () => {
-    expect(pascalCase('foo_bar_baz')).toBe('FooBarBaz');
-  });
-
-  it('should convert space-separated string to PascalCase', () => {
-    expect(pascalCase('foo bar baz')).toBe('FooBarBaz');
-  });
-
-  it('should handle mixed delimiters', () => {
-    expect(pascalCase('foo-bar_baz test')).toBe('FooBarBazTest');
-  });
-
-  it('should handle camelCase to PascalCase', () => {
-    expect(pascalCase('camelCaseString')).toBe('CamelCaseString');
-  });
-
-  it('should handle an empty string', () => {
+  test('should handle an empty string', () => {
     expect(pascalCase('')).toBe('');
   });
 
-  it('should handle a single word string', () => {
-    expect(pascalCase('word')).toBe('Word');
+  test('should handle non-string inputs', () => {
+    expect(pascalCase(null)).toBe('');
+    expect(pascalCase(undefined)).toBe('');
+    expect(pascalCase(123)).toBe('');
   });
 
-  it('should handle numbers within the string', () => {
-    expect(pascalCase('foo-bar-123')).toBe('FooBar123');
-    expect(pascalCase('foo_bar_1_2_3')).toBe('FooBar123');
+  test('should handle strings with multiple spaces', () => {
+    expect(pascalCase('  foo   bar  ')).toBe('FooBar');
   });
 });
