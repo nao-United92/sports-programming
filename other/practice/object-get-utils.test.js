@@ -1,35 +1,43 @@
-const {
-  get
-} = require('./object-get-utils');
+const { get } = require('./object-get-utils');
 
 describe('get', () => {
   const obj = {
     a: {
-      b: {
-        c: 1
-      },
-      d: [2, 3]
+      b: [
+        { c: 1 },
+        { d: 2 }
+      ],
+      'e.f': 3
     }
   };
 
-  test('should get a nested property using dot notation', () => {
-    expect(get(obj, 'a.b.c')).toBe(1);
+  it('should get a value using a string path', () => {
+    expect(get(obj, 'a.b[0].c')).toBe(1);
   });
 
-  test('should get a nested property using bracket notation', () => {
-    expect(get(obj, 'a.d[0]')).toBe(2);
+  it('should get a value using an array path', () => {
+    expect(get(obj, ['a', 'b', '1', 'd'])).toBe(2);
   });
 
-  test('should return a default value if the path does not exist', () => {
-    expect(get(obj, 'a.b.e', 'default')).toBe('default');
+  it('should handle keys with dots if specified in an array', () => {
+    expect(get(obj, ['a', 'e.f'])).toBe(3);
   });
 
-  test('should return undefined if the path does not exist and no default value is provided', () => {
-    expect(get(obj, 'a.e.f')).toBe(undefined);
+  it('should return a default value if path does not exist', () => {
+    expect(get(obj, 'a.x.y', 'default')).toBe('default');
   });
 
-  test('should handle null or undefined objects', () => {
-    expect(get(null, 'a.b.c')).toBe(undefined);
-    expect(get(undefined, 'a.b.c', 'default')).toBe('default');
+  it('should return undefined if path does not exist and no default value is provided', () => {
+    expect(get(obj, 'a.x.y')).toBeUndefined();
+  });
+
+  it('should return the object if the path is empty', () => {
+    expect(get(obj, [], 'default')).toBe('default');
+    expect(get(obj, '')).toBeUndefined();
+  });
+  
+  it('should handle null or undefined objects gracefully', () => {
+    expect(get(null, 'a.b', 'default')).toBe('default');
+    expect(get(undefined, 'a.b')).toBeUndefined();
   });
 });
