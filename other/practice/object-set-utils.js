@@ -1,25 +1,23 @@
 const set = (obj, path, value) => {
-  if (typeof obj !== 'object' || obj === null) {
+  const pathArray = Array.isArray(path) ? path : path.match(/([^[.\]])+/g);
+  if (!pathArray || pathArray.length === 0) {
     return obj;
   }
 
-  const pathArray = Array.isArray(path) ? path : path.split('.');
-  const newObj = JSON.parse(JSON.stringify(obj));
-  let current = newObj;
-
-  for (let i = 0; i < pathArray.length; i++) {
-    const key = pathArray[i];
+  pathArray.reduce((acc, key, i) => {
     if (i === pathArray.length - 1) {
-      current[key] = value;
+      acc[key] = value;
     } else {
-      if (current[key] === undefined || typeof current[key] !== 'object' || current[key] === null) {
-        current[key] = {};
+      if (!acc[key] || typeof acc[key] !== 'object') {
+        // Look ahead to see if the next key is a number, to decide between array and object
+        const nextKeyIsNumber = /^\d+$/.test(pathArray[i + 1]);
+        acc[key] = nextKeyIsNumber ? [] : {};
       }
-      current = current[key];
     }
-  }
+    return acc[key];
+  }, obj);
 
-  return newObj;
+  return obj;
 };
 
-module.exports = set;
+module.exports = { set };
