@@ -1,25 +1,35 @@
-const throttle = (fn, ms = 0) => {
-  let inThrottle = false;
+const throttle = (func, wait) => {
+  let timeout = null;
+  let result;
+  let previous = 0;
   let lastArgs = null;
-  let timeoutId;
+  let lastContext = null;
 
-  const run = () => {
-    if (lastArgs) {
-      fn.apply(this, lastArgs);
-      lastArgs = null;
-      timeoutId = setTimeout(run, ms);
-    } else {
-      timeoutId = null;
-      inThrottle = false;
-    }
+  const later = function() {
+    previous = Date.now();
+    timeout = null;
+    result = func.apply(lastContext, lastArgs);
   };
 
   return function(...args) {
+    const now = Date.now();
+    if (!previous) previous = now; // First invocation
+    
+    const remaining = wait - (now - previous);
+    lastContext = this;
     lastArgs = args;
-    if (!inThrottle) {
-      inThrottle = true;
-      run();
+
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      previous = now;
+      result = func.apply(lastContext, lastArgs);
+    } else if (!timeout) {
+      timeout = setTimeout(later, remaining);
     }
+    return result;
   };
 };
 
