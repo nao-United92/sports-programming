@@ -1,15 +1,13 @@
 const pick = (obj, keys) => {
-  if (obj == null) {
+  if (obj === null || obj === undefined) {
     return {};
   }
   return keys.reduce((acc, key) => {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       acc[key] = obj[key];
     }
     return acc;
   }, {});
 };
 
-module.exports = {
-  pick
-};
+module.exports = { pick };
