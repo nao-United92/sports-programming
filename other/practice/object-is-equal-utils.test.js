@@ -1,56 +1,56 @@
-const isEqual = require('./object-is-equal-utils');
+const { isEqual } = require('./object-is-equal-utils');
 
 describe('isEqual', () => {
-  test('should return true for identical objects', () => {
+  it('should return true for equal primitive values', () => {
+    expect(isEqual(1, 1)).toBe(true);
+    expect(isEqual('hello', 'hello')).toBe(true);
+    expect(isEqual(true, true)).toBe(true);
+    expect(isEqual(null, null)).toBe(true);
+    expect(isEqual(undefined, undefined)).toBe(true);
+  });
+
+  it('should return false for unequal primitive values', () => {
+    expect(isEqual(1, 2)).toBe(false);
+    expect(isEqual('hello', 'world')).toBe(false);
+    expect(isEqual(true, false)).toBe(false);
+    expect(isEqual(null, undefined)).toBe(false);
+  });
+
+  it('should return true for deeply equal objects', () => {
     const obj1 = { a: 1, b: { c: 2 } };
     const obj2 = { a: 1, b: { c: 2 } };
     expect(isEqual(obj1, obj2)).toBe(true);
   });
 
-  test('should return false for different objects', () => {
+  it('should return false for objects with different keys', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { a: 1, c: 2 };
+    expect(isEqual(obj1, obj2)).toBe(false);
+  });
+  
+  it('should return false for objects with different values', () => {
     const obj1 = { a: 1, b: { c: 2 } };
     const obj2 = { a: 1, b: { c: 3 } };
     expect(isEqual(obj1, obj2)).toBe(false);
   });
 
-  test('should return false for objects with different keys', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { a: 1, c: 2 };
-    expect(isEqual(obj1, obj2)).toBe(false);
-  });
-
-  test('should return false for objects with different numbers of keys', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { a: 1 };
-    expect(isEqual(obj1, obj2)).toBe(false);
-  });
-
-  test('should return true for identical arrays', () => {
-    const arr1 = [1, 2, [3, 4]];
-    const arr2 = [1, 2, [3, 4]];
+  it('should return true for deeply equal arrays', () => {
+    const arr1 = [1, [2, 3]];
+    const arr2 = [1, [2, 3]];
     expect(isEqual(arr1, arr2)).toBe(true);
   });
 
-  test('should return false for different arrays', () => {
-    const arr1 = [1, 2, [3, 4]];
-    const arr2 = [1, 2, [3, 5]];
+  it('should return false for arrays of different lengths', () => {
+    const arr1 = [1, 2];
+    const arr2 = [1, 2, 3];
     expect(isEqual(arr1, arr2)).toBe(false);
   });
 
-  test('should return true for two nulls', () => {
-    expect(isEqual(null, null)).toBe(true);
-  });
-
-  test('should return false for one null', () => {
-    expect(isEqual(null, {})).toBe(false);
-    expect(isEqual({}, null)).toBe(false);
-  });
-
-  test('should handle complex nested objects', () => {
-    const obj1 = { a: 1, b: { c: [1, 2], d: { e: 'hello' } } };
-    const obj2 = { a: 1, b: { c: [1, 2], d: { e: 'hello' } } };
-    const obj3 = { a: 1, b: { c: [1, 2], d: { e: 'world' } } };
-    expect(isEqual(obj1, obj2)).toBe(true);
-    expect(isEqual(obj1, obj3)).toBe(false);
+  it('should handle dates correctly', () => {
+    const date1 = new Date('2023-01-01');
+    const date2 = new Date('2023-01-01');
+    const date3 = new Date('2023-01-02');
+    expect(isEqual(date1, date2)).toBe(true);
+    expect(isEqual(date1, date3)).toBe(false);
   });
 });

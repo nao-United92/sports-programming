@@ -1,27 +1,38 @@
-const isEqual = (obj1, obj2) => {
-  if (obj1 === obj2) return true;
+function isEqual(a, b) {
+  if (a === b) return true;
 
-  if (
-    typeof obj1 !== 'object' ||
-    obj1 === null ||
-    typeof obj2 !== 'object' ||
-    obj2 === null
-  ) {
-    return false;
+  if (a instanceof Date && b instanceof Date) {
+    return a.getTime() === b.getTime();
   }
 
-  const keys1 = Object.keys(obj1);
-  const keys2 = Object.keys(obj2);
+  if (!a || !b || (typeof a !== 'object' && typeof b !== 'object')) {
+    return a === b;
+  }
 
-  if (keys1.length !== keys2.length) return false;
+  if (a === null || a === undefined || b === null || b === undefined) {
+    return a === b;
+  }
 
-  for (const key of keys1) {
-    if (!keys2.includes(key) || !isEqual(obj1[key], obj2[key])) {
-      return false;
-    }
+  if (a.prototype !== b.prototype) return false;
+
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+
+  if (keysA.length !== keysB.length) return false;
+
+  keysA.sort();
+  keysB.sort();
+
+  for (let i = 0; i < keysA.length; i++) {
+    if (keysA[i] !== keysB[i]) return false;
+  }
+
+  for (let i = 0; i < keysA.length; i++) {
+    const key = keysA[i];
+    if (!isEqual(a[key], b[key])) return false;
   }
 
   return true;
-};
+}
 
-module.exports = isEqual;
+module.exports = { isEqual };
