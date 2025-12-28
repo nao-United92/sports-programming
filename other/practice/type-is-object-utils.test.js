@@ -1,0 +1,31 @@
+const { isObject } = require('./type-is-object-utils');
+
+describe('isObject', () => {
+  it('should return true for objects', () => {
+    expect(isObject({})).toBe(true);
+    expect(isObject({ a: 1 })).toBe(true);
+    expect(isObject(new Object())).toBe(true);
+  });
+
+  it('should return false for arrays', () => {
+    expect(isObject([])).toBe(false);
+    expect(isObject([1, 2])).toBe(false);
+  });
+
+  it('should return false for null', () => {
+    expect(isObject(null)).toBe(false);
+  });
+
+  it('should return false for primitives', () => {
+    expect(isObject(123)).toBe(false);
+    expect(isObject('hello')).toBe(false);
+    expect(isObject(true)).toBe(false);
+    expect(isObject(undefined)).toBe(false);
+    expect(isObject(Symbol('a'))).toBe(false);
+  });
+
+  it('should return false for functions', () => {
+    expect(isObject(() => {})).toBe(false);
+    expect(isObject(function() {})).toBe(false);
+  });
+});
