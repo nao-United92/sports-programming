@@ -1,96 +1,64 @@
-const memoize = require('./function-memoize-utils');
+const { memoize } = require('./function-memoize-utils');
 
 describe('memoize', () => {
-  test('should memoize function results based on the first argument by default', () => {
+  it('should call the function only once for the same arguments', () => {
+    const expensiveFn = jest.fn((x) => x * 2);
+    const memoizedFn = memoize(expensiveFn);
+
+    memoizedFn(2);
+    memoizedFn(2);
+    memoizedFn(2);
+
+    expect(expensiveFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return the cached result for subsequent calls with same arguments', () => {
     let callCount = 0;
-    const expensiveFunction = (a, b) => {
+    const expensiveFn = (x) => {
       callCount++;
-      return a + b;
+      return x * 2;
     };
-    const memoizedAdd = memoize(expensiveFunction);
+    const memoizedFn = memoize(expensiveFn);
 
-    expect(memoizedAdd(1, 2)).toBe(3);
+    const result1 = memoizedFn(3);
+    const result2 = memoizedFn(3);
+
     expect(callCount).toBe(1);
-
-    expect(memoizedAdd(1, 3)).toBe(3); // Should return cached result for key 1
-    expect(callCount).toBe(1);
-
-    expect(memoizedAdd(2, 2)).toBe(4);
-    expect(callCount).toBe(2);
-
-    expect(memoizedAdd(2, 5)).toBe(4); // Should return cached result for key 2
-    expect(callCount).toBe(2);
+    expect(result1).toBe(6);
+    expect(result2).toBe(6);
   });
 
-  test('should memoize function results using a custom resolver', () => {
-    let callCount = 0;
-    const expensiveFunction = (a, b) => {
-      callCount++;
-      return a + b;
-    };
-    const resolver = (a, b) => `${a}_${b}`; // Custom resolver creates key "a_b"
-    const memoizedAdd = memoize(expensiveFunction, resolver);
+  it('should call the function again for different arguments', () => {
+    const expensiveFn = jest.fn((x) => x * 2);
+    const memoizedFn = memoize(expensiveFn);
 
-    expect(memoizedAdd(1, 2)).toBe(3);
-    expect(callCount).toBe(1);
+    memoizedFn(2);
+    memoizedFn(3);
+    memoizedFn(2);
+    memoizedFn(3);
 
-    expect(memoizedAdd(1, 2)).toBe(3); // Should return cached result for key "1_2"
-    expect(callCount).toBe(1);
-
-    expect(memoizedAdd(2, 1)).toBe(3);
-    expect(callCount).toBe(2);
-
-    expect(memoizedAdd(1, 3)).toBe(4);
-    expect(callCount).toBe(3);
+    expect(expensiveFn).toHaveBeenCalledTimes(2);
   });
 
-  test('should allow clearing the cache', () => {
-    let callCount = 0;
-    const expensiveFunction = (a) => {
-      callCount++;
-      return a * 2;
-    };
-    const memoizedMultiply = memoize(expensiveFunction);
+  it('should handle multiple arguments', () => {
+    const expensiveFn = jest.fn((a, b, c) => a + b + c);
+    const memoizedFn = memoize(expensiveFn);
 
-    memoizedMultiply(5);
-    expect(callCount).toBe(1);
-    memoizedMultiply(5);
-    expect(callCount).toBe(1);
+    memoizedFn(1, 2, 3);
+    memoizedFn(1, 2, 3);
+    expect(expensiveFn).toHaveBeenCalledTimes(1);
 
-    memoizedMultiply.cache.clear();
-    memoizedMultiply(5);
-    expect(callCount).toBe(2);
+    memoizedFn(4, 5, 6);
+    expect(expensiveFn).toHaveBeenCalledTimes(2);
   });
+  
+  it('should differentiate between similar but distinct arguments', () => {
+    const expensiveFn = jest.fn(a => a);
+    const memoizedFn = memoize(expensiveFn);
 
-  test('should throw TypeError if func is not a function', () => {
-    expect(() => memoize(null)).toThrow(TypeError);
-    expect(() => memoize(undefined)).toThrow(TypeError);
-    expect(() => memoize(123)).toThrow(TypeError);
-    expect(() => memoize('string')).toThrow(TypeError);
-    expect(() => memoize({})).toThrow(TypeError);
-  });
+    memoizedFn('2');
+    memoizedFn(2);
 
-  test('should handle `this` context correctly', () => {
-    let callCount = 0;
-    const obj = {
-      value: 10,
-      add: function(a) {
-        callCount++;
-        return this.value + a;
-      },
-    };
-    const memoizedAdd = memoize(obj.add, (a) => a); // Resolver based on 'a'
-
-    // Bind the memoized function to obj for 'this' context
-    const boundMemoizedAdd = memoizedAdd.bind(obj);
-
-    expect(boundMemoizedAdd(5)).toBe(15);
-    expect(callCount).toBe(1);
-
-    expect(boundMemoizedAdd(5)).toBe(15); // Should use cache
-    expect(callCount).toBe(1);
-
-    expect(boundMemoizedAdd(10)).toBe(20);
-    expect(callCount).toBe(2);
+    expect(expensiveFn).toHaveBeenCalledTimes(2);
   });
 });

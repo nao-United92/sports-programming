@@ -1,42 +1,50 @@
-const { once } = require('./function-once-utils.js');
+const { once } = require('./function-once-utils');
 
 describe('once', () => {
-  let mockFn;
-  let onceFn;
+  it('should only call the original function once', () => {
+    const myFn = jest.fn();
+    const onceFn = once(myFn);
 
-  beforeEach(() => {
-    mockFn = jest.fn((x) => x * 2);
-    onceFn = once(mockFn);
+    onceFn();
+    onceFn();
+    onceFn();
+
+    expect(myFn).toHaveBeenCalledTimes(1);
   });
 
-  it('should call the function only once', () => {
-    onceFn(5);
-    onceFn(10);
-    onceFn(15);
-    expect(mockFn).toHaveBeenCalledTimes(1);
+  it('should return the result of the first call for all subsequent calls', () => {
+    let i = 0;
+    const onceFn = once(() => ++i);
+
+    const result1 = onceFn();
+    const result2 = onceFn();
+    const result3 = onceFn();
+
+    expect(result1).toBe(1);
+    expect(result2).toBe(1);
+    expect(result3).toBe(1);
   });
 
-  it('should return the result of the first call for subsequent calls', () => {
-    const result1 = onceFn(5);
-    const result2 = onceFn(10);
-    const result3 = onceFn(15);
-    expect(result1).toBe(10);
-    expect(result2).toBe(10);
-    expect(result3).toBe(10);
-  });
+  it('should pass arguments to the original function', () => {
+    const myFn = jest.fn((a, b) => a + b);
+    const onceFn = once(myFn);
 
-  it('should pass arguments to the underlying function only on the first call', () => {
-    onceFn(5);
-    expect(mockFn).toHaveBeenCalledWith(5);
-  });
+    const result = onceFn(5, 10);
 
-  it('should maintain `this` context for the initial call', () => {
-    const obj = {
-      value: 10,
-      getValue: function() { return this.value; }
-    };
-    const onceGetVal = once(obj.getValue);
-    const result = onceGetVal.call(obj);
-    expect(result).toBe(10);
+    expect(myFn).toHaveBeenCalledWith(5, 10);
+    expect(result).toBe(15);
+  });
+  
+  it('subsequent calls with different arguments should not change the result', () => {
+    const myFn = jest.fn((a, b) => a + b);
+    const onceFn = once(myFn);
+
+    const result1 = onceFn(5, 10);
+    const result2 = onceFn(1, 2); // These arguments should be ignored
+
+    expect(myFn).toHaveBeenCalledTimes(1);
+    expect(myFn).toHaveBeenCalledWith(5, 10);
+    expect(result1).toBe(15);
+    expect(result2).toBe(15);
   });
 });

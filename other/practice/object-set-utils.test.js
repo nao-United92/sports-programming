@@ -1,39 +1,43 @@
-const set = require('./object-set-utils');
+const { set } = require('./object-set-utils');
 
 describe('set', () => {
-  test('should set a value at a nested path', () => {
-    const obj = { a: { b: 2 } };
-    const result = set(obj, 'a.c', 3);
-    expect(result).toEqual({ a: { b: 2, c: 3 } });
+  let obj;
+  beforeEach(() => {
+    obj = {};
   });
 
-  test('should not modify the original object', () => {
-    const obj = { a: { b: 2 } };
-    set(obj, 'a.c', 3);
-    expect(obj).toEqual({ a: { b: 2 } });
+  it('should set a value using a string path', () => {
+    set(obj, 'a.b.c', 1);
+    expect(obj.a.b.c).toBe(1);
   });
 
-  test('should create nested objects if they do not exist', () => {
-    const obj = {};
-    const result = set(obj, 'a.b.c', 1);
-    expect(result).toEqual({ a: { b: { c: 1 } } });
+  it('should set a value using an array path', () => {
+    set(obj, ['a', 'b', 'c'], 2);
+    expect(obj.a.b.c).toBe(2);
   });
 
-  test('should work with an array path', () => {
-    const obj = {};
-    const result = set(obj, ['a', 'b', 'c'], 1);
-    expect(result).toEqual({ a: { b: { c: 1 } } });
+  it('should create nested objects if they do not exist', () => {
+    set(obj, 'x.y.z', 'hello');
+    expect(obj).toEqual({ x: { y: { z: 'hello' } } });
   });
 
-  test('should return the original object for non-object inputs', () => {
-    expect(set(null, 'a.b', 1)).toBeNull();
-    expect(set(undefined, 'a.b', 1)).toBeUndefined();
-    expect(set(123, 'a.b', 1)).toBe(123);
+  it('should create arrays for numeric keys', () => {
+    set(obj, 'a[0].b', 'value');
+    expect(obj.a[0].b).toBe('value');
+    expect(Array.isArray(obj.a)).toBe(true);
   });
-
-  test('should overwrite existing values', () => {
-    const obj = { a: { b: 2 } };
-    const result = set(obj, 'a.b', 3);
-    expect(result).toEqual({ a: { b: 3 } });
+  
+  it('should not overwrite existing objects', () => {
+    const initial = { a: { existing: 'value' } };
+    set(initial, 'a.b', 123);
+    expect(initial.a.existing).toBe('value');
+    expect(initial.a.b).toBe(123);
+  });
+  
+  it('should modify the original object', () => {
+    const original = {a: 1};
+    const result = set(original, 'b', 2);
+    expect(original.b).toBe(2);
+    expect(result).toBe(original);
   });
 });

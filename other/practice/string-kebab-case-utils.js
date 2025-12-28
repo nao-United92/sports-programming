@@ -1,16 +1,12 @@
 const kebabCase = (str) => {
-  if (typeof str !== 'string' || str.length === 0) {
-    return '';
-  }
-  return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
-    .replace(/[^a-zA-Z0-9-]/g, '-')
-    .toLowerCase()
-    .replace(/^-+|-+$/g, '')
-    .replace(/-{2,}/g, '-');
+  if (!str) return '';
+
+  const words = str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g);
+  if (!words) return '';
+  
+  return words
+    .map(x => x.toLowerCase())
+    .join('-');
 };
 
-module.exports = {
-  kebabCase
-};
+module.exports = { kebabCase };
