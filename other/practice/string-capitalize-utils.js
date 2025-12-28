@@ -1,10 +1,9 @@
 const capitalize = (str) => {
-  if (typeof str !== 'string' || str.length === 0) {
+  if (str === null || str === undefined || str === '') {
     return '';
   }
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  const s = String(str);
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 };
 
-module.exports = {
-  capitalize
-};
+module.exports = { capitalize };
