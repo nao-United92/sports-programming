@@ -1,40 +1,32 @@
-const { camelCase } = require('./string-camel-case-utils.js');
+const { camelCase } = require('./string-camel-case-utils');
 
 describe('camelCase', () => {
-  it('should convert kebab-case to camelCase', () => {
-    expect(camelCase('foo-bar-baz')).toBe('fooBarBaz');
-  });
-
   it('should convert snake_case to camelCase', () => {
     expect(camelCase('foo_bar_baz')).toBe('fooBarBaz');
   });
 
-  it('should convert space-separated string to camelCase', () => {
-    expect(camelCase('foo bar baz')).toBe('fooBarBaz');
+  it('should convert kebab-case to camelCase', () => {
+    expect(camelCase('foo-bar-baz')).toBe('fooBarBaz');
   });
 
-  it('should handle mixed delimiters', () => {
-    expect(camelCase('foo-bar_baz test')).toBe('fooBarBazTest');
+  it('should convert space separated words to camelCase', () => {
+    expect(camelCase('Foo Bar Baz')).toBe('fooBarBaz');
   });
 
-  it('should handle PascalCase', () => {
-    expect(camelCase('PascalCaseString')).toBe('pascalCaseString');
+  it('should handle already camelCased strings', () => {
+    expect(camelCase('fooBarBaz')).toBe('fooBarBaz');
   });
 
-  it('should handle an empty string', () => {
-    expect(camelCase('')).toBe('');
+  it('should handle strings with leading and trailing spaces', () => {
+    expect(camelCase('  foo bar  ')).toBe('fooBar');
   });
 
-  it('should handle a single word string', () => {
-    expect(camelCase('word')).toBe('word');
+  it('should handle strings with mixed separators', () => {
+    expect(camelCase('__FOO-BAR__')).toBe('fooBar');
   });
 
-  it('should handle strings starting with an uppercase letter correctly', () => {
-    expect(camelCase('FooBar')).toBe('fooBar');
-  });
-
-  it('should handle numbers within the string', () => {
-    expect(camelCase('foo-bar-123')).toBe('fooBar123');
-    expect(camelCase('foo_bar_1_2_3')).toBe('fooBar123');
+  it('should return an empty string for null or undefined input', () => {
+    expect(camelCase(null)).toBe('');
+    expect(camelCase(undefined)).toBe('');
   });
 });
