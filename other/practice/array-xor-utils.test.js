@@ -1,34 +1,33 @@
-const { xor } = require('./array-xor-utils');
+import { xor } from './array-xor-utils';
 
 describe('xor', () => {
-  it('should return the symmetric difference of two arrays', () => {
-    expect(xor([1, 2], [2, 3]).sort()).toEqual([1, 3].sort());
+  test('should return unique values that are the symmetric difference of the given arrays', () => {
+    expect(xor([2, 1], [2, 3])).toEqual([1, 3]);
   });
 
-  it('should return the symmetric difference of multiple arrays', () => {
-    expect(xor([1, 2, 5], [2, 3, 5], [3, 4, 5]).sort()).toEqual([1, 4, 5].sort());
+  test('should handle multiple arrays', () => {
+    expect(xor([1, 2, 3], [2, 3, 4], [3, 4, 5])).toEqual([1, 5]);
   });
 
-  it('should handle arrays with different data types', () => {
-    // Note: Sorting behavior can be tricky with mixed types.
-    // This test assumes a consistent sort order for the given inputs.
-    const result = xor([1, 'a'], ['a', 2]);
-    const expected = [1, 2];
-    expect(result.sort((a, b) => String(a).localeCompare(String(b))))
-      .toEqual(expected.sort((a, b) => String(a).localeCompare(String(b))));
+  test('should handle empty arrays', () => {
+    expect(xor([], [1, 2])).toEqual([1, 2]);
+    expect(xor([1, 2], [])).toEqual([1, 2]);
+    expect(xor([], [])).toEqual([]);
   });
 
-  it('should return an array with unique values if only one array is provided', () => {
-    expect(xor([1, 2, 2, 3]).sort()).toEqual([1, 3].sort());
+  test('should handle arrays with no common elements', () => {
+    expect(xor([1, 2], [3, 4])).toEqual([1, 2, 3, 4]);
   });
 
-  it('should return an empty array if no arrays are provided', () => {
-    expect(xor()).toEqual([]);
+  test('should handle arrays with all common elements', () => {
+    expect(xor([1, 2], [1, 2])).toEqual([]);
   });
 
-  it('should handle empty arrays correctly', () => {
-    expect(xor([], [1, 2]).sort()).toEqual([1, 2].sort());
-    expect(xor([1, 2], []).sort()).toEqual([1, 2].sort());
+  test('should handle different data types', () => {
+    expect(xor([1, 'a', 2], [2, 'a', 3])).toEqual([1, 3]);
+  });
+
+  test('should maintain order of appearance in the result', () => {
+    expect(xor([1, 2, 3], [4, 2, 5], [1, 6])).toEqual([3, 4, 5, 6]);
   });
 });
-

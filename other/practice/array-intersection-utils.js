@@ -1,6 +1,15 @@
-const intersection = (arr1, ...arrays) => {
-  const sets = arrays.map(arr => new Set(arr));
-  return arr1.filter(item => sets.every(set => set.has(item)));
-};
+export const intersection = (...arrays) => {
+  if (arrays.length === 0) {
+    return [];
+  }
 
-export default intersection;
+  // Convert the first array to a Set for efficient lookup
+  const firstArraySet = new Set(arrays[0]);
+
+  // Iterate over the rest of the arrays and filter elements
+  // that are present in all previous arrays.
+  return arrays.slice(1).reduce((acc, currentArray) => {
+    const currentArraySet = new Set(currentArray);
+    return acc.filter(item => currentArraySet.has(item));
+  }, [...firstArraySet]); // Start with unique elements from the first array
+};

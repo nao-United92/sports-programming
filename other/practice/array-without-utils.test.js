@@ -1,23 +1,27 @@
-const without = require('./array-without-utils');
+import { without } from './array-without-utils';
 
 describe('without', () => {
-  it('should create an array excluding all given values', () => {
+  test('should return a new array excluding all given values', () => {
     expect(without([1, 2, 3, 1, 2], 1, 2)).toEqual([3]);
   });
 
-  it('should handle a single value to exclude', () => {
-    expect(without([1, 2, 3], 1)).toEqual([2, 3]);
+  test('should handle single value to exclude', () => {
+    expect(without([1, 2, 3, 4], 3)).toEqual([1, 2, 4]);
   });
 
-  it('should return the same array if no values are excluded', () => {
-    expect(without([1, 2, 3], 4)).toEqual([1, 2, 3]);
+  test('should handle no values to exclude', () => {
+    expect(without([1, 2, 3])).toEqual([1, 2, 3]);
   });
 
-  it('should return an empty array if all values are excluded', () => {
-    expect(without([1, 2, 3], 1, 2, 3)).toEqual([]);
-  });
-
-  it('should handle an empty input array', () => {
+  test('should handle empty array', () => {
     expect(without([], 1, 2)).toEqual([]);
+  });
+
+  test('should handle values that are not present in the array', () => {
+    expect(without([1, 2, 3], 4, 5)).toEqual([1, 2, 3]);
+  });
+
+  test('should handle different data types', () => {
+    expect(without([1, 'a', 2, 'b'], 'a', 2)).toEqual([1, 'b']);
   });
 });

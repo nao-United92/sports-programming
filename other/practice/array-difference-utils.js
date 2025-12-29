@@ -1,6 +1,4 @@
-const difference = (arr, values) => {
-  const set = new Set(values);
-  return arr.filter(item => !set.has(item));
+export const difference = (arr, ...others) => {
+  const otherValues = new Set(others.flat());
+  return arr.filter(item => !otherValues.has(item));
 };
-
-module.exports = difference;
