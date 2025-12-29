@@ -1,27 +1,65 @@
-const { unzip } = require('./array-unzip-utils');
+import { unzip } from './array-unzip-utils';
 
 describe('unzip', () => {
-  it('should unzip a zipped array', () => {
-    const zipped = [['a', 1, true], ['b', 2, false]];
-    expect(unzip(zipped)).toEqual([['a', 'b'], [1, 2], [true, false]]);
+  test('should ungroup elements from corresponding positions', () => {
+    expect(unzip([
+      ['a', 1, true],
+      ['b', 2, false]
+    ])).toEqual([
+      ['a', 'b'],
+      [1, 2],
+      [true, false]
+    ]);
   });
 
-  it('should handle arrays with different lengths', () => {
-    const zipped = [['a', 1, true], ['b', 2]];
-    zipped[1].length = 2; // Manually set length to avoid dense/sparse issues in test writing
-    expect(unzip(zipped)).toEqual([['a', 'b'], [1, 2], [true, undefined]]);
+  test('should handle arrays of different lengths within the grouped array', () => {
+    expect(unzip([
+      ['a', 1],
+      ['b', 2],
+      ['c', undefined]
+    ])).toEqual([
+      ['a', 'b', 'c'],
+      [1, 2, undefined]
+    ]);
   });
 
-  it('should return an empty array if given an empty array', () => {
+  test('should handle single inner array', () => {
+    expect(unzip([
+      [1],
+      [2],
+      [3]
+    ])).toEqual([
+      [1, 2, 3]
+    ]);
+  });
+
+  test('should handle empty input array', () => {
     expect(unzip([])).toEqual([]);
   });
 
-  it('should handle arrays with empty subarrays', () => {
-    expect(unzip([[], []])).toEqual([]);
+  test('should handle empty inner arrays', () => {
+    expect(unzip([
+      [],
+      []
+    ])).toEqual([]);
   });
 
-  it('should handle null or undefined input', () => {
-    expect(unzip(null)).toEqual([]);
-    expect(unzip(undefined)).toEqual([]);
+  test('should handle mixed data types', () => {
+    expect(unzip([
+      [1, true],
+      ['a', null]
+    ])).toEqual([
+      [1, 'a'],
+      [true, null]
+    ]);
+  });
+
+  test('should handle input with undefined or null inner arrays', () => {
+    expect(unzip([
+      ['a', 1], null, ['c', 3]
+    ])).toEqual([
+      ['a', undefined, 'c'],
+      [1, undefined, 3]
+    ]);
   });
 });
