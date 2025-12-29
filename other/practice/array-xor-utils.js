@@ -1,17 +1,10 @@
-const xor = (...arrays) => {
-  const flat = arrays.flat();
-  const counts = new Map();
-  for (const item of flat) {
-    counts.set(item, (counts.get(item) || 0) + 1);
+export const xor = (...arrs) => {
+  const flattened = arrs.flat();
+  const counts = {};
+
+  for (const item of flattened) {
+    counts[item] = (counts[item] || 0) + 1;
   }
 
-  const result = [];
-  for (const [item, count] of counts.entries()) {
-    if (count % 2 !== 0) {
-      result.push(item);
-    }
-  }
-  return result;
+  return flattened.filter(item => counts[item] === 1);
 };
-
-module.exports = { xor };
