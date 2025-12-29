@@ -1,8 +1,8 @@
-const pull = (arr, ...values) => {
-  const valuesToRemove = new Set(values);
+export const pull = (arr, ...values) => {
+  const valueSet = new Set(values);
   let i = 0;
   while (i < arr.length) {
-    if (valuesToRemove.has(arr[i])) {
+    if (valueSet.has(arr[i])) {
       arr.splice(i, 1);
     } else {
       i++;
@@ -10,5 +10,3 @@ const pull = (arr, ...values) => {
   }
   return arr;
 };
-
-module.exports = pull;
