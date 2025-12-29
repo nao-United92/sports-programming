@@ -1,6 +1,3 @@
-const union = (...arrays) => {
-  const combined = arrays.reduce((acc, arr) => acc.concat(arr), []);
-  return [...new Set(combined)];
+export const union = (...arrs) => {
+  return [...new Set(arrs.flat())];
 };
-
-module.exports = { union };

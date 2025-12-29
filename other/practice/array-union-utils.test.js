@@ -1,23 +1,25 @@
-const { union } = require('./array-union-utils');
+import { union } from './array-union-utils';
 
 describe('union', () => {
-  it('should return the union of multiple arrays', () => {
+  test('should return a new array of unique values, in order, from all given arrays', () => {
+    expect(union([2, 1], [2, 3])).toEqual([2, 1, 3]);
+  });
+
+  test('should handle empty arrays', () => {
+    expect(union([], [1, 2])).toEqual([1, 2]);
+    expect(union([1, 2], [])).toEqual([1, 2]);
+    expect(union([], [])).toEqual([]);
+  });
+
+  test('should handle multiple arrays', () => {
     expect(union([1, 2], [2, 3], [3, 4])).toEqual([1, 2, 3, 4]);
   });
 
-  it('should handle arrays with different data types', () => {
-    expect(union([1, 'a'], [2, 'b', 'a'])).toEqual([1, 'a', 2, 'b']);
+  test('should maintain the order of appearance', () => {
+    expect(union([1, 5, 2], [2, 3, 5])).toEqual([1, 5, 2, 3]);
   });
 
-  it('should return a single array unchanged if only one is provided', () => {
-    expect(union([1, 2, 3])).toEqual([1, 2, 3]);
-  });
-
-  it('should return an empty array if no arrays are provided', () => {
-    expect(union()).toEqual([]);
-  });
-
-  it('should handle empty arrays', () => {
-    expect(union([], [1, 2], [])).toEqual([1, 2]);
+  test('should handle arrays with different data types', () => {
+    expect(union([1, 'a'], [2, 'a', 1])).toEqual([1, 'a', 2]);
   });
 });
