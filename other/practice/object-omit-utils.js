@@ -1,12 +1,13 @@
 const omit = (obj, keys) => {
-  if (obj === null || obj === undefined) {
+  if (obj === null || typeof obj !== 'object' || !Array.isArray(keys)) {
     return {};
   }
+
   const newObj = { ...obj };
-  keys.forEach(key => {
+  for (const key of keys) {
     delete newObj[key];
-  });
+  }
   return newObj;
 };
 
-module.exports = { omit };
+export default omit;
