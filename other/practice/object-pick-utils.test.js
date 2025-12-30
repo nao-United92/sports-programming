@@ -1,26 +1,29 @@
-const { pick } = require('./object-pick-utils');
+import pick from './object-pick-utils';
 
 describe('pick', () => {
-  const obj = { a: 1, b: '2', c: 3 };
-
-  it('should pick specified keys from an object', () => {
+  test('should create an object with picked properties', () => {
+    const obj = { a: 1, b: '2', c: 3 };
     expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
   });
 
-  it('should not include keys that are not in the object', () => {
+  test('should ignore keys that are not in the object', () => {
+    const obj = { a: 1, b: '2' };
     expect(pick(obj, ['a', 'd'])).toEqual({ a: 1 });
   });
 
-  it('should return an empty object if no keys are specified', () => {
+  test('should return an empty object if no keys are provided', () => {
+    const obj = { a: 1, b: '2' };
     expect(pick(obj, [])).toEqual({});
   });
 
-  it('should return an empty object if the input object is null or undefined', () => {
+  test('should return an empty object for null or non-object inputs', () => {
     expect(pick(null, ['a'])).toEqual({});
     expect(pick(undefined, ['a'])).toEqual({});
+    expect(pick(123, ['a'])).toEqual({});
   });
 
-  it('should handle non-string keys in the keys array gracefully', () => {
-    expect(pick(obj, ['a', 2])).toEqual({ a: 1 });
+  test('should work with nested objects', () => {
+    const obj = { a: { nested: 1 }, b: 2 };
+    expect(pick(obj, ['a'])).toEqual({ a: { nested: 1 } });
   });
 });
