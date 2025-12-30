@@ -1,13 +1,14 @@
-const truncate = (str, num) => {
+const truncate = (str, length, omission = '...') => {
   if (typeof str !== 'string') {
     return '';
   }
-  if (str.length <= num) {
+  if (length >= str.length) {
     return str;
   }
-  return str.slice(0, num) + '...';
+  if (length <= omission.length) {
+    return omission.slice(0, length);
+  }
+  return str.slice(0, length - omission.length) + omission;
 };
 
-module.exports = {
-  truncate
-};
+export default truncate;

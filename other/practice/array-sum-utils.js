@@ -1,11 +1,10 @@
-const sum = (array) => {
-  if (!Array.isArray(array)) {
+const sum = (arr) => {
+  if (!Array.isArray(arr)) {
     return 0;
   }
-  return array.reduce((acc, current) => {
-    const num = Number(current);
-    return acc + (Number.isNaN(num) ? 0 : num);
+  return arr.reduce((acc, val) => {
+    return typeof val === 'number' ? acc + val : acc;
   }, 0);
 };
 
-module.exports = sum;
+export default sum;

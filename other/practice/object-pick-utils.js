@@ -1,13 +1,14 @@
 const pick = (obj, keys) => {
-  if (obj === null || obj === undefined) {
+  if (obj === null || typeof obj !== 'object' || !Array.isArray(keys)) {
     return {};
   }
+
   return keys.reduce((acc, key) => {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    if (key in obj) {
       acc[key] = obj[key];
     }
     return acc;
   }, {});
 };
 
-module.exports = { pick };
+export default pick;
