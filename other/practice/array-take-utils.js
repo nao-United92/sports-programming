@@ -1,9 +1,8 @@
-export const take = (arr, n = 1) => {
-  if (!arr || arr.length === 0) {
-    return [];
-  }
-  if (n <= 0) {
+const take = (arr, n = 1) => {
+  if (!Array.isArray(arr)) {
     return [];
   }
   return arr.slice(0, n);
 };
+
+export default take;
