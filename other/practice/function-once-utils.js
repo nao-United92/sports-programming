@@ -2,13 +2,13 @@ const once = (fn) => {
   let hasBeenCalled = false;
   let result;
 
-  return (...args) => {
+  return function(...args) {
     if (!hasBeenCalled) {
       hasBeenCalled = true;
-      result = fn(...args);
+      result = fn.apply(this, args);
     }
     return result;
   };
 };
 
-module.exports = { once };
+export default once;
