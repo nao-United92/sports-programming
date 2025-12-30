@@ -1,20 +1,15 @@
-const sortedIndexBy = (arr, value, iteratee) => {
-  let low = 0;
-  let high = arr.length;
-  const iteratedValue = iteratee(value);
-
-  while (low < high) {
-    const mid = Math.floor((low + high) / 2);
-    const iteratedMid = iteratee(arr[mid]);
-
-    if (iteratedMid < iteratedValue) {
-      low = mid + 1;
-    } else {
-      high = mid;
-    }
+// Sorts an array of objects by a specified property in ascending order
+export const sortByProperty = (arr, prop) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return [];
   }
-
-  return low;
+  return arr.sort((a, b) => {
+    if (a[prop] < b[prop]) {
+      return -1;
+    }
+    if (a[prop] > b[prop]) {
+      return 1;
+    }
+    return 0;
+  });
 };
-
-module.exports = sortedIndexBy;
