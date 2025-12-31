@@ -1,35 +1,42 @@
-const { shuffle } = require('./array-shuffle-utils');
+import { shuffle } from './array-shuffle-utils.js';
 
 describe('shuffle', () => {
-  test('should return an array with the same length', () => {
+  it('should return an array of the same length', () => {
     const arr = [1, 2, 3, 4, 5];
-    const shuffled = shuffle([...arr]);
-    expect(shuffled).toHaveLength(arr.length);
+    const shuffledArr = shuffle(arr);
+    expect(shuffledArr.length).toBe(arr.length);
   });
 
-  test('should return an array with the same elements', () => {
+  it('should contain the same elements as the original array', () => {
     const arr = [1, 2, 3, 4, 5];
-    const shuffled = shuffle([...arr]);
-    expect(shuffled.sort()).toEqual(arr.sort());
+    const shuffledArr = shuffle(arr);
+    expect(shuffledArr.sort()).toEqual(arr.sort());
   });
 
-  test('should handle an empty array', () => {
-    const arr = [];
-    const shuffled = shuffle([...arr]);
-    expect(shuffled).toEqual([]);
+  it('should not mutate the original array', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const originalArr = [...arr];
+    shuffle(arr);
+    expect(arr).toEqual(originalArr);
   });
 
-  test('should handle an array with a single element', () => {
-    const arr = [1];
-    const shuffled = shuffle([...arr]);
-    expect(shuffled).toEqual([1]);
+  it('should return a different order for a non-empty array (probabilistic)', () => {
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; // Larger array to increase probability of different order
+    let isDifferent = false;
+    for (let i = 0; i < 10; i++) { // Try multiple times
+      if (JSON.stringify(shuffle(arr)) !== JSON.stringify(arr)) {
+        isDifferent = true;
+        break;
+      }
+    }
+    expect(isDifferent).toBe(true);
   });
 
-  test('should return a different order for a large array', () => {
-    const arr = Array.from({ length: 100 }, (_, i) => i);
-    const shuffled = shuffle([...arr]);
-    // This test has a small chance of failing if the shuffled array is the same as the original.
-    // For a 100-element array, this is extremely unlikely.
-    expect(shuffled).not.toEqual(arr);
+  it('should handle an empty array', () => {
+    expect(shuffle([])).toEqual([]);
+  });
+
+  it('should handle an array with one element', () => {
+    expect(shuffle([1])).toEqual([1]);
   });
 });
