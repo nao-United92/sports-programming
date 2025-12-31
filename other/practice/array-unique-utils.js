@@ -1,3 +1,2 @@
-export const unique = (arr) => {
-  return [...new Set(arr)];
-};
+// Removes duplicate values from an array.
+export const unique = (arr) => [...new Set(arr)];
