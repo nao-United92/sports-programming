@@ -1,13 +1,23 @@
-const sortedIndexBy = require('./array-sorted-index-by-utils');
+import { sortByProperty } from './array-sorted-index-by-utils.js';
 
-test('finds the sorted index by a given iteratee', () => {
-  const arr = [{ x: 4 }, { x: 5 }, { x: 7 }];
-  const result = sortedIndexBy(arr, { x: 6 }, o => o.x);
-  expect(result).toBe(2);
-});
+describe('sortByProperty', () => {
+  it('should sort an array of objects by a specified property', () => {
+    const arr = [{ a: 3 }, { a: 1 }, { a: 2 }];
+    const expected = [{ a: 1 }, { a: 2 }, { a: 3 }];
+    expect(sortByProperty(arr, 'a')).toEqual(expected);
+  });
 
-test('handles an empty array', () => {
-  const arr = [];
-  const result = sortedIndexBy(arr, { x: 5 }, o => o.x);
-  expect(result).toBe(0);
+  it('should handle an empty array', () => {
+    expect(sortByProperty([], 'a')).toEqual([]);
+  });
+
+  it('should handle an array with one element', () => {
+    const arr = [{ a: 1 }];
+    expect(sortByProperty(arr, 'a')).toEqual(arr);
+  });
+
+  it('should handle an array that is already sorted', () => {
+    const arr = [{ a: 1 }, { a: 2 }, { a: 3 }];
+    expect(sortByProperty(arr, 'a')).toEqual(arr);
+  });
 });
