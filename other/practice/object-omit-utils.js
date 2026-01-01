@@ -1,13 +1,18 @@
 const omit = (obj, keys) => {
-  if (obj === null || typeof obj !== 'object' || !Array.isArray(keys)) {
+  if (obj === null || typeof obj !== 'object') {
     return {};
   }
 
   const newObj = { ...obj };
-  for (const key of keys) {
-    delete newObj[key];
+  const keysToRemove = Array.isArray(keys) ? keys : [keys];
+
+  for (const key of keysToRemove) {
+    if (Object.prototype.hasOwnProperty.call(newObj, key)) {
+      delete newObj[key];
+    }
   }
+
   return newObj;
 };
 
-export default omit;
+module.exports = { omit };
