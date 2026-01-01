@@ -1,10 +1,8 @@
-const {
-  uniq
-} = require('./array-uniq-utils');
+const { uniq } = require('./array-uniq-utils');
 
 describe('uniq', () => {
   test('should remove duplicate values from an array', () => {
-    expect(uniq([1, 2, 2, 3, 3, 3, 4])).toEqual([1, 2, 3, 4]);
+    expect(uniq([2, 1, 2, 3, 1])).toEqual([2, 1, 3]);
   });
 
   test('should return the same array if it has no duplicates', () => {
@@ -15,13 +13,14 @@ describe('uniq', () => {
     expect(uniq([])).toEqual([]);
   });
 
-  test('should handle an array with one element', () => {
-    expect(uniq([1])).toEqual([1]);
+  test('should handle an array with various data types', () => {
+    const mixedArray = [1, '1', 2, '2', 1, '1'];
+    expect(uniq(mixedArray)).toEqual([1, '1', 2, '2']);
   });
 
-  test('should handle non-array input', () => {
+  test('should handle non-array inputs', () => {
     expect(uniq(null)).toEqual([]);
     expect(uniq(undefined)).toEqual([]);
-    expect(uniq('string')).toEqual([]);
+    expect(uniq({})).toEqual([]);
   });
 });
