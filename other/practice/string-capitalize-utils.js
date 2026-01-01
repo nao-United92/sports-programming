@@ -1,9 +1,8 @@
 const capitalize = (str) => {
-  if (str === null || str === undefined || str === '') {
+  if (typeof str !== 'string' || str.length === 0) {
     return '';
   }
-  const s = String(str);
-  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 module.exports = { capitalize };

@@ -1,12 +1,10 @@
 const times = (n, iteratee) => {
-  if (n < 0 || typeof iteratee !== 'function') {
-    return [];
-  }
+  let index = -1;
   const result = [];
-  for (let i = 0; i < n; i++) {
-    result.push(iteratee(i));
+  while (++index < n) {
+    result[index] = iteratee(index);
   }
   return result;
 };
 
-export default times;
+module.exports = { times };

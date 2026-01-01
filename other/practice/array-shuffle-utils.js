@@ -1,21 +1,14 @@
-// Shuffles an array randomly using the Fisher-Yates (Knuth) algorithm.
-export const shuffle = (arr) => {
-  const newArr = [...arr]; // Create a shallow copy to avoid mutating the original array
-  let currentIndex = newArr.length;
-  let randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex !== 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [newArr[currentIndex], newArr[randomIndex]] = [
-      newArr[randomIndex],
-      newArr[currentIndex],
-    ];
+const shuffle = (array) => {
+  if (!Array.isArray(array)) {
+    return [];
   }
-
+  
+  const newArr = [...array];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
   return newArr;
 };
+
+module.exports = { shuffle };
