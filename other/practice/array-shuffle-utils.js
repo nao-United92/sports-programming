@@ -1,20 +1,11 @@
-export const shuffle = (array) => {
-  const shuffledArray = [...array];
-  let currentIndex = shuffledArray.length;
-  let randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex !== 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [shuffledArray[currentIndex], shuffledArray[randomIndex]] = [
-      shuffledArray[randomIndex],
-      shuffledArray[currentIndex],
-    ];
+export const shuffle = (arr) => {
+  if (!Array.isArray(arr)) {
+    return [];
   }
-
-  return shuffledArray;
+  const result = [...arr];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 };
