@@ -1,36 +1,49 @@
-const throttle = (func, wait) => {
-  let timeout = null;
-  let result;
-  let previous = 0;
+export const throttle = (func, wait) => {
+  let timeoutId = null;
   let lastArgs = null;
-  let lastContext = null;
+  let lastThis = null;
+  let lastResult = null;
+  let lastExecTime = 0;
 
-  const later = function() {
-    previous = Date.now();
-    timeout = null;
-    result = func.apply(lastContext, lastArgs);
-  };
-
-  return function(...args) {
+  const throttled = function(...args) {
     const now = Date.now();
-    if (!previous) previous = now; // First invocation
-    
-    const remaining = wait - (now - previous);
-    lastContext = this;
     lastArgs = args;
+    lastThis = this;
 
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-      }
-      previous = now;
-      result = func.apply(lastContext, lastArgs);
-    } else if (!timeout) {
-      timeout = setTimeout(later, remaining);
+    if (!lastExecTime) {
+      lastExecTime = now; // Initialize lastExecTime on first call
     }
-    return result;
-  };
-};
 
-module.exports = { throttle };
+    // Calculate time remaining until next allowed execution
+    const remaining = wait - (now - lastExecTime);
+
+    // If remaining time is <= 0 or remaining is greater than wait
+    // (meaning system clock changed or wait is very small)
+    if (remaining <= 0 || remaining > wait) {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      lastExecTime = now;
+      lastResult = func.apply(lastThis, lastArgs);
+    } else if (!timeoutId) {
+      // If there's a delay, schedule a trailing call
+      timeoutId = setTimeout(() => {
+        lastExecTime = Date.now();
+        timeoutId = null;
+        lastResult = func.apply(lastThis, lastArgs);
+      }, remaining);
+    }
+    return lastResult;
+  };
+
+  throttled.cancel = () => {
+    clearTimeout(timeoutId);
+    timeoutId = null;
+    lastExecTime = 0;
+    lastArgs = null;
+    lastThis = null;
+  };
+
+  return throttled;
+};
