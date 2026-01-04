@@ -1,22 +1,17 @@
 const flattenDepth = (arr, depth = 1) => {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
-
-  if (depth <= 0) {
-    return arr.slice();
+  if (depth < 1 || !Array.isArray(arr)) {
+    return arr;
   }
 
   let result = [];
-  for (const item of arr) {
-    if (Array.isArray(item)) {
-      result.push(...flattenDepth(item, depth - 1));
+  for (let i = 0; i < arr.length; i++) {
+    if (Array.isArray(arr[i]) && depth > 0) {
+      result.push(...flattenDepth(arr[i], depth - 1));
     } else {
-      result.push(item);
+      result.push(arr[i]);
     }
   }
-
   return result;
 };
 
-module.exports = flattenDepth;
+module.exports = { flattenDepth };
