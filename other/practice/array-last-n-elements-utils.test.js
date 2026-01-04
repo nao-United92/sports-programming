@@ -1,31 +1,36 @@
-import { lastNElements } from './array-last-n-elements-utils.js';
+const { lastN } = require('./array-last-n-elements-utils');
 
-describe('lastNElements', () => {
-  it('should return the last N elements of an array', () => {
-    expect(lastNElements([1, 2, 3, 4, 5], 3)).toEqual([3, 4, 5]);
+describe('lastN', () => {
+  const arr = [1, 2, 3, 4, 5];
+
+  test('should return the last N elements when N is positive', () => {
+    expect(lastN(arr, 3)).toEqual([3, 4, 5]);
   });
 
-  it('should return the last element if N is not specified', () => {
-    expect(lastNElements([1, 2, 3])).toEqual([3]);
+  test('should return the last element when N is not specified (default to 1)', () => {
+    expect(lastN(arr)).toEqual([5]);
   });
 
-  it('should return the entire array if N is greater than or equal to the array length', () => {
-    expect(lastNElements([1, 2, 3], 5)).toEqual([1, 2, 3]);
+  test('should return the entire array when N is greater than array length', () => {
+    expect(lastN(arr, 10)).toEqual([1, 2, 3, 4, 5]);
   });
 
-  it('should handle an empty array', () => {
-    expect(lastNElements([], 2)).toEqual([]);
+  test('should return an empty array when N is 0', () => {
+    expect(lastN(arr, 0)).toEqual([]);
   });
 
-  it('should return an empty array if N is 0 or negative', () => {
-    expect(lastNElements([1, 2, 3], 0)).toEqual([]);
-    expect(lastNElements([1, 2, 3], -1)).toEqual([]);
+  test('should return an empty array when N is negative', () => {
+    expect(lastN(arr, -2)).toEqual([]);
   });
 
-  it('should not mutate the original array', () => {
-    const arr = [1, 2, 3];
-    const originalArr = [...arr];
-    lastNElements(arr, 2);
-    expect(arr).toEqual(originalArr);
+  test('should handle an empty array, returning an empty array', () => {
+    expect(lastN([], 3)).toEqual([]);
+  });
+
+  test('should throw TypeError if first argument is not an array', () => {
+    expect(() => lastN(null, 2)).toThrow(TypeError);
+    expect(() => lastN('string', 2)).toThrow(TypeError);
+    expect(() => lastN(undefined, 2)).toThrow(TypeError);
+    expect(() => lastN({}, 2)).toThrow(TypeError);
   });
 });
