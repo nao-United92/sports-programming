@@ -1,43 +1,55 @@
-import { partitionByPredicate } from './array-partition-by-predicate-utils.js';
+const { partitionByPredicate } = require('./array-partition-by-predicate-utils');
 
 describe('partitionByPredicate', () => {
-  const users = [
-    { 'user': 'barney', 'age': 36, 'active': false },
-    { 'user': 'fred', 'age': 40, 'active': true },
-    { 'user': 'pebbles', 'age': 1, 'active': false }
-  ];
+  test('should partition numbers into even and odd', () => {
+    const numbers = [1, 2, 3, 4, 5, 6];
+    const [even, odd] = partitionByPredicate(numbers, num => num % 2 === 0);
+    expect(even).toEqual([2, 4, 6]);
+    expect(odd).toEqual([1, 3, 5]);
+  });
 
-  it('should partition an array based on a predicate function', () => {
-    const [activeUsers, inactiveUsers] = partitionByPredicate(users, ({ active }) => active);
-    expect(activeUsers).toEqual([{ 'user': 'fred', 'age': 40, 'active': true }]);
-    expect(inactiveUsers).toEqual([
-      { 'user': 'barney', 'age': 36, 'active': false },
-      { 'user': 'pebbles', 'age': 1, 'active': false }
+  test('should partition users into adults and minors', () => {
+    const users = [
+      { name: 'Alice', age: 25 },
+      { name: 'Bob', age: 17 },
+      { name: 'Charlie', age: 30 },
+      { name: 'David', age: 16 },
+    ];
+    const [adults, minors] = partitionByPredicate(users, user => user.age >= 18);
+    expect(adults).toEqual([
+      { name: 'Alice', age: 25 },
+      { name: 'Charlie', age: 30 },
+    ]);
+    expect(minors).toEqual([
+      { name: 'Bob', age: 17 },
+      { name: 'David', age: 16 },
     ]);
   });
 
-  it('should handle an empty array', () => {
-    const [passed, failed] = partitionByPredicate([], (n) => n > 0);
-    expect(passed).toEqual([]);
-    expect(failed).toEqual([]);
+  test('should handle an empty array', () => {
+    const [truthy, falsy] = partitionByPredicate([], item => item > 0);
+    expect(truthy).toEqual([]);
+    expect(falsy).toEqual([]);
   });
 
-  it('should put all elements in "passed" if predicate is always true', () => {
-    const [passed, failed] = partitionByPredicate([1, 2, 3], (n) => true);
-    expect(passed).toEqual([1, 2, 3]);
-    expect(failed).toEqual([]);
+  test('should handle all elements matching the predicate', () => {
+    const numbers = [2, 4, 6];
+    const [even, odd] = partitionByPredicate(numbers, num => num % 2 === 0);
+    expect(even).toEqual([2, 4, 6]);
+    expect(odd).toEqual([]);
   });
 
-  it('should put all elements in "failed" if predicate is always false', () => {
-    const [passed, failed] = partitionByPredicate([1, 2, 3], (n) => false);
-    expect(passed).toEqual([]);
-    expect(failed).toEqual([1, 2, 3]);
+  test('should handle no elements matching the predicate', () => {
+    const numbers = [1, 3, 5];
+    const [even, odd] = partitionByPredicate(numbers, num => num % 2 === 0);
+    expect(even).toEqual([]);
+    expect(odd).toEqual([1, 3, 5]);
   });
 
-  it('should not mutate the original array', () => {
-    const arr = [1, 2, 3];
-    const originalArr = [...arr];
-    partitionByPredicate(arr, (n) => n % 2 === 0);
-    expect(arr).toEqual(originalArr);
+  test('should handle mixed types in array with appropriate predicate', () => {
+    const mixed = [1, 'hello', 3, true, null, 6];
+    const [numbers, others] = partitionByPredicate(mixed, item => typeof item === 'number');
+    expect(numbers).toEqual([1, 3, 6]);
+    expect(others).toEqual(['hello', true, null]);
   });
 });

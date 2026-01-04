@@ -1,28 +1,52 @@
-import intersectionBy from './array-intersection-by-utils';
+const { intersectionBy } = require('./array-intersection-by-utils');
 
 describe('intersectionBy', () => {
-  test('should return the intersection of two arrays based on a function', () => {
-    const array1 = [{ x: 1 }, { x: 2 }];
-    const array2 = [{ x: 2 }, { x: 3 }];
-    expect(intersectionBy(array1, array2, o => o.x)).toEqual([{ x: 2 }]);
+  test('should return intersection of two arrays based on id property', () => {
+    const arr1 = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }, { id: 3, name: 'Charlie' }];
+    const arr2 = [{ id: 2, name: 'Robert' }, { id: 3, name: 'Charles' }, { id: 4, name: 'David' }];
+    const result = intersectionBy(arr1, arr2, item => item.id);
+    expect(result).toEqual([{ id: 2, name: 'Bob' }, { id: 3, name: 'Charlie' }]);
   });
 
-  test('should work with different property values', () => {
-    const array1 = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
-    const array2 = [{ id: 2, name: 'c' }, { id: 3, name: 'd' }];
-    expect(intersectionBy(array1, array2, o => o.id)).toEqual([{ id: 2, name: 'b' }]);
+  test('should return intersection of two arrays based on value (identity iteratee)', () => {
+    const arr1 = [1, 2, 3, 4];
+    const arr2 = [3, 4, 5, 6];
+    const result = intersectionBy(arr1, arr2, item => item);
+    expect(result).toEqual([3, 4]);
   });
 
-  test('should return an empty array if there is no intersection', () => {
-    const array1 = [{ x: 1 }];
-    const array2 = [{ x: 2 }];
-    expect(intersectionBy(array1, array2, o => o.x)).toEqual([]);
+  test('should handle empty first array', () => {
+    const arr1 = [];
+    const arr2 = [{ id: 1 }];
+    const result = intersectionBy(arr1, arr2, item => item.id);
+    expect(result).toEqual([]);
   });
 
-  test('should work with empty arrays', () => {
-    const array1 = [];
-    const array2 = [{ x: 1 }];
-    expect(intersectionBy(array1, array2, o => o.x)).toEqual([]);
-    expect(intersectionBy(array2, array1, o => o.x)).toEqual([]);
+  test('should handle empty second array', () => {
+    const arr1 = [{ id: 1 }];
+    const arr2 = [];
+    const result = intersectionBy(arr1, arr2, item => item.id);
+    expect(result).toEqual([]);
+  });
+
+  test('should handle both arrays being empty', () => {
+    const arr1 = [];
+    const arr2 = [];
+    const result = intersectionBy(arr1, arr2, item => item);
+    expect(result).toEqual([]);
+  });
+
+  test('should work with custom iteratee function', () => {
+    const arr1 = ['apple', 'banana', 'apricot'];
+    const arr2 = ['grape', 'orange', 'application']; // application's substring(0,3) is 'app'
+    const result = intersectionBy(arr1, arr2, item => item.substring(0, 3));
+    expect(result).toEqual(['apple']); // Only 'apple' (iteratee 'app') is present in both
+  });
+
+  test('should not include duplicates from the first array if iteratee values match', () => {
+    const arr1 = [{ id: 1, name: 'A' }, { id: 1, name: 'B' }];
+    const arr2 = [{ id: 1, name: 'C' }];
+    const result = intersectionBy(arr1, arr2, item => item.id);
+    expect(result).toEqual([{ id: 1, name: 'A' }, { id: 1, name: 'B' }]);
   });
 });

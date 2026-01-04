@@ -1,14 +1,11 @@
-const pick = (obj, keys) => {
+export const pick = (obj, keys) => {
   if (obj === null || typeof obj !== 'object' || !Array.isArray(keys)) {
     return {};
   }
-
   return keys.reduce((acc, key) => {
-    if (key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       acc[key] = obj[key];
     }
     return acc;
   }, {});
 };
-
-export default pick;

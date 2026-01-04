@@ -1,37 +1,50 @@
 const { deepMerge } = require('./object-deep-merge-utils');
 
 describe('deepMerge', () => {
-  test('should merge two simple objects', () => {
-    const target = { a: 1 };
-    const source = { b: 2 };
-    expect(deepMerge(target, source)).toEqual({ a: 1, b: 2 });
+  test('should merge simple objects', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { c: 3, d: 4 };
+    expect(deepMerge({}, obj1, obj2)).toEqual({ a: 1, b: 2, c: 3, d: 4 });
   });
 
-  test('should overwrite properties in target with source properties', () => {
-    const target = { a: 1, b: 1 };
-    const source = { b: 2, c: 3 };
-    expect(deepMerge(target, source)).toEqual({ a: 1, b: 2, c: 3 });
+  test('should overwrite properties with the same key', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { b: 3, c: 4 };
+    expect(deepMerge({}, obj1, obj2)).toEqual({ a: 1, b: 3, c: 4 });
   });
 
-  test('should merge nested objects', () => {
-    const target = { a: { x: 1 } };
-    const source = { a: { y: 2 } };
-    expect(deepMerge(target, source)).toEqual({ a: { x: 1, y: 2 } });
+  test('should deep merge nested objects', () => {
+    const obj1 = { a: { b: 1 } };
+    const obj2 = { a: { c: 2 }, d: 3 };
+    expect(deepMerge({}, obj1, obj2)).toEqual({ a: { b: 1, c: 2 }, d: 3 });
   });
 
-  test('should handle arrays by replacing them', () => {
-    const target = { a: [1, 2] };
-    const source = { a: [3, 4] };
-    expect(deepMerge(target, source)).toEqual({ a: [3, 4] });
+  test('should handle arrays by overwriting them', () => {
+    const obj1 = { a: [1, 2] };
+    const obj2 = { a: [3, 4] };
+    expect(deepMerge({}, obj1, obj2)).toEqual({ a: [3, 4] });
   });
 
-  test('should not modify the original objects', () => {
-    const target = { a: { x: 1 } };
-    const source = { a: { y: 2 } };
-    const targetCopy = JSON.parse(JSON.stringify(target));
-    const sourceCopy = JSON.parse(JSON.stringify(source));
-    deepMerge(target, source);
-    expect(target).toEqual(targetCopy);
-    expect(source).toEqual(sourceCopy);
+  test('should merge multiple source objects', () => {
+    const obj1 = { a: 1 };
+    const obj2 = { b: { c: 2 } };
+    const obj3 = { b: { d: 3 }, e: 4 };
+    expect(deepMerge({}, obj1, obj2, obj3)).toEqual({ a: 1, b: { c: 2, d: 3 }, e: 4 });
+  });
+
+  test('should handle empty objects', () => {
+    const obj1 = { a: 1 };
+    const obj2 = {};
+    expect(deepMerge({}, obj1, obj2)).toEqual({ a: 1 });
+    expect(deepMerge({}, obj2, obj1)).toEqual({ a: 1 });
+    expect(deepMerge({}, {})).toEqual({});
+  });
+
+  test('should not modify original objects', () => {
+    const obj1 = { a: 1, b: { c: 2 } };
+    const obj2 = { d: 3, b: { e: 4 } };
+    deepMerge({}, obj1, obj2);
+    expect(obj1).toEqual({ a: 1, b: { c: 2 } });
+    expect(obj2).toEqual({ d: 3, b: { e: 4 } });
   });
 });
