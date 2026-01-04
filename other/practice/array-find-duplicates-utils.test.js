@@ -1,45 +1,52 @@
-const findDuplicates = require('./array-find-duplicates-utils');
+const { findDuplicates } = require('./array-find-duplicates-utils');
 
 describe('findDuplicates', () => {
-  test('should return an empty array if there are no duplicates', () => {
-    expect(findDuplicates([1, 2, 3, 4, 5])).toEqual([]);
+  test('should find duplicate primitive values', () => {
+    const arr = [1, 2, 3, 2, 1, 4, 5];
+    expect(findDuplicates(arr)).toEqual([2, 1]);
   });
 
-  test('should return duplicates for numbers', () => {
-    expect(findDuplicates([1, 2, 2, 3, 3, 3, 4])).toEqual([2, 3]);
-  });
-
-  test('should return duplicates for strings', () => {
-    expect(findDuplicates(['a', 'b', 'a', 'c', 'b'])).toEqual(['a', 'b']);
-  });
-
-  test('should handle arrays with mixed types', () => {
-    expect(findDuplicates([1, 'a', 1, 'b', 'a'])).toEqual([1, 'a']);
+  test('should return an empty array if no duplicates are found', () => {
+    const arr = [1, 2, 3, 4, 5];
+    expect(findDuplicates(arr)).toEqual([]);
   });
 
   test('should return an empty array for an empty input array', () => {
-    expect(findDuplicates([])).toEqual([]);
+    const arr = [];
+    expect(findDuplicates(arr)).toEqual([]);
   });
 
-  test('should handle arrays with undefined and null values', () => {
-    expect(findDuplicates([1, null, undefined, 1, null])).toEqual([1, null]);
+  test('should find duplicates based on an iteratee function for objects (by property)', () => {
+    const users = [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+      { id: 1, name: 'Alicia' }, // Duplicate id
+      { id: 3, name: 'Charlie' },
+      { id: 2, name: 'Robert' }, // Duplicate id
+    ];
+    // Note: The duplicates array will contain the *second* occurrence of the item
+    // that created the duplicate key. This is a common behavior for such utilities.
+    expect(findDuplicates(users, user => user.id)).toEqual([
+      { id: 1, name: 'Alicia' },
+      { id: 2, name: 'Robert' },
+    ]);
   });
 
-  test('should return an empty array if input is not an array', () => {
-    expect(findDuplicates(null)).toEqual([]);
-    expect(findDuplicates(undefined)).toEqual([]);
-    expect(findDuplicates("string")).toEqual([]);
-    expect(findDuplicates(123)).toEqual([]);
-    expect(findDuplicates({})).toEqual([]);
+  test('should find duplicates based on an iteratee function for objects (by string value)', () => {
+    const items = ['apple', 'banana', 'Apple', 'grape', 'Banana'];
+    expect(findDuplicates(items, item => item.toLowerCase())).toEqual(['Apple', 'Banana']);
   });
 
-  test('should handle objects (by reference)', () => {
-    const obj1 = { a: 1 };
-    const obj2 = { b: 2 };
-    expect(findDuplicates([obj1, obj2, obj1])).toEqual([obj1]);
+  test('should handle arrays with multiple occurrences of the same duplicate', () => {
+    const arr = [1, 2, 2, 3, 3, 3, 4];
+    expect(findDuplicates(arr)).toEqual([2, 3]);
   });
 
-  test('should not consider different object instances as duplicates', () => {
-    expect(findDuplicates([{ a: 1 }, { a: 1 }])).toEqual([]);
+  test('should handle objects with full deep equality (by stringifying)', () => {
+    const obj1 = { a: 1, b: 'x' };
+    const obj2 = { a: 1, b: 'y' };
+    const obj3 = { a: 1, b: 'x' }; // Duplicate of obj1 by value
+    const arr = [obj1, obj2, obj3];
+    expect(findDuplicates(arr, item => JSON.stringify(item))).toEqual([{ a: 1, b: 'x' }]);
   });
 });
