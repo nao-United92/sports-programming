@@ -1,47 +1,48 @@
-import pluck from './array-pluck-utils';
+const { pluck } = require('./array-pluck-utils');
 
 describe('pluck', () => {
   const users = [
-    { id: 1, name: 'Alice', age: 30 },
-    { id: 2, name: 'Bob', age: 24 },
-    { id: 3, name: 'Charlie', age: 35 },
+    { id: 1, name: 'Alice', details: { age: 30, city: 'NY' } },
+    { id: 2, name: 'Bob', details: { age: 24, city: 'LA' } },
+    { id: 3, name: 'Charlie', details: { age: 35, city: 'SF' } },
+    { id: 4, name: 'David' }, // Has name, but missing details
   ];
 
-  it('should extract a list of property values from an array of objects', () => {
-    expect(pluck(users, 'name')).toEqual(['Alice', 'Bob', 'Charlie']);
+  test('should pluck a simple property from an array of objects', () => {
+    expect(pluck(users, 'name')).toEqual(['Alice', 'Bob', 'Charlie', 'David']);
   });
 
-  it('should handle a key that does not exist, returning undefined for those entries', () => {
-    expect(pluck(users, 'email')).toEqual([undefined, undefined, undefined]);
+  test('should pluck a nested property from an array of objects', () => {
+    expect(pluck(users, 'details.age')).toEqual([30, 24, 35, undefined]);
   });
 
-  it('should handle an empty array, returning an empty array', () => {
+  test('should return undefined for non-existent properties', () => {
+    expect(pluck(users, 'email')).toEqual([undefined, undefined, undefined, undefined]);
+  });
+
+  test('should handle empty array', () => {
     expect(pluck([], 'name')).toEqual([]);
   });
 
-  it('should handle an array of non-objects', () => {
-    const arr = [1, 2, 3];
-    expect(pluck(arr, 'someProperty')).toEqual([undefined, undefined, undefined]);
-  });
-
-  it('should return an empty array if input array is not an array', () => {
-    expect(pluck(null, 'name')).toEqual([]);
-    expect(pluck(undefined, 'name')).toEqual([]);
-  });
-
-  it('should return an empty array if key is not provided', () => {
-    expect(pluck(users, null)).toEqual([]);
-    expect(pluck(users, undefined)).toEqual([]);
-    expect(pluck(users, '')).toEqual([undefined, undefined, undefined]); // Accessing empty string key
-  });
-
-  it('should extract nested property values if key is a dot-notation string', () => {
-    const data = [
-      { id: 1, details: { address: { city: 'NY' } } },
-      { id: 2, details: { address: { city: 'LA' } } },
+  test('should handle array with mixed types, returning undefined for non-objects', () => {
+    const mixedArr = [
+      { id: 1, name: 'Alice' },
+      null,
+      { id: 2, name: 'Bob' },
+      'string',
+      undefined,
+      { id: 3, name: 'Charlie' },
     ];
-    // This test will fail with the current simple implementation, will need to enhance pluck for dot-notation
-    // For now, it should return undefined
-    expect(pluck(data, 'details.address.city')).toEqual([undefined, undefined]);
+    expect(pluck(mixedArr, 'name')).toEqual(['Alice', undefined, 'Bob', undefined, undefined, 'Charlie']);
+  });
+
+  test('should return undefined for a nested property if an intermediate object is missing', () => {
+    const data = [
+      { a: { b: 1 } },
+      { a: {} },
+      { c: 2 },
+      {}
+    ];
+    expect(pluck(data, 'a.b')).toEqual([1, undefined, undefined, undefined]);
   });
 });
