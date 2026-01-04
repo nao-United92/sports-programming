@@ -1,14 +1,20 @@
-const shuffle = (array) => {
-  if (!Array.isArray(array)) {
-    return [];
-  }
-  
-  const newArr = [...array];
-  for (let i = newArr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-  }
-  return newArr;
-};
+export const shuffle = (array) => {
+  const shuffledArray = [...array];
+  let currentIndex = shuffledArray.length;
+  let randomIndex;
 
-module.exports = { shuffle };
+  // While there remain elements to shuffle.
+  while (currentIndex !== 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [shuffledArray[currentIndex], shuffledArray[randomIndex]] = [
+      shuffledArray[randomIndex],
+      shuffledArray[currentIndex],
+    ];
+  }
+
+  return shuffledArray;
+};
