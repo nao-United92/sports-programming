@@ -1,16 +1,28 @@
-const deepClone = (obj) => {
+export const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object') {
-    return obj;
+    return obj; // Return primitive values or null as is
   }
-  // A simple deep clone using JSON.
-  // Note: This does not handle functions, undefined, Symbols, or circular references.
-  try {
-    return JSON.parse(JSON.stringify(obj));
-  } catch (e) {
-    // Fallback for cases where stringify fails (e.g., circular references)
-    // A more robust implementation would handle this, but for now, we return a shallow copy.
-    return { ...obj };
-  }
-};
 
-module.exports = { deepClone };
+  // Handle Date objects
+  if (obj instanceof Date) {
+    return new Date(obj.getTime());
+  }
+
+  // Handle Array
+  if (Array.isArray(obj)) {
+    const arrCopy = [];
+    for (let i = 0; i < obj.length; i++) {
+      arrCopy[i] = deepClone(obj[i]);
+    }
+    return arrCopy;
+  }
+
+  // Handle Object
+  const objCopy = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      objCopy[key] = deepClone(obj[key]);
+    }
+  }
+  return objCopy;
+};
