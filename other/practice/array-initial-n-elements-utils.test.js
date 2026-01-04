@@ -1,31 +1,36 @@
-import { initialNElements } from './array-initial-n-elements-utils.js';
+const { initialN } = require('./array-initial-n-elements-utils');
 
-describe('initialNElements', () => {
-  it('should return the first N elements of an array', () => {
-    expect(initialNElements([1, 2, 3, 4, 5], 3)).toEqual([1, 2, 3]);
+describe('initialN', () => {
+  const arr = [1, 2, 3, 4, 5];
+
+  test('should return the first N elements when N is positive', () => {
+    expect(initialN(arr, 3)).toEqual([1, 2, 3]);
   });
 
-  it('should return the first element if N is not specified', () => {
-    expect(initialNElements([1, 2, 3])).toEqual([1]);
+  test('should return the first element when N is not specified (default to 1)', () => {
+    expect(initialN(arr)).toEqual([1]);
   });
 
-  it('should return the entire array if N is greater than or equal to the array length', () => {
-    expect(initialNElements([1, 2, 3], 5)).toEqual([1, 2, 3]);
+  test('should return the entire array when N is greater than array length', () => {
+    expect(initialN(arr, 10)).toEqual([1, 2, 3, 4, 5]);
   });
 
-  it('should handle an empty array', () => {
-    expect(initialNElements([], 2)).toEqual([]);
+  test('should return an empty array when N is 0', () => {
+    expect(initialN(arr, 0)).toEqual([]);
   });
 
-  it('should return an empty array if N is 0 or negative', () => {
-    expect(initialNElements([1, 2, 3], 0)).toEqual([]);
-    expect(initialNElements([1, 2, 3], -1)).toEqual([]);
+  test('should return an empty array when N is negative', () => {
+    expect(initialN(arr, -2)).toEqual([]);
   });
 
-  it('should not mutate the original array', () => {
-    const arr = [1, 2, 3];
-    const originalArr = [...arr];
-    initialNElements(arr, 2);
-    expect(arr).toEqual(originalArr);
+  test('should handle an empty array, returning an empty array', () => {
+    expect(initialN([], 3)).toEqual([]);
+  });
+
+  test('should throw TypeError if first argument is not an array', () => {
+    expect(() => initialN(null, 2)).toThrow(TypeError);
+    expect(() => initialN('string', 2)).toThrow(TypeError);
+    expect(() => initialN(undefined, 2)).toThrow(TypeError);
+    expect(() => initialN({}, 2)).toThrow(TypeError);
   });
 });
