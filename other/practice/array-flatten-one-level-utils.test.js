@@ -1,23 +1,41 @@
-import { flattenOneLevel } from './array-flatten-one-level-utils.js';
+const arrayFlattenOneLevel = require('./array-flatten-one-level-utils');
 
-describe('flattenOneLevel', () => {
-  it('should flatten an array one level deep', () => {
-    expect(flattenOneLevel([1, [2, 3], 4])).toEqual([1, 2, 3, 4]);
+describe('arrayFlattenOneLevel', () => {
+  test('should flatten a single level nested array', () => {
+    const arr = [1, [2, 3], 4];
+    expect(arrayFlattenOneLevel(arr)).toEqual([1, 2, 3, 4]);
   });
 
-  it('should handle nested arrays with multiple levels, flattening only one level', () => {
-    expect(flattenOneLevel([1, [2, [3, 4]], 5])).toEqual([1, 2, [3, 4], 5]);
+  test('should not flatten deeply nested arrays', () => {
+    const arr = [1, [2, [3, 4]], 5];
+    expect(arrayFlattenOneLevel(arr)).toEqual([1, 2, [3, 4], 5]);
   });
 
-  it('should handle an empty array', () => {
-    expect(flattenOneLevel([])).toEqual([]);
+  test('should handle an already flat array', () => {
+    const arr = [1, 2, 3];
+    expect(arrayFlattenOneLevel(arr)).toEqual([1, 2, 3]);
   });
 
-  it('should handle an array with no nested arrays', () => {
-    expect(flattenOneLevel([1, 2, 3])).toEqual([1, 2, 3]);
+  test('should handle an empty array', () => {
+    const arr = [];
+    expect(arrayFlattenOneLevel(arr)).toEqual([]);
   });
 
-  it('should handle an array with empty nested arrays', () => {
-    expect(flattenOneLevel([1, [], 2])).toEqual([1, 2]);
+  test('should handle array with empty nested arrays', () => {
+    const arr = [1, [],
+      [2, []], 3
+    ];
+    expect(arrayFlattenOneLevel(arr)).toEqual([1, 2, [], 3]); // Note: [] is still in the array
+  });
+
+  test('should handle array with mixed types', () => {
+    const arr = [1, 'a', [2, true], null, [undefined]];
+    expect(arrayFlattenOneLevel(arr)).toEqual([1, 'a', 2, true, null, undefined]);
+  });
+
+  test('should throw TypeError if argument is not an array', () => {
+    expect(() => arrayFlattenOneLevel(null)).toThrow(TypeError);
+    expect(() => arrayFlattenOneLevel(123)).toThrow(TypeError);
+    expect(() => arrayFlattenOneLevel('string')).toThrow(TypeError);
   });
 });
