@@ -1,65 +1,67 @@
-import { unzip } from './array-unzip-utils';
+const arrayUnzip = require('./array-unzip-utils');
 
-describe('unzip', () => {
-  test('should ungroup elements from corresponding positions', () => {
-    expect(unzip([
-      ['a', 1, true],
-      ['b', 2, false]
-    ])).toEqual([
-      ['a', 'b'],
-      [1, 2],
-      [true, false]
-    ]);
-  });
-
-  test('should handle arrays of different lengths within the grouped array', () => {
-    expect(unzip([
-      ['a', 1],
-      ['b', 2],
-      ['c', undefined]
-    ])).toEqual([
+describe('arrayUnzip', () => {
+  test('should ungroup elements from a zipped array', () => {
+    const zipped = [
+      [1, 'a', true],
+      [2, 'b', false],
+      [3, 'c', true],
+    ];
+    const expected = [
+      [1, 2, 3],
       ['a', 'b', 'c'],
-      [1, 2, undefined]
-    ]);
+      [true, false, true],
+    ];
+    expect(arrayUnzip(zipped)).toEqual(expected);
   });
 
-  test('should handle single inner array', () => {
-    expect(unzip([
+  test('should handle arrays with varying lengths, filling with undefined', () => {
+    const zipped = [
+      [1, 'a'],
+      [2, 'b'],
+      [undefined, 'c'],
+    ];
+    const expected = [
+      [1, 2, undefined],
+      ['a', 'b', 'c'],
+    ];
+    expect(arrayUnzip(zipped)).toEqual(expected);
+  });
+
+  test('should handle an empty input array', () => {
+    expect(arrayUnzip([])).toEqual([]);
+  });
+
+  test('should handle an input array containing empty arrays', () => {
+    const zipped = [
+      [],
+      [],
+      []
+    ];
+    expect(arrayUnzip(zipped)).toEqual([]);
+  });
+
+  test('should handle an input array with a single sub-array', () => {
+    const zipped = [
+      [1, 2, 3]
+    ];
+    expect(arrayUnzip(zipped)).toEqual([
       [1],
       [2],
       [3]
-    ])).toEqual([
-      [1, 2, 3]
     ]);
   });
 
-  test('should handle empty input array', () => {
-    expect(unzip([])).toEqual([]);
+  test('should throw TypeError if argument is not an array', () => {
+    expect(() => arrayUnzip(null)).toThrow(TypeError);
+    expect(() => arrayUnzip(123)).toThrow(TypeError);
+    expect(() => arrayUnzip('string')).toThrow(TypeError);
   });
 
-  test('should handle empty inner arrays', () => {
-    expect(unzip([
-      [],
-      []
-    ])).toEqual([]);
-  });
-
-  test('should handle mixed data types', () => {
-    expect(unzip([
-      [1, true],
-      ['a', null]
-    ])).toEqual([
-      [1, 'a'],
-      [true, null]
-    ]);
-  });
-
-  test('should handle input with undefined or null inner arrays', () => {
-    expect(unzip([
-      ['a', 1], null, ['c', 3]
-    ])).toEqual([
-      ['a', undefined, 'c'],
-      [1, undefined, 3]
-    ]);
+  test('should throw TypeError if input array contains non-array elements', () => {
+    const invalidZipped = [
+      [1, 2], 'a', [3, 4]
+    ];
+    expect(() => arrayUnzip(invalidZipped)).toThrow(TypeError);
   });
 });

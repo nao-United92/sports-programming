@@ -1,28 +1,27 @@
-export const unzip = (array) => {
-  if (!array || array.length === 0) {
+const arrayUnzip = (arr) => {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the argument.');
+  }
+  if (arr.length === 0) {
     return [];
   }
 
-  // Determine the maximum length of any inner array to set up the result structure
-  const maxLength = Math.max(...array.map(innerArr => (innerArr && Array.isArray(innerArr) ? innerArr.length : 0)));
-  
-  // Initialize result with `maxLength` number of empty arrays
-  const result = Array.from({ length: maxLength }, () => []);
+  // Determine the maximum length of sub-arrays to correctly size the output arrays
+  const numOutputArrays = arr.reduce((max, subArr) => {
+      if (!Array.isArray(subArr)) {
+          throw new TypeError('Expected an array of arrays for the argument.');
+      }
+      return Math.max(max, subArr.length);
+  }, 0);
 
-  for (let i = 0; i < array.length; i++) {
-    const currentInnerArray = array[i];
-    if (currentInnerArray && Array.isArray(currentInnerArray)) {
-      for (let j = 0; j < maxLength; j++) {
-        result[j].push(currentInnerArray[j]);
-      }
-    } else {
-      // If the inner element is not an array (e.g., null, undefined),
-      // push undefined for each corresponding position in the result.
-      for (let j = 0; j < maxLength; j++) {
-        result[j].push(undefined);
-      }
+  const result = Array.from({ length: numOutputArrays }, () => []);
+
+  for (let i = 0; i < arr.length; i++) { // Iterate through each inner array
+    for (let j = 0; j < numOutputArrays; j++) { // Iterate through the potential output arrays
+      result[j].push(arr[i][j]);
     }
   }
-
   return result;
 };
+
+module.exports = arrayUnzip;

@@ -1,5 +1,18 @@
-// Creates an array of grouped elements, the first of which contains the first elements of the given arrays, the second of which contains the second elements of the given arrays, and so on.
-export const zip = (...arrays) => {
+const arrayZip = (...arrays) => {
+  if (!arrays.every(Array.isArray)) {
+    throw new TypeError('Expected all arguments to be arrays.');
+  }
+  if (arrays.length === 0) {
+    return [];
+  }
+
   const maxLength = Math.max(...arrays.map(arr => arr.length));
-  return Array.from({ length: maxLength }, (_, i) => arrays.map(arr => arr[i]));
+  const result = [];
+
+  for (let i = 0; i < maxLength; i++) {
+    result.push(arrays.map(arr => arr[i]));
+  }
+  return result;
 };
+
+module.exports = arrayZip;
