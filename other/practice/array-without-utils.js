@@ -1,2 +1,8 @@
-// Creates an array excluding all given values.
-export const without = (arr, ...values) => arr.filter(item => !values.includes(item));
+const arrayWithout = (arr, ...values) => {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the first argument.');
+  }
+  return arr.filter(item => !values.includes(item));
+};
+
+module.exports = arrayWithout;
