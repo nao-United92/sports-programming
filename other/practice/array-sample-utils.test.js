@@ -1,47 +1,53 @@
-const { sample, sampleSize } = require('./array-sample-utils');
+const arraySample = require('./array-sample-utils');
 
-describe('sample', () => {
-  const arr = [1, 2, 3, 4, 5];
-
-  test('should return a single element from the array', () => {
-    const result = sample(arr);
-    expect(arr).toContain(result);
-  });
-
-  test('should return undefined for an empty array', () => {
-    const result = sample([]);
-    expect(result).toBeUndefined();
-  });
-});
-
-describe('sampleSize', () => {
-  const arr = [1, 2, 3, 4, 5];
-
-  test('should return an array of specified size', () => {
-    const result = sampleSize(arr, 3);
-    expect(result).toHaveLength(3);
-    result.forEach(item => expect(arr).toContain(item));
-  });
-
-  test('should return an array of size 1 if n is not specified', () => {
-    const result = sampleSize(arr);
-    expect(result).toHaveLength(1);
+describe('arraySample', () => {
+  test('should return a single random element when n is not specified', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const result = arraySample(arr);
     expect(arr).toContain(result[0]);
+    expect(result.length).toBe(1);
   });
 
-  test('should return all elements if n is greater than array length', () => {
-    const result = sampleSize(arr, 10);
-    expect(result).toHaveLength(arr.length);
+  test('should return n random elements from the array', () => {
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const n = 3;
+    const result = arraySample(arr, n);
+    expect(result.length).toBe(n);
     result.forEach(item => expect(arr).toContain(item));
-  });
-
-  test('should return an empty array for an empty input array', () => {
-    const result = sampleSize([], 3);
-    expect(result).toEqual([]);
+    // Test that elements are unique within the sample (highly probable for small n)
+    expect(new Set(result).size).toBe(n);
   });
 
   test('should return an empty array if n is 0', () => {
-    const result = sampleSize(arr, 0);
-    expect(result).toEqual([]);
+    const arr = [1, 2, 3];
+    expect(arraySample(arr, 0)).toEqual([]);
+  });
+
+  test('should return all elements if n is greater than or equal to array length', () => {
+    const arr = [1, 2, 3];
+    const result = arraySample(arr, 5);
+    expect(result.length).toBe(3);
+    expect(arr).toEqual(expect.arrayContaining(result));
+    expect(new Set(result).size).toBe(3); // Ensure uniqueness, as it should return the original distinct elements
+  });
+
+  test('should not modify the original array', () => {
+    const arr = [1, 2, 3];
+    arraySample(arr, 2);
+    expect(arr).toEqual([1, 2, 3]);
+  });
+
+  test('should handle empty array gracefully', () => {
+    expect(arraySample([], 2)).toEqual([]);
+  });
+
+  test('should throw TypeError if first argument is not an array', () => {
+    expect(() => arraySample(null)).toThrow(TypeError);
+    expect(() => arraySample('string')).toThrow(TypeError);
+    expect(() => arraySample(123)).toThrow(TypeError);
+  });
+
+  test('should throw RangeError if n is a negative number', () => {
+    expect(() => arraySample([1, 2, 3], -1)).toThrow(RangeError);
   });
 });

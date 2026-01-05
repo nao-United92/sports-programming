@@ -1,10 +1,19 @@
-const { shuffle } = require('./array-shuffle-utils');
+const arraySample = (arr, n = 1) => {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the first argument.');
+  }
+  if (n < 0) {
+    throw new RangeError('Expected n to be a non-negative number.');
+  }
+  if (n === 0) {
+    return [];
+  }
+  if (n >= arr.length) {
+    return [...arr];
+  }
 
-const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-const sampleSize = (arr, n = 1) => {
-  const shuffled = shuffle(arr);
-  return shuffled.slice(0, Math.max(0, n));
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
 };
 
-module.exports = { sample, sampleSize };
+module.exports = arraySample;
