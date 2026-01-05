@@ -1,14 +1,12 @@
-const remove = (arr, predicate) => {
-  const removedElements = [];
-  let i = 0;
-  while (i < arr.length) {
-    if (predicate(arr[i])) {
-      removedElements.push(arr.splice(i, 1)[0]);
-    } else {
-      i++;
-    }
+const arrayRemove = (arr, value) => {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the first argument.');
   }
-  return removedElements;
+  const index = arr.indexOf(value);
+  if (index === -1) {
+    return [...arr]; // Return a shallow copy if value not found
+  }
+  return [...arr.slice(0, index), ...arr.slice(index + 1)];
 };
 
-module.exports = remove;
+module.exports = arrayRemove;
