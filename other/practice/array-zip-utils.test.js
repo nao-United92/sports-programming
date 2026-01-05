@@ -1,30 +1,53 @@
-import { zip } from './array-zip-utils.js';
+const arrayZip = require('./array-zip-utils');
 
-describe('zip', () => {
-  it('should group elements from corresponding positions in multiple arrays', () => {
-    expect(zip(['a', 'b'], [1, 2], [true, false])).toEqual([
-      ['a', 1, true],
-      ['b', 2, false],
+describe('arrayZip', () => {
+  test('should group corresponding elements from multiple arrays', () => {
+    const arr1 = [1, 2, 3];
+    const arr2 = ['a', 'b', 'c'];
+    const arr3 = [true, false, true];
+    expect(arrayZip(arr1, arr2, arr3)).toEqual([
+      [1, 'a', true],
+      [2, 'b', false],
+      [3, 'c', true],
     ]);
   });
 
-  it('should handle arrays of different lengths, filling with undefined for missing elements', () => {
-    expect(zip(['a', 'b', 'c'], [1, 2])).toEqual([
-      ['a', 1],
-      ['b', 2],
-      ['c', undefined],
+  test('should handle arrays of different lengths, filling with undefined for missing elements', () => {
+    const arr1 = [1, 2];
+    const arr2 = ['a', 'b', 'c'];
+    expect(arrayZip(arr1, arr2)).toEqual([
+      [1, 'a'],
+      [2, 'b'],
+      [undefined, 'c'],
     ]);
   });
 
-  it('should return an empty array if no arrays are provided', () => {
-    expect(zip()).toEqual([]);
+  test('should handle a single array input', () => {
+    const arr = [1, 2, 3];
+    expect(arrayZip(arr)).toEqual([
+      [1],
+      [2],
+      [3],
+    ]);
   });
 
-  it('should return an array of arrays with undefined if input arrays are empty', () => {
-    expect(zip([], [])).toEqual([]);
+  test('should handle empty arrays', () => {
+    const arr1 = [];
+    const arr2 = [1, 2];
+    const arr3 = [];
+    expect(arrayZip(arr1, arr2, arr3)).toEqual([
+      [undefined, 1, undefined],
+      [undefined, 2, undefined],
+    ]);
   });
 
-  it('should handle a single array input', () => {
-    expect(zip([1, 2, 3])).toEqual([[1], [2], [3]]);
+  test('should handle no arguments', () => {
+    expect(arrayZip()).toEqual([]);
+  });
+
+  test('should throw TypeError if any argument is not an array', () => {
+    expect(() => arrayZip([1, 2], null)).toThrow(TypeError);
+    expect(() => arrayZip([1, 2], 'string')).toThrow(TypeError);
+    expect(() => arrayZip(123, [1, 2])).toThrow(TypeError);
   });
 });
