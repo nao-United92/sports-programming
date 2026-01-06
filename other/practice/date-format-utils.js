@@ -1,38 +1,32 @@
-const padZero = (num) => String(num).padStart(2, '0');
-
-const formatDate = (date, formatStr = 'YYYY-MM-DD hh:mm:ss') => {
-  if (!(date instanceof Date) || isNaN(date)) {
-    return 'Invalid Date';
+const formatDate = (date, locale = 'en-US', options = {}) => {
+  if (!(date instanceof Date) || isNaN(date.getTime())) {
+    throw new Error('Input must be a valid Date object.');
   }
 
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const seconds = date.getSeconds();
-
-  const replacements = {
-    YYYY: year,
-    YY: String(year).slice(-2),
-    MM: padZero(month),
-    M: month,
-    DD: padZero(day),
-    D: day,
-    hh: padZero(hours),
-    h: hours,
-    mm: padZero(minutes),
-    m: minutes,
-    ss: padZero(seconds),
-    s: seconds,
+  // Default options if none are provided
+  const defaultOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   };
 
-  let formattedString = formatStr;
-  for (const key in replacements) {
-    formattedString = formattedString.replace(new RegExp(key, 'g'), replacements[key]);
+  const finalOptions = { ...defaultOptions,
+    ...options
+  };
+
+  let effectiveLocale = locale;
+  if (Intl.DateTimeFormat.supportedLocalesOf([locale]).length === 0) {
+    console.warn(`Locale '${locale}' is not supported. Falling back to 'en-US'.`);
+    effectiveLocale = 'en-US';
   }
 
-  return formattedString;
+  try {
+    return new Intl.DateTimeFormat(effectiveLocale, finalOptions).format(date);
+  } catch (error) {
+    // This catch block would primarily handle issues with options, not locale
+    console.warn(`Error formatting date with effective locale '${effectiveLocale}': ${error.message}. Falling back to default options with 'en-US'.`);
+    return new Intl.DateTimeFormat('en-US', defaultOptions).format(date);
+  }
 };
 
-module.exports = { formatDate };
+module.exports = formatDate;
