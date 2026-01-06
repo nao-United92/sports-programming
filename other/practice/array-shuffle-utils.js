@@ -1,10 +1,9 @@
-const arrayShuffle = (arr, inPlace = false) => {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument.');
+const shuffleArray = (array) => {
+  if (!Array.isArray(array)) {
+    throw new Error('Input must be an array.');
   }
-
-  const arrayToShuffle = inPlace ? arr : [...arr];
-  let currentIndex = arrayToShuffle.length;
+  const newArray = [...array]; // Create a shallow copy to avoid modifying the original array
+  let currentIndex = newArray.length;
   let randomIndex;
 
   // While there remain elements to shuffle.
@@ -14,13 +13,13 @@ const arrayShuffle = (arr, inPlace = false) => {
     currentIndex--;
 
     // And swap it with the current element.
-    [arrayToShuffle[currentIndex], arrayToShuffle[randomIndex]] = [
-      arrayToShuffle[randomIndex],
-      arrayToShuffle[currentIndex],
+    [newArray[currentIndex], newArray[randomIndex]] = [
+      newArray[randomIndex],
+      newArray[currentIndex],
     ];
   }
 
-  return arrayToShuffle;
+  return newArray;
 };
 
-module.exports = arrayShuffle;
+module.exports = shuffleArray;
