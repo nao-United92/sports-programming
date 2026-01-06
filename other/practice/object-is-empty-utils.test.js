@@ -1,44 +1,61 @@
-import { isEmptyObject } from './object-is-empty-utils';
+const isEmptyObject = require('./object-is-empty-utils');
 
 describe('isEmptyObject', () => {
   test('should return true for an empty object', () => {
     expect(isEmptyObject({})).toBe(true);
   });
 
-  test('should return false for an object with properties', () => {
+  test('should return false for a non-empty object', () => {
     expect(isEmptyObject({
       a: 1
     })).toBe(false);
+    expect(isEmptyObject({
+      0: 'test'
+    })).toBe(false);
   });
 
-  test('should return false for an object with inherited properties', () => {
-    function Parent() {
-      this.a = 1;
-    }
-
-    function Child() {}
-    Child.prototype = new Parent();
-    const child = new Child();
-    expect(isEmptyObject(child)).toBe(true); // Object.keys only checks own properties
+  test('should return true for an empty array', () => {
+    expect(isEmptyObject([])).toBe(true);
   });
 
-  test('should return false for null', () => {
-    expect(isEmptyObject(null)).toBe(false);
+  test('should return false for a non-empty array', () => {
+    expect(isEmptyObject([1, 2, 3])).toBe(false);
   });
 
-  test('should return false for undefined', () => {
-    expect(isEmptyObject(undefined)).toBe(false);
+  test('should return true for null', () => {
+    expect(isEmptyObject(null)).toBe(true);
   });
 
-  test('should return false for an array (even empty)', () => {
-    expect(isEmptyObject([])).toBe(false);
-    expect(isEmptyObject([1, 2])).toBe(false);
+  test('should return true for undefined', () => {
+    expect(isEmptyObject(undefined)).toBe(true);
   });
 
-  test('should return false for other non-object types', () => {
+  test('should return false for primitive values', () => {
     expect(isEmptyObject(123)).toBe(false);
-    expect(isEmptyObject('string')).toBe(false);
+    expect(isEmptyObject('hello')).toBe(false);
     expect(isEmptyObject(true)).toBe(false);
-    expect(isEmptyObject(Symbol('a'))).toBe(false);
+    expect(isEmptyObject(0)).toBe(false);
+    expect(isEmptyObject('')).toBe(false);
+  });
+
+  test('should return false for other object types like Date or RegExp', () => {
+    expect(isEmptyObject(new Date())).toBe(false);
+    expect(isEmptyObject(/regex/)).toBe(false);
+  });
+
+  test('should return false for a Function', () => {
+    expect(isEmptyObject(() => {})).toBe(false);
+    expect(isEmptyObject(function() {})).toBe(false);
+  });
+
+  test('should return true for an object created with Object.create(null) if it has no properties', () => {
+    const obj = Object.create(null);
+    expect(isEmptyObject(obj)).toBe(true);
+  });
+
+  test('should return false for an object created with Object.create(null) if it has properties', () => {
+    const obj = Object.create(null);
+    obj.a = 1;
+    expect(isEmptyObject(obj)).toBe(false);
   });
 });

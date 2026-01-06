@@ -1,77 +1,107 @@
-import { deepClone } from './object-deep-clone-utils';
+const deepClone = require('./object-deep-clone-utils');
 
 describe('deepClone', () => {
-  test('should clone a primitive value', () => {
-    expect(deepClone(1)).toBe(1);
-    expect(deepClone('hello')).toBe('hello');
-    expect(deepClone(true)).toBe(true);
-    expect(deepClone(null)).toBeNull();
-    expect(deepClone(undefined)).toBeUndefined();
-  });
-
-  test('should clone a simple object', () => {
-    const obj = {
+  test('should deep clone a simple object', () => {
+    const original = {
       a: 1,
-      b: 'test'
+      b: 'hello'
     };
-    const cloned = deepClone(obj);
-    expect(cloned).toEqual(obj);
-    expect(cloned).not.toBe(obj);
+    const cloned = deepClone(original);
+    expect(cloned).toEqual(original);
+    expect(cloned).not.toBe(original);
   });
 
-  test('should clone a nested object', () => {
-    const obj = {
+  test('should deep clone an object with nested objects', () => {
+    const original = {
       a: 1,
       b: {
-        c: 2
+        c: 2,
+        d: 'world'
       }
     };
-    const cloned = deepClone(obj);
-    expect(cloned).toEqual(obj);
-    expect(cloned).not.toBe(obj);
-    expect(cloned.b).not.toBe(obj.b);
+    const cloned = deepClone(original);
+    expect(cloned).toEqual(original);
+    expect(cloned).not.toBe(original);
+    expect(cloned.b).not.toBe(original.b);
   });
 
-  test('should clone an array of primitives', () => {
-    const arr = [1, 2, 3];
-    const cloned = deepClone(arr);
-    expect(cloned).toEqual(arr);
-    expect(cloned).not.toBe(arr);
-  });
-
-  test('should clone an array of objects', () => {
-    const arr = [{
-      a: 1
-    }, {
-      b: 2
-    }];
-    const cloned = deepClone(arr);
-    expect(cloned).toEqual(arr);
-    expect(cloned).not.toBe(arr);
-    expect(cloned[0]).not.toBe(arr[0]);
-  });
-
-  test('should handle circular references (if recursion depth limit is not hit)', () => {
-    const obj = {};
-    obj.a = obj; // Self-referencing
-    // This simple deepClone does not handle circular references gracefully
-    // and would result in a stack overflow.
-    // For this test, we'll confirm it doesn't immediately fail but will not
-    // expect it to successfully clone a circular reference without modification.
-    // However, the current implementation *will* stack overflow.
-    // So for now, I'll skip this test or mark it as expected to throw.
-    // Let's refine the deepClone to handle simple circular references or at least not stack overflow.
-    // For this context, I will proceed without handling circular references for simplicity
-    // and focus on basic deep cloning.
-  });
-
-  test('should clone Date objects', () => {
-    const now = new Date();
-    const obj = {
-      date: now
+  test('should deep clone an object with arrays', () => {
+    const original = {
+      a: 1,
+      b: [2, {
+        c: 3
+      }]
     };
-    const cloned = deepClone(obj);
-    expect(cloned.date).toEqual(now);
-    expect(cloned.date).not.toBe(now); // Should be a new Date object
+    const cloned = deepClone(original);
+    expect(cloned).toEqual(original);
+    expect(cloned).not.toBe(original);
+    expect(cloned.b).not.toBe(original.b);
+    expect(cloned.b[1]).not.toBe(original.b[1]);
+  });
+
+  test('should deep clone an array with nested objects and arrays', () => {
+    const original = [1, {
+      a: 2,
+      b: [3, 4]
+    }, 'test'];
+    const cloned = deepClone(original);
+    expect(cloned).toEqual(original);
+    expect(cloned).not.toBe(original);
+    expect(cloned[1]).not.toBe(original[1]);
+    expect(cloned[1].b).not.toBe(original[1].b);
+  });
+
+  test('should handle circular references', () => {
+    const original = {};
+    original.a = original;
+    const cloned = deepClone(original);
+    expect(cloned).toEqual(original);
+    expect(cloned).not.toBe(original);
+    expect(cloned.a).toBe(cloned); // Circular reference should be preserved
+  });
+
+  test('should handle multiple circular references', () => {
+    const original = {};
+    const obj2 = {};
+    original.a = obj2;
+    obj2.b = original;
+    const cloned = deepClone(original);
+    expect(cloned).toEqual(original);
+    expect(cloned).not.toBe(original);
+    expect(cloned.a).not.toBe(original.a);
+    expect(cloned.a.b).toBe(cloned);
+  });
+
+  test('should deep clone dates', () => {
+    const originalDate = new Date();
+    const original = {
+      d: originalDate
+    };
+    const cloned = deepClone(original);
+    expect(cloned.d).toEqual(originalDate);
+    expect(cloned.d).not.toBe(originalDate);
+  });
+
+  test('should deep clone RegExp objects', () => {
+    const originalRegExp = /abc/gi;
+    const original = {
+      r: originalRegExp
+    };
+    const cloned = deepClone(original);
+    expect(cloned.r).toEqual(originalRegExp);
+    expect(cloned.r).not.toBe(originalRegExp);
+  });
+
+  test('should handle primitive values', () => {
+    expect(deepClone(123)).toBe(123);
+    expect(deepClone('hello')).toBe('hello');
+    expect(deepClone(true)).toBe(true);
+    expect(deepClone(null)).toBe(null);
+    expect(deepClone(undefined)).toBe(undefined);
+  });
+
+  test('should handle empty objects and arrays', () => {
+    expect(deepClone({})).toEqual({});
+    expect(deepClone([])).toEqual([]);
   });
 });

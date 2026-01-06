@@ -1,8 +1,10 @@
 const isPlainObject = (value) => {
-  if (value === null || typeof value !== 'object' || value.nodeType || (value.constructor && !Object.prototype.hasOwnProperty.call(value.constructor.prototype, 'isPrototypeOf'))) {
+  if (typeof value !== 'object' || value === null) {
     return false;
   }
-  return true;
+
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === null || prototype === Object.prototype;
 };
 
-export default isPlainObject;
+module.exports = isPlainObject;

@@ -1,42 +1,41 @@
-import { startsWithIgnoreCase } from './string-starts-with-ignore-case-utils';
+const startsWithIgnoreCase = require('./string-starts-with-ignore-case-utils');
 
 describe('startsWithIgnoreCase', () => {
-  test('should return true for a case-sensitive match', () => {
-    expect(startsWithIgnoreCase('HelloWorld', 'Hello')).toBe(true);
+  test('should return true if string starts with prefix (case-insensitive)', () => {
+    expect(startsWithIgnoreCase('Hello World', 'hello')).toBe(true);
+    expect(startsWithIgnoreCase('Hello World', 'HELLO')).toBe(true);
+    expect(startsWithIgnoreCase('Hello World', 'HeLlO')).toBe(true);
   });
 
-  test('should return true for a case-insensitive match', () => {
-    expect(startsWithIgnoreCase('HelloWorld', 'hello')).toBe(true);
-    expect(startsWithIgnoreCase('helloworld', 'Hello')).toBe(true);
-    expect(startsWithIgnoreCase('HELLOworld', 'hello')).toBe(true);
+  test('should return false if string does not start with prefix', () => {
+    expect(startsWithIgnoreCase('Hello World', 'world')).toBe(false);
+    expect(startsWithIgnoreCase('Foo Bar', 'baz')).toBe(false);
   });
 
-  test('should return false for no match', () => {
-    expect(startsWithIgnoreCase('HelloWorld', 'World')).toBe(false);
-    expect(startsWithIgnoreCase('HelloWorld', 'xyz')).toBe(false);
-  });
-
-  test('should return true for a full string match', () => {
-    expect(startsWithIgnoreCase('test', 'test')).toBe(true);
-    expect(startsWithIgnoreCase('test', 'TeSt')).toBe(true);
-  });
-
-  test('should return false if the string is shorter than the prefix', () => {
-    expect(startsWithIgnoreCase('abc', 'abcd')).toBe(false);
-  });
-
-  test('should return true for any string with an empty prefix', () => {
-    expect(startsWithIgnoreCase('HelloWorld', '')).toBe(true);
+  test('should return true if prefix is an empty string', () => {
+    expect(startsWithIgnoreCase('Hello World', '')).toBe(true);
     expect(startsWithIgnoreCase('', '')).toBe(true);
   });
 
-  test('should throw a TypeError if str is not a string', () => {
-    expect(() => startsWithIgnoreCase(null, 'prefix')).toThrow('Expected both arguments to be strings');
-    expect(() => startsWithIgnoreCase(123, 'prefix')).toThrow('Expected both arguments to be strings');
+  test('should return false if string is empty and prefix is not empty', () => {
+    expect(startsWithIgnoreCase('', 'a')).toBe(false);
   });
 
-  test('should throw a TypeError if prefix is not a string', () => {
-    expect(() => startsWithIgnoreCase('string', null)).toThrow('Expected both arguments to be strings');
-    expect(() => startsWithIgnoreCase('string', 123)).toThrow('Expected both arguments to be strings');
+  test('should return false if string is shorter than prefix', () => {
+    expect(startsWithIgnoreCase('abc', 'abcd')).toBe(false);
+  });
+
+  test('should throw an error if first argument is not a string', () => {
+    expect(() => startsWithIgnoreCase(null, 'hello')).toThrow('Both arguments must be strings.');
+    expect(() => startsWithIgnoreCase(undefined, 'hello')).toThrow('Both arguments must be strings.');
+    expect(() => startsWithIgnoreCase(123, 'hello')).toThrow('Both arguments must be strings.');
+    expect(() => startsWithIgnoreCase({}, 'hello')).toThrow('Both arguments must be strings.');
+  });
+
+  test('should throw an error if second argument is not a string', () => {
+    expect(() => startsWithIgnoreCase('hello', null)).toThrow('Both arguments must be strings.');
+    expect(() => startsWithIgnoreCase('hello', undefined)).toThrow('Both arguments must be strings.');
+    expect(() => startsWithIgnoreCase('hello', 123)).toThrow('Both arguments must be strings.');
+    expect(() => startsWithIgnoreCase('hello', {})).toThrow('Both arguments must be strings.');
   });
 });

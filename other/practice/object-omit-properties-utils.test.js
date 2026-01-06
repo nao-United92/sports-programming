@@ -1,83 +1,83 @@
 const omit = require('./object-omit-properties-utils');
 
 describe('omit', () => {
-  const obj = {
+  const originalObj = {
     a: 1,
-    b: 'hello',
-    c: true,
+    b: 2,
+    c: 3,
     d: {
-      e: 2
-    },
-    f: undefined,
-    g: null,
-    h: 0
+      e: 4
+    }
   };
 
-  test('should omit specified properties from an object', () => {
-    expect(omit(obj, ['a', 'c'])).toEqual({
-      b: 'hello',
+  test('should omit a single property', () => {
+    const result = omit(originalObj, ['a']);
+    expect(result).toEqual({
+      b: 2,
+      c: 3,
       d: {
-        e: 2
-      },
-      f: undefined,
-      g: null,
-      h: 0
-    });
-  });
-
-  test('should not omit non-existent properties', () => {
-    expect(omit(obj, ['a', 'x'])).toEqual({
-      b: 'hello',
-      c: true,
-      d: {
-        e: 2
-      },
-      f: undefined,
-      g: null,
-      h: 0
-    });
-  });
-
-  test('should return the original object (shallow copy) if no keys are provided to omit', () => {
-    expect(omit(obj, [])).toEqual(obj);
-    expect(omit(obj, [])).not.toBe(obj);
-  });
-
-  test('should return an empty object if the input object is null or undefined', () => {
-    expect(omit(null, ['a'])).toEqual({});
-    expect(omit(undefined, ['a'])).toEqual({});
-  });
-
-  test('should return an empty object if the input object is not an object', () => {
-    expect(omit(123, ['a'])).toEqual({});
-    expect(omit('string', ['a'])).toEqual({});
-    expect(omit([1, 2, 3], ['0'])).toEqual({}); // Arrays should return empty object
-  });
-
-  test('should omit properties that are undefined or null', () => {
-    expect(omit(obj, ['f', 'g'])).toEqual({
-      a: 1,
-      b: 'hello',
-      c: true,
-      d: {
-        e: 2
-      },
-      h: 0
-    });
-  });
-
-  test('should handle nested objects by reference', () => {
-    const omitted = omit(obj, ['a', 'b', 'c', 'f', 'g', 'h']);
-    expect(omitted).toEqual({
-      d: {
-        e: 2
+        e: 4
       }
     });
-    expect(omitted.d).toBe(obj.d); // Should be same reference
+    expect(result).not.toBe(originalObj); // Should return a new object
   });
 
-  test('should omit all properties', () => {
-    const allKeys = Object.keys(obj);
-    expect(omit(obj, allKeys)).toEqual({});
+  test('should omit multiple properties', () => {
+    const result = omit(originalObj, ['a', 'c']);
+    expect(result).toEqual({
+      b: 2,
+      d: {
+        e: 4
+      }
+    });
+  });
+
+  test('should not modify the original object', () => {
+    const objCopy = { ...originalObj
+    }; // Shallow copy for comparison
+    omit(originalObj, ['a']);
+    expect(originalObj).toEqual(objCopy);
+  });
+
+  test('should handle properties that do not exist in the object', () => {
+    const result = omit(originalObj, ['a', 'x']);
+    expect(result).toEqual({
+      b: 2,
+      c: 3,
+      d: {
+        e: 4
+      }
+    });
+  });
+
+  test('should return an empty object if all properties are omitted', () => {
+    const result = omit(originalObj, ['a', 'b', 'c', 'd']);
+    expect(result).toEqual({});
+  });
+
+  test('should return a shallow copy if no properties are omitted', () => {
+    const result = omit(originalObj, []);
+    expect(result).toEqual(originalObj);
+    expect(result).not.toBe(originalObj);
+  });
+
+  test('should handle empty input object', () => {
+    expect(omit({}, ['a'])).toEqual({});
+  });
+
+  test('should handle non-plain object input gracefully', () => {
+    const arr = [1, 2, 3];
+    expect(omit(arr, ['0'])).toBe(arr); // Arrays are not plain objects, return original
+    const date = new Date();
+    expect(omit(date, ['getTime'])).toBe(date); // Date objects are not plain, return original
+    expect(omit(null, ['a'])).toBeNull();
+    expect(omit(undefined, ['a'])).toBeUndefined();
+    expect(omit(123, ['a'])).toBe(123);
+  });
+
+  test('should throw an error if propertiesToOmit is not an array', () => {
+    expect(() => omit(originalObj, 'a')).toThrow('propertiesToOmit must be an array of strings.');
+    expect(() => omit(originalObj, null)).toThrow('propertiesToOmit must be an array of strings.');
+    expect(() => omit(originalObj, undefined)).toThrow('propertiesToOmit must be an array of strings.');
   });
 });

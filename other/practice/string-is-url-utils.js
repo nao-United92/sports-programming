@@ -1,12 +1,6 @@
-/**
- * Checks if a string is a valid URL.
- *
- * @param {string} str The string to check.
- * @returns {boolean} Returns `true` if the string is a valid URL, `false` otherwise.
- */
 const isURL = (str) => {
   if (typeof str !== 'string') {
-    throw new TypeError('Expected a string for the first argument.');
+    return false;
   }
   try {
     new URL(str);
@@ -16,4 +10,4 @@ const isURL = (str) => {
   }
 };
 
-export default isURL;
+module.exports = isURL;

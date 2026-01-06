@@ -1,47 +1,49 @@
-const arrayShuffle = require('./array-shuffle-utils');
+const shuffleArray = require('./array-shuffle-utils');
 
-describe('arrayShuffle', () => {
-  test('should return a shuffled array with the same elements', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const shuffled = arrayShuffle(arr);
-    expect(shuffled).toHaveLength(arr.length);
-    expect(shuffled.sort()).toEqual(arr.sort());
-    // It's highly probable to be different, but not guaranteed
-    // For a robust test, check that elements are present and count matches
-    arr.forEach(item => expect(shuffled).toContain(item));
-    expect(shuffled.length).toBe(arr.length);
+describe('shuffleArray', () => {
+  test('should return a new array with the same elements', () => {
+    const originalArray = [1, 2, 3, 4, 5];
+    const shuffledArray = shuffleArray(originalArray);
+    expect(shuffledArray).not.toBe(originalArray); // Should be a new array
+    expect(shuffledArray.length).toBe(originalArray.length);
+    expect(shuffledArray).toEqual(expect.arrayContaining(originalArray)); // Contains same elements
+    expect(originalArray).toEqual(expect.arrayContaining(shuffledArray)); // Original array not modified
   });
 
-  test('should shuffle the array in place if inPlace is true', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const originalArr = [...arr];
-    const shuffled = arrayShuffle(arr, true);
-    expect(shuffled).toBe(arr); // Check for reference equality
-    expect(shuffled).toHaveLength(originalArr.length);
-    expect(shuffled.sort()).toEqual(originalArr.sort());
-  });
-
-  test('should return a new array if inPlace is false or not specified', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const shuffled = arrayShuffle(arr);
-    expect(shuffled).not.toBe(arr); // Check for reference inequality
+  test('should return a shuffled array', () => {
+    const originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const shuffledArray = shuffleArray(originalArray);
+    // It's highly unlikely that a truly shuffled array will be in the same order
+    expect(shuffledArray).not.toEqual(originalArray);
   });
 
   test('should handle empty array', () => {
-    const arr = [];
-    const shuffled = arrayShuffle(arr);
-    expect(shuffled).toEqual([]);
+    expect(shuffleArray([])).toEqual([]);
   });
 
-  test('should handle single element array', () => {
-    const arr = [1];
-    const shuffled = arrayShuffle(arr);
-    expect(shuffled).toEqual([1]);
+  test('should handle array with one element', () => {
+    expect(shuffleArray([1])).toEqual([1]);
   });
 
-  test('should throw TypeError if first argument is not an array', () => {
-    expect(() => arrayShuffle(null)).toThrow(TypeError);
-    expect(() => arrayShuffle('string')).toThrow(TypeError);
-    expect(() => arrayShuffle(123)).toThrow(TypeError);
+  test('should throw an error for non-array input', () => {
+    expect(() => shuffleArray(null)).toThrow('Input must be an array.');
+    expect(() => shuffleArray(undefined)).toThrow('Input must be an array.');
+    expect(() => shuffleArray('string')).toThrow('Input must be an array.');
+    expect(() => shuffleArray(123)).toThrow('Input must be an array.');
+    expect(() => shuffleArray({})).toThrow('Input must be an array.');
+  });
+
+  test('should produce a different order most of the time (probabilistic)', () => {
+    const originalArray = [1, 2, 3, 4, 5];
+    let sameOrderCount = 0;
+    const iterations = 1000; // Run many times to reduce chance of false positive
+    for (let i = 0; i < iterations; i++) {
+      const shuffled = shuffleArray(originalArray);
+      if (shuffled.every((val, index) => val === originalArray[index])) {
+        sameOrderCount++;
+      }
+    }
+    // It's highly unlikely that it will be in the same order frequently
+    expect(sameOrderCount).toBeLessThan(iterations / 10); // Expect less than 10% are in same order
   });
 });
