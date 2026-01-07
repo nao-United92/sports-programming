@@ -1,7 +1,20 @@
-const groupBy = (arr, fn) =>
-  arr.map(typeof fn === 'function' ? fn : val => val[fn]).reduce((acc, val, i) => {
-    acc[val] = (acc[val] || []).concat(arr[i]);
-    return acc;
-  }, {});
+const groupBy = (array, iteratee) => {
+  if (!Array.isArray(array)) {
+    return {};
+  }
 
-export default groupBy;
+  const iterateeFunc = typeof iteratee === 'function'
+    ? iteratee
+    : (item) => item[iteratee];
+
+  return array.reduce((result, item) => {
+    const key = iterateeFunc(item);
+    if (!result[key]) {
+      result[key] = [];
+    }
+    result[key].push(item);
+    return result;
+  }, {});
+};
+
+module.exports = { groupBy };

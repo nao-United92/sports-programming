@@ -1,12 +1,17 @@
-const takeRightWhile = (arr, func) => {
-  if (!Array.isArray(arr)) {
+const takeRightWhile = (array, predicate) => {
+  if (!Array.isArray(array)) {
     return [];
   }
-  let i = arr.length;
-  while (i-- && func(arr[i], i, arr));
-  return arr.slice(i + 1);
+
+  for (let i = array.length - 1; i >= 0; i--) {
+    if (!predicate(array[i], i, array)) {
+      return array.slice(i + 1);
+    }
+  }
+
+  return [...array];
 };
 
 module.exports = {
-  takeRightWhile
+  takeRightWhile,
 };

@@ -1,4 +1,4 @@
-import { findFirst } from './array-find-first-utils';
+const { findFirst } = require('./array-find-first-utils');
 
 describe('findFirst', () => {
   const numbers = [10, 20, 30, 40, 50];
@@ -49,14 +49,16 @@ describe('findFirst', () => {
     });
   });
 
-  test('should throw an error if array is not an array', () => {
-    expect(() => findFirst(null, () => true)).toThrow('Expected an array');
-    expect(() => findFirst(undefined, () => true)).toThrow('Expected an array');
-    expect(() => findFirst("string", () => true)).toThrow('Expected an array');
+  test('should throw TypeError if the first argument is not an array', () => {
+    expect(() => findFirst(null, () => true)).toThrow(TypeError);
+    expect(() => findFirst(null, () => true)).toThrow('Expected an array for the first argument.');
+    expect(() => findFirst(undefined, () => true)).toThrow(TypeError);
+    expect(() => findFirst("string", () => true)).toThrow(TypeError);
   });
 
-  test('should throw an error if predicate is not a function', () => {
-    expect(() => findFirst(numbers, null)).toThrow('Expected a predicate function');
-    expect(() => findFirst(numbers, "not a function")).toThrow('Expected a predicate function');
+  test('should throw TypeError if the second argument is not a function', () => {
+    expect(() => findFirst(numbers, null)).toThrow(TypeError);
+    expect(() => findFirst(numbers, null)).toThrow('Expected a function for the second argument.');
+    expect(() => findFirst(numbers, "not a function")).toThrow(TypeError);
   });
 });

@@ -1,9 +1,14 @@
 const fromPairs = (pairs) => {
-  const result = {};
-  for (const [key, value] of pairs) {
-    result[key] = value;
+  if (!Array.isArray(pairs)) {
+    return {};
   }
-  return result;
+
+  return pairs.reduce((obj, pair) => {
+    if (Array.isArray(pair) && pair.length === 2) {
+      obj[pair[0]] = pair[1];
+    }
+    return obj;
+  }, {});
 };
 
-export default fromPairs;
+module.exports = { fromPairs };

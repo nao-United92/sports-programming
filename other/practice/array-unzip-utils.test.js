@@ -1,67 +1,63 @@
-const arrayUnzip = require('./array-unzip-utils');
+const { unzip } = require('./array-unzip-utils');
 
-describe('arrayUnzip', () => {
+describe('unzip', () => {
   test('should ungroup elements from a zipped array', () => {
     const zipped = [
-      [1, 'a', true],
-      [2, 'b', false],
-      [3, 'c', true],
+      ['a', 1, true],
+      ['b', 2, false],
     ];
     const expected = [
-      [1, 2, 3],
-      ['a', 'b', 'c'],
-      [true, false, true],
+      ['a', 'b'],
+      [1, 2],
+      [true, false],
     ];
-    expect(arrayUnzip(zipped)).toEqual(expected);
+    expect(unzip(zipped)).toEqual(expected);
   });
 
   test('should handle arrays with varying lengths, filling with undefined', () => {
-    const zipped = [
-      [1, 'a'],
-      [2, 'b'],
-      [undefined, 'c'],
-    ];
+    const zipped = [['a', 1], ['b', 2, false]];
     const expected = [
-      [1, 2, undefined],
-      ['a', 'b', 'c'],
+      ['a', 'b'],
+      [1, 2],
+      [undefined, false],
     ];
-    expect(arrayUnzip(zipped)).toEqual(expected);
+    expect(unzip(zipped)).toEqual(expected);
   });
 
   test('should handle an empty input array', () => {
-    expect(arrayUnzip([])).toEqual([]);
+    expect(unzip([])).toEqual([]);
   });
 
   test('should handle an input array containing empty arrays', () => {
-    const zipped = [
-      [],
-      [],
-      []
-    ];
-    expect(arrayUnzip(zipped)).toEqual([]);
+    expect(unzip([[], []])).toEqual([]);
   });
 
   test('should handle an input array with a single sub-array', () => {
-    const zipped = [
-      [1, 2, 3]
-    ];
-    expect(arrayUnzip(zipped)).toEqual([
-      [1],
-      [2],
-      [3]
-    ]);
+    const zipped = [[1, 2, 3]];
+    expect(unzip(zipped)).toEqual([[1], [2], [3]]);
   });
 
-  test('should throw TypeError if argument is not an array', () => {
-    expect(() => arrayUnzip(null)).toThrow(TypeError);
-    expect(() => arrayUnzip(123)).toThrow(TypeError);
-    expect(() => arrayUnzip('string')).toThrow(TypeError);
+  test('should return an empty array if argument is not an array', () => {
+    expect(unzip(null)).toEqual([]);
+    expect(unzip(undefined)).toEqual([]);
+    expect(unzip({})).toEqual([]);
   });
 
-  test('should throw TypeError if input array contains non-array elements', () => {
-    const invalidZipped = [
-      [1, 2], 'a', [3, 4]
+  test('should handle non-array elements within the input array', () => {
+    const invalidZipped = [['a', 1], null, ['b', 2]];
+    const expected = [
+      ['a', undefined, 'b'],
+      [1, undefined, 2],
     ];
-    expect(() => arrayUnzip(invalidZipped)).toThrow(TypeError);
+    expect(unzip(invalidZipped)).toEqual(expected);
+  });
+
+  test('should handle `undefined` and `null` values correctly', () => {
+    const zipped = [['a', undefined], ['b', null]];
+    const expected = [
+        ['a', 'b'],
+        [undefined, null]
+    ];
+    expect(unzip(zipped)).toEqual(expected);
   });
 });
