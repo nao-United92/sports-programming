@@ -1,8 +1,17 @@
-const zipObject = (props, values) => {
-  return props.reduce((obj, prop, index) => {
-    obj[prop] = values[index];
-    return obj;
-  }, {});
+const zipObject = (keys, values) => {
+  if (!Array.isArray(keys) || !Array.isArray(values)) {
+    return {};
+  }
+  
+  const result = {};
+  const length = Math.min(keys.length, values.length);
+
+  for (let i = 0; i < length; i++) {
+    result[keys[i]] = values[i];
+  }
+
+  return result;
 };
 
-export default zipObject;
+module.exports = { zipObject };
+
