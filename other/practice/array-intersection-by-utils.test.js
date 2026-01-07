@@ -1,52 +1,55 @@
 const { intersectionBy } = require('./array-intersection-by-utils');
 
 describe('intersectionBy', () => {
-  test('should return intersection of two arrays based on id property', () => {
-    const arr1 = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }, { id: 3, name: 'Charlie' }];
-    const arr2 = [{ id: 2, name: 'Robert' }, { id: 3, name: 'Charles' }, { id: 4, name: 'David' }];
-    const result = intersectionBy(arr1, arr2, item => item.id);
-    expect(result).toEqual([{ id: 2, name: 'Bob' }, { id: 3, name: 'Charlie' }]);
+  test('should return the intersection of two arrays based on an iteratee function', () => {
+    const arr1 = [{ x: 1 }, { x: 2 }];
+    const arr2 = [{ x: 2 }, { x: 3 }];
+    expect(intersectionBy(arr1, arr2, o => o.x)).toEqual([{ x: 2 }]);
   });
 
-  test('should return intersection of two arrays based on value (identity iteratee)', () => {
-    const arr1 = [1, 2, 3, 4];
-    const arr2 = [3, 4, 5, 6];
-    const result = intersectionBy(arr1, arr2, item => item);
-    expect(result).toEqual([3, 4]);
+  test('should return the intersection of multiple arrays based on a property name iteratee', () => {
+    const arr1 = [{ x: 1 }, { x: 2 }, { x: 3 }];
+    const arr2 = [{ x: 2 }, { x: 3 }, { x: 4 }];
+    const arr3 = [{ x: 3 }, { x: 4 }, { x: 5 }];
+    expect(intersectionBy(arr1, arr2, arr3, 'x')).toEqual([{ x: 3 }]);
   });
 
-  test('should handle empty first array', () => {
-    const arr1 = [];
-    const arr2 = [{ id: 1 }];
-    const result = intersectionBy(arr1, arr2, item => item.id);
-    expect(result).toEqual([]);
+  test('should return an empty array if there is no intersection', () => {
+    const arr1 = [{ x: 1 }];
+    const arr2 = [{ x: 2 }];
+    const arr3 = [{ x: 3 }];
+    expect(intersectionBy(arr1, arr2, arr3, 'x')).toEqual([]);
   });
 
-  test('should handle empty second array', () => {
-    const arr1 = [{ id: 1 }];
+  test('should work with primitive values and an iteratee', () => {
+    const arr1 = [1.2, 2.3];
+    const arr2 = [1.8, 3.4];
+    const arr3 = [1.1, 4.5];
+    expect(intersectionBy(arr1, arr2, arr3, Math.floor)).toEqual([1.2]);
+  });
+  
+  test('should handle empty arrays', () => {
+    const arr1 = [{ x: 1 }];
     const arr2 = [];
-    const result = intersectionBy(arr1, arr2, item => item.id);
-    expect(result).toEqual([]);
+    expect(intersectionBy(arr1, arr2, 'x')).toEqual([]);
+    expect(intersectionBy([], [{ x: 1 }], 'x')).toEqual([]);
   });
 
-  test('should handle both arrays being empty', () => {
-    const arr1 = [];
-    const arr2 = [];
-    const result = intersectionBy(arr1, arr2, item => item);
-    expect(result).toEqual([]);
+  test('should return a copy of the single array if only one is provided', () => {
+    const arr1 = [{ x: 1 }, { x: 2 }];
+    const result = intersectionBy(arr1, 'x');
+    expect(result).toEqual(arr1);
+    expect(result).not.toBe(arr1); // Ensure it's a copy
   });
 
-  test('should work with custom iteratee function', () => {
-    const arr1 = ['apple', 'banana', 'apricot'];
-    const arr2 = ['grape', 'orange', 'application']; // application's substring(0,3) is 'app'
-    const result = intersectionBy(arr1, arr2, item => item.substring(0, 3));
-    expect(result).toEqual(['apple']); // Only 'apple' (iteratee 'app') is present in both
+  test('should return an empty array if no arrays are provided', () => {
+    expect(intersectionBy('x')).toEqual([]);
+    expect(intersectionBy(o => o.x)).toEqual([]);
   });
-
-  test('should not include duplicates from the first array if iteratee values match', () => {
-    const arr1 = [{ id: 1, name: 'A' }, { id: 1, name: 'B' }];
-    const arr2 = [{ id: 1, name: 'C' }];
-    const result = intersectionBy(arr1, arr2, item => item.id);
-    expect(result).toEqual([{ id: 1, name: 'A' }, { id: 1, name: 'B' }]);
+  
+  test('should preserve duplicates from the first array if they are part of the intersection', () => {
+    const arr1 = [{ id: 1 }, { id: 2 }, { id: 1 }];
+    const arr2 = [{ id: 1 }, { id: 3 }];
+    expect(intersectionBy(arr1, arr2, 'id')).toEqual([{ id: 1 }, { id: 1 }]);
   });
 });
