@@ -1,12 +1,16 @@
 // Creates a slice of `array` with elements taken from the beginning. Elements are taken until `predicate` returns falsey.
-export const takeWhile = (arr, predicate) => {
-  const result = [];
-  for (let i = 0; i < arr.length; i++) {
-    if (predicate(arr[i], i, arr)) {
-      result.push(arr[i]);
-    } else {
-      break;
+const takeWhile = (array, predicate) => {
+  if (!Array.isArray(array)) {
+    return [];
+  }
+
+  for (let i = 0; i < array.length; i++) {
+    if (!predicate(array[i], i, array)) {
+      return array.slice(0, i);
     }
   }
-  return result;
+
+  return [...array];
 };
+
+module.exports = { takeWhile };
