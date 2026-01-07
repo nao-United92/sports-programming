@@ -1,11 +1,20 @@
-const sortedLastIndexBy = (arr, value, iteratee) => {
+const sortedLastIndexBy = (array, value, iteratee) => {
+  if (!Array.isArray(array)) {
+    return 0;
+  }
+
+  const iterateeFunc = typeof iteratee === 'function' 
+    ? iteratee 
+    : (item) => item[iteratee];
+
+  const iteratedValue = iterateeFunc(value);
+  
   let low = 0;
-  let high = arr.length;
-  const iteratedValue = iteratee(value);
+  let high = array.length;
 
   while (low < high) {
     const mid = Math.floor((low + high) / 2);
-    const iteratedMid = iteratee(arr[mid]);
+    const iteratedMid = iterateeFunc(array[mid]);
 
     if (iteratedMid > iteratedValue) {
       high = mid;
@@ -17,4 +26,4 @@ const sortedLastIndexBy = (arr, value, iteratee) => {
   return high;
 };
 
-module.exports = sortedLastIndexBy;
+module.exports = { sortedLastIndexBy };
