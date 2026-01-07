@@ -1,43 +1,63 @@
-const arrayRemove = require('./array-remove-utils');
+const { remove } = require('./array-remove-utils');
 
-describe('arrayRemove', () => {
-  test('should remove the first occurrence of a specified value', () => {
-    const arr = [1, 2, 3, 2, 4];
-    expect(arrayRemove(arr, 2)).toEqual([1, 3, 2, 4]);
+describe('remove', () => {
+  test('should remove all occurrences of a specified value and return them', () => {
+    const array = [1, 2, 3, 2, 4, 2];
+    const removed = remove(array, 2);
+
+    expect(array).toEqual([1, 3, 4]); // Original array is mutated
+    expect(removed).toEqual([2, 2, 2]); // All removed elements are returned
   });
 
-  test('should return the original array (shallow copy) if value is not found', () => {
-    const arr = [1, 2, 3];
-    const result = arrayRemove(arr, 99);
-    expect(result).toEqual([1, 2, 3]);
-    expect(result).not.toBe(arr); // Ensure it's a new array
+  test('should return an empty array if the value is not found', () => {
+    const array = [1, 2, 3];
+    const originalArray = [...array];
+    const removed = remove(array, 99);
+
+    expect(array).toEqual(originalArray); // Original array is not mutated
+    expect(removed).toEqual([]); // No elements were removed
   });
 
   test('should handle an empty array', () => {
-    const arr = [];
-    expect(arrayRemove(arr, 1)).toEqual([]);
+    const array = [];
+    const removed = remove(array, 1);
+
+    expect(array).toEqual([]);
+    expect(removed).toEqual([]);
   });
 
   test('should handle array with only one element and remove it', () => {
-    const arr = [1];
-    expect(arrayRemove(arr, 1)).toEqual([]);
-  });
+    const array = [1];
+    const removed = remove(array, 1);
 
-  test('should not modify the original array', () => {
-    const arr = [1, 2, 3];
-    arrayRemove(arr, 2);
-    expect(arr).toEqual([1, 2, 3]);
+    expect(array).toEqual([]);
+    expect(removed).toEqual([1]);
   });
 
   test('should work with mixed types of values', () => {
-    const arr = [1, 'a', null, undefined, 'a', 0];
-    expect(arrayRemove(arr, 'a')).toEqual([1, null, undefined, 'a', 0]);
-    expect(arrayRemove(arr, null)).toEqual([1, 'a', undefined, 'a', 0]);
+    const array = [1, 'a', null, undefined, 'a', 0];
+    const removed = remove(array, 'a');
+
+    expect(array).toEqual([1, null, undefined, 0]);
+    expect(removed).toEqual(['a', 'a']);
   });
 
-  test('should throw TypeError if first argument is not an array', () => {
-    expect(() => arrayRemove(null, 1)).toThrow(TypeError);
-    expect(() => arrayRemove(123, 1)).toThrow(TypeError);
-    expect(() => arrayRemove('string', 1)).toThrow(TypeError);
+  test('should throw TypeError if the first argument is not an array', () => {
+    expect(() => remove(null, 1)).toThrow(TypeError);
+    expect(() => remove(null, 1)).toThrow('Expected an array for the first argument.');
+    expect(() => remove(123, 1)).toThrow(TypeError);
+    expect(() => remove('string', 1)).toThrow(TypeError);
+    expect(() => remove({}, 1)).toThrow(TypeError);
+  });
+
+  test('should remove objects by reference, not by value for non-primitive types', () => {
+    const obj1 = { id: 1 };
+    const obj2 = { id: 2 };
+    const obj3 = { id: 1 };
+    const array = [obj1, obj2, obj3];
+    const removed = remove(array, obj1);
+
+    expect(array).toEqual([obj2, obj3]); // obj3 (same content, different reference) remains
+    expect(removed).toEqual([obj1]);
   });
 });
