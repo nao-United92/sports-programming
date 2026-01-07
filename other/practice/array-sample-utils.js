@@ -1,19 +1,13 @@
-const arraySample = (arr, n = 1) => {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument.');
+const sample = (array) => {
+  if (!Array.isArray(array)) {
+    throw new TypeError('Expected an array for the argument.');
   }
-  if (n < 0) {
-    throw new RangeError('Expected n to be a non-negative number.');
-  }
-  if (n === 0) {
-    return [];
-  }
-  if (n >= arr.length) {
-    return [...arr];
+  if (array.length === 0) {
+    return undefined; // Or null, depending on desired behavior for empty arrays. undefined is common.
   }
 
-  const shuffled = [...arr].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, n);
+  const randomIndex = Math.floor(Math.random() * array.length);
+  return array[randomIndex];
 };
 
-module.exports = arraySample;
+module.exports = { sample };
