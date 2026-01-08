@@ -1,34 +1,52 @@
-import { pick } from './object-pick-utils.js';
+import pick from './object-pick-utils';
 
 describe('pick', () => {
-  it('should pick specified keys from an object', () => {
-    const obj = { a: 1, b: '2', c: 3 };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+  test('should pick specified keys from an object', () => {
+    const original = { a: 1, b: 2, c: 3, d: 4 };
+    const picked = pick(original, ['a', 'c']);
+    expect(picked).toEqual({ a: 1, c: 3 });
   });
 
-  it('should return an empty object if no keys are specified', () => {
-    const obj = { a: 1, b: '2', c: 3 };
-    expect(pick(obj, [])).toEqual({});
+  test('should return a new object reference', () => {
+    const original = { a: 1, b: 2 };
+    const picked = pick(original, ['a']);
+    expect(picked).not.toBe(original);
   });
 
-  it('should ignore keys that do not exist in the object', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1 });
+  test('should handle an empty array of keys to pick', () => {
+    const original = { a: 1, b: 2 };
+    const picked = pick(original, []);
+    expect(picked).toEqual({});
   });
 
-  it('should return an empty object for null or non-object inputs', () => {
-    expect(pick(null, ['a'])).toEqual({});
-    expect(pick(undefined, ['a'])).toEqual({});
-    expect(pick(123, ['a'])).toEqual({});
+  test('should handle keys that do not exist in the object', () => {
+    const original = { a: 1, b: 2 };
+    const picked = pick(original, ['c', 'd']);
+    expect(picked).toEqual({});
   });
 
-  it('should handle an empty source object', () => {
+  test('should handle an empty object', () => {
     expect(pick({}, ['a', 'b'])).toEqual({});
   });
 
-  it('should handle cases where keys parameter is not an array', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, null)).toEqual({});
-    expect(pick(obj, 'a')).toEqual({});
+  test('should pick all keys if all keys are specified', () => {
+    const original = { a: 1, b: 2 };
+    const picked = pick(original, ['a', 'b']);
+    expect(picked).toEqual({ a: 1, b: 2 });
+  });
+
+  test('should handle non-object inputs by returning an empty object', () => {
+    expect(pick(null, ['a'])).toEqual({});
+    expect(pick(undefined, ['a'])).toEqual({});
+    expect(pick('string', ['a'])).toEqual({});
+    expect(pick(123, ['a'])).toEqual({});
+    expect(pick([1, 2], ['a'])).toEqual({}); // Arrays are also treated as non-plain objects
+  });
+
+  test('should throw TypeError if keysToPick is not an array', () => {
+    const original = { a: 1 };
+    expect(() => pick(original, null)).toThrow(TypeError);
+    expect(() => pick(original, 'a')).toThrow(TypeError);
+    expect(() => pick(original, {})).toThrow(TypeError);
   });
 });
