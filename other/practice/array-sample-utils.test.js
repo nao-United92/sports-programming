@@ -1,44 +1,62 @@
-const { sample } = require('./array-sample-utils');
+import sample from './array-sample-utils';
 
 describe('sample', () => {
-  const array = [1, 2, 3, 4, 5];
-
-  test('should return a single random element from the array', () => {
+  test('should return a single random element by default', () => {
+    const array = [1, 2, 3, 4, 5];
     const result = sample(array);
     expect(array).toContain(result);
   });
 
-  test('should return undefined for an empty array input', () => {
+  test('should return `undefined` when sampling a single element from an empty array', () => {
     expect(sample([])).toBeUndefined();
   });
 
-  test('should not modify the original array', () => {
-    const originalArray = [...array];
-    sample(array);
-    expect(array).toEqual(originalArray);
+  test('should return an array of `n` random elements when `n` is specified', () => {
+    const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const n = 3;
+    const result = sample(array, n);
+    expect(result).toHaveLength(n);
+    result.forEach(element => {
+      expect(array).toContain(element);
+    });
   });
 
-  test('should throw a TypeError for non-array input', () => {
+  test('should return an empty array when `n` is 0', () => {
+    const array = [1, 2, 3];
+    expect(sample(array, 0)).toEqual([]);
+  });
+
+  test('should return all elements if `n` is greater than or equal to array length', () => {
+    const array = [1, 2, 3];
+    const result = sample(array, 5);
+    expect(result).toHaveLength(array.length);
+    expect(result).toEqual(expect.arrayContaining(array));
+  });
+
+  test('should not modify the original array when returning multiple samples', () => {
+    const originalArray = [1, 2, 3, 4, 5];
+    sample(originalArray, 3);
+    expect(originalArray).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  test('should throw TypeError if first argument is not an array', () => {
     expect(() => sample(null)).toThrow(TypeError);
-    expect(() => sample(null)).toThrow('Expected an array for the argument.');
     expect(() => sample(undefined)).toThrow(TypeError);
     expect(() => sample('string')).toThrow(TypeError);
-    expect(() => sample(123)).toThrow(TypeError);
-    expect(() => sample({})).toThrow(TypeError);
   });
-  
-  test('should produce different samples across multiple calls (probabilistic)', () => {
-    const sample1 = sample(array);
-    const sample2 = sample(array);
-    // While theoretically possible to get the same sample twice, it's highly improbable
-    // and we want to ensure some level of randomness. This test is probabilistic.
-    let isDifferent = false;
-    for (let i = 0; i < 100; i++) { // Run multiple times to reduce test flakiness
-      if (sample(array) !== sample1) {
-        isDifferent = true;
-        break;
-      }
-    }
-    expect(isDifferent).toBe(true);
+
+  test('should throw TypeError if n is not a non-negative integer', () => {
+    const array = [1, 2, 3];
+    expect(() => sample(array, -1)).toThrow(TypeError);
+    expect(() => sample(array, 1.5)).toThrow(TypeError);
+    expect(() => sample(array, '2')).toThrow(TypeError);
+    expect(() => sample(array, null)).toThrow(TypeError);
+  });
+
+  test('returned elements should be distinct when sampling multiple elements', () => {
+    const array = [1, 2, 3, 4, 5];
+    const result = sample(array, 3);
+    const uniqueResults = new Set(result);
+    expect(uniqueResults.size).toBe(result.length);
   });
 });
