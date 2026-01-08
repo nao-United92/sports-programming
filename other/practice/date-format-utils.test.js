@@ -1,76 +1,63 @@
-const formatDate = require('./date-format-utils');
+import formatDate from './date-format-utils';
 
 describe('formatDate', () => {
-  const testDate = new Date('2023-01-15T10:00:00Z'); // January 15, 2023, 10:00:00 UTC
+  const date = new Date('2023-01-01T14:05:06.007Z'); // January 1, 2023, 14:05:06.007
 
-  test('should format date with default options and en-US locale', () => {
-    // Expecting "January 15, 2023" for en-US.
-    // Note: The actual output can vary slightly based on the Node.js or browser's locale data.
-    // We'll use a flexible regex for month/day order and ensure correct year.
-    const formatted = formatDate(testDate);
-    expect(formatted).toMatch(/^(January 15, 2023|15 January 2023)$/);
+  test('should format date with default YYYY-MM-DD format', () => {
+    expect(formatDate(new Date('2023-01-01'))).toBe('2023-01-01');
+    expect(formatDate(new Date('2023-12-31'))).toBe('2023-12-31');
   });
 
-  test('should format date with custom options for full date and time', () => {
-    const options = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'short',
-      hour12: false, // Force 24-hour format
-    };
-    const formatted = formatDate(testDate, 'en-US', options);
-    // Adjust regex to match "January 15, 2023 at 10:00:00 AM GMT", "January 15, 2023 at 10:00:00 PM GMT+X"
-    // The actual time will depend on the machine's timezone settings relative to UTC (testDate is UTC).
-    // The `timeZoneName: 'short'` can produce `GMT+X`, `UTC`, `JST`, `CST`, etc.
-    expect(formatted).toMatch(/January 15, 2023 at \d{2}:\d{2}:\d{2} (AM|PM|GMT[+-]\d{1,2}|UTC|JST|CDT|CST|EDT|EST|PDT|PST|AEST)/); // Added AEST for potential common zones, and AM/PM for flexibility
+  test('should format date with custom YYYY/MM/DD format', () => {
+    expect(formatDate(date, 'YYYY/MM/DD')).toBe('2023/01/01');
   });
 
-  test('should format date for ja-JP locale', () => {
-    const formatted = formatDate(testDate, 'ja-JP');
-    // Expected format for ja-JP: "2023年1月15日"
-    expect(formatted).toBe('2023年1月15日');
+  test('should format date with HH:mm:ss format', () => {
+    // Note: Due to timezone differences, running this test in different environments
+    // might yield different results for hours. The test date is a UTC date.
+    // For consistency, let's ensure the `date` object is treated carefully.
+    // With `new Date('2023-01-01T14:05:06.007Z')`, `getHours()` will give the local hour.
+    // To be precise for testing, it's better to get the local time components for comparison.
+    const localDate = new Date('2023-01-01T14:05:06.007'); // Use local time for test
+    const localHours = String(localDate.getHours()).padStart(2, '0');
+    const localMinutes = String(localDate.getMinutes()).padStart(2, '0');
+    const localSeconds = String(localDate.getSeconds()).padStart(2, '0');
+    expect(formatDate(localDate, 'HH:mm:ss')).toBe(`${localHours}:${localMinutes}:${localSeconds}`);
   });
 
-  test('should format date for de-DE locale with full options', () => {
-    const options = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    };
-    const formatted = formatDate(testDate, 'de-DE', options);
-    // Expected format for de-DE: "Sonntag, 15. Januar 2023"
-    expect(formatted).toBe('Sonntag, 15. Januar 2023');
+  test('should format date with full format YYYY-MM-DD HH:mm:ss SSS', () => {
+    const localDate = new Date('2023-01-01T14:05:06.007'); // Use local time for test
+    const localHours = String(localDate.getHours()).padStart(2, '0');
+    const localMinutes = String(localDate.getMinutes()).padStart(2, '0');
+    const localSeconds = String(localDate.getSeconds()).padStart(2, '0');
+    const localMilliseconds = String(localDate.getMilliseconds()).padStart(3, '0');
+
+    const expected = `2023-01-01 ${localHours}:${localMinutes}:${localSeconds} ${localMilliseconds}`;
+    expect(formatDate(localDate, 'YYYY-MM-DD HH:mm:ss SSS')).toBe(expected);
   });
 
-  test('should throw an error for invalid date objects', () => {
-    expect(() => formatDate(new Date('invalid date'))).toThrow('Input must be a valid Date object.');
-    expect(() => formatDate(null)).toThrow('Input must be a valid Date object.');
-    expect(() => formatDate('not a date')).toThrow('Input must be a valid Date object.');
+  test('should handle single digit month/day/hour/minute/second with padding', () => {
+    const d = new Date('2023-03-05T08:07:01.002');
+    const localHours = String(d.getHours()).padStart(2, '0');
+    const localMinutes = String(d.getMinutes()).padStart(2, '0');
+    const localSeconds = String(d.getSeconds()).padStart(2, '0');
+    const localMilliseconds = String(d.getMilliseconds()).padStart(3, '0');
+
+    expect(formatDate(d, 'YYYY-MM-DD HH:mm:ss SSS'))
+      .toBe(`2023-03-05 ${localHours}:${localMinutes}:${localSeconds} ${localMilliseconds}`);
   });
 
-  test('should fall back to en-US for invalid locale (warning)', () => {
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    const formatted = formatDate(testDate, 'invalid-locale');
-    // Fallback should use default options and en-US
-    expect(formatted).toMatch(/^(January 15, 2023|15 January 2023)$/);
-    expect(consoleWarnSpy).toHaveBeenCalled();
-    consoleWarnSpy.mockRestore();
+  test('should throw TypeError if first argument is not a valid Date object', () => {
+    expect(() => formatDate(null)).toThrow(TypeError);
+    expect(() => formatDate(undefined)).toThrow(TypeError);
+    expect(() => formatDate('2023-01-01')).toThrow(TypeError);
+    expect(() => formatDate(123)).toThrow(TypeError);
+    expect(() => formatDate(new Date('invalid date'))).toThrow(TypeError);
   });
 
-  test('should fall back to en-US for invalid options (warning)', () => {
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    const invalidOptions = {
-      month: 'invalid'
-    }; // 'invalid' is not a valid month style
-    const formatted = formatDate(testDate, 'en-US', invalidOptions);
-    // Fallback should use default options and en-US
-    expect(formatted).toMatch(/^(January 15, 2023|15 January 2023)$/);
-    expect(consoleWarnSpy).toHaveBeenCalled();
-    consoleWarnSpy.mockRestore();
+  test('should throw TypeError if format argument is not a non-empty string', () => {
+    expect(() => formatDate(date, null)).toThrow(TypeError);
+    expect(() => formatDate(date, '')).toThrow(TypeError);
+    expect(() => formatDate(date, 123)).toThrow(TypeError);
   });
 });

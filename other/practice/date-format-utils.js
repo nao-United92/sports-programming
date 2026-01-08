@@ -1,32 +1,27 @@
-const formatDate = (date, locale = 'en-US', options = {}) => {
+const formatDate = (date, format = 'YYYY-MM-DD') => {
   if (!(date instanceof Date) || isNaN(date.getTime())) {
-    throw new Error('Input must be a valid Date object.');
+    throw new TypeError('Expected a valid Date object for the first argument.');
+  }
+  if (typeof format !== 'string' || format.length === 0) {
+    throw new TypeError('Expected a non-empty string for the format argument.');
   }
 
-  // Default options if none are provided
-  const defaultOptions = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  };
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
 
-  const finalOptions = { ...defaultOptions,
-    ...options
-  };
-
-  let effectiveLocale = locale;
-  if (Intl.DateTimeFormat.supportedLocalesOf([locale]).length === 0) {
-    console.warn(`Locale '${locale}' is not supported. Falling back to 'en-US'.`);
-    effectiveLocale = 'en-US';
-  }
-
-  try {
-    return new Intl.DateTimeFormat(effectiveLocale, finalOptions).format(date);
-  } catch (error) {
-    // This catch block would primarily handle issues with options, not locale
-    console.warn(`Error formatting date with effective locale '${effectiveLocale}': ${error.message}. Falling back to default options with 'en-US'.`);
-    return new Intl.DateTimeFormat('en-US', defaultOptions).format(date);
-  }
+  return format
+    .replace(/YYYY/g, year)
+    .replace(/MM/g, month)
+    .replace(/DD/g, day)
+    .replace(/HH/g, hours)
+    .replace(/mm/g, minutes)
+    .replace(/ss/g, seconds)
+    .replace(/SSS/g, milliseconds);
 };
 
-module.exports = formatDate;
+export default formatDate;
