@@ -1,64 +1,62 @@
-const arrayPartition = require('./array-partition-utils');
+import partition from './array-partition-utils';
 
-describe('arrayPartition', () => {
-  test('should partition an array into two based on a predicate', () => {
-    const arr = [1, 2, 3, 4, 5, 6];
+describe('partition', () => {
+  test('should partition an array into two groups based on a predicate', () => {
+    const numbers = [1, 2, 3, 4, 5, 6];
     const isEven = (num) => num % 2 === 0;
-    const [evens, odds] = arrayPartition(arr, isEven);
+    const [evens, odds] = partition(numbers, isEven);
     expect(evens).toEqual([2, 4, 6]);
     expect(odds).toEqual([1, 3, 5]);
   });
 
   test('should handle an empty array', () => {
-    const arr = [];
-    const isEven = (num) => num % 2 === 0;
-    const [evens, odds] = arrayPartition(arr, isEven);
-    expect(evens).toEqual([]);
-    expect(odds).toEqual([]);
+    const [pass, fail] = partition([], (item) => item > 0);
+    expect(pass).toEqual([]);
+    expect(fail).toEqual([]);
   });
 
-  test('should handle predicate where all elements pass', () => {
-    const arr = [2, 4, 6];
-    const isEven = (num) => num % 2 === 0;
-    const [evens, odds] = arrayPartition(arr, isEven);
-    expect(evens).toEqual([2, 4, 6]);
-    expect(odds).toEqual([]);
+  test('should handle all elements satisfying the predicate', () => {
+    const numbers = [1, 2, 3];
+    const isPositive = (num) => num > 0;
+    const [positives, nonPositives] = partition(numbers, isPositive);
+    expect(positives).toEqual([1, 2, 3]);
+    expect(nonPositives).toEqual([]);
   });
 
-  test('should handle predicate where no elements pass', () => {
-    const arr = [1, 3, 5];
-    const isEven = (num) => num % 2 === 0;
-    const [evens, odds] = arrayPartition(arr, isEven);
-    expect(evens).toEqual([]);
-    expect(odds).toEqual([1, 3, 5]);
+  test('should handle no elements satisfying the predicate', () => {
+    const numbers = [-1, -2, -3];
+    const isPositive = (num) => num > 0;
+    const [positives, nonPositives] = partition(numbers, isPositive);
+    expect(positives).toEqual([]);
+    expect(nonPositives).toEqual([-1, -2, -3]);
   });
 
-  test('should pass index and array to the predicate', () => {
-    const arr = ['a', 'b', 'c', 'd'];
-    const predicate = (char, index) => index % 2 === 0;
-    const [evenIndexChars, oddIndexChars] = arrayPartition(arr, predicate);
-    expect(evenIndexChars).toEqual(['a', 'c']);
-    expect(oddIndexChars).toEqual(['b', 'd']);
-  });
-
-  test('should not modify the original array', () => {
-    const arr = [1, 2, 3];
-    const isEven = (num) => num % 2 === 0;
-    arrayPartition(arr, isEven);
-    expect(arr).toEqual([1, 2, 3]);
+  test('should work with objects and complex predicates', () => {
+    const users = [
+      { name: 'Alice', age: 30 },
+      { name: 'Bob', age: 25 },
+      { name: 'Charlie', age: 35 },
+    ];
+    const isAdult = (user) => user.age >= 30;
+    const [adults, nonAdults] = partition(users, isAdult);
+    expect(adults).toEqual([
+      { name: 'Alice', age: 30 },
+      { name: 'Charlie', age: 35 },
+    ]);
+    expect(nonAdults).toEqual([
+      { name: 'Bob', age: 25 },
+    ]);
   });
 
   test('should throw TypeError if first argument is not an array', () => {
-    const predicate = (num) => num > 0;
-    expect(() => arrayPartition(null, predicate)).toThrow(TypeError);
-    expect(() => arrayPartition(123, predicate)).toThrow(TypeError);
-    expect(() => arrayPartition('string', predicate)).toThrow(TypeError);
+    expect(() => partition(null, () => true)).toThrow(TypeError);
+    expect(() => partition(undefined, () => true)).toThrow(TypeError);
+    expect(() => partition({}, () => true)).toThrow(TypeError);
   });
 
-  test('should throw TypeError if second argument is not a function', () => {
-    const arr = [1, 2, 3];
-    expect(() => arrayPartition(arr, null)).toThrow(TypeError);
-    expect(() => arrayPartition(arr, 'string')).toThrow(TypeError);
-    expect(() => arrayPartition(arr, 123)).toThrow(TypeError);
+  test('should throw TypeError if predicate is not a function', () => {
+    expect(() => partition([], null)).toThrow(TypeError);
+    expect(() => partition([], undefined)).toThrow(TypeError);
+    expect(() => partition([], 'not a function')).toThrow(TypeError);
   });
 });

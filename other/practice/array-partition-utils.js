@@ -1,22 +1,23 @@
-const arrayPartition = (arr, predicate) => {
+const partition = (arr, predicate) => {
   if (!Array.isArray(arr)) {
     throw new TypeError('Expected an array for the first argument.');
   }
   if (typeof predicate !== 'function') {
-    throw new TypeError('Expected a function for the second argument (predicate).');
+    throw new TypeError('Expected a function for the predicate argument.');
   }
 
   const pass = [];
   const fail = [];
 
-  for (let i = 0; i < arr.length; i++) {
-    if (predicate(arr[i], i, arr)) {
-      pass.push(arr[i]);
+  arr.forEach(item => {
+    if (predicate(item)) {
+      pass.push(item);
     } else {
-      fail.push(arr[i]);
+      fail.push(item);
     }
-  }
+  });
+
   return [pass, fail];
 };
 
-module.exports = arrayPartition;
+export default partition;
