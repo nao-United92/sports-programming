@@ -1,22 +1,14 @@
 const camelCase = (str) => {
-  if (str === null || str === undefined || str === '') {
-    return '';
+  if (typeof str !== 'string') {
+    throw new TypeError('Expected a string for the argument.');
   }
-  // Normalize separators to spaces
-  let s = String(str)
-    .replace(/[-_]+/g, ' ') // Convert snake_case and kebab-case to spaces
-    .replace(/([a-z])([A-Z])/g, '$1 $2'); // Insert space before uppercase letter in camelCase
 
-  // Process space-separated words
-  return s
-    .toLowerCase()
-    .split(' ')
-    .filter(word => word.length > 0)
-    .map((word, index) => {
-      if (index === 0) return word;
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    })
-    .join('');
+  // Convert the string to lowercase first, then replace non-alphanumeric separators
+  // and capitalize the character following them.
+  // Finally, ensure the very first character is lowercase.
+  return str.toLowerCase()
+            .replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '')
+            .replace(/^./, (match) => match.toLowerCase());
 };
 
-module.exports = { camelCase };
+export default camelCase;
