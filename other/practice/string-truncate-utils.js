@@ -1,24 +1,24 @@
-const truncate = (str, maxLength, ellipsis = '...') => {
+const truncateString = (str, maxLength, indicator = '...') => {
   if (typeof str !== 'string') {
-    return '';
+    throw new TypeError('Expected a string for the first argument.');
   }
-  if (typeof maxLength !== 'number' || maxLength < 0) {
-    throw new Error('maxLength must be a non-negative number.');
+  if (!Number.isInteger(maxLength) || maxLength < 0) {
+    throw new TypeError('Expected a non-negative integer for maxLength.');
+  }
+  if (typeof indicator !== 'string') {
+    throw new TypeError('Expected a string for the indicator argument.');
   }
 
   if (str.length <= maxLength) {
     return str;
   }
 
-  // Ensure ellipsis length is accounted for
-  const effectiveMaxLength = maxLength - ellipsis.length;
-
-  if (effectiveMaxLength < 0) {
-    // If maxLength is too small to even fit the ellipsis
-    return ellipsis.substring(0, maxLength); // Return truncated ellipsis
+  // If maxLength is less than or equal to indicator length, just return indicator
+  if (maxLength <= indicator.length) {
+    return indicator.slice(0, maxLength); // Return part of indicator if it's too long
   }
 
-  return str.slice(0, effectiveMaxLength) + ellipsis;
+  return str.slice(0, maxLength - indicator.length) + indicator;
 };
 
-module.exports = truncate;
+export default truncateString;
