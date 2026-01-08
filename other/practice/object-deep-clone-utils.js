@@ -1,43 +1,27 @@
-const deepClone = (obj, hash = new WeakMap()) => {
+const deepCloneObject = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
 
-  // Handle circular references
-  if (hash.has(obj)) {
-    return hash.get(obj);
-  }
-
   // Handle Date
   if (obj instanceof Date) {
-    return new Date(obj);
-  }
-
-  // Handle RegExp
-  if (obj instanceof RegExp) {
-    return new RegExp(obj);
+    return new Date(obj.getTime());
   }
 
   // Handle Array
   if (Array.isArray(obj)) {
-    const arrCopy = [];
-    hash.set(obj, arrCopy);
-    obj.forEach((item, index) => {
-      arrCopy[index] = deepClone(item, hash);
-    });
-    return arrCopy;
+    return obj.map(item => deepCloneObject(item));
   }
 
   // Handle Object
-  const objCopy = {};
-  hash.set(obj, objCopy);
+  const clonedObj = {};
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      objCopy[key] = deepClone(obj[key], hash);
+      clonedObj[key] = deepCloneObject(obj[key]);
     }
   }
 
-  return objCopy;
+  return clonedObj;
 };
 
-module.exports = deepClone;
+export default deepCloneObject;
