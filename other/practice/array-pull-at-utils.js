@@ -1,21 +1,22 @@
-const pullAt = (array, indexes) => {
-  if (!Array.isArray(array) || !Array.isArray(indexes)) {
-    return [];
+const pullAt = (arr, indexes) => {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the first argument.');
+  }
+  if (!Array.isArray(indexes)) {
+    throw new TypeError('Expected an array of indexes for the second argument.');
   }
 
-  const removedElements = [];
-  // Filter for valid indexes, remove duplicates, and sort in descending order
-  // to prevent splice from affecting subsequent indexes.
-  const validSortedIndexes = [...new Set(indexes)]
-    .filter(index => index >= 0 && index < array.length)
-    .sort((a, b) => b - a);
+  // Get unique indexes and sort them in descending order to avoid issues when splicing
+  const uniqueSortedIndexes = [...new Set(indexes)].sort((a, b) => b - a);
+  const pulled = [];
 
-  for (const index of validSortedIndexes) {
-    const [removed] = array.splice(index, 1);
-    removedElements.unshift(removed);
-  }
+  uniqueSortedIndexes.forEach(index => {
+    if (index >= 0 && index < arr.length) {
+      pulled.unshift(arr.splice(index, 1)[0]);
+    }
+  });
 
-  return removedElements;
+  return pulled;
 };
 
-module.exports = { pullAt };
+export default pullAt;
