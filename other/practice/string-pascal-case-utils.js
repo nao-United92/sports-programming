@@ -1,17 +1,25 @@
-const pascalCase = (str) => {
-  if (typeof str !== 'string' || str.length === 0) {
-    return '';
-  }
+const toWords = (str) => {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1 $2') // camelCase to space separated (e.g., 'fooBar' -> 'foo Bar')
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // XMLHttpRequest -> XML Http Request
-    .replace(/[^a-zA-Z0-9]/g, ' ') // Replace non-alphanumeric with spaces
-    .toLowerCase() // Convert to lowercase
-    .split(' ') // Split by spaces
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
-    .join(''); // Join words without spaces
+    .replace(/([a-z])([A-Z])/g, '$1 $2') // camelCase/PascalCase to "camel Case"
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // acronyms like "USA Today" to "USA Today"
+    .replace(/([0-9])([a-zA-Z])/g, '$1 $2') // number followed by letter
+    .replace(/([a-zA-Z])([0-9])/g, '$1 $2') // letter followed by number
+    .replace(/[^a-zA-Z0-9]+/g, ' ') // Replace non-alphanumeric with space
+    .trim()
+    .split(' ');
 };
 
-module.exports = {
-  pascalCase
+const pascalCase = (str) => {
+  if (typeof str !== 'string') {
+    throw new TypeError('Expected a string for the argument.');
+  }
+  if (str.length === 0) {
+    return '';
+  }
+
+  return toWords(str)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join('');
 };
+
+export default pascalCase;
