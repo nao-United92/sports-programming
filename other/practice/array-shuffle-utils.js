@@ -1,26 +1,11 @@
-const shuffle = (array) => {
-  if (!Array.isArray(array)) {
-    throw new TypeError('Expected an array for the argument.');
+export const shuffle = (arr) => {
+  if (!Array.isArray(arr)) {
+    return arr;
   }
-
-  const result = [...array]; // Create a shallow copy to avoid mutating the original array
-  let currentIndex = result.length;
-  let randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex !== 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [result[currentIndex], result[randomIndex]] = [
-      result[randomIndex],
-      result[currentIndex],
-    ];
+  const newArr = [...arr];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
   }
-
-  return result;
+  return newArr;
 };
-
-module.exports = { shuffle };
