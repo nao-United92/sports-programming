@@ -1,4 +1,4 @@
-const invert = (obj) => {
+export const invert = (obj) => {
   if (typeof obj !== 'object' || obj === null) {
     return {};
   }
@@ -7,5 +7,3 @@ const invert = (obj) => {
     return acc;
   }, {});
 };
-
-module.exports = { invert };
