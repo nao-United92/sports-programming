@@ -1,4 +1,4 @@
-import last from './array-last-utils';
+import { last } from './array-last-utils.js';
 
 describe('last', () => {
   test('should return the last element of an array', () => {
@@ -9,8 +9,12 @@ describe('last', () => {
     expect(last([])).toBeUndefined();
   });
 
-  test('should work with arrays containing different types', () => {
-    expect(last(['a', 'b', 'c'])).toBe('c');
-    expect(last([1, 2, null])).toBeNull();
+  test('should return undefined for non-array inputs', () => {
+    expect(last(null)).toBeUndefined();
+    expect(last({})).toBeUndefined();
+  });
+
+  test('should return the element for a single-element array', () => {
+    expect(last(['a'])).toBe('a');
   });
 });

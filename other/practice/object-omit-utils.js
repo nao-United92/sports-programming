@@ -1,20 +1,10 @@
-const omit = (obj, keysToOmit) => {
-  if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {
-    return obj;
+export const omit = (obj, ...keys) => {
+  if (typeof obj !== 'object' || obj === null) {
+    return {};
   }
-  if (!Array.isArray(keysToOmit)) {
-    throw new TypeError('Expected an array for the keysToOmit argument.');
-  }
-
-  const newObj = {};
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      if (!keysToOmit.includes(key)) {
-        newObj[key] = obj[key];
-      }
-    }
+  const newObj = { ...obj };
+  for (const key of keys) {
+    delete newObj[key];
   }
   return newObj;
 };
-
-export default omit;

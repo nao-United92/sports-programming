@@ -1,50 +1,27 @@
-import truncateString from './string-truncate-utils';
+import { truncate } from './string-truncate-utils.js';
 
-describe('truncateString', () => {
-  test('should truncate a string to the specified maxLength with default indicator', () => {
-    expect(truncateString('This is a long string', 10)).toBe('This is...');
-    expect(truncateString('Hello World', 5)).toBe('He...');
+describe('truncate', () => {
+  const str = 'abcdefghijklmnopqrstuvwxyz';
+
+  test('should truncate a string to a specified length', () => {
+    expect(truncate(str, 10)).toBe('abcdefghij...');
   });
 
-  test('should not truncate if string length is less than or equal to maxLength', () => {
-    expect(truncateString('Short', 10)).toBe('Short');
-    expect(truncateString('Exact', 5)).toBe('Exact');
+  test('should not truncate if the string is shorter than or equal to the length', () => {
+    expect(truncate('short', 10)).toBe('short');
+    expect(truncate('ten chars!', 10)).toBe('ten chars!');
   });
 
-  test('should use a custom indicator', () => {
-    expect(truncateString('This is a long string', 10, '---')).toBe('This is---');
-    expect(truncateString('Hello World', 5, '..')).toBe('Hel..');
+  test('should use a custom omission string', () => {
+    expect(truncate(str, 10, '... (more)')).toBe('abcdefghij... (more)');
   });
 
-  test('should handle empty string', () => {
-    expect(truncateString('', 10)).toBe('');
-    expect(truncateString('', 0)).toBe('');
+  test('should return an empty string for non-string inputs', () => {
+    expect(truncate(null, 10)).toBe('');
+    expect(truncate(123, 5)).toBe('');
   });
 
-  test('should handle maxLength of 0', () => {
-    expect(truncateString('Hello', 0)).toBe('');
-    expect(truncateString('Hello', 0, '..')).toBe('');
-  });
-
-  test('should handle maxLength less than indicator length', () => {
-    expect(truncateString('Hello World', 2, '...')).toBe('..'); // indicator '...' should be truncated to '..'
-    expect(truncateString('Hello World', 0, '...')).toBe('');
-  });
-
-  test('should throw TypeError if first argument is not a string', () => {
-    expect(() => truncateString(null, 10)).toThrow(TypeError);
-    expect(() => truncateString(undefined, 10)).toThrow(TypeError);
-    expect(() => truncateString(123, 10)).toThrow(TypeError);
-  });
-
-  test('should throw TypeError if maxLength is not a non-negative integer', () => {
-    expect(() => truncateString('hello', -1)).toThrow(TypeError);
-    expect(() => truncateString('hello', 1.5)).toThrow(TypeError);
-    expect(() => truncateString('hello', '5')).toThrow(TypeError);
-  });
-
-  test('should throw TypeError if indicator is not a string', () => {
-    expect(() => truncateString('hello', 5, null)).toThrow(TypeError);
-    expect(() => truncateString('hello', 5, 123)).toThrow(TypeError);
+  test('should handle a length of 0', () => {
+    expect(truncate(str, 0)).toBe('...');
   });
 });

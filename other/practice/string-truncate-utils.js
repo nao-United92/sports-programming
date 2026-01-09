@@ -1,24 +1,9 @@
-const truncateString = (str, maxLength, indicator = '...') => {
+export const truncate = (str, length, omission = '...') => {
   if (typeof str !== 'string') {
-    throw new TypeError('Expected a string for the first argument.');
+    return '';
   }
-  if (!Number.isInteger(maxLength) || maxLength < 0) {
-    throw new TypeError('Expected a non-negative integer for maxLength.');
-  }
-  if (typeof indicator !== 'string') {
-    throw new TypeError('Expected a string for the indicator argument.');
-  }
-
-  if (str.length <= maxLength) {
+  if (str.length <= length) {
     return str;
   }
-
-  // If maxLength is less than or equal to indicator length, just return indicator
-  if (maxLength <= indicator.length) {
-    return indicator.slice(0, maxLength); // Return part of indicator if it's too long
-  }
-
-  return str.slice(0, maxLength - indicator.length) + indicator;
+  return str.slice(0, length) + omission;
 };
-
-export default truncateString;

@@ -1,4 +1,4 @@
-const { times } = require('./function-times-utils');
+import { times } from './function-times-utils.js';
 
 describe('times', () => {
   test('should call the iteratee n times', () => {
@@ -20,10 +20,15 @@ describe('times', () => {
     expect(result).toEqual(['0', '1', '2', '3', '4']);
   });
 
-  test('should handle n=0', () => {
-    const iteratee = jest.fn();
-    const result = times(0, iteratee);
-    expect(iteratee).not.toHaveBeenCalled();
+  test('should return an empty array for n < 0', () => {
+    const result = times(-1, () => {});
     expect(result).toEqual([]);
+  });
+
+  test('should handle n = 0', () => {
+    const iteratee = jest.fn();
+    times(0, iteratee);
+    expect(iteratee).not.toHaveBeenCalled();
+    expect(times(0, iteratee)).toEqual([]);
   });
 });
