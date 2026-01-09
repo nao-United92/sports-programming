@@ -1,10 +1,10 @@
-const times = (n, iteratee) => {
-  let index = -1;
+export const times = (n, iteratee) => {
+  if (n < 0) {
+    return [];
+  }
   const result = [];
-  while (++index < n) {
-    result[index] = iteratee(index);
+  for (let i = 0; i < n; i++) {
+    result.push(iteratee(i));
   }
   return result;
 };
-
-module.exports = { times };
