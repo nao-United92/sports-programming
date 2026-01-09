@@ -1,12 +1,13 @@
 export const pull = (arr, ...values) => {
-  const valueSet = new Set(values);
-  let i = 0;
-  while (i < arr.length) {
-    if (valueSet.has(arr[i])) {
-      arr.splice(i, 1);
-    } else {
-      i++;
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  const valuesToRemove = new Set(values);
+  const result = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (!valuesToRemove.has(arr[i])) {
+      result.push(arr[i]);
     }
   }
-  return arr;
+  return result;
 };

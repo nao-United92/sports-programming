@@ -1,39 +1,35 @@
-import { pull } from './array-pull-utils';
+import { pull } from './array-pull-utils.js';
 
 describe('pull', () => {
-  test('should remove all given values from array', () => {
-    const arr = ['a', 'b', 'c', 'a', 'b'];
-    pull(arr, 'a', 'c');
-    expect(arr).toEqual(['b', 'b']);
+  test('should pull specified values from an array', () => {
+    const arr = ['a', 'b', 'c', 'a', 'b', 'c'];
+    expect(pull(arr, 'a', 'c')).toEqual(['b', 'b']);
   });
 
-  test('should modify the original array in place', () => {
-    const arr = [1, 2, 3, 1];
-    pull(arr, 1);
-    expect(arr).toEqual([2, 3]);
-  });
-
-  test('should handle values not present in the array', () => {
+  test('should not modify the original array', () => {
     const arr = [1, 2, 3];
-    pull(arr, 4, 5);
-    expect(arr).toEqual([1, 2, 3]);
+    const originalArr = [...arr];
+    pull(arr, 2);
+    expect(arr).toEqual(originalArr);
   });
 
-  test('should handle empty array', () => {
-    const arr = [];
-    pull(arr, 1, 2);
-    expect(arr).toEqual([]);
-  });
-
-  test('should handle no values to pull', () => {
+  test('should return a new array', () => {
     const arr = [1, 2, 3];
-    pull(arr);
-    expect(arr).toEqual([1, 2, 3]);
+    const result = pull(arr, 2);
+    expect(result).not.toBe(arr);
   });
 
-  test('should handle different data types', () => {
-    const arr = [1, 'a', 2, 'b', 1];
-    pull(arr, 'a', 1);
-    expect(arr).toEqual([2, 'b']);
+  test('should handle an empty array', () => {
+    expect(pull([], 1, 2)).toEqual([]);
+  });
+
+  test('should handle non-array inputs', () => {
+    expect(pull(null, 1)).toEqual([]);
+    expect(pull(undefined, 1)).toEqual([]);
+  });
+
+  test('should do nothing if no values are specified to be pulled', () => {
+    const arr = [1, 2, 3];
+    expect(pull(arr)).toEqual([1, 2, 3]);
   });
 });
