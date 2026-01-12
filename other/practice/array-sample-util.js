@@ -1,9 +1,6 @@
-const sample = (arr) => {
-  if (!arr || arr.length === 0) {
+export const sample = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
     return undefined;
   }
-  const index = Math.floor(Math.random() * arr.length);
-  return arr[index];
+  return arr[Math.floor(Math.random() * arr.length)];
 };
-
-module.exports = sample;
