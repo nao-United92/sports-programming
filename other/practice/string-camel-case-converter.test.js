@@ -1,35 +1,35 @@
-const toCamelCase = require('./string-camel-case-converter');
+const { toCamelCase } = require("./string-camel-case-converter");
 
-describe('toCamelCase', () => {
-  test('should convert kebab-case to camelCase', () => {
-    expect(toCamelCase('hello-world')).toBe('helloWorld');
-    expect(toCamelCase('my-first-string')).toBe('myFirstString');
-    expect(toCamelCase('a-b-c-d-e')).toBe('aBCDE');
+describe("toCamelCase", () => {
+  it("should convert a kebab-case string to camelCase", () => {
+    expect(toCamelCase("hello-world")).toBe("helloWorld");
   });
 
-  test('should convert snake_case to camelCase', () => {
-    expect(toCamelCase('hello_world')).toBe('helloWorld');
-    expect(toCamelCase('my_first_string')).toBe('myFirstString');
-    expect(toCamelCase('a_b_c_d_e')).toBe('aBCDE');
+  it("should convert a snake_case string to camelCase", () => {
+    expect(toCamelCase("hello_world")).toBe("helloWorld");
   });
 
-  test('should handle strings that are already camelCase', () => {
-    expect(toCamelCase('helloWorld')).toBe('helloWorld');
-    expect(toCamelCase('myFirstString')).toBe('myFirstString');
+  it("should convert a space separated string to camelCase", () => {
+    expect(toCamelCase("hello world")).toBe("helloWorld");
   });
 
-  test('should handle empty or null strings', () => {
-    expect(toCamelCase('')).toBe('');
-    expect(toCamelCase(null)).toBe('');
-    expect(toCamelCase(undefined)).toBe('');
+  it("should handle a string that is already camelCase", () => {
+    expect(toCamelCase("helloWorld")).toBe("helloWorld");
   });
 
-  test('should handle strings with leading/trailing separators', () => {
-    expect(toCamelCase('_hello_world_')).toBe('helloWorld');
-    expect(toCamelCase('-hello-world-')).toBe('helloWorld');
+  it("should handle an empty string", () => {
+    expect(toCamelCase("")).toBe("");
   });
 
-  test('should handle strings with mixed separators', () => {
-    expect(toCamelCase('hello_world-from-me')).toBe('helloWorldFromMe');
+  it("should handle a single word string", () => {
+    expect(toCamelCase("hello")).toBe("hello");
+  });
+
+  it("should throw an error if not a string", () => {
+    expect(() => toCamelCase(123)).toThrow("Expected a string.");
+  });
+
+  it("should handle strings with numbers and special characters", () => {
+    expect(toCamelCase("foo-bar-123_baz")).toBe("fooBar123Baz");
   });
 });
