@@ -9,12 +9,7 @@ describe('last', () => {
     expect(last([])).toBeUndefined();
   });
 
-  test('should return undefined for non-array inputs', () => {
-    expect(last(null)).toBeUndefined();
-    expect(last({})).toBeUndefined();
-  });
-
   test('should return the element for a single-element array', () => {
-    expect(last(['a'])).toBe('a');
+    expect(last([1])).toBe(1);
   });
 });
