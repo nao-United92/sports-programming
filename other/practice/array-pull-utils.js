@@ -1,13 +1,7 @@
-export const pull = (arr, ...values) => {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
-  const valuesToRemove = new Set(values);
-  const result = [];
-  for (let i = 0; i < arr.length; i++) {
-    if (!valuesToRemove.has(arr[i])) {
-      result.push(arr[i]);
-    }
-  }
-  return result;
+export const pull = (arr, ...args) => {
+  const argState = Array.isArray(args[0]) ? args[0] : args;
+  const pulled = arr.filter((v, i) => !argState.includes(v));
+  arr.length = 0;
+  pulled.forEach(v => arr.push(v));
+  return arr;
 };
