@@ -1,20 +1,14 @@
-const remove = (array, value) => {
-  if (!Array.isArray(array)) {
-    throw new TypeError('Expected an array for the first argument.');
-  }
-
-  const removedElements = [];
-  let i = 0;
-  while (i < array.length) {
-    if (array[i] === value) {
-      removedElements.push(array[i]);
-      array.splice(i, 1);
+export const remove = (arr, func) => {
+  let removed = [];
+  let kept = [];
+  arr.forEach(item => {
+    if (func(item)) {
+      removed.push(item);
     } else {
-      i++;
+      kept.push(item);
     }
-  }
-
-  return removedElements;
+  });
+  arr.length = 0;
+  kept.forEach(item => arr.push(item));
+  return removed;
 };
-
-module.exports = { remove };

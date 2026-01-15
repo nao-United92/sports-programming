@@ -1,7 +1,1 @@
-export const sample = (arr) => {
-  if (!Array.isArray(arr) || arr.length === 0) {
-    return undefined;
-  }
-  const randomIndex = Math.floor(Math.random() * arr.length);
-  return arr[randomIndex];
-};
+export const sample = arr => arr[Math.floor(Math.random() * arr.length)];
