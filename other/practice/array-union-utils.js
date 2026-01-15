@@ -1,4 +1,1 @@
-export const union = (...arrays) => {
-  const combined = arrays.flat();
-  return [...new Set(combined)];
-};
+export const union = (...arrs) => [...new Set(arrs.flat())];
