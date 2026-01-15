@@ -1,19 +1,23 @@
-const join = require('./array-join-utils');
+import { join } from './array-join-utils.js';
 
-test('joins the elements of an array with a separator', () => {
-  const arr = ['a', 'b', 'c'];
-  const result = join(arr, '~');
-  expect(result).toBe('a~b~c');
-});
+describe('join', () => {
+  test('should join all elements of an array into a string with a separator', () => {
+    expect(join(['a', 'b', 'c'])).toBe('a,b,c');
+  });
 
-test('uses a comma as the default separator', () => {
-  const arr = ['a', 'b', 'c'];
-  const result = join(arr);
-  expect(result).toBe('a,b,c');
-});
+  test('should use a custom separator', () => {
+    expect(join(['a', 'b', 'c'], ';')).toBe('a;b;c');
+  });
 
-test('returns an empty string for an empty array', () => {
-  const arr = [];
-  const result = join(arr);
-  expect(result).toBe('');
+  test('should use a different separator for the end', () => {
+    expect(join(['a', 'b', 'c'], ',', '&')).toBe('a,b&c');
+  });
+
+  test('should work with a single element', () => {
+    expect(join(['a'])).toBe('a');
+  });
+
+  test('should return an empty string for an empty array', () => {
+    expect(join([])).toBe('');
+  });
 });
