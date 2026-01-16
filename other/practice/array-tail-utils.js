@@ -1,9 +1,17 @@
-// Returns all but the first element of an array.
-const tail = (array) => {
-  if (!Array.isArray(array) || array.length <= 1) {
+/**
+ * Gets all but the first element of `array`.
+ *
+ * @param {Array} arr The array to query.
+ * @returns {Array} Returns the slice of `array`.
+ */
+function arrayTail(arr) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the first argument.');
+  }
+  if (arr.length <= 1) {
     return [];
   }
-  return array.slice(1);
-};
+  return arr.slice(1);
+}
 
-module.exports = { tail };
+module.exports = arrayTail;
