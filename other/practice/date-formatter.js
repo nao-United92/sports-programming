@@ -1,27 +1,31 @@
-const padZero = (num) => num < 10 ? '0' + num : String(num);
-
-const format = (date, pattern = 'YYYY-MM-DD HH:mm:ss') => {
-  if (!(date instanceof Date) || isNaN(date)) {
-    throw new TypeError('Expected a valid Date object for the first argument.');
-  }
-  if (typeof pattern !== 'string') {
-    throw new TypeError('Expected a string for the second argument (format pattern).');
+export const formatDate = (date, formatStr = 'YYYY-MM-DD') => {
+  if (!(date instanceof Date) || isNaN(date.getTime())) {
+    return '';
   }
 
   const year = date.getFullYear();
-  const month = padZero(date.getMonth() + 1);
-  const day = padZero(date.getDate());
-  const hours = padZero(date.getHours());
-  const minutes = padZero(date.getMinutes());
-  const seconds = padZero(date.getSeconds());
+  const month = date.getMonth() + 1; // getMonth() is 0-indexed
+  const day = date.getDate();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
 
-  return pattern
-    .replace(/YYYY/g, String(year))
-    .replace(/MM/g, month)
-    .replace(/DD/g, day)
-    .replace(/HH/g, hours)
-    .replace(/mm/g, minutes)
-    .replace(/ss/g, seconds);
+  const pad = (num) => num.toString().padStart(2, '0');
+
+  const replacements = {
+    YYYY: year,
+    MM: pad(month),
+    DD: pad(day),
+    HH: pad(hours),
+    mm: pad(minutes),
+    ss: pad(seconds),
+    // Add more format specifiers as needed
+  };
+
+  let formattedDate = formatStr;
+  for (const key in replacements) {
+    formattedDate = formattedDate.replace(new RegExp(key, 'g'), replacements[key]);
+  }
+
+  return formattedDate;
 };
-
-module.exports = { format };
