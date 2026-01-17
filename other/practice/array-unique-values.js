@@ -1,16 +1,6 @@
-const uniq = (arr) => {
+export const getUniqueValues = (arr) => {
   if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument.');
+    return [];
   }
-  const seen = new Set();
-  const result = [];
-  for (const item of arr) {
-    if (!seen.has(item)) {
-      seen.add(item);
-      result.push(item);
-    }
-  }
-  return result;
+  return [...new Set(arr)];
 };
-
-module.exports = { uniq };
