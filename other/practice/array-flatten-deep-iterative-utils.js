@@ -1,22 +1,23 @@
-const arrayFlattenDeepIterative = (arr) => {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the argument.');
-  }
+// other/practice/array-flatten-deep-iterative-utils.js
 
+/**
+ * Iteratively flattens a deeply nested array.
+ *
+ * @param {Array} arr The array to flatten.
+ * @returns {Array} Returns the new flattened array.
+ */
+function arrayFlattenDeepIterative(arr) {
   const result = [];
-  const stack = [];
-  // Push elements from the original array onto the stack in reverse order
-  // so when popped, they are processed from left to right.
-  for (let i = arr.length - 1; i >= 0; i--) {
-    stack.push(arr[i]);
-  }
+  // Use a stack to manage elements to process.
+  // Push elements in reverse order to process them in original order when popped.
+  const stack = [...arr].reverse(); 
 
   while (stack.length > 0) {
-    const item = stack.pop();
+    const item = stack.pop(); // Get the last item from the stack (DFS)
 
     if (Array.isArray(item)) {
       // If it's an array, push its elements onto the stack in reverse order
-      // to maintain correct flattening order
+      // so they are popped in the correct order.
       for (let i = item.length - 1; i >= 0; i--) {
         stack.push(item[i]);
       }
@@ -26,6 +27,6 @@ const arrayFlattenDeepIterative = (arr) => {
   }
 
   return result;
-};
+}
 
 module.exports = arrayFlattenDeepIterative;

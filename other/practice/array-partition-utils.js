@@ -1,31 +1,29 @@
+// other/practice/array-partition-utils.js
+
 /**
- * Divides an array into two arrays based on a predicate function.
+ * Partitions an array into two groups: one for elements that satisfy the predicate,
+ * and one for elements that do not.
  *
  * @param {Array} arr The array to partition.
- * @param {Function} predicate The function to execute on each value to determine if it belongs to the first or second array.
- * @returns {Array<Array>} A tuple where the first array contains elements for which the predicate returned true,
- *                          and the second array contains elements for which the predicate returned false.
+ * @param {Function} predicate The function to invoke per element to determine its group.
+ *   The predicate is invoked with one argument: (value).
+ * @returns {Array<Array>} Returns a two-element array, where the first element is the
+ *   array of elements for which the predicate returned truthy, and the second element
+ *   is the array of elements for which the predicate returned falsy.
  */
 function arrayPartition(arr, predicate) {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument.');
-  }
-  if (typeof predicate !== 'function') {
-    throw new TypeError('Expected a function for the second argument.');
-  }
+  const truthy = [];
+  const falsy = [];
 
-  const trueArr = [];
-  const falseArr = [];
-
-  for (let i = 0; i < arr.length; i++) {
-    if (predicate(arr[i], i, arr)) {
-      trueArr.push(arr[i]);
+  arr.forEach(item => {
+    if (predicate(item)) {
+      truthy.push(item);
     } else {
-      falseArr.push(arr[i]);
+      falsy.push(item);
     }
-  }
+  });
 
-  return [trueArr, falseArr];
+  return [truthy, falsy];
 }
 
 module.exports = arrayPartition;

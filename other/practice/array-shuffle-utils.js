@@ -1,15 +1,8 @@
-/**
- * Shuffles an array in place using the Fisher-Yates (Knuth) algorithm.
- *
- * @param {Array} arr The array to shuffle.
- * @returns {Array} The shuffled array.
- */
-function arrayShuffle(arr) {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument.');
-  }
+// other/practice/array-shuffle-utils.js
 
-  let currentIndex = arr.length;
+function arrayShuffle(arr) {
+  const newArr = [...arr]; // Create a shallow copy to avoid modifying the original array
+  let currentIndex = newArr.length;
   let randomIndex;
 
   // While there remain elements to shuffle.
@@ -19,10 +12,13 @@ function arrayShuffle(arr) {
     currentIndex--;
 
     // And swap it with the current element.
-    [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
+    [newArr[currentIndex], newArr[randomIndex]] = [
+      newArr[randomIndex],
+      newArr[currentIndex],
+    ];
   }
 
-  return arr;
+  return newArr;
 }
 
 module.exports = arrayShuffle;

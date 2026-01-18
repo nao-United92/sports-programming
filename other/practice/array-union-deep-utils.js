@@ -1,4 +1,4 @@
-// other/practice/array-unique-deep-utils.js
+// other/practice/array-union-deep-utils.js
 
 function deepEquals(a, b) {
   if (a === b) return true;
@@ -28,9 +28,10 @@ function deepEquals(a, b) {
   return false;
 }
 
-function arrayUniqueDeep(arr) {
+function arrayUnionDeep(arr1, arr2) {
+  const combined = [...arr1, ...arr2];
   const result = [];
-  arr.forEach(item => {
+  combined.forEach(item => {
     if (!result.some(existingItem => deepEquals(item, existingItem))) {
       result.push(item);
     }
@@ -38,4 +39,4 @@ function arrayUniqueDeep(arr) {
   return result;
 }
 
-module.exports = arrayUniqueDeep;
+module.exports = arrayUnionDeep;

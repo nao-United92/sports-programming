@@ -1,3 +1,5 @@
+// other/practice/array-tail-utils.js
+
 /**
  * Gets all but the first element of `array`.
  *
@@ -5,10 +7,7 @@
  * @returns {Array} Returns the slice of `array`.
  */
 function arrayTail(arr) {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument.');
-  }
-  if (arr.length <= 1) {
+  if (!Array.isArray(arr) || arr.length <= 1) {
     return [];
   }
   return arr.slice(1);

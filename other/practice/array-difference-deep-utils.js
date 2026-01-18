@@ -1,4 +1,4 @@
-// other/practice/array-unique-deep-utils.js
+// other/practice/array-difference-deep-utils.js
 
 function deepEquals(a, b) {
   if (a === b) return true;
@@ -28,14 +28,14 @@ function deepEquals(a, b) {
   return false;
 }
 
-function arrayUniqueDeep(arr) {
+function arrayDifferenceDeep(arr1, arr2) {
   const result = [];
-  arr.forEach(item => {
-    if (!result.some(existingItem => deepEquals(item, existingItem))) {
-      result.push(item);
+  arr1.forEach(item1 => {
+    if (!arr2.some(item2 => deepEquals(item1, item2))) {
+      result.push(item1);
     }
   });
   return result;
 }
 
-module.exports = arrayUniqueDeep;
+module.exports = arrayDifferenceDeep;
