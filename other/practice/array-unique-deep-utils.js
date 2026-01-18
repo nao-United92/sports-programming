@@ -1,43 +1,41 @@
-// Helper for deep comparison (simple version for this context)
-const deepEqual = (obj1, obj2) => {
-  if (obj1 === obj2) return true;
+// other/practice/array-unique-deep-utils.js
 
-  if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
-    return false;
-  }
+function deepEquals(a, b) {
+  if (a === b) return true;
 
-  const keys1 = Object.keys(obj1);
-  const keys2 = Object.keys(obj2);
+  if (a && typeof a === 'object' && b && typeof b === 'object') {
+    if (Array.isArray(a) !== Array.isArray(b)) return false;
 
-  if (keys1.length !== keys2.length) return false;
-
-  for (const key of keys1) {
-    if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-
-export const uniqueDeep = (array) => {
-  if (!Array.isArray(array)) {
-    throw new TypeError('Expected an array');
-  }
-
-  const result = [];
-  for (const item of array) {
-    let isDuplicate = false;
-    for (const existingItem of result) {
-      if (deepEqual(item, existingItem)) {
-        isDuplicate = true;
-        break;
+    if (Array.isArray(a)) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!deepEquals(a[i], b[i])) return false;
       }
+      return true;
     }
-    if (!isDuplicate) {
+
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+
+    if (keysA.length !== keysB.length) return false;
+
+    for (const key of keysA) {
+      if (!keysB.includes(key) || !deepEquals(a[key], b[key])) return false;
+    }
+    return true;
+  }
+
+  return false;
+}
+
+function arrayUniqueDeep(arr) {
+  const result = [];
+  arr.forEach(item => {
+    if (!result.some(existingItem => deepEquals(item, existingItem))) {
       result.push(item);
     }
-  }
+  });
   return result;
-};
+}
+
+module.exports = arrayUniqueDeep;

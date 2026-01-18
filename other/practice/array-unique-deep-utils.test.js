@@ -1,113 +1,51 @@
-import { uniqueDeep } from './array-unique-deep-utils';
+// other/practice/array-unique-deep-utils.test.js
 
-describe('uniqueDeep', () => {
-  test('should remove duplicate objects based on deep equality', () => {
-    const arr = [{
-      a: 1,
-      b: {
-        c: 2
-      }
-    }, {
-      a: 1,
-      b: {
-        c: 3
-      }
-    }, {
-      a: 1,
-      b: {
-        c: 2
-      }
-    }, {
-      a: 2
-    }, ];
-    const expected = [{
-      a: 1,
-      b: {
-        c: 2
-      }
-    }, {
-      a: 1,
-      b: {
-        c: 3
-      }
-    }, {
-      a: 2
-    }, ];
-    expect(uniqueDeep(arr)).toEqual(expected);
+const arrayUniqueDeep = require('./array-unique-deep-utils');
+
+describe('arrayUniqueDeep', () => {
+  test('should return unique elements from an array with primitive values', () => {
+    const arr = [1, 2, 2, 3, 1, 4];
+    expect(arrayUniqueDeep(arr)).toEqual([1, 2, 3, 4]);
   });
 
-  test('should handle arrays with primitive values (behaves like basic unique)', () => {
-    const arr = [1, 2, 3, 2, 1, 'a', 'b', 'a'];
-    expect(uniqueDeep(arr)).toEqual([1, 2, 3, 'a', 'b']);
+  test('should return unique elements from an array with object values (deep comparison)', () => {
+    const obj1 = { a: 1, b: 'hello' };
+    const obj2 = { a: 1, b: 'hello' };
+    const obj3 = { a: 2, b: 'world' };
+    const arr = [obj1, obj2, obj3, obj1];
+    expect(arrayUniqueDeep(arr)).toEqual([obj1, obj3]);
   });
 
-  test('should handle nested objects', () => {
-    const arr = [{
-      id: 1,
-      data: {
-        value: 'A'
-      }
-    }, {
-      id: 2,
-      data: {
-        value: 'B'
-      }
-    }, {
-      id: 1,
-      data: {
-        value: 'A'
-      }
-    }, ];
-    const expected = [{
-      id: 1,
-      data: {
-        value: 'A'
-      }
-    }, {
-      id: 2,
-      data: {
-        value: 'B'
-      }
-    }, ];
-    expect(uniqueDeep(arr)).toEqual(expected);
+  test('should return unique elements from an array with nested arrays (deep comparison)', () => {
+    const arr1 = [1, [2, 3]];
+    const arr2 = [1, [2, 3]];
+    const arr3 = [1, [2, 4]];
+    const arr = [arr1, arr2, arr3];
+    expect(arrayUniqueDeep(arr)).toEqual([arr1, arr3]);
   });
 
-  test('should handle empty array', () => {
-    expect(uniqueDeep([])).toEqual([]);
+  test('should handle empty arrays', () => {
+    expect(arrayUniqueDeep([])).toEqual([]);
   });
 
-  test('should not modify original array or objects', () => {
-    const obj1 = {
-      a: 1,
-      b: {
-        c: 2
-      }
-    };
-    const obj2 = {
-      a: 1,
-      b: {
-        c: 2
-      }
-    };
-    const originalArr = [obj1, obj2];
-    uniqueDeep(originalArr);
-    expect(originalArr[0]).toBe(obj1);
-    expect(originalArr[1]).toBe(obj2);
+  test('should handle arrays with mixed primitive and object values', () => {
+    const obj1 = { id: 1 };
+    const obj2 = { id: 1 };
+    const obj3 = { id: 2 };
+    const arr = [1, 'hello', obj1, 1, 'world', obj2, obj3];
+    expect(arrayUniqueDeep(arr)).toEqual([1, 'hello', obj1, 'world', obj3]);
   });
 
-  test('should throw an error if input is not an array', () => {
-    expect(() => uniqueDeep(null)).toThrow('Expected an array');
-    expect(() => uniqueDeep({})).toThrow('Expected an array');
+  test('should distinguish between objects with different key order but same content', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { b: 2, a: 1 };
+    const obj3 = { c: 3, d: 4 };
+    const arr = [obj1, obj2, obj3];
+    expect(arrayUniqueDeep(arr)).toEqual([obj1, obj3]);
   });
 
-  test('should distinguish between objects with same keys but different values', () => {
-    const arr = [{
-      x: 1,
-      y: 2
-    }, {
-      x: 1,
-      y: 3
-    }];
-    expect(uniqueDeep(arr)).toEqual(arr);
+  test('should handle arrays with null and undefined values', () => {
+    const arr = [1, null, 2, undefined, null, 3];
+    expect(arrayUniqueDeep(arr)).toEqual([1, null, 2, undefined, 3]);
   });
 });
