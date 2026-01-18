@@ -1,17 +1,39 @@
-import { sample } from './array-sample-utils.js';
+// other/practice/array-sample-utils.test.js
 
-describe('sample', () => {
-  test('should return one of the elements in the array', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const result = sample(arr);
-    expect(arr).toContain(result);
-  });
+const arraySample = require('./array-sample-utils');
 
+describe('arraySample', () => {
   test('should return undefined for an empty array', () => {
-    expect(sample([])).toBeUndefined();
+    expect(arraySample([])).toBeUndefined();
   });
 
   test('should return the only element for a single-element array', () => {
-    expect(sample([1])).toBe(1);
+    expect(arraySample([10])).toBe(10);
+  });
+
+  test('should return an element from the array', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const sample = arraySample(arr);
+    expect(arr).toContain(sample);
+  });
+
+  test('should return different elements over multiple calls (probabilistic)', () => {
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const samples = new Set();
+    const iterations = 1000;
+    for (let i = 0; i < iterations; i++) {
+      samples.add(arraySample(arr));
+    }
+    // With 10 elements and 1000 iterations, it's highly probable to get more than one unique sample
+    expect(samples.size).toBeGreaterThan(1);
+    expect(samples.size).toBeLessThanOrEqual(arr.length);
+  });
+
+  test('should handle non-array input by returning undefined', () => {
+    expect(arraySample(null)).toBeUndefined();
+    expect(arraySample(undefined)).toBeUndefined();
+    expect(arraySample(123)).toBeUndefined();
+    expect(arraySample('string')).toBeUndefined();
+    expect(arraySample({})).toBeUndefined();
   });
 });
