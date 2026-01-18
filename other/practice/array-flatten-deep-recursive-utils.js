@@ -1,23 +1,15 @@
-/**
- * Recursively flattens an array.
- *
- * @param {Array<any>} arr The array to flatten.
- * @returns {Array<any>} Returns the new flattened array.
- */
-function flattenDeepRecursive(arr) {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
+// other/practice/array-flatten-deep-recursive-utils.js
 
-  const result = [];
-  arr.forEach(item => {
-    if (Array.isArray(item)) {
-      result.push(...flattenDeepRecursive(item));
+function arrayFlattenDeepRecursive(arr) {
+  let result = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (Array.isArray(arr[i])) {
+      result = result.concat(arrayFlattenDeepRecursive(arr[i]));
     } else {
-      result.push(item);
+      result.push(arr[i]);
     }
-  });
+  }
   return result;
 }
 
-module.exports = flattenDeepRecursive;
+module.exports = arrayFlattenDeepRecursive;

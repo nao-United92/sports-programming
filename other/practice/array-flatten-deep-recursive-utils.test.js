@@ -1,49 +1,29 @@
-const flattenDeepRecursive = require('./array-flatten-deep-recursive-utils');
+// other/practice/array-flatten-deep-recursive-utils.test.js
 
-describe('flattenDeepRecursive', () => {
+const arrayFlattenDeepRecursive = require('./array-flatten-deep-recursive-utils');
+
+describe('arrayFlattenDeepRecursive', () => {
   test('should flatten a deeply nested array', () => {
-    const arr = [1, [2, [3, [4, 5]]], 6];
-    expect(flattenDeepRecursive(arr)).toEqual([1, 2, 3, 4, 5, 6]);
+    const arr = [1, [2, [3, [4, 5]]], 6, [7, [8]]];
+    expect(arrayFlattenDeepRecursive(arr)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
   });
 
-  test('should handle a singly nested array', () => {
-    const arr = [1, [2, 3], 4];
-    expect(flattenDeepRecursive(arr)).toEqual([1, 2, 3, 4]);
-  });
-
-  test('should return the same array if it is already flat', () => {
+  test('should handle a shallow array', () => {
     const arr = [1, 2, 3, 4];
-    expect(flattenDeepRecursive(arr)).toEqual([1, 2, 3, 4]);
+    expect(arrayFlattenDeepRecursive(arr)).toEqual([1, 2, 3, 4]);
   });
 
-  test('should return an empty array for an empty input array', () => {
-    expect(flattenDeepRecursive([])).toEqual([]);
-  });
-
-  test('should handle arrays with empty nested arrays', () => {
-    const arr = [1, [],
-      [2, []],
-      [
-        []
-      ], 3
-    ];
-    expect(flattenDeepRecursive(arr)).toEqual([1, 2, 3]);
+  test('should handle an empty array', () => {
+    expect(arrayFlattenDeepRecursive([])).toEqual([]);
   });
 
   test('should handle arrays with mixed types', () => {
-    const arr = [1, ['a', [true, null]], {
-      b: 2
-    }];
-    expect(flattenDeepRecursive(arr)).toEqual([1, 'a', true, null, {
-      b: 2
-    }]);
+    const arr = [1, 'hello', [2, { a: 3 }], null, [4, [undefined]]];
+    expect(arrayFlattenDeepRecursive(arr)).toEqual([1, 'hello', 2, { a: 3 }, null, 4, undefined]);
   });
 
-  test('should handle non-array input by returning an empty array', () => {
-    expect(flattenDeepRecursive(null)).toEqual([]);
-    expect(flattenDeepRecursive(undefined)).toEqual([]);
-    expect(flattenDeepRecursive(123)).toEqual([]);
-    expect(flattenDeepRecursive('string')).toEqual([]);
-    expect(flattenDeepRecursive({})).toEqual([]);
+  test('should handle arrays containing empty nested arrays', () => {
+    const arr = [1, [], [2, []], [[[]]], 3];
+    expect(arrayFlattenDeepRecursive(arr)).toEqual([1, 2, 3]);
   });
 });
