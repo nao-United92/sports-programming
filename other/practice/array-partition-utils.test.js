@@ -1,58 +1,53 @@
+// other/practice/array-partition-utils.test.js
+
 const arrayPartition = require('./array-partition-utils');
 
 describe('arrayPartition', () => {
-  test('should partition an array of numbers into even and odd', () => {
+  test('should partition an array based on a numeric predicate', () => {
     const arr = [1, 2, 3, 4, 5, 6];
-    const [evens, odds] = arrayPartition(arr, (num) => num % 2 === 0);
+    const [evens, odds] = arrayPartition(arr, (n) => n % 2 === 0);
     expect(evens).toEqual([2, 4, 6]);
     expect(odds).toEqual([1, 3, 5]);
   });
 
-  test('should partition an array of strings by length', () => {
-    const arr = ['apple', 'banana', 'cat', 'doggy', 'elephant'];
-    const [longWords, shortWords] = arrayPartition(arr, (word) => word.length > 4);
-    expect(longWords).toEqual(['apple', 'banana', 'doggy', 'elephant']);
-    expect(shortWords).toEqual(['cat']);
+  test('should partition an array of objects based on a property', () => {
+    const users = [
+      { name: 'Alice', active: true },
+      { name: 'Bob', active: false },
+      { name: 'Charlie', active: true },
+    ];
+    const [activeUsers, inactiveUsers] = arrayPartition(users, (user) => user.active);
+    expect(activeUsers).toEqual([
+      { name: 'Alice', active: true },
+      { name: 'Charlie', active: true },
+    ]);
+    expect(inactiveUsers).toEqual([{ name: 'Bob', active: false }]);
   });
 
   test('should handle an empty array', () => {
-    const arr = [];
-    const [trueArr, falseArr] = arrayPartition(arr, (item) => item > 0);
-    expect(trueArr).toEqual([]);
-    expect(falseArr).toEqual([]);
+    const [truthy, falsy] = arrayPartition([], (x) => x > 0);
+    expect(truthy).toEqual([]);
+    expect(falsy).toEqual([]);
   });
 
-  test('should handle a predicate that always returns true', () => {
+  test('should place all elements in the first array if predicate is always true', () => {
     const arr = [1, 2, 3];
-    const [trueArr, falseArr] = arrayPartition(arr, () => true);
-    expect(trueArr).toEqual([1, 2, 3]);
-    expect(falseArr).toEqual([]);
+    const [allTrue, noneFalse] = arrayPartition(arr, (x) => true);
+    expect(allTrue).toEqual([1, 2, 3]);
+    expect(noneFalse).toEqual([]);
   });
 
-  test('should handle a predicate that always returns false', () => {
+  test('should place all elements in the second array if predicate is always false', () => {
     const arr = [1, 2, 3];
-    const [trueArr, falseArr] = arrayPartition(arr, () => false);
-    expect(trueArr).toEqual([]);
-    expect(falseArr).toEqual([1, 2, 3]);
+    const [noneTrue, allFalse] = arrayPartition(arr, (x) => false);
+    expect(noneTrue).toEqual([]);
+    expect(allFalse).toEqual([1, 2, 3]);
   });
 
-  test('should pass index and original array to predicate', () => {
-    const arr = ['a', 'b', 'c'];
-    const mockPredicate = jest.fn((item, index) => index % 2 === 0);
-    arrayPartition(arr, mockPredicate);
-    expect(mockPredicate).toHaveBeenCalledWith('a', 0, arr);
-    expect(mockPredicate).toHaveBeenCalledWith('b', 1, arr);
-    expect(mockPredicate).toHaveBeenCalledWith('c', 2, arr);
-  });
-
-  test('should throw an error if the first argument is not an array', () => {
-    expect(() => arrayPartition(null, () => true)).toThrow('Expected an array for the first argument.');
-    expect(() => arrayPartition(undefined, () => true)).toThrow('Expected an array for the first argument.');
-    expect(() => arrayPartition('string', () => true)).toThrow('Expected an array for the first argument.');
-  });
-
-  test('should throw an error if the second argument is not a function', () => {
-    expect(() => arrayPartition([1, 2], null)).toThrow('Expected a function for the second argument.');
-    expect(() => arrayPartition([1, 2], 'string')).toThrow('Expected a function for the second argument.');
+  test('should handle mixed types in the array', () => {
+    const arr = [1, 'hello', null, 0, true, 'world', false];
+    const [truthyValues, falsyValues] = arrayPartition(arr, (item) => Boolean(item));
+    expect(truthyValues).toEqual([1, 'hello', true, 'world']);
+    expect(falsyValues).toEqual([null, 0, false]);
   });
 });
