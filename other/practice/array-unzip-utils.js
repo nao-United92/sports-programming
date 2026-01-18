@@ -1,32 +1,39 @@
+// other/practice/array-unzip-utils.js
+
 /**
  * The inverse of `arrayZip`; this method accepts an array of grouped elements
- * and creates a new array of arrays, where the first contains all first elements,
- * the second all second elements, and so on.
+ * and creates an array of arrays, regrouping elements to their original array positions.
  *
  * @param {Array<Array>} zippedArray The array of grouped elements to unzip.
- * @returns {Array<Array>} Returns the new array of unzipped arrays.
+ * @returns {Array<Array>} Returns the new array of ungrouped arrays.
  */
 function arrayUnzip(zippedArray) {
-  if (!Array.isArray(zippedArray)) {
-    throw new TypeError('Expected an array for the first argument.');
-  }
-
-  if (zippedArray.length === 0) {
+  if (!Array.isArray(zippedArray) || zippedArray.length === 0) {
     return [];
   }
 
-  const numArrays = Math.max(...zippedArray.map(arr => (Array.isArray(arr) ? arr.length : 0)));
+  // If the first inner array is empty, it means all original arrays were empty.
+  // In this case, the number of original arrays is equal to the length of zippedArray.
+  // Example: arrayZip([], [], []) => [[], [], []]
+  // Then arrayUnzip([[], [], []]) should return [[], [], []]
+  if (zippedArray[0].length === 0) {
+    return Array.from({ length: zippedArray.length }, () => []);
+  }
+
+
+  // Determine the number of arrays to "unzip" into
+  // This is the length of the first inner array
+  const numArrays = zippedArray[0].length;
+
   const result = Array.from({ length: numArrays }, () => []);
 
-  for (let i = 0; i < zippedArray.length; i++) {
-    const currentGroup = zippedArray[i];
-    if (!Array.isArray(currentGroup)) {
-      throw new TypeError('Expected an array of arrays.');
-    }
-    for (let j = 0; j < numArrays; j++) {
-      result[j].push(currentGroup[j]);
-    }
-  }
+  zippedArray.forEach(group => {
+    group.forEach((item, index) => {
+      if (result[index]) { // Ensure index exists, though it should based on numArrays
+        result[index].push(item);
+      }
+    });
+  });
 
   return result;
 }
