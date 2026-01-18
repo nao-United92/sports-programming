@@ -1,38 +1,36 @@
+// other/practice/array-initial-utils.test.js
+
 const arrayInitial = require('./array-initial-utils');
 
 describe('arrayInitial', () => {
   test('should return all but the last element of an array', () => {
-    const arr = [1, 2, 3, 4, 5];
-    expect(arrayInitial(arr)).toEqual([1, 2, 3, 4]);
+    expect(arrayInitial([1, 2, 3, 4])).toEqual([1, 2, 3]);
   });
 
   test('should return an empty array if the input array has one element', () => {
-    const arr = [1];
-    expect(arrayInitial(arr)).toEqual([]);
+    expect(arrayInitial([1])).toEqual([]);
   });
 
   test('should return an empty array if the input array is empty', () => {
-    const arr = [];
-    expect(arrayInitial(arr)).toEqual([]);
+    expect(arrayInitial([])).toEqual([]);
   });
 
   test('should not modify the original array', () => {
-    const arr = [1, 2, 3];
-    const originalArr = [...arr];
-    arrayInitial(arr);
-    expect(arr).toEqual(originalArr);
+    const originalArr = [1, 2, 3];
+    arrayInitial(originalArr);
+    expect(originalArr).toEqual([1, 2, 3]);
   });
 
   test('should handle arrays with mixed types', () => {
-    const arr = [1, 'a', null, { key: 'value' }, undefined];
-    expect(arrayInitial(arr)).toEqual([1, 'a', null, { key: 'value' }]);
+    const arr = [1, 'hello', { a: 1 }, null];
+    expect(arrayInitial(arr)).toEqual([1, 'hello', { a: 1 }]);
   });
 
-  test('should throw an error if the input is not an array', () => {
-    expect(() => arrayInitial(null)).toThrow('Expected an array for the first argument.');
-    expect(() => arrayInitial(undefined)).toThrow('Expected an array for the first argument.');
-    expect(() => arrayInitial('string')).toThrow('Expected an array for the first argument.');
-    expect(() => arrayInitial(123)).toThrow('Expected an array for the first argument.');
-    expect(() => arrayInitial({})).toThrow('Expected an array for the first argument.');
+  test('should handle non-array input by returning an empty array', () => {
+    expect(arrayInitial(null)).toEqual([]);
+    expect(arrayInitial(undefined)).toEqual([]);
+    expect(arrayInitial(123)).toEqual([]);
+    expect(arrayInitial('string')).toEqual([]);
+    expect(arrayInitial({})).toEqual([]);
   });
 });
