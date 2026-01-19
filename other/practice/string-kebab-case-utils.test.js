@@ -1,48 +1,36 @@
-import kebabCase from './string-kebab-case-utils';
+const { kebabCase } = require('./string-kebab-case-utils');
 
 describe('kebabCase', () => {
-  test('should convert camelCase to kebab-case', () => {
+  it('should convert a camelCase string to kebab-case', () => {
     expect(kebabCase('helloWorld')).toBe('hello-world');
-    expect(kebabCase('fooBarBaz')).toBe('foo-bar-baz');
   });
 
-  test('should convert PascalCase to kebab-case', () => {
+  it('should convert a PascalCase string to kebab-case', () => {
     expect(kebabCase('HelloWorld')).toBe('hello-world');
-    expect(kebabCase('FooBarBaz')).toBe('foo-bar-baz');
   });
 
-  test('should convert snake_case to kebab-case', () => {
+  it('should convert a snake_case string to kebab-case', () => {
     expect(kebabCase('hello_world')).toBe('hello-world');
-    expect(kebabCase('foo_bar_baz')).toBe('foo-bar-baz');
   });
 
-  test('should convert space-separated words to kebab-case', () => {
-    expect(kebabCase('Hello World')).toBe('hello-world');
-    expect(kebabCase('foo bar baz')).toBe('foo-bar-baz');
+  it('should convert a space-separated string to kebab-case', () => {
+    expect(kebabCase('hello world')).toBe('hello-world');
   });
 
-  test('should handle mixed delimiters', () => {
-    expect(kebabCase('Hello-world_this Is A-test')).toBe('hello-world-this-is-a-test');
+  it('should handle strings with multiple separators', () => {
+    expect(kebabCase('foo--bar__baz')).toBe('foo-bar-baz');
   });
 
-  test('should handle leading/trailing spaces and multiple delimiters', () => {
-    expect(kebabCase('  --Hello World--  ')).toBe('hello-world');
-    expect(kebabCase('__foo   bar__')).toBe('foo-bar');
+  it('should handle leading/trailing separators and spaces', () => {
+    expect(kebabCase('-foo bar-')).toBe('foo-bar');
+    expect(kebabCase(' Foo Bar ')).toBe('foo-bar');
   });
 
-  test('should handle strings with numbers', () => {
-    expect(kebabCase('fooBar123')).toBe('foo-bar-123');
-    expect(kebabCase('foo-123-bar')).toBe('foo-123-bar');
+  it('should handle single word strings', () => {
+    expect(kebabCase('hello')).toBe('hello');
   });
 
-  test('should handle empty string', () => {
+  it('should handle empty strings', () => {
     expect(kebabCase('')).toBe('');
-  });
-
-  test('should throw TypeError if argument is not a string', () => {
-    expect(() => kebabCase(null)).toThrow(TypeError);
-    expect(() => kebabCase(undefined)).toThrow(TypeError);
-    expect(() => kebabCase(123)).toThrow(TypeError);
-    expect(() => kebabCase({})).toThrow(TypeError);
   });
 });

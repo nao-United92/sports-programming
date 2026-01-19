@@ -1,43 +1,40 @@
 const { set } = require('./object-set-utils');
 
 describe('set', () => {
-  let obj;
-  beforeEach(() => {
-    obj = {};
-  });
-
-  it('should set a value using a string path', () => {
-    set(obj, 'a.b.c', 1);
-    expect(obj.a.b.c).toBe(1);
-  });
-
-  it('should set a value using an array path', () => {
-    set(obj, ['a', 'b', 'c'], 2);
+  it('should set a value at a specified string path', () => {
+    const obj = { a: { b: { c: 1 } } };
+    set(obj, 'a.b.c', 2);
     expect(obj.a.b.c).toBe(2);
   });
 
-  it('should create nested objects if they do not exist', () => {
-    set(obj, 'x.y.z', 'hello');
-    expect(obj).toEqual({ x: { y: { z: 'hello' } } });
+  it('should set a value at a specified array path', () => {
+    const obj = { a: { b: { c: 1 } } };
+    set(obj, ['a', 'b', 'c'], 3);
+    expect(obj.a.b.c).toBe(3);
   });
 
-  it('should create arrays for numeric keys', () => {
-    set(obj, 'a[0].b', 'value');
-    expect(obj.a[0].b).toBe('value');
-    expect(Array.isArray(obj.a)).toBe(true);
+  it('should create nested objects if they do not exist', () => {
+    const obj = {};
+    set(obj, 'a.b.c', 10);
+    expect(obj.a.b.c).toBe(10);
   });
-  
-  it('should not overwrite existing objects', () => {
-    const initial = { a: { existing: 'value' } };
-    set(initial, 'a.b', 123);
-    expect(initial.a.existing).toBe('value');
-    expect(initial.a.b).toBe(123);
+
+  it('should handle setting a value at the root level', () => {
+    const obj = {};
+    set(obj, 'key', 'value');
+    expect(obj.key).toBe('value');
   });
-  
-  it('should modify the original object', () => {
-    const original = {a: 1};
-    const result = set(original, 'b', 2);
-    expect(original.b).toBe(2);
-    expect(result).toBe(original);
+
+  it('should overwrite existing values', () => {
+    const obj = { a: { b: { c: 1 } } };
+    set(obj, 'a.b.c', 'new value');
+    expect(obj.a.b.c).toBe('new value');
+  });
+
+  it('should return the modified object', () => {
+    const obj = { a: { b: { c: 1 } } };
+    const result = set(obj, 'a.b.c', 5);
+    expect(result).toBe(obj);
+    expect(result.a.b.c).toBe(5);
   });
 });

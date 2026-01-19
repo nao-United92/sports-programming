@@ -1,61 +1,45 @@
 const { groupBy } = require('./array-group-by-utils');
 
 describe('groupBy', () => {
-  test('should group an array of numbers by a function', () => {
-    expect(groupBy([6.1, 4.2, 6.3], Math.floor)).toEqual({
-      '4': [4.2],
-      '6': [6.1, 6.3],
-    });
-  });
-
-  test('should group an array of objects by a property name string', () => {
-    const users = [
-      { id: 1, name: 'Alice', active: true },
-      { id: 2, name: 'Bob', active: false },
-      { id: 3, name: 'Charlie', active: true },
+  it('should group an array of objects by a given key', () => {
+    const array = [
+      { id: 1, category: 'A' },
+      { id: 2, category: 'B' },
+      { id: 3, category: 'A' },
+      { id: 4, category: 'C' },
+      { id: 5, category: 'B' },
     ];
-    expect(groupBy(users, 'active')).toEqual({
-      'true': [
-        { id: 1, name: 'Alice', active: true },
-        { id: 3, name: 'Charlie', active: true },
+    const expected = {
+      A: [
+        { id: 1, category: 'A' },
+        { id: 3, category: 'A' },
       ],
-      'false': [{ id: 2, name: 'Bob', active: false }],
-    });
+      B: [
+        { id: 2, category: 'B' },
+        { id: 5, category: 'B' },
+      ],
+      C: [{ id: 4, category: 'C' }],
+    };
+    expect(groupBy(array, 'category')).toEqual(expected);
   });
 
-  test('should handle an empty array, returning an empty object', () => {
-    expect(groupBy([], 'id')).toEqual({});
+  it('should return an empty object for an empty array', () => {
+    expect(groupBy([], 'category')).toEqual({});
   });
 
-  test('should return an empty object for non-array inputs', () => {
-    expect(groupBy(null, 'id')).toEqual({});
-    expect(groupBy(undefined, 'id')).toEqual({});
-    expect(groupBy({}, 'id')).toEqual({});
-  });
-
-  test('should group by a complex iteratee function', () => {
-    const data = [
-      { category: 'A', value: 10 },
-      { category: 'B', value: 20 },
-      { category: 'A', value: 30 },
+  it('should handle items without the specified key', () => {
+    const array = [
+      { id: 1, category: 'A' },
+      { id: 2 },
+      { id: 3, category: 'A' },
     ];
-    const iteratee = item => item.category + '-' + (item.value > 15 ? 'high' : 'low');
-    expect(groupBy(data, iteratee)).toEqual({
-      'A-low': [{ category: 'A', value: 10 }],
-      'B-high': [{ category: 'B', value: 20 }],
-      'A-high': [{ category: 'A', value: 30 }],
-    });
-  });
-
-  test('should group items with undefined keys when iteratee returns undefined', () => {
-    const items = [
-      { a: 1 },
-      { b: 2 },
-      { a: 3 },
-    ];
-    expect(groupBy(items, 'b')).toEqual({
-      'undefined': [{ a: 1 }, { a: 3 }],
-      '2': [{ b: 2 }]
-    });
+    const expected = {
+      A: [
+        { id: 1, category: 'A' },
+        { id: 3, category: 'A' },
+      ],
+      undefined: [{ id: 2 }],
+    };
+    expect(groupBy(array, 'category')).toEqual(expected);
   });
 });

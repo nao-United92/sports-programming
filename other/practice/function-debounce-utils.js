@@ -1,11 +1,11 @@
 const debounce = (func, delay) => {
   let timeoutId;
-
-  return function(...args) {
-    const context = this;
+  return (...args) => {
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(context, args), delay);
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
   };
 };
 
-module.exports = debounce;
+module.exports = { debounce };
