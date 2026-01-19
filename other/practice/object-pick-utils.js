@@ -1,11 +1,11 @@
-export const pick = (obj, ...keys) => {
-  if (typeof obj !== 'object' || obj === null) {
-    return {};
-  }
-  return keys.reduce((acc, key) => {
-    if (key in obj) {
-      acc[key] = obj[key];
+const pick = (obj, keysToPick) => {
+  const newObj = {};
+  for (const key of keysToPick) {
+    if (obj.hasOwnProperty(key)) {
+      newObj[key] = obj[key];
     }
-    return acc;
-  }, {});
+  }
+  return newObj;
 };
+
+module.exports = { pick };
