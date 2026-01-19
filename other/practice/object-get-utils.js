@@ -1,18 +1,15 @@
-const get = (obj, path, defaultValue = undefined) => {
-  const pathArray = Array.isArray(path) ? path : path.match(/([^[.\]])+/g);
+const get = (obj, path, defaultValue) => {
+  const pathParts = Array.isArray(path) ? path : path.split('.');
+  let current = obj;
 
-  if (!pathArray || pathArray.length === 0) {
-    return defaultValue;
+  for (let i = 0; i < pathParts.length; i++) {
+    if (current === null || typeof current === 'undefined') {
+      return defaultValue;
+    }
+    current = current[pathParts[i]];
   }
 
-  const result = pathArray.reduce((prevObj, key) => {
-    if (prevObj && typeof prevObj === 'object' && key in prevObj) {
-      return prevObj[key];
-    }
-    return undefined;
-  }, obj);
-
-  return result === undefined ? defaultValue : result;
+  return current === null || typeof current === 'undefined' ? defaultValue : current;
 };
 
 module.exports = { get };
