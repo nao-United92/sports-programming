@@ -1,31 +1,31 @@
-const mode = (arr) => {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument.');
-  }
-  if (arr.length === 0) {
+export const mode = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
     return [];
   }
 
-  const counts = new Map();
-  let maxCount = 0;
+  const counts = arr.reduce((acc, value) => {
+    acc[value] = (acc[value] || 0) + 1;
+    return acc;
+  }, {});
 
-  for (const item of arr) {
-    const stringifiedItem = typeof item === 'object' && item !== null ? JSON.stringify(item) : item;
-    const currentCount = (counts.get(stringifiedItem) || { count: 0 }).count + 1;
-    counts.set(stringifiedItem, { value: item, count: currentCount });
-    if (currentCount > maxCount) {
-      maxCount = currentCount;
+  let maxCount = 0;
+  for (const key in counts) {
+    if (counts[key] > maxCount) {
+      maxCount = counts[key];
     }
+  }
+
+  if (maxCount <= 1 && new Set(arr).size === arr.length) {
+    return [];
   }
 
   const result = [];
-  for (const [stringifiedItem, { value, count }] of counts.entries()) {
-    if (count === maxCount) {
-      result.push(value);
+  for (const key in counts) {
+    if (counts[key] === maxCount) {
+      // Convert key back to number if it's a numeric string
+      result.push(isNaN(key) ? key : Number(key));
     }
   }
 
-  return result;
+  return result.sort((a, b) => a - b);
 };
-
-module.exports = { mode };
