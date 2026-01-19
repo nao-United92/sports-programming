@@ -1,8 +1,5 @@
 const clamp = (number, lower, upper) => {
-  if (typeof number !== 'number' || typeof lower !== 'number' || typeof upper !== 'number') {
-    return NaN;
-  }
-  return Math.max(lower, Math.min(number, upper));
+  return Math.min(Math.max(number, lower), upper);
 };
 
-export default clamp;
+module.exports = { clamp };
