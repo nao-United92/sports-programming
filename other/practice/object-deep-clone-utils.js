@@ -1,27 +1,23 @@
-const deepCloneObject = (obj) => {
+const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
 
-  // Handle Date
   if (obj instanceof Date) {
     return new Date(obj.getTime());
   }
 
-  // Handle Array
   if (Array.isArray(obj)) {
-    return obj.map(item => deepCloneObject(item));
+    return obj.map(item => deepClone(item));
   }
 
-  // Handle Object
-  const clonedObj = {};
+  const newObj = {};
   for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      clonedObj[key] = deepCloneObject(obj[key]);
+    if (obj.hasOwnProperty(key)) {
+      newObj[key] = deepClone(obj[key]);
     }
   }
-
-  return clonedObj;
+  return newObj;
 };
 
-export default deepCloneObject;
+module.exports = { deepClone };

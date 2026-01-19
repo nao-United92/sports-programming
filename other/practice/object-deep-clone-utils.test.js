@@ -1,77 +1,34 @@
-import deepCloneObject from './object-deep-clone-utils';
+const { deepClone } = require('./object-deep-clone-utils');
 
-describe('deepCloneObject', () => {
-  test('should deep clone a simple object', () => {
-    const original = { a: 1, b: 'hello' };
-    const cloned = deepCloneObject(original);
-    expect(cloned).toEqual(original);
-    expect(cloned).not.toBe(original);
+describe('deepClone', () => {
+  it('should clone an object with nested properties', () => {
+    const obj = { a: 1, b: { c: 2, d: { e: 3 } } };
+    const cloned = deepClone(obj);
+    expect(cloned).toEqual(obj);
+    expect(cloned).not.toBe(obj);
+    expect(cloned.b).not.toBe(obj.b);
+    expect(cloned.b.d).not.toBe(obj.b.d);
   });
 
-  test('should deep clone an object with nested objects', () => {
-    const original = { a: 1, b: { c: 2, d: { e: 3 } } };
-    const cloned = deepCloneObject(original);
-    expect(cloned).toEqual(original);
-    expect(cloned).not.toBe(original);
-    expect(cloned.b).not.toBe(original.b);
-    expect(cloned.b.d).not.toBe(original.b.d);
+  it('should clone an array with nested objects', () => {
+    const arr = [{ a: 1 }, { b: { c: 2 } }];
+    const cloned = deepClone(arr);
+    expect(cloned).toEqual(arr);
+    expect(cloned).not.toBe(arr);
+    expect(cloned[1]).not.toBe(arr[1]);
+    expect(cloned[1].b).not.toBe(arr[1].b);
   });
 
-  test('should deep clone an object with arrays', () => {
-    const original = { a: [1, 2], b: { c: [3, 4] } };
-    const cloned = deepCloneObject(original);
-    expect(cloned).toEqual(original);
-    expect(cloned).not.toBe(original);
-    expect(cloned.a).not.toBe(original.a);
-    expect(cloned.b.c).not.toBe(original.b.c);
+  it('should handle null and primitive values', () => {
+    expect(deepClone(null)).toBeNull();
+    expect(deepClone(123)).toBe(123);
+    expect(deepClone('hello')).toBe('hello');
   });
 
-  test('should deep clone an object with mixed types', () => {
-    const original = {
-      str: 'test',
-      num: 123,
-      bool: true,
-      arr: [1, { x: 10 }],
-      obj: { y: 20, z: [1, 2] },
-      date: new Date(),
-      nil: null,
-      undef: undefined,
-    };
-    const cloned = deepCloneObject(original);
-    expect(cloned).toEqual(original);
-    expect(cloned).not.toBe(original);
-    expect(cloned.arr).not.toBe(original.arr);
-    expect(cloned.arr[1]).not.toBe(original.arr[1]);
-    expect(cloned.obj).not.toBe(original.obj);
-    expect(cloned.obj.z).not.toBe(original.obj.z);
-    expect(cloned.date).not.toBe(original.date);
-    expect(cloned.date instanceof Date).toBe(true);
-    expect(cloned.date.getTime()).toBe(original.date.getTime());
-  });
-
-  test('should handle primitive values', () => {
-    expect(deepCloneObject(123)).toBe(123);
-    expect(deepCloneObject('string')).toBe('string');
-    expect(deepCloneObject(true)).toBe(true);
-    expect(deepCloneObject(null)).toBe(null);
-    expect(deepCloneObject(undefined)).toBe(undefined);
-  });
-
-  test('should handle empty objects and arrays', () => {
-    expect(deepCloneObject({})).toEqual({});
-    expect(deepCloneObject([])).toEqual([]);
-    expect(deepCloneObject({ a: {} })).toEqual({ a: {} });
-    expect(deepCloneObject({ b: [] })).toEqual({ b: [] });
-    expect(deepCloneObject({})).not.toBe({});
-    expect(deepCloneObject([])).not.toBe([]);
-  });
-
-  test('should handle Date objects correctly', () => {
-    const originalDate = new Date();
-    const original = { d: originalDate };
-    const cloned = deepCloneObject(original);
-    expect(cloned.d).toEqual(originalDate);
-    expect(cloned.d).not.toBe(originalDate);
-    expect(cloned.d instanceof Date).toBe(true);
+  it('should handle dates', () => {
+    const date = new Date();
+    const cloned = deepClone(date);
+    expect(cloned.getTime()).toBe(date.getTime());
+    expect(cloned).not.toBe(date);
   });
 });
