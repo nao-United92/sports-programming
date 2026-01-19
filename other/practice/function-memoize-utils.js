@@ -1,16 +1,14 @@
-export const memoize = (func, resolver) => {
-  const cache = new Map();
-
-  const memoized = function(...args) {
-    const key = resolver ? resolver(...args) : JSON.stringify(args);
-    if (cache.has(key)) {
-      return cache.get(key);
+const memoize = (func) => {
+  const cache = {};
+  return (...args) => {
+    const key = JSON.stringify(args);
+    if (cache[key]) {
+      return cache[key];
     }
-    const result = func.apply(this, args);
-    cache.set(key, result);
+    const result = func(...args);
+    cache[key] = result;
     return result;
   };
-
-  memoized.cache = cache; // Expose cache for inspection/clearing if needed
-  return memoized;
 };
+
+module.exports = { memoize };
