@@ -1,24 +1,17 @@
-const toWords = (str) => {
-  const matches = str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g);
-  return matches ? matches.map(s => s.toLowerCase()) : [];
-}
+/**
+ * Converts a string to camelCase.
+ * Handles snake_case, kebab-case, and space separated strings.
+ * @param {string} str The string to convert.
+ * @returns {string} The camelCased string.
+ */
+const toCamelCase = (str) => {
+  if (typeof str !== 'string' || !str) {
+    return '';
+  }
 
-export const toCamelCase = (str) => {
-  if (typeof str !== 'string' || !str) return '';
-  const words = toWords(str);
-  return words.reduce((acc, word, index) => {
-    return acc + (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1));
-  }, '');
+  return str
+    .replace(/[-_\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : ''))
+    .replace(/^(.)/, (c) => c.toLowerCase());
 };
 
-export const toSnakeCase = (str) => {
-  if (typeof str !== 'string' || !str) return '';
-  const words = toWords(str);
-  return words.join('_');
-};
-
-export const toKebabCase = (str) => {
-  if (typeof str !== 'string' || !str) return '';
-  const words = toWords(str);
-  return words.join('-');
-};
+module.exports = { toCamelCase };
