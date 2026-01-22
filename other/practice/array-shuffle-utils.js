@@ -1,6 +1,6 @@
 export const shuffle = (arr) => {
-  if (!Array.isArray(arr)) {
-    throw new Error("The argument must be an array.");
+  if (!arr) {
+    return [];
   }
   const result = [...arr];
   for (let i = result.length - 1; i > 0; i--) {

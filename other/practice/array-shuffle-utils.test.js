@@ -1,34 +1,33 @@
-import { shuffle } from "./array-shuffle-utils.js";
+import { shuffle } from './array-shuffle-utils';
 
-describe("shuffle", () => {
-  it("should return an array with the same length", () => {
+describe('shuffle', () => {
+  it('should return an array with the same elements', () => {
     const array = [1, 2, 3, 4, 5];
     const shuffled = shuffle(array);
     expect(shuffled).toHaveLength(array.length);
-  });
-
-  it("should contain the same elements as the original array", () => {
-    const array = [1, 2, 3, 4, 5];
-    const shuffled = shuffle(array);
     expect(shuffled.sort()).toEqual(array.sort());
   });
 
-  it("should return a new array, not modify the original", () => {
+  it('should return a new array, not modify the original', () => {
     const array = [1, 2, 3];
-    const arrayCopy = [...array];
+    const original = [...array];
     shuffle(array);
-    expect(array).toEqual(arrayCopy);
+    expect(array).toEqual(original);
   });
 
-  it("should handle an empty array", () => {
+  it('should handle an empty array', () => {
     expect(shuffle([])).toEqual([]);
   });
 
-  it("should handle an array with one element", () => {
-    expect(shuffle([1])).toEqual([1]);
+  it('should handle a null or undefined array', () => {
+    expect(shuffle(null)).toEqual([]);
+    expect(shuffle(undefined)).toEqual([]);
   });
 
-  it("should throw an error if the argument is not an array", () => {
-    expect(() => shuffle("not an array")).toThrow("The argument must be an array.");
+  it('should return an array that is likely not in the same order', () => {
+    const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const shuffled = shuffle(array);
+    // This is not a guaranteed test, but it makes a failure very unlikely for a correct implementation.
+    expect(shuffled).not.toEqual(array);
   });
 });
