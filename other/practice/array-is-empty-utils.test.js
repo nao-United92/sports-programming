@@ -1,17 +1,15 @@
-const {
-  isEmpty
-} = require('./array-is-empty-utils');
+import { isEmpty } from './array-is-empty-utils';
 
 describe('isEmpty', () => {
-  test('should return true for an empty array', () => {
+  it('should return true for an empty array', () => {
     expect(isEmpty([])).toBe(true);
   });
 
-  test('should return false for a non-empty array', () => {
-    expect(isEmpty([1, 2, 3])).toBe(false);
+  it('should return false for a non-empty array', () => {
+    expect(isEmpty([1, 2])).toBe(false);
   });
 
-  test('should return false for non-array values', () => {
+  it('should return false for non-array inputs', () => {
     expect(isEmpty(null)).toBe(false);
     expect(isEmpty(undefined)).toBe(false);
     expect(isEmpty({})).toBe(false);
