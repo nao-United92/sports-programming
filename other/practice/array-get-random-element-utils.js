@@ -1,9 +1,7 @@
-const getRandomElement = (arr) => {
-  if (!Array.isArray(arr) || arr.length === 0) {
-    return undefined; // Or null, or throw an error, depending on desired behavior
+export const getRandomElement = (arr) => {
+  if (!arr || arr.length === 0) {
+    return undefined;
   }
-  const randomIndex = Math.floor(Math.random() * arr.length);
-  return arr[randomIndex];
+  const index = Math.floor(Math.random() * arr.length);
+  return arr[index];
 };
-
-module.exports = getRandomElement;
