@@ -1,20 +1,14 @@
-export const uniqueBy = (arr, key) => {
+export const uniqueBy = (arr, iteratee) => {
   if (!Array.isArray(arr)) {
-    throw new Error("The first argument must be an array.");
+    return [];
   }
-  if (typeof key !== "string" && typeof key !== "function") {
-    throw new Error("The key must be a string or a function.");
-  }
-
   const seen = new Set();
-  const getKeyValue = (item) => (typeof key === "function" ? key(item) : item[key]);
-
-  return arr.filter((item) => {
-    const keyValue = getKeyValue(item);
-    if (seen.has(keyValue)) {
+  return arr.filter(item => {
+    const applied = iteratee(item);
+    if (seen.has(applied)) {
       return false;
     } else {
-      seen.add(keyValue);
+      seen.add(applied);
       return true;
     }
   });

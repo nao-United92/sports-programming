@@ -1,55 +1,28 @@
-import { uniqueBy } from "./array-unique-by-utils.js";
+import { uniqueBy } from './array-unique-by-utils';
 
-describe("uniqueBy", () => {
-  it("should return a unique array of objects based on a string key", () => {
-    const array = [
-      { id: 1, name: "apple" },
-      { id: 2, name: "banana" },
-      { id: 3, name: "apple" },
-      { id: 4, name: "orange" },
-      { id: 5, name: "banana" },
-    ];
-    const expected = [
-      { id: 1, name: "apple" },
-      { id: 2, name: "banana" },
-      { id: 4, name: "orange" },
-    ];
-    expect(uniqueBy(array, "name")).toEqual(expected);
+describe('uniqueBy', () => {
+  it('should return unique elements based on the iteratee function', () => {
+    const array = [{ id: 1, value: 'a' }, { id: 2, value: 'b' }, { id: 3, value: 'a' }];
+    expect(uniqueBy(array, item => item.value)).toEqual([{ id: 1, value: 'a' }, { id: 2, value: 'b' }]);
   });
 
-  it("should return a unique array based on a function", () => {
-    const array = [
-      { id: 1, value: 10 },
-      { id: 2, value: 25 },
-      { id: 3, value: 10 },
-      { id: 4, value: 28 },
-    ];
-    const expected = [
-      { id: 1, value: 10 },
-      { id: 2, value: 25 },
-      { id: 4, value: 28 },
-    ];
-    expect(uniqueBy(array, (item) => item.value)).toEqual(expected);
+  it('should work with Math.floor on numbers', () => {
+    const array = [1.2, 1.5, 2.1, 3.8, 2.9];
+    expect(uniqueBy(array, Math.floor)).toEqual([1.2, 2.1, 3.8]);
   });
 
-  it("should return the original array if all elements are unique", () => {
-    const array = [
-      { id: 1, name: "apple" },
-      { id: 2, name: "banana" },
-      { id: 3, name: "orange" },
-    ];
-    expect(uniqueBy(array, "name")).toEqual(array);
+  it('should return an empty array for invalid input', () => {
+    expect(uniqueBy(null, Math.floor)).toEqual([]);
+    expect(uniqueBy(undefined, item => item)).toEqual([]);
   });
 
-  it("should handle an empty array", () => {
-    expect(uniqueBy([], "id")).toEqual([]);
+  it('should handle an empty array input', () => {
+    expect(uniqueBy([], item => item)).toEqual([]);
   });
 
-  it("should throw an error if the first argument is not an array", () => {
-    expect(() => uniqueBy("not an array", "key")).toThrow("The first argument must be an array.");
-  });
-
-  it("should throw an error if the key is not a string or a function", () => {
-    expect(() => uniqueBy([], 123)).toThrow("The key must be a string or a function.");
+  it('should not mutate the original array', () => {
+    const originalArray = [{ id: 1 }, { id: 2 }, { id: 1 }];
+    uniqueBy(originalArray, item => item.id);
+    expect(originalArray).toEqual([{ id: 1 }, { id: 2 }, { id: 1 }]);
   });
 });
