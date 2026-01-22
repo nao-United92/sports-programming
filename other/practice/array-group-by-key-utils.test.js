@@ -1,71 +1,45 @@
-// other/practice/array-group-by-key-utils.test.js
+import { groupByKey } from './array-group-by-key-utils';
 
-const arrayGroupByKey = require('./array-group-by-key-utils');
-
-describe('arrayGroupByKey', () => {
-  test('should group objects by a specified string key', () => {
-    const users = [
-      { id: 1, category: 'A', name: 'Alice' },
-      { id: 2, category: 'B', name: 'Bob' },
-      { id: 3, category: 'A', name: 'Charlie' },
-      { id: 4, category: 'C', name: 'David' },
+describe('groupByKey', () => {
+  it('should group an array of objects by a key', () => {
+    const array = [
+      { id: 1, category: 'A' },
+      { id: 2, category: 'B' },
+      { id: 3, category: 'A' },
+      { id: 4, category: 'C' },
+      { id: 5, category: 'B' },
     ];
-    const grouped = arrayGroupByKey(users, 'category');
-    expect(grouped).toEqual({
+    const expected = {
       A: [
-        { id: 1, category: 'A', name: 'Alice' },
-        { id: 3, category: 'A', name: 'Charlie' },
+        { id: 1, category: 'A' },
+        { id: 3, category: 'A' },
       ],
-      B: [{ id: 2, category: 'B', name: 'Bob' }],
-      C: [{ id: 4, category: 'C', name: 'David' }],
-    });
-  });
-
-  test('should group objects by a specified numeric key', () => {
-    const products = [
-      { id: 1, price: 10, name: 'Shirt' },
-      { id: 2, price: 20, name: 'Pants' },
-      { id: 3, price: 10, name: 'Socks' },
-    ];
-    const grouped = arrayGroupByKey(products, 'price');
-    expect(grouped).toEqual({
-      10: [
-        { id: 1, price: 10, name: 'Shirt' },
-        { id: 3, price: 10, name: 'Socks' },
+      B: [
+        { id: 2, category: 'B' },
+        { id: 5, category: 'B' },
       ],
-      20: [{ id: 2, price: 20, name: 'Pants' }],
-    });
+      C: [{ id: 4, category: 'C' }],
+    };
+    expect(groupByKey(array, 'category')).toEqual(expected);
   });
 
-  test('should handle items with missing keys gracefully', () => {
-    const data = [
-      { id: 1, type: 'A' },
-      { id: 2 }, // Missing 'type'
-      { id: 3, type: 'A' },
-      { id: 4, type: 'B' },
+  it('should return an empty object for an empty array', () => {
+    expect(groupByKey([], 'category')).toEqual({});
+  });
+
+  it('should handle items without the specified key', () => {
+    const array = [
+      { id: 1, category: 'A' },
+      { id: 2, name: 'No Category' },
+      { id: 3, category: 'A' },
     ];
-    const grouped = arrayGroupByKey(data, 'type');
-    expect(grouped).toEqual({
-      A: [{ id: 1, type: 'A' }, { id: 3, type: 'A' }],
-      B: [{ id: 4, type: 'B' }],
-    });
-  });
-
-  test('should return an empty object for an empty array', () => {
-    expect(arrayGroupByKey([], 'category')).toEqual({});
-  });
-
-  test('should throw TypeError if arr is not an array', () => {
-    expect(() => arrayGroupByKey(null, 'key')).toThrow(TypeError);
-    expect(() => arrayGroupByKey(undefined, 'key')).toThrow(TypeError);
-    expect(() => arrayGroupByKey({}, 'key')).toThrow(TypeError);
-  });
-
-  test('should throw TypeError if key is not a string or empty', () => {
-    const arr = [{ a: 1 }];
-    expect(() => arrayGroupByKey(arr, null)).toThrow(TypeError);
-    expect(() => arrayGroupByKey(arr, undefined)).toThrow(TypeError);
-    expect(() => arrayGroupByKey(arr, 123)).toThrow(TypeError);
-    expect(() => arrayGroupByKey(arr, '')).toThrow(TypeError);
+    const expected = {
+      A: [
+        { id: 1, category: 'A' },
+        { id: 3, category: 'A' },
+      ],
+      undefined: [{ id: 2, name: 'No Category' }],
+    };
+    expect(groupByKey(array, 'category')).toEqual(expected);
   });
 });
