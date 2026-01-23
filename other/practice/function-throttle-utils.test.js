@@ -1,39 +1,40 @@
-const { throttle } = require('./function-throttle-utils');
-
-jest.useFakeTimers();
+import { throttle } from './function-throttle-utils.js';
 
 describe('throttle', () => {
-  let func;
-  let throttledFunc;
+  jest.useFakeTimers();
 
-  beforeEach(() => {
-    func = jest.fn();
-    throttledFunc = throttle(func, 1000);
-  });
-
-  it('should call the function immediately on the first call', () => {
-    throttledFunc();
+  it('should call the function immediately', () => {
+    const func = jest.fn();
+    const throttled = throttle(func, 1000);
+    throttled();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should not call the function again within the time limit', () => {
-    throttledFunc();
-    throttledFunc();
-    throttledFunc();
+  it('should not call the function again within the wait time', () => {
+    const func = jest.fn();
+    const throttled = throttle(func, 1000);
+    throttled();
+    throttled();
+    throttled();
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should call the function again after the time limit has passed', () => {
-    throttledFunc();
+  it('should call the function again after the wait time', () => {
+    const func = jest.fn();
+    const throttled = throttle(func, 1000);
+
+    throttled();
     expect(func).toHaveBeenCalledTimes(1);
 
     jest.advanceTimersByTime(1000);
-    throttledFunc();
+    throttled();
     expect(func).toHaveBeenCalledTimes(2);
   });
 
-  it('should call the function with the correct arguments', () => {
-    throttledFunc(1, 'test');
+  it('should pass arguments to the throttled function', () => {
+    const func = jest.fn();
+    const throttled = throttle(func, 1000);
+    throttled(1, 'test');
     expect(func).toHaveBeenCalledWith(1, 'test');
   });
 });

@@ -1,4 +1,24 @@
-const pipe = (...fns) =>
-  fns.reduce((f, g) => (...args) => g(f(...args)), arg => arg);
+/**
+ * Creates a function that returns the result of invoking the given functions from left to right.
+ * The first function is invoked with the arguments of the created function; the subsequent functions
+ * are invoked with the result of the previous function.
+ * (This is an alias for `flow` for functional programming style).
+ *
+ * @param {...(Function)} funcs The functions to invoke.
+ * @returns {Function} Returns the new composite function.
+ */
+const pipe = (...funcs) => {
+  return function(...args) {
+    if (funcs.length === 0) {
+      return undefined;
+    }
 
-module.exports = { pipe };
+    let result = funcs[0].apply(this, args);
+    for (let i = 1; i < funcs.length; i++) {
+      result = funcs[i].call(this, result);
+    }
+    return result;
+  };
+};
+
+export { pipe };
