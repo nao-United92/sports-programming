@@ -1,16 +1,14 @@
 /**
- * Creates a function that returns the opposite of the given predicate function's result.
+ * Creates a function that negates the result of the predicate `func`. The `func` predicate is
+ * invoked with the `this` binding and arguments of the created function.
  *
- * @param {Function} predicate The predicate function to negate.
+ * @param {Function} predicate The predicate to negate.
  * @returns {Function} Returns the new negated function.
  */
 const negate = (predicate) => {
-  if (typeof predicate !== 'function') {
-    throw new TypeError('Expected a function for the first argument.');
-  }
   return function(...args) {
-    return !predicate(...args);
+    return !predicate.apply(this, args);
   };
 };
 
-export default negate;
+export { negate };
