@@ -1,31 +1,39 @@
-import once from './function-once-utils';
+import { once } from './function-once-utils.js';
 
 describe('once', () => {
-  test('should only invoke the function once', () => {
-    const spy = jest.fn();
-    const initialize = once(spy);
+  it('should only call the original function once', () => {
+    const func = jest.fn();
+    const onceFunc = once(func);
 
-    initialize();
-    initialize();
-    initialize();
+    onceFunc();
+    onceFunc();
+    onceFunc();
 
-    expect(spy).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenCalledTimes(1);
   });
 
-  test('should return the value of the first invocation', () => {
-    let num = 5;
-    const canOnlyDoubleOnce = once(() => (num *= 2));
+  it('should return the value from the first call', () => {
+    let i = 0;
+    const func = () => ++i;
+    const onceFunc = once(func);
 
-    expect(canOnlyDoubleOnce()).toBe(10);
-    expect(canOnlyDoubleOnce()).toBe(10);
-    expect(num).toBe(10);
+    const result1 = onceFunc();
+    const result2 = onceFunc();
+    const result3 = onceFunc();
+
+    expect(result1).toBe(1);
+    expect(result2).toBe(1);
+    expect(result3).toBe(1);
   });
 
-  test('should pass arguments to the original function', () => {
-    const add = (a, b) => a + b;
-    const addOnce = once(add);
+  it('should pass arguments to the original function', () => {
+    const func = jest.fn();
+    const onceFunc = once(func);
 
-    expect(addOnce(3, 4)).toBe(7);
-    expect(addOnce(5, 6)).toBe(7);
+    onceFunc(1, 2, 3);
+    onceFunc(4, 5, 6);
+
+    expect(func).toHaveBeenCalledWith(1, 2, 3);
+    expect(func).not.toHaveBeenCalledWith(4, 5, 6);
   });
 });
