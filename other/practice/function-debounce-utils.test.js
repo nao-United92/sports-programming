@@ -1,46 +1,44 @@
-const { debounce } = require('./function-debounce-utils');
-
-jest.useFakeTimers();
+import { debounce } from './function-debounce-utils.js';
 
 describe('debounce', () => {
-  let func;
-  let debouncedFunc;
+  jest.useFakeTimers();
 
-  beforeEach(() => {
-    func = jest.fn();
-    debouncedFunc = debounce(func, 500);
-  });
+  it('should only call the function after the wait time has passed', () => {
+    const func = jest.fn();
+    const debouncedFunc = debounce(func, 1000);
 
-  it('should not call the function immediately', () => {
     debouncedFunc();
     expect(func).not.toHaveBeenCalled();
-  });
 
-  it('should call the function after the specified delay', () => {
-    debouncedFunc();
+    jest.advanceTimersByTime(500);
     expect(func).not.toHaveBeenCalled();
-    
+
     jest.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should call the function only once for multiple rapid calls', () => {
-    for (let i = 0; i < 10; i++) {
-      debouncedFunc();
-    }
-    
+  it('should reset the timer if called again within the wait time', () => {
+    const func = jest.fn();
+    const debouncedFunc = debounce(func, 1000);
+
+    debouncedFunc();
+    jest.advanceTimersByTime(500);
+    debouncedFunc(); // Call again
+
+    jest.advanceTimersByTime(500);
+    expect(func).not.toHaveBeenCalled();
+
     jest.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
-  it('should reset the timer on subsequent calls', () => {
-    debouncedFunc();
-    jest.advanceTimersByTime(300);
-    debouncedFunc();
-    jest.advanceTimersByTime(400);
-    expect(func).not.toHaveBeenCalled();
+  it('should pass arguments to the debounced function', () => {
+    const func = jest.fn();
+    const debouncedFunc = debounce(func, 1000);
 
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1);
+    debouncedFunc(1, 'test');
+    jest.advanceTimersByTime(1000);
+
+    expect(func).toHaveBeenCalledWith(1, 'test');
   });
 });
