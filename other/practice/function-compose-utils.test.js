@@ -1,30 +1,60 @@
-const { compose } = require('./function-compose-utils.js');
+import { compose } from './function-compose-utils.js';
 
 describe('compose', () => {
-  const add1 = (x) => x + 1;
-  const multiply2 = (x) => x * 2;
-  const subtract3 = (x) => x - 3;
-
   it('should compose functions from right to left', () => {
-    const composedFn = compose(subtract3, multiply2, add1);
-    // (5 + 1) * 2 - 3 = 6 * 2 - 3 = 12 - 3 = 9
-    expect(composedFn(5)).toBe(9);
+    const addOne = (n) => n + 1;
+    const multiplyByTwo = (n) => n * 2;
+    const subtractThree = (n) => n - 3;
+
+    const composedFunc = compose(subtractThree, multiplyByTwo, addOne);
+
+    // 最初にaddOne(10) -> 11
+    // 次にmultiplyByTwo(11) -> 22
+    // 最後にsubtractThree(22) -> 19
+    expect(composedFunc(10)).toBe(19);
   });
 
-  it('should work with a single function', () => {
-    const composedFn = compose(add1);
-    expect(composedFn(5)).toBe(6);
+  it('should handle multiple arguments for the rightmost function', () => {
+    const add = (a, b) => a + b;
+    const square = (n) => n * n;
+    const toString = (n) => String(n);
+
+    const composedFunc = compose(toString, square, add);
+
+    // add(2, 3) -> 5
+    // square(5) -> 25
+    // toString(25) -> '25'
+    expect(composedFunc(2, 3)).toBe('25');
   });
 
-  it('should return the initial value if no functions are provided', () => {
-    const composedFn = compose();
-    expect(composedFn(5)).toBe(5);
+  it('should handle a single function', () => {
+    const addOne = (n) => n + 1;
+    const singleCompose = compose(addOne);
+
+    expect(singleCompose(5)).toBe(6);
   });
 
-  it('should handle functions with multiple arguments correctly for the first function', () => {
-    const sum = (a, b) => a + b;
-    const square = (x) => x * x;
-    const composedFn = compose(square, sum); // square(sum(a, b))
-    expect(composedFn(2, 3)).toBe(25); // (2 + 3) * (2 + 3) = 5 * 5 = 25
+  it('should return the first argument if no functions are provided', () => {
+    const emptyCompose = compose();
+    expect(emptyCompose(123)).toBe(123);
+    expect(emptyCompose()).toBeUndefined();
+  });
+
+  it('should maintain the `this` context', () => {
+    const obj = {
+      value: 10,
+      addValue: function(num) {
+        return this.value + num;
+      },
+      multiplyByTwo: function(num) {
+        return num * 2;
+      },
+    };
+
+    const combinedCompose = compose(obj.multiplyByTwo, obj.addValue);
+
+    // obj.addValue(3) with this = { value: 5 } -> 8
+    // obj.multiplyByTwo(8) with this = { value: 5 } -> 16
+    expect(combinedCompose.call({ value: 5 }, 3)).toBe(16);
   });
 });
