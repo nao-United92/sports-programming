@@ -1,14 +1,27 @@
-const throttle = (func, limit) => {
-  let inThrottle;
-  return function() {
-    const args = arguments;
-    const context = this;
+/**
+ * Creates a throttled function that only invokes `func` at most once per every `wait` milliseconds.
+ *
+ * @param {Function} func The function to throttle.
+ * @param {number} wait The number of milliseconds to throttle invocations to.
+ * @returns {Function} Returns the new throttled function.
+ */
+const throttle = (func, wait) => {
+  let inThrottle = false;
+  let lastArgs = null;
+  let lastThis = null;
+
+  return function(...args) {
+    lastArgs = args;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    lastThis = this;
     if (!inThrottle) {
-      func.apply(context, args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      func.apply(lastThis, lastArgs);
+      setTimeout(() => {
+        inThrottle = false;
+      }, wait);
     }
   };
 };
 
-module.exports = { throttle };
+export { throttle };
