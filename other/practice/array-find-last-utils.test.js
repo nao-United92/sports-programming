@@ -1,68 +1,66 @@
-const findLast = require('./array-find-last-utils');
+import findLast from './array-find-last-utils';
 
 describe('findLast', () => {
-  const users = [{
-    id: 1,
-    name: 'john',
-    active: false
-  }, {
-    id: 2,
-    name: 'jane',
-    active: true
-  }, {
-    id: 3,
-    name: 'doe',
-    active: false
-  }, {
-    id: 4,
-    name: 'alice',
-    active: true
-  }, ];
+  const users = [
+    { user: 'barney', active: false },
+    { user: 'fred', active: true },
+    { user: 'pebbles', active: false },
+    { user: 'dino', active: true },
+  ];
 
-  test('should return the last element that satisfies the predicate', () => {
-    const result = findLast(users, user => user.active);
-    expect(result).toEqual({
-      id: 4,
-      name: 'alice',
-      active: true
-    });
+  // Test case 1: Find an active user
+  test('should find the last element that satisfies the predicate', () => {
+    const result = findLast(users, o => o.active);
+    expect(result).toEqual({ user: 'dino', active: true });
   });
 
+  // Test case 2: No element satisfies the predicate
   test('should return undefined if no element satisfies the predicate', () => {
-    const result = findLast(users, user => user.id === 5);
+    const result = findLast(users, o => o.age > 50);
     expect(result).toBeUndefined();
   });
 
+  // Test case 3: Empty array
   test('should return undefined for an empty array', () => {
-    const result = findLast([], user => user.active);
+    const result = findLast([], o => o.active);
     expect(result).toBeUndefined();
   });
 
-  test('should handle arrays of primitive values', () => {
-    const arr = [1, 2, 3, 4, 5, 2];
-    expect(findLast(arr, num => num % 2 === 0)).toBe(2);
-    expect(findLast(arr, num => num > 5)).toBeUndefined();
+  // Test case 4: Predicate using index
+  test('should find the last element based on index', () => {
+    const numbers = [10, 20, 30, 40, 50];
+    const result = findLast(numbers, (num, index) => index < 2);
+    expect(result).toBe(20); // Last element where index < 2 is 20 (index 1)
   });
 
-  test('should pass index and array to the predicate', () => {
-    const arr = [10, 20, 30];
-    const predicate = jest.fn((value, index, array) => {
-      expect(array).toEqual(arr);
-      return index === 1;
-    });
-    expect(findLast(arr, predicate)).toBe(20);
-    expect(predicate).toHaveBeenCalledTimes(2); // Should call for 30 (index 2) then 20 (index 1)
+  // Test case 5: Predicate always returns true
+  test('should return the last element if predicate always returns true', () => {
+    const numbers = [1, 2, 3];
+    const result = findLast(numbers, () => true);
+    expect(result).toBe(3);
   });
 
-  test('should return undefined if input is not an array', () => {
-    expect(findLast(null, () => true)).toBeUndefined();
-    expect(findLast(undefined, () => true)).toBeUndefined();
-    expect(findLast({}, () => true)).toBeUndefined();
+  // Test case 6: Predicate always returns false
+  test('should return undefined if predicate always returns false', () => {
+    const numbers = [1, 2, 3];
+    const result = findLast(numbers, () => false);
+    expect(result).toBeUndefined();
   });
 
-  test('should return undefined if predicate is not a function', () => {
-    expect(findLast(users, null)).toBeUndefined();
-    expect(findLast(users, undefined)).toBeUndefined();
-    expect(findLast(users, 'active')).toBeUndefined();
+  // Test case 7: Invalid input - non-array
+  test('should throw TypeError if the first argument is not an array', () => {
+    expect(() => findLast(null, o => o)).toThrow(TypeError);
+    expect(() => findLast(undefined, o => o)).toThrow(TypeError);
+    expect(() => findLast(123, o => o)).toThrow(TypeError);
+    expect(() => findLast('string', o => o)).toThrow(TypeError);
+    expect(() => findLast({}, o => o)).toThrow(TypeError);
+  });
+
+  // Test case 8: Invalid input - non-function predicate
+  test('should throw TypeError if the predicate argument is not a function', () => {
+    const arr = [1, 2, 3];
+    expect(() => findLast(arr, 'not-a-function')).toThrow(TypeError);
+    expect(() => findLast(arr, null)).toThrow(TypeError);
+    expect(() => findLast(arr, undefined)).toThrow(TypeError);
   });
 });

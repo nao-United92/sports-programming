@@ -1,23 +1,25 @@
 /**
- * Iterates over elements of `arr` from right to left, returning the first element
- * `predicate` returns truthy for. The predicate is invoked with three arguments:
- * (value, index, array).
+ * This function is like `find` except that it iterates over elements of `collection` from right to left.
  *
- * @param {Array<any>} arr The array to inspect.
- * @param {Function} predicate The function invoked per iteration.
- * @returns {any|undefined} Returns the matched element, else `undefined`.
+ * @param {Array<T>} array The array to inspect.
+ * @param {function(T, number, Array<T>): boolean} predicate The function invoked per iteration.
+ * @returns {T|undefined} Returns the matched element, else `undefined`.
+ * @template T
  */
-function findLast(arr, predicate) {
-  if (!Array.isArray(arr) || typeof predicate !== 'function') {
-    return undefined;
+function findLast(array, predicate) {
+  if (!Array.isArray(array)) {
+    throw new TypeError('Expected an array for the first argument.');
+  }
+  if (typeof predicate !== 'function') {
+    throw new TypeError('Expected a function for the predicate argument.');
   }
 
-  for (let i = arr.length - 1; i >= 0; i--) {
-    if (predicate(arr[i], i, arr)) {
-      return arr[i];
+  for (let i = array.length - 1; i >= 0; i--) {
+    if (predicate(array[i], i, array)) {
+      return array[i];
     }
   }
   return undefined;
 }
 
-module.exports = findLast;
+export default findLast;
