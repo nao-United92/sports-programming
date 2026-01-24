@@ -1,63 +1,57 @@
 import formatDate from './date-format-utils';
 
 describe('formatDate', () => {
-  const date = new Date('2023-01-01T14:05:06.007Z'); // January 1, 2023, 14:05:06.007
+  const testDate = new Date('2023-01-24T14:35:08.123Z'); // January 24, 2023 14:35:08.123 UTC
 
-  test('should format date with default YYYY-MM-DD format', () => {
-    expect(formatDate(new Date('2023-01-01'))).toBe('2023-01-01');
-    expect(formatDate(new Date('2023-12-31'))).toBe('2023-12-31');
+  // Test case 1: Full date and time
+  test('should format date to YYYY-MM-DD HH:mm:ss.ms', () => {
+    expect(formatDate(testDate, 'YYYY-MM-DD HH:mm:ss.ms')).toBe('2023-01-24 14:35:08.123');
   });
 
-  test('should format date with custom YYYY/MM/DD format', () => {
-    expect(formatDate(date, 'YYYY/MM/DD')).toBe('2023/01/01');
+  // Test case 2: Date only
+  test('should format date to YYYY/MM/DD', () => {
+    expect(formatDate(testDate, 'YYYY/MM/DD')).toBe('2023/01/24');
   });
 
-  test('should format date with HH:mm:ss format', () => {
-    // Note: Due to timezone differences, running this test in different environments
-    // might yield different results for hours. The test date is a UTC date.
-    // For consistency, let's ensure the `date` object is treated carefully.
-    // With `new Date('2023-01-01T14:05:06.007Z')`, `getHours()` will give the local hour.
-    // To be precise for testing, it's better to get the local time components for comparison.
-    const localDate = new Date('2023-01-01T14:05:06.007'); // Use local time for test
-    const localHours = String(localDate.getHours()).padStart(2, '0');
-    const localMinutes = String(localDate.getMinutes()).padStart(2, '0');
-    const localSeconds = String(localDate.getSeconds()).padStart(2, '0');
-    expect(formatDate(localDate, 'HH:mm:ss')).toBe(`${localHours}:${localMinutes}:${localSeconds}`);
+  // Test case 3: Time only
+  test('should format time to HH:mm:ss', () => {
+    expect(formatDate(testDate, 'HH:mm:ss')).toBe('14:35:08');
   });
 
-  test('should format date with full format YYYY-MM-DD HH:mm:ss SSS', () => {
-    const localDate = new Date('2023-01-01T14:05:06.007'); // Use local time for test
-    const localHours = String(localDate.getHours()).padStart(2, '0');
-    const localMinutes = String(localDate.getMinutes()).padStart(2, '0');
-    const localSeconds = String(localDate.getSeconds()).padStart(2, '0');
-    const localMilliseconds = String(localDate.getMilliseconds()).padStart(3, '0');
-
-    const expected = `2023-01-01 ${localHours}:${localMinutes}:${localSeconds} ${localMilliseconds}`;
-    expect(formatDate(localDate, 'YYYY-MM-DD HH:mm:ss SSS')).toBe(expected);
+  // Test case 4: Custom format string
+  test('should format date with a custom string', () => {
+    expect(formatDate(testDate, 'MM/DD/YYYY at HHh mmm sss ms')).toBe('01/24/2023 at 14h 35m 08s 123');
   });
 
-  test('should handle single digit month/day/hour/minute/second with padding', () => {
-    const d = new Date('2023-03-05T08:07:01.002');
-    const localHours = String(d.getHours()).padStart(2, '0');
-    const localMinutes = String(d.getMinutes()).padStart(2, '0');
-    const localSeconds = String(d.getSeconds()).padStart(2, '0');
-    const localMilliseconds = String(d.getMilliseconds()).padStart(3, '0');
-
-    expect(formatDate(d, 'YYYY-MM-DD HH:mm:ss SSS'))
-      .toBe(`2023-03-05 ${localHours}:${localMinutes}:${localSeconds} ${localMilliseconds}`);
+  // Test case 5: Single digit month, day, hour, minute, second
+  test('should format single digit components with leading zeros', () => {
+    const singleDigitDate = new Date('2023-02-05T03:04:05.006Z'); // February 5, 2023 03:04:05.006 UTC
+    expect(formatDate(singleDigitDate, 'YYYY-MM-DD HH:mm:ss.ms')).toBe('2023-02-05 03:04:05.006');
   });
 
-  test('should throw TypeError if first argument is not a valid Date object', () => {
-    expect(() => formatDate(null)).toThrow(TypeError);
-    expect(() => formatDate(undefined)).toThrow(TypeError);
-    expect(() => formatDate('2023-01-01')).toThrow(TypeError);
-    expect(() => formatDate(123)).toThrow(TypeError);
-    expect(() => formatDate(new Date('invalid date'))).toThrow(TypeError);
+  // Test case 6: Milliseconds less than 100
+  test('should format milliseconds with leading zeros when less than 100', () => {
+    const msDate = new Date('2023-01-01T00:00:00.007Z');
+    expect(formatDate(msDate, 'ms')).toBe('007');
   });
 
-  test('should throw TypeError if format argument is not a non-empty string', () => {
-    expect(() => formatDate(date, null)).toThrow(TypeError);
-    expect(() => formatDate(date, '')).toThrow(TypeError);
-    expect(() => formatDate(date, 123)).toThrow(TypeError);
+  // Test case 7: Milliseconds less than 10
+  test('should format milliseconds with two leading zeros when less than 10', () => {
+    const msDate = new Date('2023-01-01T00:00:00.001Z');
+    expect(formatDate(msDate, 'ms')).toBe('001');
+  });
+
+  // Test case 8: Invalid Date object
+  test('should throw TypeError for an invalid Date object', () => {
+    expect(() => formatDate(new Date('invalid date'), 'YYYY')).toThrow(TypeError);
+    expect(() => formatDate(null, 'YYYY')).toThrow(TypeError);
+    expect(() => formatDate(undefined, 'YYYY')).toThrow(TypeError);
+  });
+
+  // Test case 9: Invalid format string
+  test('should throw TypeError for a non-string format argument', () => {
+    expect(() => formatDate(new Date(), null)).toThrow(TypeError);
+    expect(() => formatDate(new Date(), 123)).toThrow(TypeError);
+    expect(() => formatDate(new Date(), {})).toThrow(TypeError);
   });
 });
