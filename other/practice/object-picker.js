@@ -1,17 +1,14 @@
 const pick = (obj, keys) => {
-  if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
-    throw new TypeError('Expected an object for the first argument.');
+  if (obj === null || typeof obj !== 'object') {
+    return {};
   }
-  if (!Array.isArray(keys)) {
-    throw new TypeError('Expected an array of strings for the second argument.');
-  }
-  const result = {};
-  for (const key of keys) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      result[key] = obj[key];
+  const keysToPick = Array.isArray(keys) ? keys : [keys];
+  return keysToPick.reduce((acc, key) => {
+    if (obj.hasOwnProperty(key)) {
+      acc[key] = obj[key];
     }
-  }
-  return result;
+    return acc;
+  }, {});
 };
 
 module.exports = { pick };

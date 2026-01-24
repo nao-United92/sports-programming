@@ -1,34 +1,34 @@
 /**
- * This function returns the minimum value of `array` as determined by `iteratee`.
- * The iteratee is invoked with one argument: (value).
+ * Iterates over elements of `array`, returning the minimum value of a specific property or computed value.
  *
- * @param {Array} arr The array to iterate over.
- * @param {Function} iteratee The iteratee invoked per element.
- * @returns {*} Returns the minimum value.
+ * @param {Array<T>} array The array to iterate over.
+ * @param {function(T): number} iteratee The function invoked per iteration to compute the value to compare.
+ * @returns {T|undefined} Returns the minimum value. `undefined` if the array is empty.
+ * @template T
  */
-function arrayMinBy(arr, iteratee) {
-  if (!Array.isArray(arr)) {
+function minBy(array, iteratee) {
+  if (!Array.isArray(array)) {
     throw new TypeError('Expected an array for the first argument.');
   }
   if (typeof iteratee !== 'function') {
-    throw new TypeError('Expected a function for the second argument.');
+    throw new TypeError('Expected a function for the iteratee argument.');
   }
-  if (arr.length === 0) {
-    return undefined; // Or throw an error, depending on desired behavior for empty arrays
+  if (array.length === 0) {
+    return undefined;
   }
 
-  let minVal = arr[0];
-  let minComputed = iteratee(arr[0]);
+  let minElement = array[0];
+  let minValue = iteratee(array[0]);
 
-  for (let i = 1; i < arr.length; i++) {
-    const currentComputed = iteratee(arr[i]);
-    if (currentComputed < minComputed) {
-      minComputed = currentComputed;
-      minVal = arr[i];
+  for (let i = 1; i < array.length; i++) {
+    const currentValue = iteratee(array[i]);
+    if (currentValue < minValue) {
+      minValue = currentValue;
+      minElement = array[i];
     }
   }
 
-  return minVal;
+  return minElement;
 }
 
-module.exports = arrayMinBy;
+export default minBy;

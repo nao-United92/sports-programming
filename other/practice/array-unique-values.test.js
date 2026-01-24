@@ -1,30 +1,36 @@
-import { getUniqueValues } from './array-unique-values.js';
+const { getUniqueValues } = require('./array-unique-values');
 
 describe('getUniqueValues', () => {
-  test('should return unique values from an array of numbers', () => {
-    expect(getUniqueValues([1, 2, 2, 3, 4, 4, 5])).toEqual([1, 2, 3, 4, 5]);
+  it('should return an array with unique values from an array of primitives', () => {
+    const numbers = [1, 2, 2, 3, 4, 4, 5];
+    expect(getUniqueValues(numbers)).toEqual([1, 2, 3, 4, 5]);
   });
 
-  test('should return unique values from an array of strings', () => {
-    expect(getUniqueValues(['apple', 'banana', 'apple', 'cherry'])).toEqual(['apple', 'banana', 'cherry']);
+  it('should handle an array with mixed data types', () => {
+    const mixed = [1, 'a', 2, 'b', 'a', 1, null, undefined, null];
+    expect(getUniqueValues(mixed)).toEqual([1, 'a', 2, 'b', null, undefined]);
   });
 
-  test('should handle an empty array', () => {
+  it('should return an empty array when given an empty array', () => {
     expect(getUniqueValues([])).toEqual([]);
   });
 
-  test('should handle an array with no duplicate values', () => {
-    expect(getUniqueValues([1, 2, 3, 4, 5])).toEqual([1, 2, 3, 4, 5]);
+  it('should handle an array with no duplicate values', () => {
+    const noDuplicates = [1, 2, 3, 'a', 'b', 'c'];
+    expect(getUniqueValues(noDuplicates)).toEqual([1, 2, 3, 'a', 'b', 'c']);
   });
 
-  test('should handle an array with mixed data types', () => {
-    expect(getUniqueValues([1, 'apple', 2, 'apple', 1, 3])).toEqual([1, 'apple', 2, 3]);
+  it('should throw a TypeError if the argument is not an array', () => {
+    expect(() => getUniqueValues({})).toThrow(TypeError);
+    expect(() => getUniqueValues('string')).toThrow(TypeError);
+    expect(() => getUniqueValues(123)).toThrow(TypeError);
+    expect(() => getUniqueValues(null)).toThrow(TypeError);
   });
-
-  test('should return an empty array if the input is not an array', () => {
-    expect(getUniqueValues('not an array')).toEqual([]);
-    expect(getUniqueValues(null)).toEqual([]);
-    expect(getUniqueValues(undefined)).toEqual([]);
-    expect(getUniqueValues({ a: 1 })).toEqual([]);
+  
+  it('should handle arrays with object references (by reference)', () => {
+    const obj1 = { id: 1 };
+    const obj2 = { id: 2 };
+    const objects = [obj1, obj2, obj1];
+    expect(getUniqueValues(objects)).toEqual([obj1, obj2]);
   });
 });

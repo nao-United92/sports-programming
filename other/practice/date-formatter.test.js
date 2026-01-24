@@ -1,36 +1,38 @@
-import { formatDate } from './date-formatter.js';
+const { formatDate } = require('./date-formatter');
 
 describe('formatDate', () => {
-  const date = new Date(2023, 0, 15, 10, 30, 45); // January 15, 2023 10:30:45
+  const date = new Date('2023-10-27T03:24:00');
 
-  test('should format date to YYYY-MM-DD by default', () => {
-    expect(formatDate(date)).toBe('2023-01-15');
+  it('should format a date with the default format (YYYY-MM-DD)', () => {
+    expect(formatDate(date)).toBe('2023-10-27');
   });
 
-  test('should format date to YYYY/MM/DD', () => {
-    expect(formatDate(date, 'YYYY/MM/DD')).toBe('2023/01/15');
+  it('should format a date with a custom format (DD/MM/YYYY)', () => {
+    expect(formatDate(date, 'DD/MM/YYYY')).toBe('27/10/2023');
   });
 
-  test('should format date to DD-MM-YYYY', () => {
-    expect(formatDate(date, 'DD-MM-YYYY')).toBe('15-01-2023');
+  it('should include time in the formatted string', () => {
+    expect(formatDate(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-10-27 03:24:00');
+  });
+  
+  it('should handle single-digit months and days', () => {
+    const newDate = new Date('2024-01-05T08:09:01');
+    expect(formatDate(newDate, 'YYYY-MM-DD HH:mm:ss')).toBe('2024-01-05 08:09:01');
   });
 
-  test('should format date with hours, minutes, and seconds', () => {
-    expect(formatDate(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-01-15 10:30:45');
+  it('should return null for an invalid date', () => {
+    const invalidDate = new Date('not a date');
+    expect(formatDate(invalidDate)).toBeNull();
   });
 
-  test('should handle single digit month and day correctly', () => {
-    const singleDigitDate = new Date(2023, 3, 5, 5, 5, 5); // April 5, 2023 05:05:05
-    expect(formatDate(singleDigitDate, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-04-05 05:05:05');
+  it('should return null for non-Date input', () => {
+    expect(formatDate(null)).toBeNull();
+    expect(formatDate('2023-10-27')).toBeNull();
+    expect(formatDate(1666838640000)).toBeNull();
   });
-
-  test('should return empty string for invalid date objects', () => {
-    expect(formatDate(new Date('invalid date'))).toBe('');
-  });
-
-  test('should return empty string for non-Date inputs', () => {
-    expect(formatDate('2023-01-15')).toBe('');
-    expect(formatDate(null)).toBe('');
-    expect(formatDate(undefined)).toBe('');
+  
+  it('should handle complex formats', () => {
+    const anotherDate = new Date(2025, 0, 1, 12, 30, 15);
+    expect(formatDate(anotherDate, 'MM-DD-YYYY HH:mm')).toBe('01-01-2025 12:30');
   });
 });

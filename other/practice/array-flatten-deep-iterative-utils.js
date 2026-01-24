@@ -1,25 +1,25 @@
-// other/practice/array-flatten-deep-iterative-utils.js
-
 /**
- * Iteratively flattens a deeply nested array.
+ * Recursively flattens a nested array using an iterative approach (without recursion).
  *
- * @param {Array} arr The array to flatten.
- * @returns {Array} Returns the new flattened array.
+ * @param {Array<any>} arr The array to flatten.
+ * @returns {Array<any>} A new array with all sub-array elements concatenated into it recursively.
  */
-function arrayFlattenDeepIterative(arr) {
+function flattenDeepIterative(arr) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the first argument.');
+  }
+
   const result = [];
-  // Use a stack to manage elements to process.
-  // Push elements in reverse order to process them in original order when popped.
-  const stack = [...arr].reverse(); 
+  const stack = [...arr]; // Use a stack for iterative flattening
 
   while (stack.length > 0) {
-    const item = stack.pop(); // Get the last item from the stack (DFS)
+    const item = stack.shift(); // Get the next item from the front (mimics depth-first if pushing to unshift)
 
     if (Array.isArray(item)) {
-      // If it's an array, push its elements onto the stack in reverse order
-      // so they are popped in the correct order.
+      // If it's an array, unshift its elements to the front of the stack
+      // This ensures depth-first traversal
       for (let i = item.length - 1; i >= 0; i--) {
-        stack.push(item[i]);
+        stack.unshift(item[i]);
       }
     } else {
       result.push(item);
@@ -29,4 +29,4 @@ function arrayFlattenDeepIterative(arr) {
   return result;
 }
 
-module.exports = arrayFlattenDeepIterative;
+export default flattenDeepIterative;

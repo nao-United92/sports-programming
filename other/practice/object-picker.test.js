@@ -1,47 +1,47 @@
-const { pick } = require('./object-picker.js');
+const { pick } = require('./object-picker');
 
 describe('pick', () => {
-  test('should pick specified properties from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+  const obj = {
+    a: 1,
+    b: '2',
+    c: true,
+    d: { nested: 'object' },
+  };
+
+  it('should pick specified keys from an object', () => {
+    const picked = pick(obj, ['a', 'c']);
+    expect(picked).toEqual({ a: 1, c: true });
   });
 
-  test('should return an empty object if no keys are specified', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, [])).toEqual({});
+  it('should handle a single key as a string', () => {
+    const picked = pick(obj, 'b');
+    expect(picked).toEqual({ b: '2' });
   });
 
-  test('should ignore keys that do not exist in the object', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, ['a', 'c', 'd'])).toEqual({ a: 1 });
+  it('should return an empty object if no keys are specified', () => {
+    const picked = pick(obj, []);
+    expect(picked).toEqual({});
   });
 
-  test('should return an empty object if the input object is empty', () => {
-    expect(pick({}, ['a', 'b'])).toEqual({});
+  it('should ignore keys that do not exist in the source object', () => {
+    const picked = pick(obj, ['a', 'e']);
+    expect(picked).toEqual({ a: 1 });
   });
 
-  test('should return a new object instance', () => {
-    const obj = { a: 1, b: 2 };
-    const picked = pick(obj, ['a']);
-    expect(picked).not.toBe(obj);
+  it('should return an empty object for invalid input', () => {
+    expect(pick(null, ['a'])).toEqual({});
+    expect(pick(undefined, ['a'])).toEqual({});
+    expect(pick(123, ['a'])).toEqual({});
   });
 
-  test('should handle properties with undefined or null values', () => {
-    const obj = { a: 1, b: undefined, c: null };
-    expect(pick(obj, ['a', 'b', 'c'])).toEqual({ a: 1, b: undefined, c: null });
+  it('should handle nested objects', () => {
+    const picked = pick(obj, 'd');
+    expect(picked).toEqual({ d: { nested: 'object' } });
   });
-
-  test('should throw an error if the first argument is not an object', () => {
-    expect(() => pick(null, ['a'])).toThrow('Expected an object for the first argument.');
-    expect(() => pick(undefined, ['a'])).toThrow('Expected an object for the first argument.');
-    expect(() => pick(123, ['a'])).toThrow('Expected an object for the first argument.');
-    expect(() => pick('string', ['a'])).toThrow('Expected an object for the first argument.');
-    expect(() => pick([], ['a'])).toThrow('Expected an object for the first argument.');
-  });
-
-  test('should throw an error if the second argument is not an array', () => {
-    const obj = { a: 1 };
-    expect(() => pick(obj, 'a')).toThrow('Expected an array of strings for the second argument.');
-    expect(() => pick(obj, null)).toThrow('Expected an array of strings for the second argument.');
+  
+  it('should not mutate the original object', () => {
+    const original = { x: 10, y: 20 };
+    pick(original, 'x');
+    expect(original).toEqual({ x: 10, y: 20 });
   });
 });
