@@ -1,10 +1,18 @@
-// other/practice/array-flatten-deep-recursive-utils.js
+/**
+ * Recursively flattens a nested array.
+ *
+ * @param {Array<any>} arr The array to flatten.
+ * @returns {Array<any>} A new array with all sub-array elements concatenated into it recursively.
+ */
+function flattenDeepRecursive(arr) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the first argument.');
+  }
 
-function arrayFlattenDeepRecursive(arr) {
-  let result = [];
+  const result = [];
   for (let i = 0; i < arr.length; i++) {
     if (Array.isArray(arr[i])) {
-      result = result.concat(arrayFlattenDeepRecursive(arr[i]));
+      result.push(...flattenDeepRecursive(arr[i]));
     } else {
       result.push(arr[i]);
     }
@@ -12,4 +20,4 @@ function arrayFlattenDeepRecursive(arr) {
   return result;
 }
 
-module.exports = arrayFlattenDeepRecursive;
+export default flattenDeepRecursive;
