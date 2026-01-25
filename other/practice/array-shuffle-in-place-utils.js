@@ -1,28 +1,10 @@
-/**
- * Shuffles an array in place using the Fisher-Yates (Knuth) algorithm.
- *
- * @param {Array<any>} arr The array to shuffle.
- * @returns {Array<any>} Returns the shuffled array.
- */
-function shuffleInPlace(arr) {
-  if (!Array.isArray(arr)) {
-    return [];
+const shuffle = (arr) => {
+  let a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
+  return a;
+};
 
-  let currentIndex = arr.length;
-  let randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex !== 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
-  }
-
-  return arr;
-}
-
-module.exports = shuffleInPlace;
+module.exports = { shuffle };
