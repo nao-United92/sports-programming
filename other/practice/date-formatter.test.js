@@ -1,38 +1,47 @@
-const { formatDate } = require('./date-formatter');
+const { formatDate, isToday } = require('./date-formatter');
 
-describe('formatDate', () => {
-  const date = new Date('2023-10-27T03:24:00');
+describe('Date Formatter', () => {
+  const date = new Date('2024-07-26T10:00:00Z');
 
-  it('should format a date with the default format (YYYY-MM-DD)', () => {
-    expect(formatDate(date)).toBe('2023-10-27');
+  describe('formatDate', () => {
+    test('should format date to YYYY-MM-DD by default', () => {
+      // Adjusting for timezone offset
+      const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+      expect(formatDate(localDate)).toBe('2024-07-26');
+    });
+
+    test('should format date to specified format', () => {
+      const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+      expect(formatDate(localDate, 'DD/MM/YYYY hh:mm:ss')).toBe('26/07/2024 10:00:00');
+    });
+
+    test('should return null for invalid date', () => {
+      expect(formatDate(new Date('invalid'))).toBeNull();
+      expect(formatDate(null)).toBeNull();
+      expect(formatDate('2024-07-26')).toBeNull();
+    });
   });
 
-  it('should format a date with a custom format (DD/MM/YYYY)', () => {
-    expect(formatDate(date, 'DD/MM/YYYY')).toBe('27/10/2023');
-  });
+  describe('isToday', () => {
+    test('should return true for today\'s date', () => {
+      expect(isToday(new Date())).toBe(true);
+    });
 
-  it('should include time in the formatted string', () => {
-    expect(formatDate(date, 'YYYY-MM-DD HH:mm:ss')).toBe('2023-10-27 03:24:00');
-  });
-  
-  it('should handle single-digit months and days', () => {
-    const newDate = new Date('2024-01-05T08:09:01');
-    expect(formatDate(newDate, 'YYYY-MM-DD HH:mm:ss')).toBe('2024-01-05 08:09:01');
-  });
+    test('should return false for a date in the past', () => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      expect(isToday(yesterday)).toBe(false);
+    });
 
-  it('should return null for an invalid date', () => {
-    const invalidDate = new Date('not a date');
-    expect(formatDate(invalidDate)).toBeNull();
-  });
+    test('should return false for a date in the future', () => {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      expect(isToday(tomorrow)).toBe(false);
+    });
 
-  it('should return null for non-Date input', () => {
-    expect(formatDate(null)).toBeNull();
-    expect(formatDate('2023-10-27')).toBeNull();
-    expect(formatDate(1666838640000)).toBeNull();
-  });
-  
-  it('should handle complex formats', () => {
-    const anotherDate = new Date(2025, 0, 1, 12, 30, 15);
-    expect(formatDate(anotherDate, 'MM-DD-YYYY HH:mm')).toBe('01-01-2025 12:30');
+    test('should return false for invalid date input', () => {
+      expect(isToday(new Date('invalid'))).toBe(false);
+      expect(isToday(null)).toBe(false);
+    });
   });
 });

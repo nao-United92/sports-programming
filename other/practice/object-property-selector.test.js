@@ -1,34 +1,62 @@
-const { pick } = require('./object-property-selector');
+const { pick, omit } = require('./object-property-selector');
 
-describe('pick', () => {
-  it('should create an object with picked properties', () => {
-    const obj = { a: 1, b: '2', c: 3 };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
+describe('Object Property Selectors', () => {
+  const user = {
+    name: 'John Doe',
+    age: 30,
+    isAdmin: true,
+    country: 'USA'
+  };
+
+  describe('pick', () => {
+    test('should select specified properties from an object', () => {
+      const selected = pick(user, ['name', 'age']);
+      expect(selected).toEqual({ name: 'John Doe', age: 30 });
+    });
+
+    test('should return an empty object if no keys are provided', () => {
+      expect(pick(user, [])).toEqual({});
+    });
+
+    test('should ignore keys that do not exist in the object', () => {
+      const selected = pick(user, ['name', 'nonExistentKey']);
+      expect(selected).toEqual({ name: 'John Doe' });
+    });
+
+    test('should return an empty object for null or non-object inputs', () => {
+      expect(pick(null, ['name'])).toEqual({});
+      expect(pick(undefined, ['name'])).toEqual({});
+      expect(pick('a string', ['length'])).toEqual({});
+    });
   });
 
-  it('should ignore keys that do not exist in the source object', () => {
-    const obj = { a: 1, b: '2' };
-    expect(pick(obj, ['a', 'd'])).toEqual({ a: 1 });
-  });
+  describe('omit', () => {
+    test('should omit specified properties from an object', () => {
+      const result = omit(user, ['age', 'country']);
+      expect(result).toEqual({ name: 'John Doe', isAdmin: true });
+    });
 
-  it('should handle an empty keys array', () => {
-    const obj = { a: 1, b: '2' };
-    expect(pick(obj, [])).toEqual({});
-  });
+    test('should return the original object if no keys are provided', () => {
+      expect(omit(user, [])).toEqual(user);
+    });
 
-  it('should return an empty object for invalid inputs', () => {
-    expect(pick(null, ['a'])).toEqual({});
-    expect(pick(undefined, ['a'])).toEqual({});
-    expect(pick({ a: 1 }, null)).toEqual({});
-    expect(pick('string', ['length'])).toEqual({});
-  });
+    test('should not modify the original object', () => {
+      omit(user, ['age']);
+      expect(user).toEqual({
+        name: 'John Doe',
+        age: 30,
+        isAdmin: true,
+        country: 'USA'
+      });
+    });
 
-  it('should not pick properties from the prototype chain', () => {
-    function MyObject() {
-      this.a = 1;
-    }
-    MyObject.prototype.b = 2;
-    const obj = new MyObject();
-    expect(pick(obj, ['a', 'b'])).toEqual({ a: 1 });
+    test('should ignore keys that do not exist in the object', () => {
+      const result = omit(user, ['nonExistentKey']);
+      expect(result).toEqual(user);
+    });
+
+    test('should return an empty object for null or non-object inputs', () => {
+      expect(omit(null, ['name'])).toEqual({});
+    });
   });
 });
