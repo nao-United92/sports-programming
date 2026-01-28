@@ -1,10 +1,32 @@
-const shuffle = (arr) => {
-  const result = [...arr];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
+/**
+ * Shuffles an array in place using the Fisher-Yates (aka Knuth) algorithm.
+ *
+ * @param {Array} array The array to shuffle.
+ * @returns {Array} Returns the shuffled array.
+ */
+function shuffle(array) {
+  if (!Array.isArray(array)) {
+    return [];
   }
-  return result;
-};
+  let currentIndex = array.length;
+  let randomIndex;
 
-export default shuffle;
+  // While there remain elements to shuffle.
+  while (currentIndex !== 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+}
+
+module.exports = {
+  shuffle,
+};

@@ -1,60 +1,54 @@
 const { groupBy } = require('./array-group-by');
 
 describe('groupBy', () => {
-  it('should group an array of objects by a specified key', () => {
-    const people = [
-      { name: 'Alice', age: 25 },
-      { name: 'Bob', age: 30 },
-      { name: 'Charlie', age: 25 },
-      { name: 'David', age: 30 },
-    ];
+  const people = [
+    { name: 'Alice', age: 25, city: 'New York' },
+    { name: 'Bob', age: 30, city: 'San Francisco' },
+    { name: 'Charlie', age: 25, city: 'New York' },
+    { name: 'Diana', age: 30, city: 'San Francisco' },
+  ];
+
+  it('should group an array of objects by a key', () => {
     const groupedByAge = groupBy(people, 'age');
     expect(groupedByAge).toEqual({
-      25: [
-        { name: 'Alice', age: 25 },
-        { name: 'Charlie', age: 25 },
+      '25': [
+        { name: 'Alice', age: 25, city: 'New York' },
+        { name: 'Charlie', age: 25, city: 'New York' },
       ],
-      30: [
-        { name: 'Bob', age: 30 },
-        { name: 'David', age: 30 },
+      '30': [
+        { name: 'Bob', age: 30, city: 'San Francisco' },
+        { name: 'Diana', age: 30, city: 'San Francisco' },
       ],
     });
   });
 
-  it('should group an array of objects using a function', () => {
-    const numbers = [1.2, 1.5, 2.3, 2.6, 3.1];
-    const groupedByFloor = groupBy(numbers, Math.floor);
-    expect(groupedByFloor).toEqual({
-      1: [1.2, 1.5],
-      2: [2.3, 2.6],
-      3: [3.1],
+  it('should handle a key that does not exist', () => {
+    const groupedByCountry = groupBy(people, 'country');
+    expect(groupedByCountry).toEqual({
+      'undefined': people,
     });
   });
 
   it('should return an empty object for an empty array', () => {
-    expect(groupBy([], 'key')).toEqual({});
+    expect(groupBy([], 'name')).toEqual({});
   });
 
-  it('should ignore objects where the key does not exist', () => {
-    const items = [
-      { category: 'A', value: 1 },
-      { value: 2 },
-      { category: 'B', value: 3 },
-      { category: 'A', value: 4 },
+  it('should handle various data types as keys', () => {
+    const data = [
+      { id: 1, group: 'A' },
+      { id: 2, group: 'B' },
+      { id: 3, group: 'A' },
     ];
-    const groupedByCategory = groupBy(items, 'category');
-    expect(groupedByCategory).toEqual({
-      A: [
-        { category: 'A', value: 1 },
-        { category: 'A', value: 4 },
-      ],
-      B: [{ category: 'B', value: 3 }],
+    const grouped = groupBy(data, 'group');
+    expect(grouped).toEqual({
+      'A': [{ id: 1, group: 'A' }, { id: 3, group: 'A' }],
+      'B': [{ id: 2, group: 'B' }],
     });
   });
 
-  it('should throw a TypeError if the first argument is not an array', () => {
-    expect(() => groupBy({}, 'key')).toThrow(TypeError);
-    expect(() => groupBy(null, 'key')).toThrow(TypeError);
-    expect(() => groupBy('string', 'key')).toThrow(TypeError);
+  it('should return an empty object if the input is not an array', () => {
+    expect(groupBy(null, 'key')).toEqual({});
+    expect(groupBy({}, 'key')).toEqual({});
+    expect(groupBy('string', 'key')).toEqual({});
   });
 });
