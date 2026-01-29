@@ -1,54 +1,49 @@
-// other/practice/array-zip-utils.test.js
+import zip from './array-zip-utils';
 
-const arrayZip = require('./array-zip-utils');
-
-describe('arrayZip', () => {
-  test('should zip two arrays of the same length', () => {
+describe('zip', () => {
+  it('should combine multiple arrays into an array of arrays', () => {
     const arr1 = [1, 2, 3];
     const arr2 = ['a', 'b', 'c'];
-    expect(arrayZip(arr1, arr2)).toEqual([
-      [1, 'a'],
-      [2, 'b'],
-      [3, 'c'],
-    ]);
-  });
-
-  test('should zip three arrays of the same length', () => {
-    const arr1 = [1, 2];
-    const arr2 = ['a', 'b'];
-    const arr3 = [true, false];
-    expect(arrayZip(arr1, arr2, arr3)).toEqual([
+    const arr3 = [true, false, true];
+    expect(zip(arr1, arr2, arr3)).toEqual([
       [1, 'a', true],
       [2, 'b', false],
+      [3, 'c', true],
     ]);
   });
 
-  test('should zip arrays of different lengths, truncating to the shortest', () => {
-    const arr1 = [1, 2, 3, 4];
-    const arr2 = ['a', 'b'];
-    expect(arrayZip(arr1, arr2)).toEqual([
+  it('should handle arrays of different lengths', () => {
+    const arr1 = [1, 2];
+    const arr2 = ['a', 'b', 'c'];
+    expect(zip(arr1, arr2)).toEqual([
       [1, 'a'],
       [2, 'b'],
+      [undefined, 'c'],
     ]);
   });
 
-  test('should return an empty array if no arrays are provided', () => {
-    expect(arrayZip()).toEqual([]);
+  it('should handle an empty array as input', () => {
+    expect(zip([], ['a', 'b'])).toEqual([
+      [undefined, 'a'],
+      [undefined, 'b'],
+    ]);
   });
 
-  test('should return an empty array if one of the input arrays is empty', () => {
-    const arr1 = [1, 2, 3];
-    const arr2 = [];
-    expect(arrayZip(arr1, arr2)).toEqual([]);
+  it('should return an empty array if no arrays are provided', () => {
+    expect(zip()).toEqual([]);
   });
 
-  test('should handle arrays with mixed types', () => {
-    const arr1 = [1, 'hello', { key: 'value' }];
-    const arr2 = [true, null, [1, 2]];
-    expect(arrayZip(arr1, arr2)).toEqual([
-      [1, true],
-      ['hello', null],
-      [{ key: 'value' }, [1, 2]],
+  it('should handle a single array', () => {
+    expect(zip([1, 2, 3])).toEqual([[1], [2], [3]]);
+  });
+
+  it('should handle arrays with null or undefined elements', () => {
+    const arr1 = [1, null, 3];
+    const arr2 = ['a', undefined, 'c'];
+    expect(zip(arr1, arr2)).toEqual([
+      [1, 'a'],
+      [null, undefined],
+      [3, 'c'],
     ]);
   });
 });
