@@ -1,5 +1,5 @@
-export const shuffle = (arr) => {
-  if (!arr) {
+const shuffle = (arr) => {
+  if (!Array.isArray(arr)) {
     return [];
   }
   const result = [...arr];
@@ -9,3 +9,5 @@ export const shuffle = (arr) => {
   }
   return result;
 };
+
+export default shuffle;
