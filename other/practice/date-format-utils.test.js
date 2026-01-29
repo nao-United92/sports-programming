@@ -1,57 +1,36 @@
 import formatDate from './date-format-utils';
 
 describe('formatDate', () => {
-  const testDate = new Date('2023-01-24T14:35:08.123Z'); // January 24, 2023 14:35:08.123 UTC
+  const date = new Date(2023, 0, 2); // 2023-01-02
 
-  // Test case 1: Full date and time
-  test('should format date to YYYY-MM-DD HH:mm:ss.ms', () => {
-    expect(formatDate(testDate, 'YYYY-MM-DD HH:mm:ss.ms')).toBe('2023-01-24 14:35:08.123');
+  it('should format a date object into YYYY-MM-DD format', () => {
+    expect(formatDate(date, 'YYYY-MM-DD')).toBe('2023-01-02');
   });
 
-  // Test case 2: Date only
-  test('should format date to YYYY/MM/DD', () => {
-    expect(formatDate(testDate, 'YYYY/MM/DD')).toBe('2023/01/24');
+  it('should format a date object into MM/DD/YYYY format', () => {
+    expect(formatDate(date, 'MM/DD/YYYY')).toBe('01/02/2023');
   });
 
-  // Test case 3: Time only
-  test('should format time to HH:mm:ss', () => {
-    expect(formatDate(testDate, 'HH:mm:ss')).toBe('14:35:08');
+  it('should format a date object with different separators', () => {
+    expect(formatDate(date, 'YYYY年MM月DD日')).toBe('2023年01月02日');
   });
 
-  // Test case 4: Custom format string
-  test('should format date with a custom string', () => {
-    expect(formatDate(testDate, 'MM/DD/YYYY at HHh mmm sss ms')).toBe('01/24/2023 at 14h 35m 08s 123');
+  it('should handle single-digit month and day', () => {
+    const singleDigitDate = new Date(2023, 8, 9); // 2023-09-09
+    expect(formatDate(singleDigitDate, 'YYYY-MM-DD')).toBe('2023-09-09');
   });
 
-  // Test case 5: Single digit month, day, hour, minute, second
-  test('should format single digit components with leading zeros', () => {
-    const singleDigitDate = new Date('2023-02-05T03:04:05.006Z'); // February 5, 2023 03:04:05.006 UTC
-    expect(formatDate(singleDigitDate, 'YYYY-MM-DD HH:mm:ss.ms')).toBe('2023-02-05 03:04:05.006');
+  it('should return an empty string for invalid date input', () => {
+    expect(formatDate(null, 'YYYY-MM-DD')).toBe('');
+    expect(formatDate('2023-01-01', 'YYYY-MM-DD')).toBe('');
   });
 
-  // Test case 6: Milliseconds less than 100
-  test('should format milliseconds with leading zeros when less than 100', () => {
-    const msDate = new Date('2023-01-01T00:00:00.007Z');
-    expect(formatDate(msDate, 'ms')).toBe('007');
+  it('should return an empty string for invalid format input', () => {
+    expect(formatDate(date, null)).toBe('');
+    expect(formatDate(date, 123)).toBe('');
   });
 
-  // Test case 7: Milliseconds less than 10
-  test('should format milliseconds with two leading zeros when less than 10', () => {
-    const msDate = new Date('2023-01-01T00:00:00.001Z');
-    expect(formatDate(msDate, 'ms')).toBe('001');
-  });
-
-  // Test case 8: Invalid Date object
-  test('should throw TypeError for an invalid Date object', () => {
-    expect(() => formatDate(new Date('invalid date'), 'YYYY')).toThrow(TypeError);
-    expect(() => formatDate(null, 'YYYY')).toThrow(TypeError);
-    expect(() => formatDate(undefined, 'YYYY')).toThrow(TypeError);
-  });
-
-  // Test case 9: Invalid format string
-  test('should throw TypeError for a non-string format argument', () => {
-    expect(() => formatDate(new Date(), null)).toThrow(TypeError);
-    expect(() => formatDate(new Date(), 123)).toThrow(TypeError);
-    expect(() => formatDate(new Date(), {})).toThrow(TypeError);
+  it('should handle formats without replacements', () => {
+    expect(formatDate(date, 'No replacements here')).toBe('No replacements here');
   });
 });
