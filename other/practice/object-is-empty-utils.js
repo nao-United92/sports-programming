@@ -1,6 +1,14 @@
-export const isEmptyObject = (obj) => {
-  if (Object.prototype.toString.call(obj) !== '[object Object]') {
-    return false;
+const isEmpty = (value) => {
+  if (value === null || typeof value === 'undefined') {
+    return true;
   }
-  return Object.keys(obj).length === 0;
+  if (typeof value === 'string' || Array.isArray(value)) {
+    return value.length === 0;
+  }
+  if (typeof value === 'object') {
+    return Object.keys(value).length === 0;
+  }
+  return false;
 };
+
+export default isEmpty;
