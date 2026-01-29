@@ -1,11 +1,12 @@
 const omit = (obj, keysToOmit) => {
-  const newObj = {};
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key) && !keysToOmit.includes(key)) {
-      newObj[key] = obj[key];
-    }
+  if (typeof obj !== 'object' || obj === null) {
+    return {};
   }
-  return newObj;
+  const result = { ...obj };
+  for (const key of keysToOmit) {
+    delete result[key];
+  }
+  return result;
 };
 
-module.exports = { omit };
+export default omit;

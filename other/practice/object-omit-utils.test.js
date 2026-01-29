@@ -1,35 +1,45 @@
-const { omit } = require('./object-omit-utils');
+import omit from './object-omit-utils';
 
 describe('omit', () => {
-  it('should omit a single key from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
-    const result = omit(obj, ['b']);
-    expect(result).toEqual({ a: 1, c: 3 });
-    expect(result).not.toBe(obj); // Ensure new object is returned
+  const obj = {
+    a: 1,
+    b: 2,
+    c: 3,
+    d: undefined,
+    e: null,
+  };
+
+  it('should omit specified keys from an object', () => {
+    expect(omit(obj, ['a', 'c'])).toEqual({ b: 2, d: undefined, e: null });
   });
 
-  it('should omit multiple keys from an object', () => {
-    const obj = { a: 1, b: 2, c: 3, d: 4 };
-    const result = omit(obj, ['b', 'd']);
-    expect(result).toEqual({ a: 1, c: 3 });
+  it('should handle keys that do not exist in the object', () => {
+    expect(omit(obj, ['a', 'x'])).toEqual({ b: 2, c: 3, d: undefined, e: null });
   });
 
-  it('should return a shallow copy if no keys are omitted', () => {
-    const obj = { a: 1, b: 2 };
-    const result = omit(obj, []);
-    expect(result).toEqual(obj);
-    expect(result).not.toBe(obj);
+  it('should return the original object if no keys are specified to omit', () => {
+    expect(omit(obj, [])).toEqual(obj);
   });
 
-  it('should handle non-existent keys to omit gracefully', () => {
-    const obj = { a: 1, b: 2 };
-    const result = omit(obj, ['c', 'd']);
-    expect(result).toEqual({ a: 1, b: 2 });
+  it('should return an empty object if the input object is null or undefined', () => {
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
   });
 
-  it('should return an empty object if all keys are omitted', () => {
-    const obj = { a: 1, b: 2 };
-    const result = omit(obj, ['a', 'b']);
-    expect(result).toEqual({});
+  it('should handle omitting properties with undefined values', () => {
+    expect(omit(obj, ['d'])).toEqual({ a: 1, b: 2, c: 3, e: null });
+  });
+
+  it('should handle omitting properties with null values', () => {
+    expect(omit(obj, ['e'])).toEqual({ a: 1, b: 2, c: 3, d: undefined });
+  });
+
+  it('should return an empty object if the object is empty', () => {
+    expect(omit({}, ['a'])).toEqual({});
+  });
+
+  it('should handle non-object inputs', () => {
+    expect(omit(123, ['a'])).toEqual({});
+    expect(omit('string', ['a'])).toEqual({});
   });
 });
