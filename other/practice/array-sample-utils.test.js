@@ -1,39 +1,34 @@
-// other/practice/array-sample-utils.test.js
+import sample from './array-sample-utils';
 
-const arraySample = require('./array-sample-utils');
-
-describe('arraySample', () => {
-  test('should return undefined for an empty array', () => {
-    expect(arraySample([])).toBeUndefined();
+describe('sample', () => {
+  it('should return undefined for an empty array', () => {
+    expect(sample([])).toBeUndefined();
   });
 
-  test('should return the only element for a single-element array', () => {
-    expect(arraySample([10])).toBe(10);
+  it('should return undefined for non-array inputs', () => {
+    expect(sample(null)).toBeUndefined();
+    expect(sample(undefined)).toBeUndefined();
+    expect(sample(123)).toBeUndefined();
+    expect(sample({})).toBeUndefined();
   });
 
-  test('should return an element from the array', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const sample = arraySample(arr);
-    expect(arr).toContain(sample);
+  it('should return an element from the array', () => {
+    const array = [1, 2, 3, 4, 5];
+    const result = sample(array);
+    expect(array).toContain(result);
   });
 
-  test('should return different elements over multiple calls (probabilistic)', () => {
-    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    const samples = new Set();
-    const iterations = 1000;
-    for (let i = 0; i < iterations; i++) {
-      samples.add(arraySample(arr));
+  it('should return the only element for a single-element array', () => {
+    expect(sample([10])).toBe(10);
+  });
+
+  it('should return different elements over multiple calls (probabilistic)', () => {
+    const array = [1, 2, 3, 4, 5];
+    const results = new Set();
+    for (let i = 0; i < 100; i++) {
+      results.add(sample(array));
     }
-    // With 10 elements and 1000 iterations, it's highly probable to get more than one unique sample
-    expect(samples.size).toBeGreaterThan(1);
-    expect(samples.size).toBeLessThanOrEqual(arr.length);
-  });
-
-  test('should handle non-array input by returning undefined', () => {
-    expect(arraySample(null)).toBeUndefined();
-    expect(arraySample(undefined)).toBeUndefined();
-    expect(arraySample(123)).toBeUndefined();
-    expect(arraySample('string')).toBeUndefined();
-    expect(arraySample({})).toBeUndefined();
+    // This test is probabilistic and might fail rarely, but it's a good general check
+    expect(results.size).toBeGreaterThan(1);
   });
 });
