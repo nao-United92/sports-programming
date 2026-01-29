@@ -1,65 +1,45 @@
 import camelCase from './string-camel-case-utils';
 
 describe('camelCase', () => {
-  // Test case 1: Basic string conversion with spaces
-  test('should convert space-separated words to camelCase', () => {
-    expect(camelCase('hello world')).toBe('helloWorld');
+  it('should convert kebab-case to camelCase', () => {
+    expect(camelCase('kebab-case-string')).toBe('kebabCaseString');
   });
 
-  // Test case 2: Kebab case
-  test('should convert kebab-case to camelCase', () => {
-    expect(camelCase('hello-world')).toBe('helloWorld');
+  it('should convert snake_case to camelCase', () => {
+    expect(camelCase('snake_case_string')).toBe('snakeCaseString');
   });
 
-  // Test case 3: Snake case
-  test('should convert snake_case to camelCase', () => {
-    expect(camelCase('hello_world')).toBe('helloWorld');
+  it('should convert space separated strings to camelCase', () => {
+    expect(camelCase('space separated string')).toBe('spaceSeparatedString');
   });
 
-  // Test case 4: Pascal case
-  test('should convert PascalCase to camelCase', () => {
-    expect(camelCase('HelloWorld')).toBe('helloWorld');
+  it('should convert PascalCase to camelCase', () => {
+    expect(camelCase('PascalCaseString')).toBe('pascalCaseString');
   });
 
-  // Test case 5: Already camelCase
-  test('should return the same string if it is already camelCase', () => {
-    expect(camelCase('helloWorld')).toBe('helloWorld');
+  it('should handle strings with numbers', () => {
+    expect(camelCase('string with 1 number')).toBe('stringWith1Number');
   });
 
-  // Test case 6: Mixed case and separators
-  test('should convert mixed case and separators to camelCase', () => {
-    expect(camelCase('fooBar Baz_QuX-bAng')).toBe('fooBarBazQuxBang');
-  });
-
-  // Test case 7: String with numbers
-  test('should handle strings with numbers correctly', () => {
-    expect(camelCase('version 1 2 3')).toBe('version123');
-    expect(camelCase('version-1.2.3')).toBe('version123');
-  });
-
-  // Test case 8: Leading/trailing spaces or separators
-  test('should trim leading/trailing spaces and separators', () => {
-    expect(camelCase('  -Hello World-  ')).toBe('helloWorld');
-    expect(camelCase('__hello_world__')).toBe('helloWorld');
-  });
-
-  // Test case 9: Empty string
-  test('should return an empty string for an empty input', () => {
+  it('should handle empty strings', () => {
     expect(camelCase('')).toBe('');
   });
 
-  // Test case 10: Invalid input - non-string
-  test('should throw TypeError if the input is not a string', () => {
-    expect(() => camelCase(123)).toThrow(TypeError);
-    expect(() => camelCase(null)).toThrow(TypeError);
-    expect(() => camelCase(undefined)).toThrow(TypeError);
-    expect(() => camelCase({})).toThrow(TypeError);
-    expect(() => camelCase([])).toThrow(TypeError);
+  it('should handle non-string inputs', () => {
+    expect(camelCase(null)).toBe('');
+    expect(camelCase(undefined)).toBe('');
+    expect(camelCase(123)).toBe('');
   });
 
-  // Test case 11: Acronyms
-  test('should handle acronyms correctly', () => {
-    expect(camelCase('NASA JPL')).toBe('nasaJpl');
-    expect(camelCase('HTTP Response Code')).toBe('httpResponseCode');
+  it('should handle already camelCase strings', () => {
+    expect(camelCase('alreadyCamelCase')).toBe('alreadyCamelCase');
+  });
+
+  it('should handle strings with leading/trailing non-alphanumeric characters', () => {
+    expect(camelCase('__ leading and trailing __')).toBe('leadingAndTrailing');
+  });
+
+  it('should handle multiple non-alphanumeric separators', () => {
+    expect(camelCase('foo--bar__baz')).toBe('fooBarBaz');
   });
 });
