@@ -1,14 +1,21 @@
+// other/practice/array-shuffle.js
 /**
- * Shuffles an array in place using the Fisher-Yates (aka Knuth) algorithm.
+ * Randomizes the order of the elements in an array using the Fisher-Yates (Knuth) shuffle algorithm.
  *
- * @param {Array} array The array to shuffle.
+ * @param {Array} arr The array to shuffle.
  * @returns {Array} Returns the shuffled array.
+ * @example
+ *
+ * arrayShuffle([1, 2, 3, 4]);
+ * // => [3, 1, 4, 2] (shuffled array)
  */
-function shuffle(array) {
-  if (!Array.isArray(array)) {
+function arrayShuffle(arr) {
+  if (!Array.isArray(arr)) {
     return [];
   }
-  let currentIndex = array.length;
+
+  const shuffledArr = [...arr];
+  let currentIndex = shuffledArr.length;
   let randomIndex;
 
   // While there remain elements to shuffle.
@@ -18,15 +25,13 @@ function shuffle(array) {
     currentIndex--;
 
     // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
+    [shuffledArr[currentIndex], shuffledArr[randomIndex]] = [
+      shuffledArr[randomIndex],
+      shuffledArr[currentIndex],
     ];
   }
 
-  return array;
+  return shuffledArr;
 }
 
-module.exports = {
-  shuffle,
-};
+module.exports = arrayShuffle;

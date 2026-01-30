@@ -1,30 +1,34 @@
-const { unique } = require('./array-unique');
+// other/practice/array-unique.test.js
+const arrayUnique = require('./array-unique');
 
-describe('unique', () => {
-  it('should remove duplicate numbers from an array', () => {
-    expect(unique([1, 2, 2, 3, 1, 4])).toEqual([1, 2, 3, 4]);
+describe('arrayUnique', () => {
+  test('should return an array with unique values', () => {
+    expect(arrayUnique([1, 2, 2, 3, 4, 4, 5])).toEqual([1, 2, 3, 4, 5]);
   });
 
-  it('should remove duplicate strings from an array', () => {
-    expect(unique(['a', 'b', 'a', 'c'])).toEqual(['a', 'b', 'c']);
+  test('should handle empty arrays', () => {
+    expect(arrayUnique([])).toEqual([]);
   });
 
-  it('should handle an array with no duplicates', () => {
-    expect(unique([1, 2, 3, 4, 5])).toEqual([1, 2, 3, 4, 5]);
+  test('should handle arrays with no duplicates', () => {
+    expect(arrayUnique([1, 2, 3])).toEqual([1, 2, 3]);
   });
 
-  it('should handle an empty array', () => {
-    expect(unique([])).toEqual([]);
-  });
-  
-  it('should handle various data types including objects and null', () => {
-    const obj = { id: 1 };
-    const arr = [1, 'a', obj, null, 'a', obj, null];
-    expect(unique(arr)).toEqual([1, 'a', obj, null]);
+  test('should handle arrays with mixed data types', () => {
+    expect(arrayUnique([1, '1', 2, 1, '2', '1'])).toEqual([1, '1', 2, '2']);
   });
 
-  it('should return an empty array for non-array inputs', () => {
-    expect(unique(null)).toEqual([]);
-    expect(unique({})).toEqual([]);
+  test('should handle arrays with objects (reference equality)', () => {
+    const obj1 = { a: 1 };
+    const obj2 = { a: 1 };
+    expect(arrayUnique([obj1, obj2, obj1])).toEqual([obj1, obj2]);
+  });
+
+  test('should return an empty array if input is not an array', () => {
+    expect(arrayUnique(null)).toEqual([]);
+    expect(arrayUnique(undefined)).toEqual([]);
+    expect(arrayUnique('string')).toEqual([]);
+    expect(arrayUnique(123)).toEqual([]);
+    expect(arrayUnique({})).toEqual([]);
   });
 });
