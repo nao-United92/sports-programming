@@ -1,37 +1,41 @@
+// other/practice/object-is-empty.js
 /**
- * Checks if `value` is an empty object, collection, map, or set.
+ * Checks if an object has no enumerable own properties.
+ * Arrays are considered non-empty if they have a length greater than 0.
  *
- * @param {*} value The value to inspect.
- * @returns {boolean} Returns `true` if `value` is empty, else `false`.
+ * @param {Object} obj The object to inspect.
+ * @returns {boolean} Returns `true` if the object is empty, `false` otherwise.
+ * @example
+ *
+ * objectIsEmpty({});
+ * // => true
+ *
+ * objectIsEmpty({ 'a': 1 });
+ * // => false
+ *
+ * objectIsEmpty(null);
+ * // => true
+ *
+ * objectIsEmpty(undefined);
+ * // => true
+ *
+ * objectIsEmpty([]);
+ * // => false
+ *
+ * objectIsEmpty([1, 2]);
+ * // => false
  */
-function isEmpty(value) {
-  if (value === null || typeof value === 'undefined') {
+function objectIsEmpty(obj) {
+  if (obj === null || obj === undefined) {
     return true;
   }
-
-  // Handle strings
-  if (typeof value === 'string') {
-    return value.length === 0;
+  if (Array.isArray(obj)) {
+    return obj.length === 0;
   }
-
-  // Handle arrays
-  if (Array.isArray(value)) {
-    return value.length === 0;
+  if (typeof obj !== 'object') {
+    return true; // Primitives are considered "empty" in this context
   }
-
-  // Handle Maps and Sets
-  if (value instanceof Map || value instanceof Set) {
-    return value.size === 0;
-  }
-  
-  // Handle plain objects
-  if (typeof value === 'object') {
-    return Object.keys(value).length === 0;
-  }
-
-  return false;
+  return Object.keys(obj).length === 0;
 }
 
-module.exports = {
-  isEmpty,
-};
+module.exports = objectIsEmpty;
