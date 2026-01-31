@@ -1,17 +1,8 @@
-/**
- * Gets a random element from `array`.
- *
- * @param {Array} array The array to sample.
- * @returns {*} Returns the random element.
- */
-function randomElement(array) {
-  if (!Array.isArray(array) || array.length === 0) {
+const arrayRandomElement = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
     return undefined;
   }
-  const index = Math.floor(Math.random() * array.length);
-  return array[index];
-}
-
-module.exports = {
-  randomElement,
+  return arr[Math.floor(Math.random() * arr.length)];
 };
+
+module.exports = arrayRandomElement;
