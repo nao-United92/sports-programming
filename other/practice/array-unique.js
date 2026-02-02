@@ -1,3 +1,3 @@
-const arrayUnique = (arr) => [...new Set(arr)];
+const unique = (arr) => [...new Set(arr)];
 
-module.exports = arrayUnique;
+module.exports = unique;

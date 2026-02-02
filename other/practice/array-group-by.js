@@ -1,30 +1,9 @@
-/**
- * Groups the elements of an array of objects based on a given key.
- *
- * @param {Array<object>} array The array to group.
- * @param {string} key The key to group by.
- * @returns {object} An object with keys representing the groups and values as arrays of objects.
- */
-function groupBy(array, key) {
-  if (!Array.isArray(array)) {
-    return {};
-  }
-  return array.reduce((result, currentValue) => {
-    // Get the value of the key for the current object
-    const groupKey = currentValue[key];
-    
-    // If the group key doesn't exist in the result, create it
-    if (!result[groupKey]) {
-      result[groupKey] = [];
-    }
-    
-    // Push the current object to the group
-    result[groupKey].push(currentValue);
-    
-    return result;
+const groupBy = (arr, key) =>
+  arr.reduce((acc, item) => {
+    const group = item[key];
+    acc[group] = acc[group] || [];
+    acc[group].push(item);
+    return acc;
   }, {});
-}
 
-module.exports = {
-  groupBy,
-};
+module.exports = groupBy;
