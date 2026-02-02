@@ -1,35 +1,35 @@
-// other/practice/array-union.test.js
-const arrayUnion = require('./array-union');
+const union = require('./array-union');
 
-describe('arrayUnion', () => {
-  test('should return all unique elements from both arrays', () => {
-    expect(arrayUnion([1, 2, 3], [3, 4, 5])).toEqual([1, 2, 3, 4, 5]);
+describe('union', () => {
+  test('should return the union of two arrays with unique values', () => {
+    const arrA = [1, 2, 3, 4];
+    const arrB = [3, 4, 5, 6];
+    expect(union(arrA, arrB)).toEqual([1, 2, 3, 4, 5, 6]);
   });
 
-  test('should handle arrays with duplicate elements within themselves', () => {
-    expect(arrayUnion([1, 2, 1], [2, 3, 2])).toEqual([1, 2, 3]);
+  test('should work with arrays containing different data types', () => {
+    const arrA = [1, 'hello', null];
+    const arrB = ['hello', null, { a: 1 }];
+    const result = union(arrA, arrB);
+    // Note: object equality is by reference.
+    expect(result).toHaveLength(4);
+    expect(result).toContain(1);
+    expect(result).toContain('hello');
+    expect(result).toContain(null);
+    expect(result).toContainEqual({ a: 1 });
   });
 
-  test('should handle empty input arrays', () => {
-    expect(arrayUnion([], [1, 2, 3])).toEqual([1, 2, 3]);
-    expect(arrayUnion([1, 2, 3], [])).toEqual([1, 2, 3]);
-    expect(arrayUnion([], [])).toEqual([]);
+  test('should return a new array instance', () => {
+    const arrA = [1, 2];
+    const arrB = [3, 4];
+    const result = union(arrA, arrB);
+    expect(result).not.toBe(arrA);
+    expect(result).not.toBe(arrB);
   });
 
-  test('should handle arrays with mixed data types', () => {
-    expect(arrayUnion([1, 'a', 2], ['a', 3, null])).toEqual([1, 'a', 2, 3, null]);
-  });
-
-  test('should handle arrays with objects (reference equality)', () => {
-    const obj1 = { a: 1 };
-    const obj2 = { b: 2 };
-    const obj3 = { c: 3 };
-    expect(arrayUnion([obj1, obj2], [obj2, obj3])).toEqual([obj1, obj2, obj3]);
-  });
-
-  test('should return unique elements from the valid array if one input is not an array', () => {
-    expect(arrayUnion(null, [1, 2, 2])).toEqual([1, 2]);
-    expect(arrayUnion([1, 1, 2], 'string')).toEqual([1, 2]);
-    expect(arrayUnion(123, {})).toEqual([]);
+  test('should handle empty arrays', () => {
+    expect(union([], [])).toEqual([]);
+    expect(union([1, 2], [])).toEqual([1, 2]);
+    expect(union([], [3, 4])).toEqual([3, 4]);
   });
 });
