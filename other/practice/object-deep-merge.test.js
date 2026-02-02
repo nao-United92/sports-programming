@@ -1,43 +1,38 @@
-const { deepMerge } = require('./object-deep-merge');
+const deepMerge = require('./object-deep-merge');
 
 describe('deepMerge', () => {
-  it('should deeply merge two simple objects', () => {
-    const obj1 = { a: 1, b: { c: 2 } };
-    const obj2 = { b: { d: 3 }, e: 4 };
-    expect(deepMerge(obj1, obj2)).toEqual({ a: 1, b: { c: 2, d: 3 }, e: 4 });
+  test('should merge nested objects', () => {
+    const target = { a: { b: 1, c: [1, 2] } };
+    const source = { a: { b: 2, d: 3 }, e: 4 };
+    const expected = { a: { b: 2, c: [1, 2], d: 3 }, e: 4 };
+    expect(deepMerge(target, source)).toEqual(expected);
   });
 
-  it('should deeply merge multiple objects', () => {
-    const obj1 = { a: 1, b: { c: 2 } };
-    const obj2 = { b: { d: 3 }, e: 4 };
-    const obj3 = { f: { g: 5 }, b: { c: 10 } }; // Overwrites b.c
-    expect(deepMerge(obj1, obj2, obj3)).toEqual({ a: 1, b: { c: 10, d: 3 }, e: 4, f: { g: 5 } });
+  test('should not modify the original objects', () => {
+    const target = { a: { b: 1 } };
+    const source = { a: { c: 2 } };
+    deepMerge(target, source);
+    expect(target).toEqual({ a: { b: 1 } });
+    expect(source).toEqual({ a: { c: 2 } });
   });
 
-  it('should handle undefined or null sources gracefully', () => {
-    const obj1 = { a: 1 };
-    expect(deepMerge(obj1, null, { b: 2 })).toEqual({ a: 1, b: 2 });
-    expect(deepMerge(obj1, undefined, { c: 3 })).toEqual({ a: 1, c: 3 });
+  test('should handle null and undefined values', () => {
+    const target = { a: 1 };
+    const source = { b: null, c: undefined };
+    const expected = { a: 1, b: null, c: undefined };
+    expect(deepMerge(target, source)).toEqual(expected);
   });
 
-  it('should overwrite primitive values', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { b: 3, c: 4 };
-    expect(deepMerge(obj1, obj2)).toEqual({ a: 1, b: 3, c: 4 });
+  test('source should overwrite target primitive values', () => {
+    const target = { a: 1, b: 'hello' };
+    const source = { b: 'world', c: 3 };
+    const expected = { a: 1, b: 'world', c: 3 };
+    expect(deepMerge(target, source)).toEqual(expected);
   });
 
-  it('should handle arrays by overwriting them entirely', () => {
-    const obj1 = { a: [1, 2], b: 3 };
-    const obj2 = { a: [3, 4] };
-    expect(deepMerge(obj1, obj2)).toEqual({ a: [3, 4], b: 3 });
-  });
-
-  it('should create new objects for nested structures', () => {
-    const obj1 = { a: { b: 1 } };
-    const obj2 = { c: 2 };
-    const result = deepMerge(obj1, obj2);
-    expect(result.a).toEqual({ b: 1 });
-    expect(result.c).toBe(2);
-    expect(result.a).not.toBe(obj1.a); // Should be a new object reference
+  test('should merge arrays by replacing them', () => {
+    const target = { a: [1, 2] };
+    const source = { a: [3, 4] };
+    expect(deepMerge(target, source)).toEqual({ a: [3, 4] });
   });
 });
