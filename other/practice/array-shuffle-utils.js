@@ -1,13 +1,8 @@
-const shuffle = (arr) => {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
-  const result = [...arr];
-  for (let i = result.length - 1; i > 0; i--) {
+export const shuffle = (arr) => {
+  const newArr = [...arr];
+  for (let i = newArr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
   }
-  return result;
+  return newArr;
 };
-
-export default shuffle;
