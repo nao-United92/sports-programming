@@ -1,8 +1,1 @@
-const uniq = (array) => {
-  if (!Array.isArray(array)) {
-    return [];
-  }
-  return [...new Set(array)];
-};
-
-module.exports = { uniq };
+export const uniq = (arr) => [...new Set(arr)];
