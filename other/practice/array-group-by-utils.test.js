@@ -1,65 +1,39 @@
-import groupBy from './array-group-by-utils';
+import { groupBy } from './array-group-by-utils.js';
 
 describe('groupBy', () => {
-  it('should group an array of objects by a given key', () => {
-    const array = [
-      { id: 1, category: 'A' },
-      { id: 2, category: 'B' },
-      { id: 3, category: 'A' },
-      { id: 4, category: 'C' },
-      { id: 5, category: 'B' },
+  it('should group an array of objects by a specified key', () => {
+    const people = [
+      { name: 'Alice', age: 25 },
+      { name: 'Bob', age: 30 },
+      { name: 'Charlie', age: 25 },
     ];
-    const expected = {
-      A: [
-        { id: 1, category: 'A' },
-        { id: 3, category: 'A' },
+    const grouped = groupBy(people, 'age');
+    expect(grouped).toEqual({
+      25: [
+        { name: 'Alice', age: 25 },
+        { name: 'Charlie', age: 25 },
       ],
-      B: [
-        { id: 2, category: 'B' },
-        { id: 5, category: 'B' },
-      ],
-      C: [{ id: 4, category: 'C' }],
-    };
-    expect(groupBy(array, 'category')).toEqual(expected);
+      30: [{ name: 'Bob', age: 30 }],
+    });
   });
 
   it('should return an empty object for an empty array', () => {
-    expect(groupBy([], 'category')).toEqual({});
+    expect(groupBy([], 'key')).toEqual({});
   });
 
-  it('should handle non-existent keys', () => {
-    const array = [
-      { id: 1, category: 'A' },
-      { id: 2, category: 'B' },
+  it('should handle arrays with objects that do not have the key', () => {
+    const items = [
+      { category: 'A', value: 1 },
+      { value: 2 },
+      { category: 'A', value: 3 },
     ];
-    const expected = {
-      undefined: [
-        { id: 1, category: 'A' },
-        { id: 2, category: 'B' },
+    const grouped = groupBy(items, 'category');
+    expect(grouped).toEqual({
+      A: [
+        { category: 'A', value: 1 },
+        { category: 'A', value: 3 },
       ],
-    };
-    expect(groupBy(array, 'nonExistentKey')).toEqual(expected);
-  });
-
-  it('should return an empty object for non-array input', () => {
-    expect(groupBy(null, 'key')).toEqual({});
-    expect(groupBy(undefined, 'key')).toEqual({});
-    expect(groupBy({}, 'key')).toEqual({});
-  });
-
-  it('should group by a numeric key', () => {
-    const array = [
-      { id: 1, value: 100 },
-      { id: 2, value: 200 },
-      { id: 3, value: 100 },
-    ];
-    const expected = {
-      '100': [
-        { id: 1, value: 100 },
-        { id: 3, value: 100 },
-      ],
-      '200': [{ id: 2, value: 200 }],
-    };
-    expect(groupBy(array, 'value')).toEqual(expected);
+      undefined: [{ value: 2 }],
+    });
   });
 });

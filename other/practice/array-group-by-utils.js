@@ -1,15 +1,7 @@
-const groupBy = (arr, key) => {
-  if (!Array.isArray(arr)) {
-    return {};
-  }
-  return arr.reduce((acc, obj) => {
-    const groupKey = obj[key];
-    if (!acc[groupKey]) {
-      acc[groupKey] = [];
-    }
-    acc[groupKey].push(obj);
-    return acc;
-  }, {});
-};
-
-export default groupBy;
+export const groupBy = (arr, key) =>
+  arr.reduce(
+    (acc, item) => (
+      (acc[item[key]] = [...(acc[item[key]] || []), item]), acc
+    ),
+    {}
+  );
