@@ -1,34 +1,7 @@
-const sortBy = (arr, iteratees) => {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
-
-  const normalizedIteratees = Array.isArray(iteratees) ? iteratees : [iteratees];
-
+export const sortBy = (arr, fn) => {
   return [...arr].sort((a, b) => {
-    for (const iteratee of normalizedIteratees) {
-      let valA, valB;
-
-      if (typeof iteratee === 'function') {
-        valA = iteratee(a);
-        valB = iteratee(b);
-      } else if (typeof iteratee === 'string') {
-        valA = a[iteratee];
-        valB = b[iteratee];
-      } else {
-        valA = a;
-        valB = b;
-      }
-
-      if (valA < valB) {
-        return -1;
-      }
-      if (valA > valB) {
-        return 1;
-      }
-    }
-    return 0;
+    const valA = typeof fn === 'function' ? fn(a) : a[fn];
+    const valB = typeof fn === 'function' ? fn(b) : b[fn];
+    return valA > valB ? 1 : valA < valB ? -1 : 0;
   });
 };
-
-module.exports = sortBy;

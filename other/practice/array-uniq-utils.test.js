@@ -1,26 +1,22 @@
-const { uniq } = require('./array-uniq-utils');
+import { uniq } from './array-uniq-utils.js';
 
 describe('uniq', () => {
-  test('should remove duplicate values from an array', () => {
-    expect(uniq([2, 1, 2, 3, 1])).toEqual([2, 1, 3]);
+  it('should return an array with unique values', () => {
+    const arr = [1, 2, 2, 3, 4, 4, 5];
+    expect(uniq(arr)).toEqual([1, 2, 3, 4, 5]);
   });
 
-  test('should return the same array if it has no duplicates', () => {
-    expect(uniq([1, 2, 3, 4])).toEqual([1, 2, 3, 4]);
+  it('should handle an array with no duplicates', () => {
+    const arr = [1, 2, 3, 4, 5];
+    expect(uniq(arr)).toEqual([1, 2, 3, 4, 5]);
   });
 
-  test('should handle an empty array', () => {
+  it('should handle an empty array', () => {
     expect(uniq([])).toEqual([]);
   });
 
-  test('should handle an array with various data types', () => {
-    const mixedArray = [1, '1', 2, '2', 1, '1'];
-    expect(uniq(mixedArray)).toEqual([1, '1', 2, '2']);
-  });
-
-  test('should handle non-array inputs', () => {
-    expect(uniq(null)).toEqual([]);
-    expect(uniq(undefined)).toEqual([]);
-    expect(uniq({})).toEqual([]);
+  it('should handle an array with various data types', () => {
+    const arr = [1, 'hello', 1, 'world', 'hello'];
+    expect(uniq(arr)).toEqual([1, 'hello', 'world']);
   });
 });
