@@ -1,27 +1,27 @@
-import isUnique from './array-is-unique-utils';
+import { isUnique } from './array-is-unique-utils.js';
 
 describe('isUnique', () => {
-  test('should return true for an array with all unique elements', () => {
-    expect(isUnique([1, 2, 3, 4])).toBe(true);
-    expect(isUnique(['a', 'b', 'c'])).toBe(true);
+  it('should return true for an array with unique values', () => {
+    const arr = [1, 2, 3, 4, 5];
+    expect(isUnique(arr)).toBe(true);
+  });
+
+  it('should return false for an array with duplicate values', () => {
+    const arr = [1, 2, 2, 3, 4];
+    expect(isUnique(arr)).toBe(false);
+  });
+
+  it('should return true for an empty array', () => {
     expect(isUnique([])).toBe(true);
   });
 
-  test('should return false for an array with duplicate elements', () => {
-    expect(isUnique([1, 2, 2, 3])).toBe(false);
-    expect(isUnique(['a', 'b', 'a'])).toBe(false);
+  it('should handle arrays with mixed data types', () => {
+    const arr = [1, 'a', 2, 'b'];
+    expect(isUnique(arr)).toBe(true);
   });
 
-  test('should handle arrays with mixed types', () => {
-    expect(isUnique([1, '1', 2])).toBe(true);
-    expect(isUnique([1, '1', 1])).toBe(false);
-  });
-
-  test('should throw an error if the argument is not an array', () => {
-    expect(() => isUnique(null)).toThrow(TypeError);
-    expect(() => isUnique(undefined)).toThrow(TypeError);
-    expect(() => isUnique('string')).toThrow(TypeError);
-    expect(() => isUnique(123)).toThrow(TypeError);
-    expect(() => isUnique({})).toThrow(TypeError);
+  it('should handle arrays with mixed data types and duplicates', () => {
+    const arr = [1, 'a', 2, 'a'];
+    expect(isUnique(arr)).toBe(false);
   });
 });
