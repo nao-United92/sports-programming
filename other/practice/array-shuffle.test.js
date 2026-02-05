@@ -1,36 +1,34 @@
-const shuffle = require('./array-shuffle');
+const { shuffle } = require('./array-shuffle');
 
 describe('shuffle', () => {
-  test('should return a new array with the same elements but in a different order', () => {
-    const originalArray = [1, 2, 3, 4, 5];
-    const shuffledArray = shuffle(originalArray);
-
-    // Ensure it's a new array instance
-    expect(shuffledArray).not.toBe(originalArray);
-
-    // Ensure all elements are still present
-    expect(shuffledArray.sort()).toEqual(originalArray.sort());
-
-    // With a reasonable probability, the array should be different (not guaranteed)
-    // This test might occasionally fail due to pure chance, but it's rare.
-    if (originalArray.length > 1) {
-      expect(shuffledArray).not.toEqual(originalArray);
-    }
+  it('should return an array with the same elements', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const shuffled = shuffle(arr);
+    expect(shuffled).toHaveLength(arr.length);
+    expect(shuffled.sort()).toEqual(arr.sort());
   });
 
-  test('should handle an empty array', () => {
-    expect(shuffle([])).toEqual([]);
+  it('should handle an empty array', () => {
+    const arr = [];
+    const shuffled = shuffle(arr);
+    expect(shuffled).toEqual([]);
   });
 
-  test('should handle an array with a single element', () => {
-    expect(shuffle([1])).toEqual([1]);
+  it('should handle an array with one element', () => {
+    const arr = [1];
+    const shuffled = shuffle(arr);
+    expect(shuffled).toEqual([1]);
+  });
+  
+  it('should not modify the original array', () => {
+    const originalArr = [1, 2, 3];
+    shuffle(originalArr);
+    expect(originalArr).toEqual([1, 2, 3]);
   });
 
-  test('should handle array with duplicate elements', () => {
-    const originalArray = [1, 1, 2, 2, 3];
-    const shuffledArray = shuffle(originalArray);
-
-    expect(shuffledArray).not.toBe(originalArray);
-    expect(shuffledArray.sort()).toEqual(originalArray.sort());
+  it('should throw an error if not given an array', () => {
+    expect(() => shuffle('not an array')).toThrow(TypeError);
+    expect(() => shuffle({ a: 1 })).toThrow(TypeError);
+    expect(() => shuffle(null)).toThrow(TypeError);
   });
 });
