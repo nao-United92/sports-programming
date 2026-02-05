@@ -1,8 +1,8 @@
-const unique = (arr) => {
+const drop = (arr, n = 1) => {
   if (!Array.isArray(arr)) {
     throw new TypeError('Expected an array');
   }
-  return [...new Set(arr)];
+  return arr.slice(n);
 };
 
-module.exports = { unique };
+module.exports = { drop };

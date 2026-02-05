@@ -1,8 +1,8 @@
-const unique = (arr) => {
+const flatten = (arr) => {
   if (!Array.isArray(arr)) {
     throw new TypeError('Expected an array');
   }
-  return [...new Set(arr)];
+  return arr.flat();
 };
 
-module.exports = { unique };
+module.exports = { flatten };
