@@ -1,42 +1,51 @@
-// other/practice/array-flatten-with-depth-utils.test.js
+const flattenWithDepth = require('./array-flatten-with-depth-utils');
 
-const arrayFlattenWithDepth = require('./array-flatten-with-depth-utils');
-
-describe('arrayFlattenWithDepth', () => {
-  test('should flatten an array by one level by default', () => {
-    const arr = [1, [2, [3, 4]], 5];
-    expect(arrayFlattenWithDepth(arr)).toEqual([1, 2, [3, 4], 5]);
+describe('flattenWithDepth', () => {
+  test('should flatten by one level by default', () => {
+    const arr = [1, [2, 3], 4, [5, [6, 7]]];
+    expect(flattenWithDepth(arr)).toEqual([1, 2, 3, 4, 5, [6, 7]]);
   });
 
-  test('should flatten an array to a specified depth', () => {
-    const arr = [1, [2, [3, 4]], 5];
-    expect(arrayFlattenWithDepth(arr, 2)).toEqual([1, 2, 3, 4, 5]);
+  test('should flatten to a specified depth of 1', () => {
+    const arr = [1, [2, 3], 4, [5, [6, 7]]];
+    expect(flattenWithDepth(arr, 1)).toEqual([1, 2, 3, 4, 5, [6, 7]]);
   });
 
-  test('should not flatten if depth is 0', () => {
-    const arr = [1, [2, [3, 4]], 5];
-    expect(arrayFlattenWithDepth(arr, 0)).toEqual([1, [2, [3, 4]], 5]);
+  test('should flatten to a specified depth of 2', () => {
+    const arr = [1, [2, [3, 4]], 5, [6, [7, [8]]]];
+    expect(flattenWithDepth(arr, 2)).toEqual([1, 2, 3, 4, 5, 6, 7, [8]]);
+  });
+
+  test('should deeply flatten if depth is sufficiently large', () => {
+    const arr = [1, [2, [3, [4, [5]]]], 6];
+    expect(flattenWithDepth(arr, Infinity)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(flattenWithDepth(arr, 4)).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  test('should return a shallow copy if depth is 0', () => {
+    const arr = [1, [2, 3], 4];
+    expect(flattenWithDepth(arr, 0)).toEqual([1, [2, 3], 4]);
+    expect(flattenWithDepth(arr, 0)).not.toBe(arr); // Should be a new array
   });
 
   test('should handle empty arrays', () => {
-    expect(arrayFlattenWithDepth([])).toEqual([]);
-    expect(arrayFlattenWithDepth([], 2)).toEqual([]);
+    expect(flattenWithDepth([])).toEqual([]);
+    expect(flattenWithDepth([], 5)).toEqual([]);
   });
 
-  test('should handle arrays with no nested arrays', () => {
-    const arr = [1, 2, 3, 4];
-    expect(arrayFlattenWithDepth(arr)).toEqual([1, 2, 3, 4]);
-    expect(arrayFlattenWithDepth(arr, 2)).toEqual([1, 2, 3, 4]);
+  test('should handle arrays with no nested elements', () => {
+    const arr = [1, 2, 3];
+    expect(flattenWithDepth(arr, 2)).toEqual([1, 2, 3]);
   });
 
-  test('should flatten deeply nested arrays', () => {
-    const arr = [1, [2, [3, [4, 5]]], 6];
-    expect(arrayFlattenWithDepth(arr, Infinity)).toEqual([1, 2, 3, 4, 5, 6]);
+  test('should throw an error for non-array input', () => {
+    expect(() => flattenWithDepth(null)).toThrow('Expected an array');
+    expect(() => flattenWithDepth(123)).toThrow('Expected an array');
   });
 
-  test('should handle arrays with mixed types', () => {
-    const arr = [1, [2, { a: 3 }], 'hello', [4, [5]]];
-    expect(arrayFlattenWithDepth(arr, 1)).toEqual([1, 2, { a: 3 }, 'hello', 4, [5]]);
-    expect(arrayFlattenWithDepth(arr, 2)).toEqual([1, 2, { a: 3 }, 'hello', 4, 5]);
+  test('should throw an error for invalid depth', () => {
+    const arr = [1, 2];
+    expect(() => flattenWithDepth(arr, -1)).toThrow('Expected depth to be a non-negative number');
+    expect(() => flattenWithDepth(arr, 'abc')).toThrow('Expected depth to be a non-negative number');
   });
 });
