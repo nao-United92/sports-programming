@@ -1,33 +1,28 @@
 /**
- * Creates an array of elements split into two groups, one for which `predicate` returns truthy,
- * and one for which `predicate` returns falsy.
- *
- * @param {Array<T>} array The array to inspect.
- * @param {function(T, number, Array<T>): boolean} predicate The function invoked per iteration.
- * @returns {Array<Array<T>>} Returns the array of grouped elements.
- * @template T
+ * Partitions an array into two groups: one whose elements satisfy the predicate,
+ * and one whose elements do not.
+ * @param {Array<any>} arr The array to partition.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array<Array<any>>} A new array containing two arrays: [elementsThatPass, elementsThatFail].
  */
-function partition(array, predicate) {
-  if (!Array.isArray(array)) {
-    throw new TypeError('Expected an array for the first argument.');
+function partition(arr, predicate) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the first argument');
   }
   if (typeof predicate !== 'function') {
-    throw new TypeError('Expected a function for the predicate argument.');
+    throw new TypeError('Expected a function for the second argument (predicate)');
   }
 
-  const truthy = [];
-  const falsy = [];
-
-  for (let i = 0; i < array.length; i++) {
-    const element = array[i];
-    if (predicate(element, i, array)) {
-      truthy.push(element);
+  const pass = [];
+  const fail = [];
+  arr.forEach(item => {
+    if (predicate(item)) {
+      pass.push(item);
     } else {
-      falsy.push(element);
+      fail.push(item);
     }
-  }
-
-  return [truthy, falsy];
+  });
+  return [pass, fail];
 }
 
-export default partition;
+module.exports = partition;
