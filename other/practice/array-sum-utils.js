@@ -1,10 +1,16 @@
-const sum = (arr) => {
+/**
+ * Calculates the sum of all numbers in an array.
+ * @param {Array<number>} arr The array of numbers.
+ * @returns {number} The sum of the numbers.
+ */
+function sum(arr) {
   if (!Array.isArray(arr)) {
-    return 0;
+    throw new TypeError('Expected an array');
   }
-  return arr.reduce((acc, val) => {
-    return typeof val === 'number' ? acc + val : acc;
-  }, 0);
-};
+  if (arr.some(isNaN)) {
+    throw new TypeError('All elements in the array must be numbers');
+  }
+  return arr.reduce((total, num) => total + num, 0);
+}
 
-export default sum;
+module.exports = sum;
