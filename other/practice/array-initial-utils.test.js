@@ -1,36 +1,31 @@
-// other/practice/array-initial-utils.test.js
+const initial = require('./array-initial-utils');
 
-const arrayInitial = require('./array-initial-utils');
-
-describe('arrayInitial', () => {
-  test('should return all but the last element of an array', () => {
-    expect(arrayInitial([1, 2, 3, 4])).toEqual([1, 2, 3]);
+describe('initial', () => {
+  test('should return all elements except the last for a non-empty array', () => {
+    expect(initial([1, 2, 3, 4])).toEqual([1, 2, 3]);
+    expect(initial(['a', 'b', 'c'])).toEqual(['a', 'b']);
+    expect(initial([null, 1, 2])).toEqual([null, 1]);
+    expect(initial([undefined, 1, 2])).toEqual([undefined, 1]);
   });
 
-  test('should return an empty array if the input array has one element', () => {
-    expect(arrayInitial([1])).toEqual([]);
+  test('should return an empty array for an empty array', () => {
+    expect(initial([])).toEqual([]);
   });
 
-  test('should return an empty array if the input array is empty', () => {
-    expect(arrayInitial([])).toEqual([]);
+  test('should return an empty array for an array with one element', () => {
+    expect(initial([100])).toEqual([]);
   });
 
   test('should not modify the original array', () => {
-    const originalArr = [1, 2, 3];
-    arrayInitial(originalArr);
-    expect(originalArr).toEqual([1, 2, 3]);
+    const originalArray = [1, 2, 3];
+    initial(originalArray);
+    expect(originalArray).toEqual([1, 2, 3]);
   });
 
-  test('should handle arrays with mixed types', () => {
-    const arr = [1, 'hello', { a: 1 }, null];
-    expect(arrayInitial(arr)).toEqual([1, 'hello', { a: 1 }]);
-  });
-
-  test('should handle non-array input by returning an empty array', () => {
-    expect(arrayInitial(null)).toEqual([]);
-    expect(arrayInitial(undefined)).toEqual([]);
-    expect(arrayInitial(123)).toEqual([]);
-    expect(arrayInitial('string')).toEqual([]);
-    expect(arrayInitial({})).toEqual([]);
+  test('should throw an error for non-array input', () => {
+    expect(() => initial(null)).toThrow('Expected an array');
+    expect(() => initial(123)).toThrow('Expected an array');
+    expect(() => initial('string')).toThrow('Expected an array');
+    expect(() => initial({})).toThrow('Expected an array');
   });
 });
