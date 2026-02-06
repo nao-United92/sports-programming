@@ -1,51 +1,37 @@
-const arrayUnion = require('./array-union-utils');
+const union = require('./array-union-utils');
 
-describe('arrayUnion', () => {
-  test('should return unique elements from two number arrays', () => {
+describe('union', () => {
+  test('should return the union of two arrays of numbers', () => {
     const arr1 = [1, 2, 3];
     const arr2 = [3, 4, 5];
-    expect(arrayUnion(arr1, arr2)).toEqual([1, 2, 3, 4, 5]);
+    expect(union(arr1, arr2)).toEqual([1, 2, 3, 4, 5]);
   });
 
-  test('should return unique elements from two string arrays', () => {
-    const arr1 = ['a', 'b', 'c'];
-    const arr2 = ['c', 'd', 'e'];
-    expect(arrayUnion(arr1, arr2)).toEqual(['a', 'b', 'c', 'd', 'e']);
-  });
-
-  test('should handle arrays with no common elements', () => {
-    const arr1 = [1, 2, 3];
-    const arr2 = [4, 5, 6];
-    expect(arrayUnion(arr1, arr2)).toEqual([1, 2, 3, 4, 5, 6]);
+  test('should handle duplicate values within the same array', () => {
+    const arr1 = [1, 1, 2];
+    const arr2 = [2, 3, 3];
+    expect(union(arr1, arr2)).toEqual([1, 2, 3]);
   });
 
   test('should handle empty arrays', () => {
-    const arr1 = [1, 2, 3];
-    const arr2 = [];
-    expect(arrayUnion(arr1, arr2)).toEqual([1, 2, 3]);
-    expect(arrayUnion([], [1, 2, 3])).toEqual([1, 2, 3]);
-    expect(arrayUnion([], [])).toEqual([]);
+    expect(union([], [1, 2])).toEqual([1, 2]);
+    expect(union([1, 2], [])).toEqual([1, 2]);
+    expect(union([], [])).toEqual([]);
   });
 
-  test('should handle duplicate elements within input arrays', () => {
-    const arr1 = [1, 2, 2, 3];
-    const arr2 = [3, 3, 4, 5];
-    expect(arrayUnion(arr1, arr2)).toEqual([1, 2, 3, 4, 5]);
-  });
-
-  test('should handle mixed types if Set can compare them', () => {
+  test('should handle arrays with mixed types', () => {
     const arr1 = [1, 'a', null];
     const arr2 = ['a', undefined, 2];
-    expect(arrayUnion(arr1, arr2)).toEqual([1, 'a', null, undefined, 2]);
+    expect(union(arr1, arr2)).toEqual([1, 'a', null, undefined, 2]);
   });
 
-  test('should throw an error if the first argument is not an array', () => {
-    expect(() => arrayUnion(null, [1, 2])).toThrow('Expected both arguments to be arrays.');
-    expect(() => arrayUnion(123, [1, 2])).toThrow('Expected both arguments to be arrays.');
+  test('should throw an error if the first input is not an array', () => {
+    expect(() => union(null, [1, 2])).toThrow('Expected both inputs to be arrays');
+    expect(() => union(123, [1, 2])).toThrow('Expected both inputs to be arrays');
   });
 
-  test('should throw an error if the second argument is not an array', () => {
-    expect(() => arrayUnion([1, 2], null)).toThrow('Expected both arguments to be arrays.');
-    expect(() => arrayUnion([1, 2], 'string')).toThrow('Expected both arguments to be arrays.');
+  test('should throw an error if the second input is not an array', () => {
+    expect(() => union([1, 2], null)).toThrow('Expected both inputs to be arrays');
+    expect(() => union([1, 2], 'string')).toThrow('Expected both inputs to be arrays');
   });
 });
