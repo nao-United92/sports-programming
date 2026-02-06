@@ -1,32 +1,25 @@
-// other/practice/array-last-utils.test.js
+const last = require('./array-last-utils');
 
-const arrayLast = require('./array-last-utils');
-
-describe('arrayLast', () => {
-  test('should return the last element of an array', () => {
-    expect(arrayLast([1, 2, 3, 4])).toBe(4);
+describe('last', () => {
+  test('should return the last element of a non-empty array', () => {
+    expect(last([1, 2, 3])).toBe(3);
+    expect(last(['a', 'b', 'c'])).toBe('c');
+    expect(last([null, 1, 2])).toBe(2);
+    expect(last([undefined, 1, 2])).toBe(2);
   });
 
   test('should return undefined for an empty array', () => {
-    expect(arrayLast([])).toBeUndefined();
+    expect(last([])).toBe(undefined);
   });
 
-  test('should return the single element for a single-element array', () => {
-    expect(arrayLast([10])).toBe(10);
+  test('should return the only element if array has one element', () => {
+    expect(last([100])).toBe(100);
   });
 
-  test('should handle arrays with mixed types', () => {
-    const obj = { key: 'value' };
-    const arr = [1, 'hello', obj, null];
-    expect(arrayLast(arr)).toBe(null);
-    expect(arrayLast([1, 'hello', obj])).toBe(obj);
-  });
-
-  test('should handle non-array input by returning undefined', () => {
-    expect(arrayLast(null)).toBeUndefined();
-    expect(arrayLast(undefined)).toBeUndefined();
-    expect(arrayLast(123)).toBeUndefined();
-    expect(arrayLast('string')).toBeUndefined();
-    expect(arrayLast({})).toBeUndefined();
+  test('should throw an error for non-array input', () => {
+    expect(() => last(null)).toThrow('Expected an array');
+    expect(() => last(123)).toThrow('Expected an array');
+    expect(() => last('string')).toThrow('Expected an array');
+    expect(() => last({})).toThrow('Expected an array');
   });
 });
