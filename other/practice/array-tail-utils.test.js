@@ -1,36 +1,31 @@
-// other/practice/array-tail-utils.test.js
+const tail = require('./array-tail-utils');
 
-const arrayTail = require('./array-tail-utils');
-
-describe('arrayTail', () => {
-  test('should return all but the first element of an array', () => {
-    expect(arrayTail([1, 2, 3, 4])).toEqual([2, 3, 4]);
+describe('tail', () => {
+  test('should return all elements except the first for a non-empty array', () => {
+    expect(tail([1, 2, 3, 4])).toEqual([2, 3, 4]);
+    expect(tail(['a', 'b', 'c'])).toEqual(['b', 'c']);
+    expect(tail([null, 1, 2])).toEqual([1, 2]);
+    expect(tail([undefined, 1, 2])).toEqual([1, 2]);
   });
 
-  test('should return an empty array if the input array has one element', () => {
-    expect(arrayTail([1])).toEqual([]);
+  test('should return an empty array for an empty array', () => {
+    expect(tail([])).toEqual([]);
   });
 
-  test('should return an empty array if the input array is empty', () => {
-    expect(arrayTail([])).toEqual([]);
+  test('should return an empty array for an array with one element', () => {
+    expect(tail([100])).toEqual([]);
   });
 
   test('should not modify the original array', () => {
-    const originalArr = [1, 2, 3];
-    arrayTail(originalArr);
-    expect(originalArr).toEqual([1, 2, 3]);
+    const originalArray = [1, 2, 3];
+    tail(originalArray);
+    expect(originalArray).toEqual([1, 2, 3]);
   });
 
-  test('should handle arrays with mixed types', () => {
-    const arr = [1, 'hello', { a: 1 }, null];
-    expect(arrayTail(arr)).toEqual(['hello', { a: 1 }, null]);
-  });
-
-  test('should handle non-array input by returning an empty array', () => {
-    expect(arrayTail(null)).toEqual([]);
-    expect(arrayTail(undefined)).toEqual([]);
-    expect(arrayTail(123)).toEqual([]);
-    expect(arrayTail('string')).toEqual([]);
-    expect(arrayTail({})).toEqual([]);
+  test('should throw an error for non-array input', () => {
+    expect(() => tail(null)).toThrow('Expected an array');
+    expect(() => tail(123)).toThrow('Expected an array');
+    expect(() => tail('string')).toThrow('Expected an array');
+    expect(() => tail({})).toThrow('Expected an array');
   });
 });
