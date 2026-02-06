@@ -1,16 +1,13 @@
-// other/practice/array-tail-utils.js
-
 /**
- * Gets all but the first element of `array`.
- *
- * @param {Array} arr The array to query.
- * @returns {Array} Returns the slice of `array`.
+ * Gets all elements of an array except the first one.
+ * @param {Array<any>} arr The array to query.
+ * @returns {Array<any>} A new array containing all elements of `arr` except the first.
  */
-function arrayTail(arr) {
-  if (!Array.isArray(arr) || arr.length <= 1) {
-    return [];
+function tail(arr) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array');
   }
-  return arr.slice(1);
+  return arr.length > 0 ? arr.slice(1) : [];
 }
 
-module.exports = arrayTail;
+module.exports = tail;

@@ -1,16 +1,13 @@
-// other/practice/array-initial-utils.js
-
 /**
- * Gets all but the last element of `array`.
- *
- * @param {Array} arr The array to query.
- * @returns {Array} Returns the slice of `array`.
+ * Gets all elements of an array except the last one.
+ * @param {Array<any>} arr The array to query.
+ * @returns {Array<any>} A new array containing all elements of `arr` except the last.
  */
-function arrayInitial(arr) {
+function initial(arr) {
   if (!Array.isArray(arr)) {
-    return []; // Or throw an error, depending on desired behavior for non-arrays
+    throw new TypeError('Expected an array');
   }
-  return arr.slice(0, -1);
+  return arr.length > 0 ? arr.slice(0, -1) : [];
 }
 
-module.exports = arrayInitial;
+module.exports = initial;

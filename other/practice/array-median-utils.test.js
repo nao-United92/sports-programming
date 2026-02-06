@@ -1,39 +1,45 @@
-import { median } from "./array-median-utils.js";
+const median = require('./array-median-utils');
 
-describe("median", () => {
-  it("should return the median of an array with an odd number of elements", () => {
-    const array = [1, 5, 2, 8, 3];
-    expect(median(array)).toBe(3);
+describe('median', () => {
+  test('should calculate the median of an odd-length array', () => {
+    expect(median([1, 2, 3, 4, 5])).toBe(3);
+    expect(median([5, 1, 4, 2, 3])).toBe(3); // Unsorted input
   });
 
-  it("should return the median of an array with an even number of elements", () => {
-    const array = [1, 5, 2, 8, 3, 4];
-    expect(median(array)).toBe(3.5);
+  test('should calculate the median of an even-length array', () => {
+    expect(median([1, 2, 3, 4])).toBe(2.5);
+    expect(median([4, 1, 3, 2])).toBe(2.5); // Unsorted input
   });
 
-  it("should handle an array with negative numbers", () => {
-    const array = [-1, -5, -2, -8, -3];
-    expect(median(array)).toBe(-3);
+  test('should handle arrays with negative numbers', () => {
+    expect(median([-5, -1, -3, -2, -4])).toBe(-3);
+    expect(median([-4, -1, -3, -2])).toBe(-2.5);
   });
 
-  it("should handle an array with duplicate numbers", () => {
-    const array = [1, 2, 2, 3, 3, 3, 4];
-    expect(median(array)).toBe(3);
+  test('should handle arrays with floating point numbers', () => {
+    expect(median([1.1, 2.2, 3.3])).toBe(2.2);
+    expect(median([1.0, 2.0, 3.0, 4.0])).toBe(2.5);
   });
 
-  it("should return null for an empty array", () => {
-    expect(median([])).toBeNull();
+  test('should handle a single-element array', () => {
+    expect(median([7])).toBe(7);
   });
 
-  it("should handle an array with a single element", () => {
-    expect(median([10])).toBe(10);
+  test('should throw an error for an empty array', () => {
+    expect(() => median([])).toThrow('Median cannot be calculated for an empty array');
   });
 
-  it("should throw an error if the argument is not an array", () => {
-    expect(() => median("not an array")).toThrow("The argument must be an array of numbers.");
+  test('should throw an error for non-array input', () => {
+    expect(() => median(null)).toThrow('Expected an array');
+    expect(() => median(123)).toThrow('Expected an array');
+    expect(() => median('string')).toThrow('Expected an array');
+    expect(() => median({})).toThrow('Expected an array');
   });
 
-  it("should throw an error if the array contains non-numeric values", () => {
-    expect(() => median([1, 2, "a", 4])).toThrow("The argument must be an array of numbers.");
+  test('should throw an error if array contains non-numeric values', () => {
+    expect(() => median([1, 2, 'a', 4])).toThrow('All elements in the array must be numbers');
+    expect(() => median([1, null, 3])).toThrow('All elements in the array must be numbers');
+    expect(() => median([1, undefined, 3])).toThrow('All elements in the array must be numbers');
+    expect(() => median([1, {}, 3])).toThrow('All elements in the array must be numbers');
   });
 });

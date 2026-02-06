@@ -1,18 +1,14 @@
 /**
- * Computes the union of two arrays.
- * Returns a new array of unique elements that are present in either of the two arrays.
- *
- * @param {Array} arr1 The first array.
- * @param {Array} arr2 The second array.
- * @returns {Array} A new array containing the unique elements from both arrays.
+ * Computes the union of two arrays, returning all unique elements that appear in either array.
+ * @param {Array<any>} arr1 The first array.
+ * @param {Array<any>} arr2 The second array.
+ * @returns {Array<any>} A new array containing the union of elements.
  */
-function arrayUnion(arr1, arr2) {
+function union(arr1, arr2) {
   if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
-    throw new TypeError('Expected both arguments to be arrays.');
+    throw new TypeError('Expected both inputs to be arrays');
   }
-
-  const combined = [...arr1, ...arr2];
-  return [...new Set(combined)];
+  return [...new Set([...arr1, ...arr2])];
 }
 
-module.exports = arrayUnion;
+module.exports = union;

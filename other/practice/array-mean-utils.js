@@ -1,26 +1,19 @@
-const mean = (arr) => {
+/**
+ * Calculates the mean (average) of an array of numbers.
+ * @param {Array<number>} arr The array of numbers.
+ * @returns {number} The mean of the numbers.
+ */
+function mean(arr) {
   if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument.');
+    throw new TypeError('Expected an array');
   }
   if (arr.length === 0) {
-    return NaN; // Mean of an empty array is undefined
+    return 0; // Or throw an error, depending on desired behavior for empty arrays
   }
-
-  const sum = arr.reduce((acc, val) => {
-    if (typeof val !== 'number' || isNaN(val)) {
-      // If non-numeric values are present, they are effectively ignored
-      // or treated as 0 for sum calculation if desired, but returning NaN is safer.
-      // For this implementation, we'll propagate NaN if any non-number exists
-      return NaN;
-    }
-    return acc + val;
-  }, 0);
-
-  if (isNaN(sum)) {
-    return NaN;
+  if (arr.some(isNaN)) {
+    throw new TypeError('All elements in the array must be numbers');
   }
+  return arr.reduce((sum, num) => sum + num, 0) / arr.length;
+}
 
-  return sum / arr.length;
-};
-
-module.exports = { mean };
+module.exports = mean;

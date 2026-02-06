@@ -1,34 +1,25 @@
-// other/practice/array-head-utils.test.js
+const head = require('./array-head-utils');
 
-const arrayHead = require('./array-head-utils');
-const arrayFirst = require('./array-first-utils'); // To ensure it's using the same logic
-
-describe('arrayHead', () => {
-  test('should return the first element of an array, same as arrayFirst', () => {
-    const arr = [1, 2, 3, 4];
-    expect(arrayHead(arr)).toBe(1);
-    expect(arrayHead(arr)).toBe(arrayFirst(arr));
+describe('head', () => {
+  test('should return the first element of a non-empty array', () => {
+    expect(head([1, 2, 3])).toBe(1);
+    expect(head(['a', 'b', 'c'])).toBe('a');
+    expect(head([null, 1, 2])).toBe(null);
+    expect(head([undefined, 1, 2])).toBe(undefined);
   });
 
   test('should return undefined for an empty array', () => {
-    expect(arrayHead([])).toBeUndefined();
+    expect(head([])).toBe(undefined);
   });
 
-  test('should return the single element for a single-element array', () => {
-    expect(arrayHead([10])).toBe(10);
+  test('should return the only element if array has one element', () => {
+    expect(head([100])).toBe(100);
   });
 
-  test('should handle arrays with mixed types', () => {
-    const obj = { key: 'value' };
-    const arr = [obj, 'hello', 1, null];
-    expect(arrayHead(arr)).toBe(obj);
-  });
-
-  test('should handle non-array input by returning undefined', () => {
-    expect(arrayHead(null)).toBeUndefined();
-    expect(arrayHead(undefined)).toBeUndefined();
-    expect(arrayHead(123)).toBeUndefined();
-    expect(arrayHead('string')).toBeUndefined();
-    expect(arrayHead({})).toBeUndefined();
+  test('should throw an error for non-array input', () => {
+    expect(() => head(null)).toThrow('Expected an array');
+    expect(() => head(123)).toThrow('Expected an array');
+    expect(() => head('string')).toThrow('Expected an array');
+    expect(() => head({})).toThrow('Expected an array');
   });
 });

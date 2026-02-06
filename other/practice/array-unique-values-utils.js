@@ -1,14 +1,13 @@
 /**
- * Creates a duplicate-free version of an array.
- *
- * @param {Array<any>} arr The array to inspect.
- * @returns {Array<any>} Returns the new duplicate free array.
+ * Returns an array with unique values from the input array.
+ * @param {Array<any>} arr The input array.
+ * @returns {Array<any>} A new array with unique values.
  */
 function uniqueValues(arr) {
   if (!Array.isArray(arr)) {
-    return [];
+    throw new TypeError('Expected an array');
   }
-  return Array.from(new Set(arr));
+  return [...new Set(arr)];
 }
 
 module.exports = uniqueValues;
