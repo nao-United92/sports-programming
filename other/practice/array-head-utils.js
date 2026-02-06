@@ -1,16 +1,13 @@
-// other/practice/array-head-utils.js
-
-const arrayFirst = require('./array-first-utils');
-
 /**
- * Gets the first element of `array`.
- * This is an alias for `arrayFirst`.
- *
- * @param {Array} arr The array to query.
- * @returns {*} Returns the first element of `array`.
+ * Gets the first element of an array.
+ * @param {Array<any>} arr The array to query.
+ * @returns {any} The first element of `arr`.
  */
-function arrayHead(arr) {
-  return arrayFirst(arr);
+function head(arr) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array');
+  }
+  return arr.length > 0 ? arr[0] : undefined;
 }
 
-module.exports = arrayHead;
+module.exports = head;
