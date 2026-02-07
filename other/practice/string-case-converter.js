@@ -1,30 +1,11 @@
-
-
-const toCamelCase = (str) => {
-  if (typeof str !== 'string' || !str) return '';
-  return str.replace(/([-_\s]+(.)?)/g, (match, sep, c) => c ? c.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
+const kebabCase = (str) => {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase()
+    .replace(/^-+|-+$/g, '');
 };
 
-const toPascalCase = (str) => {
-  const camel = toCamelCase(str);
-  return camel.charAt(0).toUpperCase() + camel.slice(1);
-}
-
-const toSnakeCase = (str) => {
-  if (typeof str !== 'string' || !str) return '';
-  return str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-    .map(x => x.toLowerCase())
-    .join('_');
-};
-
-const toKebabCase = (str) => {
-  if (typeof str !== 'string' || !str) return '';
-  return toSnakeCase(str).replace(/_/g, '-');
-};
-
-module.exports = {
-  toCamelCase,
-  toPascalCase,
-  toSnakeCase,
-  toKebabCase,
-};
+module.exports = { kebabCase };
