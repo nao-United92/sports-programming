@@ -1,9 +1,6 @@
-const omit = (obj, keys) => {
-  const newObj = { ...obj };
-  for (const key of keys) {
-    delete newObj[key];
-  }
-  return newObj;
-};
+const omit = (obj, keys) =>
+  Object.fromEntries(
+    Object.entries(obj).filter(([key]) => !keys.includes(key)),
+  );
 
-module.exports = omit;
+export { omit };
