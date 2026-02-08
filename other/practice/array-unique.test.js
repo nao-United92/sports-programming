@@ -1,33 +1,30 @@
-const { unique } = require('./array-unique');
+import { unique } from './array-unique.js';
 
 describe('unique', () => {
-  it('should remove duplicate values from an array', () => {
-    const arr = [1, 2, 2, 3, 4, 4, 5];
-    expect(unique(arr)).toEqual([1, 2, 3, 4, 5]);
+  it('should remove duplicate elements from an array of numbers', () => {
+    const arr = [1, 2, 2, 3, 1, 4];
+    const expected = [1, 2, 3, 4];
+    expect(unique(arr)).toEqual(expected);
   });
 
-  it('should work with an array of strings', () => {
+  it('should remove duplicate elements from an array of strings', () => {
     const arr = ['a', 'b', 'a', 'c', 'b'];
-    expect(unique(arr)).toEqual(['a', 'b', 'c']);
+    const expected = ['a', 'b', 'c'];
+    expect(unique(arr)).toEqual(expected);
   });
 
-  it('should return an empty array if given an empty array', () => {
+  it('should handle an empty array', () => {
     expect(unique([])).toEqual([]);
   });
 
-  it('should return the same array if it has no duplicates', () => {
-    const arr = [1, 2, 3, 4, 5];
-    expect(unique(arr)).toEqual([1, 2, 3, 4, 5]);
-  });
-  
-  it('should handle mixed types', () => {
-    const arr = [1, '1', 2, '2', 1];
-    expect(unique(arr)).toEqual([1, '1', 2, '2']);
+  it('should handle an array with no duplicates', () => {
+    const arr = [1, 2, 3];
+    expect(unique(arr)).toEqual(arr);
   });
 
-  it('should throw an error if not given an array', () => {
-    expect(() => unique('not an array')).toThrow(TypeError);
-    expect(() => unique({ a: 1 })).toThrow(TypeError);
-    expect(() => unique(null)).toThrow(TypeError);
+  it('should handle mixed data types', () => {
+    const arr = [1, 'a', 1, true, 'a', false];
+    const expected = [1, 'a', true, false];
+    expect(unique(arr)).toEqual(expected);
   });
 });

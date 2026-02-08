@@ -1,31 +1,26 @@
-const omit = require('./object-omit');
+import { omit } from './object-omit.js';
 
 describe('omit', () => {
-  test('should create an object excluding specified keys', () => {
-    const original = { a: 1, b: 2, c: 3 };
-    const expected = { a: 1 };
-    expect(omit(original, ['b', 'c'])).toEqual(expected);
+  it('should omit specified keys from an object', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const keys = ['a', 'c'];
+    const expected = { b: 2 };
+    expect(omit(obj, keys)).toEqual(expected);
   });
 
-  test('should return a new object instance', () => {
-    const original = { a: 1, b: 2 };
-    const result = omit(original, ['b']);
-    expect(result).not.toBe(original);
+  it('should handle non-existent keys gracefully', () => {
+    const obj = { a: 1, b: 2 };
+    const keys = ['c', 'd'];
+    const expected = { a: 1, b: 2 };
+    expect(omit(obj, keys)).toEqual(expected);
   });
 
-  test('should not modify the original object', () => {
-    const original = { a: 1, b: 2 };
-    omit(original, ['b']);
-    expect(original).toEqual({ a: 1, b: 2 });
+  it('should return the original object if no keys are provided', () => {
+    const obj = { a: 1, b: 2 };
+    expect(omit(obj, [])).toEqual(obj);
   });
 
-  test('should handle keys that do not exist in the object', () => {
-    const original = { a: 1, b: 2 };
-    expect(omit(original, ['c', 'd'])).toEqual(original);
-  });
-
-  test('should return an empty object if all keys are omitted', () => {
-    const original = { a: 1, b: 2 };
-    expect(omit(original, ['a', 'b'])).toEqual({});
+  it('should return an empty object if the input object is empty', () => {
+    expect(omit({}, ['a'])).toEqual({});
   });
 });

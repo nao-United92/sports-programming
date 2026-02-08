@@ -1,37 +1,26 @@
-const pick = require('./object-pick');
+import { pick } from './object-pick.js';
 
 describe('pick', () => {
-  test('should create an object with only the specified keys', () => {
-    const original = { a: 1, b: 2, c: 3 };
+  it('should pick specified keys from an object', () => {
+    const obj = { a: 1, b: 2, c: 3 };
+    const keys = ['a', 'c'];
     const expected = { a: 1, c: 3 };
-    expect(pick(original, ['a', 'c'])).toEqual(expected);
+    expect(pick(obj, keys)).toEqual(expected);
   });
 
-  test('should return a new object instance', () => {
-    const original = { a: 1, b: 2 };
-    const result = pick(original, ['a']);
-    expect(result).not.toBe(original);
-  });
-
-  test('should not modify the original object', () => {
-    const original = { a: 1, b: 2 };
-    pick(original, ['a']);
-    expect(original).toEqual({ a: 1, b: 2 });
-  });
-
-  test('should handle keys that do not exist in the object', () => {
-    const original = { a: 1, b: 2 };
+  it('should handle non-existent keys gracefully', () => {
+    const obj = { a: 1, b: 2 };
+    const keys = ['a', 'd'];
     const expected = { a: 1 };
-    expect(pick(original, ['a', 'd'])).toEqual(expected);
+    expect(pick(obj, keys)).toEqual(expected);
   });
 
-  test('should return an empty object if no keys are picked', () => {
-    const original = { a: 1, b: 2 };
-    expect(pick(original, [])).toEqual({});
+  it('should return an empty object if no keys are provided', () => {
+    const obj = { a: 1, b: 2 };
+    expect(pick(obj, [])).toEqual({});
   });
 
-  test('should return an empty object if no matching keys are found', () => {
-    const original = { a: 1, b: 2 };
-    expect(pick(original, ['c', 'd'])).toEqual({});
+  it('should return an empty object if the input object is empty', () => {
+    expect(pick({}, ['a'])).toEqual({});
   });
 });

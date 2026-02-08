@@ -1,11 +1,6 @@
-const pick = (obj, keys) => {
-  const newObj = {};
-  for (const key of keys) {
-    if (key in obj) {
-      newObj[key] = obj[key];
-    }
-  }
-  return newObj;
-};
+const pick = (obj, keys) =>
+  Object.fromEntries(
+    keys.filter((key) => key in obj).map((key) => [key, obj[key]]),
+  );
 
-module.exports = pick;
+export { pick };

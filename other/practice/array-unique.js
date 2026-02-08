@@ -1,8 +1,3 @@
-const unique = (arr) => {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array');
-  }
-  return [...new Set(arr)];
-};
+const unique = (arr) => [...new Set(arr)];
 
-module.exports = { unique };
+export { unique };
