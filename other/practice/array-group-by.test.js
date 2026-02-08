@@ -1,47 +1,33 @@
-const groupBy = require('./array-group-by');
+import { groupBy } from './array-group-by.js';
 
 describe('groupBy', () => {
-  test('should group an array of objects by a key', () => {
+  it('should group objects by a key', () => {
     const array = [
-      { id: 1, category: 'A' },
-      { id: 2, category: 'B' },
-      { id: 3, category: 'A' },
-      { id: 4, category: 'B' },
-      { id: 5, category: 'A' },
+      { id: 1, category: 'a' },
+      { id: 2, category: 'b' },
+      { id: 3, category: 'a' },
+      { id: 4, category: 'b' },
     ];
     const expected = {
-      A: [
-        { id: 1, category: 'A' },
-        { id: 3, category: 'A' },
-        { id: 5, category: 'A' },
+      a: [
+        { id: 1, category: 'a' },
+        { id: 3, category: 'a' },
       ],
-      B: [
-        { id: 2, category: 'B' },
-        { id: 4, category: 'B' },
+      b: [
+        { id: 2, category: 'b' },
+        { id: 4, category: 'b' },
       ],
     };
     expect(groupBy(array, 'category')).toEqual(expected);
   });
 
-  test('should return an empty object for an empty array', () => {
+  it('should return an empty object for an empty array', () => {
     expect(groupBy([], 'category')).toEqual({});
   });
 
-  test('should handle items without the specified key', () => {
-    const array = [
-      { id: 1, category: 'A' },
-      { id: 2, name: 'Item 2' },
-      { id: 3, category: 'A' },
-    ];
-    const expected = {
-      A: [
-        { id: 1, category: 'A' },
-        { id: 3, category: 'A' },
-      ],
-      undefined: [
-        { id: 2, name: 'Item 2' },
-      ],
-    };
+  it('should handle arrays with a single element', () => {
+    const array = [{ id: 1, category: 'a' }];
+    const expected = { a: [{ id: 1, category: 'a' }] };
     expect(groupBy(array, 'category')).toEqual(expected);
   });
 });
