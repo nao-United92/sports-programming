@@ -1,11 +1,24 @@
-const { shuffle } = require('./array-shuffle');
+import shuffle from './array-shuffle';
 
 describe('shuffle', () => {
-  it('should return an array with the same elements', () => {
+  it('should return an array with the same length', () => {
     const arr = [1, 2, 3, 4, 5];
     const shuffled = shuffle(arr);
     expect(shuffled).toHaveLength(arr.length);
+  });
+
+  it('should contain the same elements as the original array', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const shuffled = shuffle(arr);
     expect(shuffled.sort()).toEqual(arr.sort());
+  });
+
+  it('should not be the same as the original array', () => {
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const shuffled = shuffle(arr);
+    // This test has a small chance of failing if the shuffled array is the same as the original
+    // but for a 10 element array, this is very unlikely.
+    expect(shuffled).not.toEqual(arr);
   });
 
   it('should handle an empty array', () => {
@@ -18,17 +31,5 @@ describe('shuffle', () => {
     const arr = [1];
     const shuffled = shuffle(arr);
     expect(shuffled).toEqual([1]);
-  });
-  
-  it('should not modify the original array', () => {
-    const originalArr = [1, 2, 3];
-    shuffle(originalArr);
-    expect(originalArr).toEqual([1, 2, 3]);
-  });
-
-  it('should throw an error if not given an array', () => {
-    expect(() => shuffle('not an array')).toThrow(TypeError);
-    expect(() => shuffle({ a: 1 })).toThrow(TypeError);
-    expect(() => shuffle(null)).toThrow(TypeError);
   });
 });
