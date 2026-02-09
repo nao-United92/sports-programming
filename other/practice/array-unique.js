@@ -1,3 +1,3 @@
 const unique = (arr) => [...new Set(arr)];
 
-export { unique };
+export default unique;

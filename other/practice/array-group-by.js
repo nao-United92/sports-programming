@@ -1,9 +1,9 @@
 const groupBy = (arr, key) =>
-  arr.reduce(
-    (acc, item) => (
-      (acc[item[key]] = [...(acc[item[key]] || []), item]), acc
-    ),
-    {},
-  );
+  arr.reduce((acc, item) => {
+    const group = item[key];
+    acc[group] = acc[group] || [];
+    acc[group].push(item);
+    return acc;
+  }, {});
 
-export { groupBy };
+export default groupBy;

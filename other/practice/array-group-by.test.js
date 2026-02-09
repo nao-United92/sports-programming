@@ -1,33 +1,51 @@
-import { groupBy } from './array-group-by.js';
+import groupBy from './array-group-by';
 
 describe('groupBy', () => {
-  it('should group objects by a key', () => {
-    const array = [
-      { id: 1, category: 'a' },
-      { id: 2, category: 'b' },
-      { id: 3, category: 'a' },
-      { id: 4, category: 'b' },
+  it('should group an array of objects by a key', () => {
+    const arr = [
+      { type: 'fruit', name: 'apple' },
+      { type: 'vegetable', name: 'carrot' },
+      { type: 'fruit', name: 'banana' },
+      { type: 'vegetable', name: 'potato' },
     ];
-    const expected = {
-      a: [
-        { id: 1, category: 'a' },
-        { id: 3, category: 'a' },
+    const grouped = groupBy(arr, 'type');
+    expect(grouped).toEqual({
+      fruit: [
+        { type: 'fruit', name: 'apple' },
+        { type: 'fruit', name: 'banana' },
       ],
-      b: [
-        { id: 2, category: 'b' },
-        { id: 4, category: 'b' },
+      vegetable: [
+        { type: 'vegetable', name: 'carrot' },
+        { type: 'vegetable', name: 'potato' },
       ],
-    };
-    expect(groupBy(array, 'category')).toEqual(expected);
+    });
   });
 
-  it('should return an empty object for an empty array', () => {
-    expect(groupBy([], 'category')).toEqual({});
+  it('should handle an empty array', () => {
+    expect(groupBy([], 'type')).toEqual({});
   });
 
-  it('should handle arrays with a single element', () => {
-    const array = [{ id: 1, category: 'a' }];
-    const expected = { a: [{ id: 1, category: 'a' }] };
-    expect(groupBy(array, 'category')).toEqual(expected);
+  it('should handle an array with no matching key', () => {
+    const arr = [{ name: 'apple' }, { name: 'carrot' }];
+    const grouped = groupBy(arr, 'type');
+    expect(grouped).toEqual({
+      undefined: [{ name: 'apple' }, { name: 'carrot' }],
+    });
+  });
+
+  it('should group by a numeric key', () => {
+    const arr = [
+      { id: 1, value: 'a' },
+      { id: 2, value: 'b' },
+      { id: 1, value: 'c' },
+    ];
+    const grouped = groupBy(arr, 'id');
+    expect(grouped).toEqual({
+      '1': [
+        { id: 1, value: 'a' },
+        { id: 1, value: 'c' },
+      ],
+      '2': [{ id: 2, value: 'b' }],
+    });
   });
 });
