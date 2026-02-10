@@ -1,30 +1,28 @@
-import { unique } from './array-unique.js';
+import arrayUnique from './array-unique';
 
-describe('unique', () => {
-  it('should remove duplicate elements from an array of numbers', () => {
-    const arr = [1, 2, 2, 3, 1, 4];
-    const expected = [1, 2, 3, 4];
-    expect(unique(arr)).toEqual(expected);
+describe('arrayUnique', () => {
+  test('should return unique elements from an array of numbers', () => {
+    expect(arrayUnique([1, 2, 2, 3, 4, 4, 5])).toEqual([1, 2, 3, 4, 5]);
   });
 
-  it('should remove duplicate elements from an array of strings', () => {
-    const arr = ['a', 'b', 'a', 'c', 'b'];
-    const expected = ['a', 'b', 'c'];
-    expect(unique(arr)).toEqual(expected);
+  test('should return unique elements from an array of strings', () => {
+    expect(arrayUnique(['a', 'b', 'a', 'c', 'b'])).toEqual(['a', 'b', 'c']);
   });
 
-  it('should handle an empty array', () => {
-    expect(unique([])).toEqual([]);
+  test('should handle mixed types correctly', () => {
+    expect(arrayUnique([1, '1', 2, 1])).toEqual([1, '1', 2]);
   });
 
-  it('should handle an array with no duplicates', () => {
+  test('should return an empty array if an empty array is provided', () => {
+    expect(arrayUnique([])).toEqual([]);
+  });
+
+  test('should return the same array if all elements are unique', () => {
     const arr = [1, 2, 3];
-    expect(unique(arr)).toEqual(arr);
+    expect(arrayUnique(arr)).toEqual(arr);
   });
 
-  it('should handle mixed data types', () => {
-    const arr = [1, 'a', 1, true, 'a', false];
-    const expected = [1, 'a', true, false];
-    expect(unique(arr)).toEqual(expected);
+  test('should handle arrays with null and undefined values', () => {
+    expect(arrayUnique([1, null, 2, undefined, null, 1])).toEqual([1, null, 2, undefined]);
   });
 });
