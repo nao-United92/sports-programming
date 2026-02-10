@@ -1,13 +1,27 @@
-const shuffle = (arr) => {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array');
+/**
+ * Shuffles an array randomly using the Fisher-Yates (Knuth) shuffle algorithm.
+ * The original array is modified.
+ *
+ * @param {Array<any>} array The array to shuffle.
+ * @returns {Array<any>} The shuffled array.
+ */
+const arrayShuffle = (array) => {
+  let currentIndex = array.length, randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex !== 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
-  const newArr = [...arr];
-  for (let i = newArr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-  }
-  return newArr;
+
+  return array;
 };
 
-module.exports = { shuffle };
+export default arrayShuffle;
