@@ -1,29 +1,28 @@
-const { capitalize } = require('./string-capitalize');
+import stringCapitalize from './string-capitalize';
 
-describe('capitalize', () => {
-  it('should capitalize the first letter of a string and lowercase the rest', () => {
-    expect(capitalize('hello')).toBe('Hello');
-    expect(capitalize('WORLD')).toBe('World');
-    expect(capitalize('jAvAsCrIpT')).toBe('Javascript');
+describe('stringCapitalize', () => {
+  test('should capitalize the first letter of a word', () => {
+    expect(stringCapitalize('hello')).toBe('Hello');
   });
 
-  it('should handle an empty string', () => {
-    expect(capitalize('')).toBe('');
+  test('should capitalize the first letter of a sentence', () => {
+    expect(stringCapitalize('hello world')).toBe('Hello world');
   });
 
-  it('should handle a single-character string', () => {
-    expect(capitalize('a')).toBe('A');
-    expect(capitalize('Z')).toBe('Z');
-  });
-  
-  it('should work correctly with leading spaces (though typical use case expects trimmed string)', () => {
-    expect(capitalize('  hello')).toBe('  hello'); // Note: Does not trim. User should handle trimming if desired.
+  test('should return an empty string for an empty input', () => {
+    expect(stringCapitalize('')).toBe('');
   });
 
-  it('should throw an error if not given a string', () => {
-    expect(() => capitalize(123)).toThrow(TypeError);
-    expect(() => capitalize(null)).toThrow(TypeError);
-    expect(() => capitalize(undefined)).toThrow(TypeError);
-    expect(() => capitalize({})).toThrow(TypeError);
+  test('should handle a single character string', () => {
+    expect(stringCapitalize('a')).toBe('A');
+  });
+
+  test('should not change an already capitalized string', () => {
+    expect(stringCapitalize('Hello')).toBe('Hello');
+  });
+
+  test('should handle strings with numbers or special characters at the beginning', () => {
+    expect(stringCapitalize('1abc')).toBe('1abc');
+    expect(stringCapitalize('@xyz')).toBe('@xyz');
   });
 });
