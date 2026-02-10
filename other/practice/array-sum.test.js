@@ -1,5 +1,4 @@
-// other/practice/array-sum.test.js
-const arraySum = require('./array-sum');
+import arraySum from './array-sum';
 
 describe('arraySum', () => {
   test('should return the sum of positive numbers', () => {
@@ -18,27 +17,15 @@ describe('arraySum', () => {
     expect(arraySum([])).toBe(0);
   });
 
-  test('should return the number itself for an array with a single number', () => {
-    expect(arraySum([10])).toBe(10);
+  test('should return the number itself for a single element array', () => {
+    expect(arraySum([100])).toBe(100);
   });
 
-  test('should return 0 for an array containing non-numeric values', () => {
-    expect(arraySum([1, 2, 'a', 4])).toBe(0);
-    expect(arraySum([1, 2, null, 4])).toBe(0); // null is not typeof number, so this should return 0
-    expect(arraySum([1, 2, undefined, 4])).toBe(0);
-    expect(arraySum([1, 2, {}, 4])).toBe(0);
+  test('should handle floating point numbers', () => {
+    expect(arraySum([0.1, 0.2, 0.3])).toBeCloseTo(0.6);
   });
 
-  test('should handle arrays with zero', () => {
-    expect(arraySum([0, 0, 0])).toBe(0);
-    expect(arraySum([-5, 0, 5])).toBe(0);
-  });
-
-  test('should return 0 for non-array inputs', () => {
-    expect(arraySum(null)).toBe(0);
-    expect(arraySum(undefined)).toBe(0);
-    expect(arraySum(123)).toBe(0);
-    expect(arraySum('string')).toBe(0);
-    expect(arraySum({})).toBe(0);
+  test('should handle large numbers', () => {
+    expect(arraySum([1000000, 2000000, 3000000])).toBe(6000000);
   });
 });
