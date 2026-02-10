@@ -17,4 +17,4 @@ const sortObjectsByKey = (arr, key, order = 'asc') => {
   });
 };
 
-module.exports = { sortObjectsByKey };
+export { sortObjectsByKey };
