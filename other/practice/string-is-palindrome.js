@@ -1,31 +1,14 @@
-// other/practice/string-is-palindrome.js
 /**
- * Checks if a string is a palindrome (reads the same forwards and backwards,
- * ignoring case and non-alphanumeric characters).
+ * Checks if a given string is a palindrome (reads the same forwards and backwards).
+ * Ignores case and non-alphanumeric characters.
  *
  * @param {string} str The string to check.
- * @returns {boolean} Returns `true` if the string is a palindrome, `false` otherwise.
- * @example
- *
- * stringIsPalindrome('A man, a plan, a canal: Panama');
- * // => true
- *
- * stringIsPalindrome('race a car');
- * // => false
- *
- * stringIsPalindrome('madam');
- * // => true
- *
- * stringIsPalindrome('');
- * // => true
+ * @returns {boolean} True if the string is a palindrome, false otherwise.
  */
-function stringIsPalindrome(str) {
-  if (typeof str !== 'string') {
-    return false; // Or throw an error, depending on desired behavior
-  }
-
+const stringIsPalindrome = (str) => {
   const cleanedStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return cleanedStr === cleanedStr.split('').reverse().join('');
-}
+  const reversedStr = cleanedStr.split('').reverse().join('');
+  return cleanedStr === reversedStr;
+};
 
-module.exports = stringIsPalindrome;
+export default stringIsPalindrome;
