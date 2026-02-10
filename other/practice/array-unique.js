@@ -8,4 +8,4 @@ const arrayUnique = (array) => {
   return [...new Set(array)];
 };
 
-export default arrayUnique;
+export default unique;

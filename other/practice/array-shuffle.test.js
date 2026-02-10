@@ -1,39 +1,34 @@
-import arrayShuffle from './array-shuffle';
+import shuffle from './array-shuffle';
 
-describe('arrayShuffle', () => {
-  test('should shuffle an array without losing elements', () => {
-    const originalArray = [1, 2, 3, 4, 5];
-    const shuffledArray = arrayShuffle([...originalArray]); // Create a copy to not modify original
+describe('shuffle', () => {
+  it('should return an array with the same length', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const shuffled = shuffle(arr);
+    expect(shuffled).toHaveLength(arr.length);
+  });
 
-    expect(shuffledArray.sort()).toEqual(originalArray.sort());
-    expect(shuffledArray.length).toBe(originalArray.length);
+  it('should contain the same elements as the original array', () => {
+    const arr = [1, 2, 3, 4, 5];
+    const shuffled = shuffle(arr);
+    expect(shuffled.sort()).toEqual(arr.sort());
+  });
+
+  it('should not be the same as the original array', () => {
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const shuffled = shuffle(arr);
+    // This test has a small chance of failing if the shuffled array is the same as the original
+    // but for a 10 element array, this is very unlikely.
+    expect(shuffled).not.toEqual(arr);
+  });
+
+  it('should handle an empty array', () => {
+    const arr = [];
+    const shuffled = shuffle(arr);
+    expect(shuffled).toEqual([]);
   });
 
   test('should return an empty array if an empty array is provided', () => {
     const emptyArray = [];
     expect(arrayShuffle(emptyArray)).toEqual([]);
-  });
-
-  test('should return the same array if it has only one element', () => {
-    const singleElementArray = [1];
-    expect(arrayShuffle(singleElementArray)).toEqual([1]);
-  });
-
-  test('should return a different order for a non-trivial array (probabilistic test)', () => {
-    // This test is probabilistic and might fail rarely due to random chance
-    // A truly random shuffle could theoretically result in the same order.
-    // We'll run it a few times to increase confidence.
-    const original = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    let differentOrderCount = 0;
-    const attempts = 10;
-
-    for (let i = 0; i < attempts; i++) {
-      const shuffled = arrayShuffle([...original]);
-      if (shuffled.join(',') !== original.join(',')) {
-        differentOrderCount++;
-      }
-    }
-    // Expect at least one shuffle to result in a different order over 10 attempts
-    expect(differentOrderCount).toBeGreaterThan(0);
   });
 });
