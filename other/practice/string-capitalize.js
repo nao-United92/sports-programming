@@ -1,11 +1,14 @@
-const capitalize = (str) => {
-  if (typeof str !== 'string') {
-    throw new TypeError('Expected a string');
-  }
-  if (str.length === 0) {
+/**
+ * Capitalizes the first letter of a string.
+ *
+ * @param {string} str The string to capitalize.
+ * @returns {string} The string with its first letter capitalized.
+ */
+const stringCapitalize = (str) => {
+  if (!str) {
     return '';
   }
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-module.exports = { capitalize };
+export default stringCapitalize;

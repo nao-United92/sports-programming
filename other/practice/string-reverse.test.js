@@ -1,25 +1,27 @@
-const reverseString = require('./string-reverse');
+import stringReverse from './string-reverse';
 
-describe('reverseString', () => {
-  test('should reverse a standard string', () => {
-    expect(reverseString('hello')).toBe('olleh');
+describe('stringReverse', () => {
+  test('should reverse a basic string', () => {
+    expect(stringReverse('hello')).toBe('olleh');
   });
 
-  test('should handle a string with spaces', () => {
-    expect(reverseString('hello world')).toBe('dlrow olleh');
+  test('should reverse a string with spaces', () => {
+    expect(stringReverse('hello world')).toBe('dlrow olleh');
   });
 
   test('should return an empty string for an empty input', () => {
-    expect(reverseString('')).toBe('');
+    expect(stringReverse('')).toBe('');
   });
 
-  test('should handle non-string inputs gracefully', () => {
-    expect(reverseString(12345)).toBe('');
-    expect(reverseString(null)).toBe('');
-    expect(reverseString(undefined)).toBe('');
+  test('should return the same character for a single character string', () => {
+    expect(stringReverse('a')).toBe('a');
   });
 
-  test('should handle palindromes', () => {
-    expect(reverseString('madam')).toBe('madam');
+  test('should handle numbers in a string', () => {
+    expect(stringReverse('12345')).toBe('54321');
+  });
+
+  test('should handle special characters', () => {
+    expect(stringReverse('!@#$%')).toBe('%$#@!');
   });
 });

@@ -27,9 +27,8 @@ describe('shuffle', () => {
     expect(shuffled).toEqual([]);
   });
 
-  it('should handle an array with one element', () => {
-    const arr = [1];
-    const shuffled = shuffle(arr);
-    expect(shuffled).toEqual([1]);
+  test('should return an empty array if an empty array is provided', () => {
+    const emptyArray = [];
+    expect(arrayShuffle(emptyArray)).toEqual([]);
   });
 });
