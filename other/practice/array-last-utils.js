@@ -1,13 +1,8 @@
-/**
- * Gets the last element of an array.
- * @param {Array<any>} arr The array to query.
- * @returns {any} The last element of `arr`.
- */
-function last(arr) {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array');
+const last = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return undefined;
   }
-  return arr.length > 0 ? arr[arr.length - 1] : undefined;
-}
+  return arr[arr.length - 1];
+};
 
-module.exports = last;
+export { last };
