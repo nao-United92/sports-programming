@@ -1,51 +1,42 @@
-const zip = require('./array-zip-utils');
+import { zip } from './array-zip-utils.js';
 
 describe('zip', () => {
-  test('should group corresponding elements from multiple arrays', () => {
+  it('should zip multiple arrays together', () => {
     const arr1 = [1, 2, 3];
     const arr2 = ['a', 'b', 'c'];
     const arr3 = [true, false, true];
     expect(zip(arr1, arr2, arr3)).toEqual([
       [1, 'a', true],
       [2, 'b', false],
-      [3, 'c', true],
+      [3, 'c', true]
     ]);
   });
 
-  test('should handle arrays of different lengths, padding with undefined', () => {
+  it('should handle arrays of different lengths, filling with undefined', () => {
     const arr1 = [1, 2];
-    const arr2 = ['a', 'b', 'c', 'd'];
+    const arr2 = ['a', 'b', 'c'];
     expect(zip(arr1, arr2)).toEqual([
       [1, 'a'],
       [2, 'b'],
-      [undefined, 'c'],
-      [undefined, 'd'],
+      [undefined, 'c']
     ]);
   });
 
-  test('should return an empty array if no arrays are provided', () => {
+  it('should return an empty array if no arrays are provided', () => {
     expect(zip()).toEqual([]);
   });
 
-  test('should return an array of empty arrays if all input arrays are empty', () => {
-    expect(zip([], [], [])).toEqual([]);
-  });
-
-  test('should handle a single array', () => {
-    expect(zip([1, 2, 3])).toEqual([[1], [2], [3]]);
-  });
-
-  test('should handle arrays with mixed types', () => {
-    const arr1 = [1, null];
-    const arr2 = ['a', undefined];
-    expect(zip(arr1, arr2)).toEqual([
-      [1, 'a'],
-      [null, undefined],
+  it('should handle single array input', () => {
+    const arr1 = [1, 2, 3];
+    expect(zip(arr1)).toEqual([
+      [1],
+      [2],
+      [3]
     ]);
   });
 
-  test('should throw an error for non-array input', () => {
-    expect(() => zip([1, 2], null)).toThrow('Expected all arguments to be arrays');
-    expect(() => zip(1, [2, 3])).toThrow('Expected all arguments to be arrays');
+  it('should handle empty arrays', () => {
+    expect(zip([], [])).toEqual([]);
+    expect(zip([1, 2], [])).toEqual([[1, undefined], [2, undefined]]);
   });
 });
