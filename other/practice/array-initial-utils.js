@@ -1,13 +1,8 @@
-/**
- * Gets all elements of an array except the last one.
- * @param {Array<any>} arr The array to query.
- * @returns {Array<any>} A new array containing all elements of `arr` except the last.
- */
-function initial(arr) {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array');
+const initial = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return [];
   }
-  return arr.length > 0 ? arr.slice(0, -1) : [];
-}
+  return arr.slice(0, arr.length - 1);
+};
 
-module.exports = initial;
+export { initial };

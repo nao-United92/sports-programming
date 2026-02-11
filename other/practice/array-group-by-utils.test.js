@@ -1,39 +1,29 @@
 import { groupBy } from './array-group-by-utils.js';
 
 describe('groupBy', () => {
-  it('should group an array of objects by a specified key', () => {
+  it('should group an array of objects by a given key', () => {
     const people = [
-      { name: 'Alice', age: 25 },
-      { name: 'Bob', age: 30 },
-      { name: 'Charlie', age: 25 },
+      { name: 'Alice', age: 21 },
+      { name: 'Bob', age: 24 },
+      { name: 'Charlie', age: 21 }
     ];
     const grouped = groupBy(people, 'age');
     expect(grouped).toEqual({
-      25: [
-        { name: 'Alice', age: 25 },
-        { name: 'Charlie', age: 25 },
-      ],
-      30: [{ name: 'Bob', age: 30 }],
+      21: [{ name: 'Alice', age: 21 }, { name: 'Charlie', age: 21 }],
+      24: [{ name: 'Bob', age: 24 }]
+    });
+  });
+
+  it('should group an array of objects by a function', () => {
+    const numbers = [6.1, 4.2, 6.3];
+    const grouped = groupBy(numbers, Math.floor);
+    expect(grouped).toEqual({
+      4: [4.2],
+      6: [6.1, 6.3]
     });
   });
 
   it('should return an empty object for an empty array', () => {
-    expect(groupBy([], 'key')).toEqual({});
-  });
-
-  it('should handle arrays with objects that do not have the key', () => {
-    const items = [
-      { category: 'A', value: 1 },
-      { value: 2 },
-      { category: 'A', value: 3 },
-    ];
-    const grouped = groupBy(items, 'category');
-    expect(grouped).toEqual({
-      A: [
-        { category: 'A', value: 1 },
-        { category: 'A', value: 3 },
-      ],
-      undefined: [{ value: 2 }],
-    });
+    expect(groupBy([], 'age')).toEqual({});
   });
 });

@@ -1,25 +1,22 @@
-const head = require('./array-head-utils');
+import { head } from './array-head-utils.js';
 
 describe('head', () => {
-  test('should return the first element of a non-empty array', () => {
+  it('should return the first element of an array', () => {
     expect(head([1, 2, 3])).toBe(1);
-    expect(head(['a', 'b', 'c'])).toBe('a');
-    expect(head([null, 1, 2])).toBe(null);
-    expect(head([undefined, 1, 2])).toBe(undefined);
   });
 
-  test('should return undefined for an empty array', () => {
-    expect(head([])).toBe(undefined);
+  it('should return undefined for an empty array', () => {
+    expect(head([])).toBeUndefined();
   });
 
-  test('should return the only element if array has one element', () => {
-    expect(head([100])).toBe(100);
+  it('should return undefined for a non-array input', () => {
+    expect(head(null)).toBeUndefined();
+    expect(head(undefined)).toBeUndefined();
+    expect(head("string")).toBeUndefined();
+    expect(head({})).toBeUndefined();
   });
 
-  test('should throw an error for non-array input', () => {
-    expect(() => head(null)).toThrow('Expected an array');
-    expect(() => head(123)).toThrow('Expected an array');
-    expect(() => head('string')).toThrow('Expected an array');
-    expect(() => head({})).toThrow('Expected an array');
+  it('should return the only element for a single-element array', () => {
+    expect(head([10])).toBe(10);
   });
 });

@@ -1,4 +1,4 @@
-const { sortObjectsByKey } = require('./array-sort-objects-by-key');
+import { sortObjectsByKey } from './array-sort-objects-by-key';
 
 describe('sortObjectsByKey', () => {
   const data = [

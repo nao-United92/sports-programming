@@ -1,13 +1,8 @@
-/**
- * Gets the first element of an array.
- * @param {Array<any>} arr The array to query.
- * @returns {any} The first element of `arr`.
- */
-function head(arr) {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array');
+const head = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return undefined;
   }
-  return arr.length > 0 ? arr[0] : undefined;
-}
+  return arr[0];
+};
 
-module.exports = head;
+export { head };
