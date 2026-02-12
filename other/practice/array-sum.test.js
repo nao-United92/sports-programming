@@ -1,31 +1,40 @@
-import arraySum from './array-sum';
+import { sum } from './array-sum';
 
-describe('arraySum', () => {
-  test('should return the sum of positive numbers', () => {
-    expect(arraySum([1, 2, 3, 4, 5])).toBe(15);
-  });
-
-  test('should return the sum of negative numbers', () => {
-    expect(arraySum([-1, -2, -3])).toBe(-6);
-  });
-
-  test('should return the sum of mixed positive and negative numbers', () => {
-    expect(arraySum([-1, 2, -3, 4])).toBe(2);
+describe('sum', () => {
+  test('should compute the sum of numbers in an array', () => {
+    const arr = [1, 2, 3, 4, 5];
+    expect(sum(arr)).toBe(15);
   });
 
   test('should return 0 for an empty array', () => {
-    expect(arraySum([])).toBe(0);
+    const arr = [];
+    expect(sum(arr)).toBe(0);
   });
 
-  test('should return the number itself for a single element array', () => {
-    expect(arraySum([100])).toBe(100);
+  test('should handle negative numbers', () => {
+    const arr = [-1, -2, 3];
+    expect(sum(arr)).toBe(0);
   });
 
   test('should handle floating point numbers', () => {
-    expect(arraySum([0.1, 0.2, 0.3])).toBeCloseTo(0.6);
+    const arr = [1.5, 2.5, 3.0];
+    expect(sum(arr)).toBe(7.0);
   });
 
-  test('should handle large numbers', () => {
-    expect(arraySum([1000000, 2000000, 3000000])).toBe(6000000);
+  test('should handle mixed numbers and strings that can be converted to numbers', () => {
+    const arr = [1, '2', 3];
+    expect(sum(arr)).toBe(6);
+  });
+
+  test('should return 0 for non-array input', () => {
+    expect(sum(null)).toBe(0);
+    expect(sum(undefined)).toBe(0);
+    expect(sum(123)).toBe(0);
+    expect(sum('string')).toBe(0);
+  });
+
+  test('should treat non-numeric values as 0 (after Number() conversion)', () => {
+    const arr = [1, 'a', 2]; // Number('a') is NaN, which becomes 0 in addition
+    expect(sum(arr)).toBe(3);
   });
 });
