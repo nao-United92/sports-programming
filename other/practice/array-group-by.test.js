@@ -1,51 +1,67 @@
-import groupBy from './array-group-by';
+import { groupBy } from './array-group-by';
 
 describe('groupBy', () => {
-  it('should group an array of objects by a key', () => {
-    const arr = [
-      { type: 'fruit', name: 'apple' },
-      { type: 'vegetable', name: 'carrot' },
-      { type: 'fruit', name: 'banana' },
-      { type: 'vegetable', name: 'potato' },
-    ];
-    const grouped = groupBy(arr, 'type');
-    expect(grouped).toEqual({
-      fruit: [
-        { type: 'fruit', name: 'apple' },
-        { type: 'fruit', name: 'banana' },
+  const users = [
+    { user: 'barney', age: 36, active: true },
+    { user: 'fred', age: 40, active: false },
+    { user: 'pebbles', age: 1, active: true },
+    { user: 'fred', age: 20, active: true },
+  ];
+
+  test('should group by a property name', () => {
+    expect(groupBy(users, 'user')).toEqual({
+      barney: [{ user: 'barney', age: 36, active: true }],
+      fred: [
+        { user: 'fred', age: 40, active: false },
+        { user: 'fred', age: 20, active: true },
       ],
-      vegetable: [
-        { type: 'vegetable', name: 'carrot' },
-        { type: 'vegetable', name: 'potato' },
+      pebbles: [{ user: 'pebbles', age: 1, active: true }],
+    });
+  });
+
+  test('should group by a function result', () => {
+    expect(groupBy(users, (user) => user.age < 30 ? 'young' : 'old')).toEqual({
+      old: [
+        { user: 'barney', age: 36, active: true },
+        { user: 'fred', age: 40, active: false },
+      ],
+      young: [
+        { user: 'pebbles', age: 1, active: true },
+        { user: 'fred', age: 20, active: true },
       ],
     });
   });
 
-  it('should handle an empty array', () => {
-    expect(groupBy([], 'type')).toEqual({});
+  test('should return an empty object for an empty array', () => {
+    expect(groupBy([], 'user')).toEqual({});
   });
 
-  it('should handle an array with no matching key', () => {
-    const arr = [{ name: 'apple' }, { name: 'carrot' }];
-    const grouped = groupBy(arr, 'type');
-    expect(grouped).toEqual({
-      undefined: [{ name: 'apple' }, { name: 'carrot' }],
+  test('should handle non-array input by returning an empty object', () => {
+    expect(groupBy(null, 'user')).toEqual({});
+    expect(groupBy(undefined, 'user')).toEqual({});
+    expect(groupBy('string', 'user')).toEqual({});
+  });
+
+  test('should group by value itself if iteratee is not provided or invalid', () => {
+    const arr = [1, 2, 1, 3];
+    expect(groupBy(arr)).toEqual({
+      '1': [1, 1],
+      '2': [2],
+      '3': [3],
+    });
+    expect(groupBy(arr, null)).toEqual({
+      '1': [1, 1],
+      '2': [2],
+      '3': [3],
     });
   });
 
-  it('should group by a numeric key', () => {
-    const arr = [
-      { id: 1, value: 'a' },
-      { id: 2, value: 'b' },
-      { id: 1, value: 'c' },
-    ];
-    const grouped = groupBy(arr, 'id');
-    expect(grouped).toEqual({
-      '1': [
-        { id: 1, value: 'a' },
-        { id: 1, value: 'c' },
-      ],
-      '2': [{ id: 2, value: 'b' }],
+  test('should handle numeric keys', () => {
+    const numbers = [1.2, 3.4, 1.8, 5.0];
+    expect(groupBy(numbers, Math.floor)).toEqual({
+      '1': [1.2, 1.8],
+      '3': [3.4],
+      '5': [5.0],
     });
   });
 });
