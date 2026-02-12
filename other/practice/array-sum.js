@@ -1,11 +1,14 @@
 /**
- * Calculates the sum of all numbers in an array.
+ * Computes the sum of the values in `array`.
  *
- * @param {Array<number>} array The array of numbers to sum.
- * @returns {number} The sum of the numbers in the array. Returns 0 for an empty array.
+ * @param {Array} arr The array to iterate over.
+ * @returns {number} Returns the sum.
  */
-const arraySum = (array) => {
-  return array.reduce((acc, current) => acc + current, 0);
-};
+function sum(arr) {
+  if (!Array.isArray(arr)) {
+    return 0;
+  }
+  return arr.reduce((acc, num) => acc + Number(num), 0);
+}
 
-export default arraySum;
+export { sum };

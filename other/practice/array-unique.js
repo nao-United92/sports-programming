@@ -1,11 +1,14 @@
 /**
- * Returns a new array with unique elements from the input array.
+ * Creates a duplicate-free version of an array.
  *
- * @param {Array<any>} array The array to process.
- * @returns {Array<any>} A new array containing only the unique elements.
+ * @param {Array} arr The array to inspect.
+ * @returns {Array} Returns the new duplicate free array.
  */
-const arrayUnique = (array) => {
-  return [...new Set(array)];
-};
+function unique(arr) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  return [...new Set(arr)];
+}
 
-export default unique;
+export { unique };
