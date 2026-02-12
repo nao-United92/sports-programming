@@ -1,19 +1,23 @@
 /**
- * Recursively flattens a nested array.
+ * Recursively flattens an array.
  *
- * @param {Array<any>} array The array to deep flatten.
- * @returns {Array<any>} A new array with all levels of nesting removed.
+ * @param {Array} arr The array to flatten.
+ * @returns {Array} The new flattened array.
  */
-const arrayFlattenDeep = (array) => {
+function flattenDeep(arr) {
+  if (!Array.isArray(arr)) {
+    return [arr];
+  }
+
   let result = [];
-  for (let i = 0; i < array.length; i++) {
-    if (Array.isArray(array[i])) {
-      result = result.concat(arrayFlattenDeep(array[i]));
+  for (let i = 0; i < arr.length; i++) {
+    if (Array.isArray(arr[i])) {
+      result = result.concat(flattenDeep(arr[i]));
     } else {
-      result.push(array[i]);
+      result.push(arr[i]);
     }
   }
   return result;
-};
+}
 
-export default arrayFlattenDeep;
+export { flattenDeep };

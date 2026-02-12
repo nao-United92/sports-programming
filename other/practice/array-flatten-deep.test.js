@@ -1,27 +1,33 @@
-import arrayFlattenDeep from './array-flatten-deep';
+import { flattenDeep } from './array-flatten-deep';
 
-describe('arrayFlattenDeep', () => {
-  test('should deep flatten a simple nested array', () => {
-    expect(arrayFlattenDeep([1, [2, [3, 4]], 5])).toEqual([1, 2, 3, 4, 5]);
+describe('flattenDeep', () => {
+  test('should flatten a deeply nested array', () => {
+    const arr = [1, [2, [3, [4]], 5], 6];
+    expect(flattenDeep(arr)).toEqual([1, 2, 3, 4, 5, 6]);
   });
 
-  test('should deep flatten an array with multiple levels of nesting', () => {
-    expect(arrayFlattenDeep([1, [2, [3, [4, 5]]], 6])).toEqual([1, 2, 3, 4, 5, 6]);
+  test('should return an empty array if given an empty array', () => {
+    const arr = [];
+    expect(flattenDeep(arr)).toEqual([]);
   });
 
-  test('should return an empty array if an empty array is provided', () => {
-    expect(arrayFlattenDeep([])).toEqual([]);
+  test('should return the same array if no nesting', () => {
+    const arr = [1, 2, 3];
+    expect(flattenDeep(arr)).toEqual([1, 2, 3]);
   });
 
-  test('should handle an array with no nested arrays', () => {
-    expect(arrayFlattenDeep([1, 2, 3])).toEqual([1, 2, 3]);
+  test('should handle arrays with null or undefined values', () => {
+    const arr = [1, [null, [undefined]], 3];
+    expect(flattenDeep(arr)).toEqual([1, null, undefined, 3]);
   });
 
   test('should handle arrays with mixed types', () => {
-    expect(arrayFlattenDeep([1, ['a', [true, null]], {c: 1}])).toEqual([1, 'a', true, null, {c: 1}]);
+    const arr = [1, ['a', [true, { key: 'value' }]], 3];
+    expect(flattenDeep(arr)).toEqual([1, 'a', true, { key: 'value' }, 3]);
   });
 
-  test('should handle deeply empty nested arrays', () => {
-    expect(arrayFlattenDeep([1, [], [[]], [[[]]], 2])).toEqual([1, 2]);
+  test('should handle deeply nested empty arrays', () => {
+    const arr = [1, [], [2, [], [3, []]], 4];
+    expect(flattenDeep(arr)).toEqual([1, 2, 3, 4]);
   });
 });
