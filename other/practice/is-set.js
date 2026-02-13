@@ -1,0 +1,11 @@
+/**
+ * Checks if `value` is classified as a `Set` object.
+ *
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a `Set` object, else `false`.
+ */
+const isSet = (value) => {
+  return Object.prototype.toString.call(value) === '[object Set]';
+};
+
+export default isSet;
