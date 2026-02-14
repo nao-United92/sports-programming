@@ -1,3 +1,12 @@
-const matchesPattern = (str, pattern) => pattern.test(str);
+const matchesPattern = (str, pattern) => {
+  if (typeof str !== 'string') {
+    throw new TypeError('Expected a string for the first argument');
+  }
+  if (!(pattern instanceof RegExp)) {
+    throw new TypeError('Expected a RegExp object for the second argument');
+  }
 
-module.exports = matchesPattern;
+  return pattern.test(str);
+};
+
+module.exports = { matchesPattern };
