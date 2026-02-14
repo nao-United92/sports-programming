@@ -1,14 +1,8 @@
-/**
- * Creates a duplicate-free version of an array.
- *
- * @param {Array} arr The array to inspect.
- * @returns {Array} Returns the new duplicate free array.
- */
-function unique(arr) {
+const uniqueArray = (arr) => {
   if (!Array.isArray(arr)) {
-    return [];
+    throw new TypeError('Expected an array');
   }
   return [...new Set(arr)];
-}
+};
 
-export { unique };
+module.exports = { uniqueArray };
