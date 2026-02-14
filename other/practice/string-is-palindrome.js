@@ -1,14 +1,10 @@
-/**
- * Checks if a given string is a palindrome (reads the same forwards and backwards).
- * Ignores case and non-alphanumeric characters.
- *
- * @param {string} str The string to check.
- * @returns {boolean} True if the string is a palindrome, false otherwise.
- */
-const stringIsPalindrome = (str) => {
+const isPalindrome = (str) => {
+  if (typeof str !== 'string') {
+    throw new TypeError('Expected a string');
+  }
+
   const cleanedStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const reversedStr = cleanedStr.split('').reverse().join('');
-  return cleanedStr === reversedStr;
+  return cleanedStr === cleanedStr.split('').reverse().join('');
 };
 
-export default stringIsPalindrome;
+module.exports = { isPalindrome };

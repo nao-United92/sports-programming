@@ -1,38 +1,40 @@
-import stringIsPalindrome from './string-is-palindrome';
+const { isPalindrome } = require('./string-is-palindrome');
 
-describe('stringIsPalindrome', () => {
+describe('isPalindrome', () => {
   test('should return true for a simple palindrome', () => {
-    expect(stringIsPalindrome('madam')).toBe(true);
-  });
-
-  test('should return true for a palindrome with spaces and mixed case', () => {
-    expect(stringIsPalindrome('A man, a plan, a canal: Panama')).toBe(true);
+    expect(isPalindrome('madam')).toBe(true);
   });
 
   test('should return false for a non-palindrome', () => {
-    expect(stringIsPalindrome('hello')).toBe(false);
+    expect(isPalindrome('hello')).toBe(false);
   });
 
-  test('should return true for an empty string', () => {
-    expect(stringIsPalindrome('')).toBe(true);
+  test('should handle palindromes with different cases', () => {
+    expect(isPalindrome('Madam')).toBe(true);
+    expect(isPalindrome('Racecar')).toBe(true);
   });
 
-  test('should return true for a single character string', () => {
-    expect(stringIsPalindrome('a')).toBe(true);
+  test('should handle palindromes with spaces and punctuation', () => {
+    expect(isPalindrome('A man, a plan, a canal: Panama')).toBe(true);
+    expect(isPalindrome('No lemon, no melon')).toBe(true);
   });
 
-  test('should handle numbers in a palindrome', () => {
-    expect(stringIsPalindrome('1racecar1')).toBe(true);
+  test('should handle empty strings as palindromes', () => {
+    expect(isPalindrome('')).toBe(true);
   });
 
-  test('should handle special characters and numbers, ignoring them', () => {
-    expect(stringIsPalindrome('Noel sees Leon.')).toBe(true);
-    expect(stringIsPalindrome('Eva, can I stab bats in a cave?')).toBe(true);
-    expect(stringIsPalindrome('Was it a car or a cat I saw?')).toBe(true);
-    expect(stringIsPalindrome('0_0 (: /-\\ :) 0-0')).toBe(true); // Should clean to '00'
+  test('should handle single character strings as palindromes', () => {
+    expect(isPalindrome('a')).toBe(true);
   });
 
-  test('should return false for a non-palindrome with numbers and special chars', () => {
-    expect(stringIsPalindrome('A man, a plan, a canoe: Panama')).toBe(false);
+  test('should return false for non-palindromes with spaces and punctuation', () => {
+    expect(isPalindrome('hello world')).toBe(false);
+  });
+
+  test('should throw an error if the argument is not a string', () => {
+    expect(() => isPalindrome(123)).toThrow(TypeError);
+    expect(() => isPalindrome(null)).toThrow(TypeError);
+    expect(() => isPalindrome(undefined)).toThrow(TypeError);
+    expect(() => isPalindrome({})).toThrow(TypeError);
   });
 });
