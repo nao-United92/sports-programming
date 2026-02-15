@@ -1,15 +1,12 @@
-/**
- * Converts a string to kebab-case.
- *
- * @param {string} str The string to convert.
- * @returns {string} The string in kebab-case.
- */
-const stringToKebabCase = (str) => {
+function toKebabCase(str) {
+  if (typeof str !== 'string') {
+    throw new Error('Argument must be a string.');
+  }
   return str
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
+    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2') // Add dash between lower/upper or digit/upper
+    .replace(/[^a-zA-Z0-9]+/g, '-') // Replace non-alphanumeric with dashes
     .toLowerCase()
-    .replace(/^-/, ''); // Remove leading hyphen if any
-};
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
+}
 
-export default stringToKebabCase;
+module.exports = toKebabCase;

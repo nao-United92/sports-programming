@@ -1,21 +1,29 @@
-const arrayLast = require('./array-last');
+const last = require('./array-last');
 
-describe('arrayLast', () => {
+describe('last', () => {
   test('should return the last element of an array', () => {
-    expect(arrayLast([1, 2, 3])).toBe(3);
+    expect(last([1, 2, 3, 4, 5])).toBe(5);
   });
 
   test('should return undefined for an empty array', () => {
-    expect(arrayLast([])).toBeUndefined();
+    expect(last([])).toBeUndefined();
   });
 
-  test('should return the element for a single-element array', () => {
-    expect(arrayLast(['a'])).toBe('a');
+  test('should return the only element for a single-element array', () => {
+    expect(last([42])).toBe(42);
   });
 
-  test('should return undefined for non-array inputs', () => {
-    expect(arrayLast('abc')).toBeUndefined();
-    expect(arrayLast(null)).toBeUndefined();
-    expect(arrayLast({})).toBeUndefined();
+  test('should handle arrays with mixed data types', () => {
+    expect(last([1, 'a', null, {
+      key: 'value'
+    }])).toEqual({
+      key: 'value'
+    });
+  });
+
+  test('should throw an error if the argument is not an array', () => {
+    expect(() => last(null)).toThrow('Argument must be an array.');
+    expect(() => last('string')).toThrow('Argument must be an array.');
+    expect(() => last(123)).toThrow('Argument must be an array.');
   });
 });
