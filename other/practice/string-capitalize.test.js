@@ -1,28 +1,33 @@
-import stringCapitalize from './string-capitalize';
+const capitalize = require('./string-capitalize');
 
-describe('stringCapitalize', () => {
-  test('should capitalize the first letter of a word', () => {
-    expect(stringCapitalize('hello')).toBe('Hello');
+describe('capitalize', () => {
+  test('should capitalize the first letter of a string', () => {
+    expect(capitalize('hello')).toBe('Hello');
   });
 
-  test('should capitalize the first letter of a sentence', () => {
-    expect(stringCapitalize('hello world')).toBe('Hello world');
+  test('should return an empty string if given an empty string', () => {
+    expect(capitalize('')).toBe('');
   });
 
-  test('should return an empty string for an empty input', () => {
-    expect(stringCapitalize('')).toBe('');
+  test('should handle a string that is already capitalized', () => {
+    expect(capitalize('World')).toBe('World');
   });
 
   test('should handle a single character string', () => {
-    expect(stringCapitalize('a')).toBe('A');
+    expect(capitalize('a')).toBe('A');
   });
 
-  test('should not change an already capitalized string', () => {
-    expect(stringCapitalize('Hello')).toBe('Hello');
+  test('should not affect subsequent characters', () => {
+    expect(capitalize('hello world')).toBe('Hello world');
   });
 
-  test('should handle strings with numbers or special characters at the beginning', () => {
-    expect(stringCapitalize('1abc')).toBe('1abc');
-    expect(stringCapitalize('@xyz')).toBe('@xyz');
+  test('should handle strings with leading spaces', () => {
+    expect(capitalize(' hello')).toBe(' hello'); // Only the first char is affected, which is a space
+  });
+
+  test('should throw an error if the argument is not a string', () => {
+    expect(() => capitalize(null)).toThrow('Argument must be a string.');
+    expect(() => capitalize(123)).toThrow('Argument must be a string.');
+    expect(() => capitalize([])).toThrow('Argument must be a string.');
   });
 });
