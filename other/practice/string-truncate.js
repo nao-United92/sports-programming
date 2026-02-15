@@ -1,21 +1,23 @@
-/**
- * Truncates a string if it is longer than the specified maximum length.
- * The truncation will add an ellipsis ("...") to the end.
- *
- * @param {string} str The string to truncate.
- * @param {number} maxLength The maximum length of the string before truncation.
- * @returns {string} The truncated string.
- */
-const stringTruncate = (str, maxLength) => {
-  if (str.length <= maxLength) {
-    return str;
+function truncateString(str, maxLength, suffix = '...') {
+  if (typeof str !== 'string') {
+    throw new Error('First argument must be a string.');
   }
-  // If maxLength is less than 3, we cannot display any part of the string
-  // and still show an ellipsis of 3 characters. So, just return '...'.
-  if (maxLength < 3) {
-    return '...';
+  if (typeof maxLength !== 'number' || maxLength < 0 || !Number.isInteger(maxLength)) {
+    throw new Error('Second argument (maxLength) must be a non-negative integer.');
   }
-  return str.slice(0, maxLength - 3) + '...';
-};
+  if (typeof suffix !== 'string') {
+    throw new Error('Third argument (suffix) must be a string.');
+  }
 
-export default stringTruncate;
+  if (str.length > maxLength) {
+    // Ensure that the truncated string + suffix doesn't exceed maxLength
+    // If suffix itself is longer than maxLength, just return suffix
+    if (maxLength <= suffix.length) {
+      return suffix.substring(0, maxLength);
+    }
+    return str.substring(0, maxLength - suffix.length) + suffix;
+  }
+  return str;
+}
+
+module.exports = truncateString;
