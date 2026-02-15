@@ -1,16 +1,11 @@
-const repeatString = (str, num) => {
+function repeatString(str, count) {
   if (typeof str !== 'string') {
-    throw new TypeError('Expected a string for the first argument');
+    throw new Error('First argument must be a string.');
   }
-  if (typeof num !== 'number' || num < 0 || !Number.isInteger(num)) {
-    throw new TypeError('Expected a non-negative integer for the second argument');
+  if (typeof count !== 'number' || count < 0 || !Number.isInteger(count)) {
+    throw new Error('Second argument (count) must be a non-negative integer.');
   }
+  return str.repeat(count);
+}
 
-  let result = '';
-  for (let i = 0; i < num; i++) {
-    result += str;
-  }
-  return result;
-};
-
-module.exports = { repeatString };
+module.exports = repeatString;
