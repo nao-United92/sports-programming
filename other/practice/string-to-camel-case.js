@@ -1,8 +1,8 @@
-const toCamelCase = (str) => {
-  if (!str) return '';
-  return str
-    .replace(/[-_](.)/g, (_, c) => c.toUpperCase())
-    .replace(/[-_]$/, '');
-};
+function toCamelCase(str) {
+  if (typeof str !== 'string') {
+    throw new Error('Argument must be a string.');
+  }
+  return str.replace(/[^a-zA-Z0-9]+(.)?/g, (match, chr) => chr ? chr.toUpperCase() : '').replace(/^./, (match) => match.toLowerCase());
+}
 
 module.exports = toCamelCase;
