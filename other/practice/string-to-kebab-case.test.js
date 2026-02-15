@@ -1,35 +1,48 @@
-import stringToKebabCase from './string-to-kebab-case';
+const toKebabCase = require('./string-to-kebab-case');
 
-describe('stringToKebabCase', () => {
-  test('should convert a simple string to kebab-case', () => {
-    expect(stringToKebabCase('helloWorld')).toBe('hello-world');
+describe('toKebabCase', () => {
+  test('should convert a camelCase string to kebab-case', () => {
+    expect(toKebabCase('helloWorld')).toBe('hello-world');
   });
 
-  test('should convert a string with multiple words to kebab-case', () => {
-    expect(stringToKebabCase('some long string')).toBe('some-long-string');
+  test('should convert a PascalCase string to kebab-case', () => {
+    expect(toKebabCase('HelloWorld')).toBe('hello-world');
   });
 
-  test('should handle already kebab-cased strings', () => {
-    expect(stringToKebabCase('already-kebab-cased')).toBe('already-kebab-cased');
+  test('should convert a space-separated string to kebab-case', () => {
+    expect(toKebabCase('hello world')).toBe('hello-world');
   });
 
-  test('should handle PascalCase', () => {
-    expect(stringToKebabCase('PascalCaseString')).toBe('pascal-case-string');
+  test('should convert an underscore-separated string to kebab-case', () => {
+    expect(toKebabCase('hello_world')).toBe('hello-world');
   });
 
-  test('should handle strings with numbers', () => {
-    expect(stringToKebabCase('stringWith1Number')).toBe('string-with1-number');
+  test('should convert a mixed-separator string to kebab-case', () => {
+    expect(toKebabCase('hello-World_again And-Again')).toBe('hello-world-again-and-again');
   });
 
-  test('should handle empty string', () => {
-    expect(stringToKebabCase('')).toBe('');
+  test('should handle a single word string', () => {
+    expect(toKebabCase('word')).toBe('word');
   });
 
-  test('should handle leading capital letters', () => {
-    expect(stringToKebabCase('HelloWorld')).toBe('hello-world');
+  test('should handle an empty string', () => {
+    expect(toKebabCase('')).toBe('');
   });
 
-  test('should handle strings with spaces and hyphens', () => {
-    expect(stringToKebabCase('foo-bar baz')).toBe('foo-bar-baz');
+  test('should handle a string with leading/trailing spaces/separators', () => {
+    expect(toKebabCase(' Hello World ')).toBe('hello-world');
+    expect(toKebabCase('-hello-world-')).toBe('hello-world');
+    expect(toKebabCase('_hello_world_')).toBe('hello-world');
+  });
+
+  test('should handle a string with numbers', () => {
+    expect(toKebabCase('someValue123')).toBe('some-value123');
+    expect(toKebabCase('some-value-123')).toBe('some-value-123');
+  });
+
+  test('should throw an error if the argument is not a string', () => {
+    expect(() => toKebabCase(null)).toThrow('Argument must be a string.');
+    expect(() => toKebabCase(123)).toThrow('Argument must be a string.');
+    expect(() => toKebabCase([])).toThrow('Argument must be a string.');
   });
 });
