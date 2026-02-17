@@ -1,13 +1,13 @@
-const groupBy = (arr, keyOrIterator) => {
+const arrayGroupBy = (arr, keyFn) => {
   if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument');
+    throw new TypeError('Expected an array for the first argument.');
   }
-  if (typeof keyOrIterator !== 'string' && typeof keyOrIterator !== 'function') {
-    throw new TypeError('Expected a string or a function for the second argument');
+  if (typeof keyFn !== 'function' && typeof keyFn !== 'string') {
+    throw new TypeError('Expected a function or a string for the second argument.');
   }
 
   return arr.reduce((acc, item) => {
-    const key = typeof keyOrIterator === 'function' ? keyOrIterator(item) : item[keyOrIterator];
+    const key = typeof keyFn === 'function' ? keyFn(item) : item[keyFn];
     if (!acc[key]) {
       acc[key] = [];
     }
@@ -16,4 +16,4 @@ const groupBy = (arr, keyOrIterator) => {
   }, {});
 };
 
-module.exports = { groupBy };
+export default arrayGroupBy;
