@@ -1,35 +1,52 @@
-const sample = require('./array-sample');
+import arraySample from './array-sample';
 
-describe('sample', () => {
-  test('should return a random element from the array', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const result = sample(arr);
-    expect(arr).toContain(result);
+describe('arraySample', () => {
+  const testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  test('should return a single random element when n is not specified or 1', () => {
+    const sample = arraySample(testArray);
+    expect(testArray).toContain(sample);
   });
 
-  test('should return undefined for an empty array', () => {
-    expect(sample([])).toBeUndefined();
+  test('should return an array of n random elements when n is specified', () => {
+    const n = 3;
+    const samples = arraySample(testArray, n);
+    expect(samples).toHaveLength(n);
+    samples.forEach(s => expect(testArray).toContain(s));
+    // Test for uniqueness of samples if n <= array.length
+    if (n <= testArray.length) {
+      expect(new Set(samples).size).toBe(n);
+    }
   });
 
-  test('should return the only element for a single-element array', () => {
-    expect(sample([42])).toBe(42);
+  test('should return an empty array if the input array is empty and n > 0', () => {
+    expect(arraySample([], 5)).toEqual([]);
   });
 
-  test('should return one of the elements for a larger array', () => {
-    const arr = ['a', 'b', 'c', 'd'];
-    const results = Array.from({
-      length: 100
-    }, () => sample(arr));
-    results.forEach(result => {
-      expect(arr).toContain(result);
-    });
-    // Ensure that not all results are the same (probabilistic check)
-    expect(new Set(results).size).toBeGreaterThan(1);
+  test('should return undefined if the input array is empty and n is not specified or 1', () => {
+    expect(arraySample([])).toBeUndefined();
+    expect(arraySample([], 1)).toBeUndefined();
   });
 
-  test('should throw an error if the argument is not an array', () => {
-    expect(() => sample(null)).toThrow('Argument must be an array.');
-    expect(() => sample('string')).toThrow('Argument must be an array.');
-    expect(() => sample(123)).toThrow('Argument must be an array.');
+  test('should return an empty array if n is 0', () => {
+    expect(arraySample(testArray, 0)).toEqual([]);
+  });
+
+  test('should return all elements (shuffled) if n is greater than or equal to array length', () => {
+    const samples = arraySample(testArray, testArray.length);
+    expect(samples).toHaveLength(testArray.length);
+    expect(samples.sort((a, b) => a - b)).toEqual(testArray.sort((a, b) => a - b));
+    expect(samples).not.toBe(testArray); // Ensure it's a new array
+  });
+
+  test('should throw an error if the first argument is not an array', () => {
+    expect(() => arraySample(null)).toThrow('Expected an array for the first argument.');
+    expect(() => arraySample(undefined)).toThrow('Expected an array for the first argument.');
+  });
+
+  test('should throw an error if n is not a non-negative integer', () => {
+    expect(() => arraySample(testArray, -1)).toThrow('Expected a non-negative integer for the second argument.');
+    expect(() => arraySample(testArray, 1.5)).toThrow('Expected a non-negative integer for the second argument.');
+    expect(() => arraySample(testArray, 'string')).toThrow('Expected a non-negative integer for the second argument.');
   });
 });

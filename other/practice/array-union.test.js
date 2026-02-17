@@ -1,40 +1,39 @@
-import { union } from './array-union';
+import arrayUnion from './array-union';
 
-describe('union', () => {
-  test('should combine two arrays with unique values', () => {
+describe('arrayUnion', () => {
+  test('should return a new array with unique values from all given arrays', () => {
     const arr1 = [1, 2, 3];
     const arr2 = [3, 4, 5];
-    expect(union(arr1, arr2)).toEqual([1, 2, 3, 4, 5]);
+    const arr3 = [5, 6, 7];
+    expect(arrayUnion(arr1, arr2, arr3)).toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
 
-  test('should handle multiple arrays', () => {
-    const arr1 = [1, 2];
-    const arr2 = [2, 3];
-    const arr3 = [3, 4];
-    expect(union(arr1, arr2, arr3)).toEqual([1, 2, 3, 4]);
+  test('should handle empty arrays', () => {
+    const arr1 = [];
+    const arr2 = [1, 2];
+    expect(arrayUnion(arr1, arr2)).toEqual([1, 2]);
   });
 
-  test('should return an empty array if no arrays are provided', () => {
-    expect(union()).toEqual([]);
+  test('should handle all empty arrays', () => {
+    expect(arrayUnion([], [], [])).toEqual([]);
   });
 
-  test('should handle empty arrays as input', () => {
-    const arr1 = [1, 2];
-    const arr2 = [];
-    expect(union(arr1, arr2)).toEqual([1, 2]);
+  test('should handle arrays with duplicate values within themselves and across arrays', () => {
+    const arr1 = [1, 1, 2];
+    const arr2 = [2, 3, 3];
+    expect(arrayUnion(arr1, arr2)).toEqual([1, 2, 3]);
   });
 
   test('should handle arrays with mixed types', () => {
-    const arr1 = [1, 'a', true];
-    const arr2 = ['a', false, 1];
-    expect(union(arr1, arr2)).toEqual([1, 'a', true, false]);
+    const arr1 = [1, 'a', 2];
+    const arr2 = ['a', 3, 'b'];
+    expect(arrayUnion(arr1, arr2)).toEqual([1, 'a', 2, 3, 'b']);
   });
 
-  test('should handle arrays with objects (by reference)', () => {
-    const obj1 = { id: 1 };
-    const obj2 = { id: 2 };
-    const arr1 = [obj1, obj2];
-    const arr2 = [obj1, { id: 3 }];
-    expect(union(arr1, arr2)).toEqual([obj1, obj2, { id: 3 }]);
+  test('should throw an error if any argument is not an array', () => {
+    const arr1 = [1, 2];
+    expect(() => arrayUnion(arr1, null)).toThrow('Expected all arguments to be arrays.');
+    expect(() => arrayUnion(undefined, arr1)).toThrow('Expected all arguments to be arrays.');
+    expect(() => arrayUnion(arr1, 'string')).toThrow('Expected all arguments to be arrays.');
   });
 });

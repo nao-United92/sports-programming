@@ -1,4 +1,4 @@
-const arrayFindLast = (arr, predicate) => {
+const arrayFindLastIndex = (arr, predicate) => {
   if (!Array.isArray(arr)) {
     throw new TypeError('Expected an array for the first argument.');
   }
@@ -8,10 +8,10 @@ const arrayFindLast = (arr, predicate) => {
 
   for (let i = arr.length - 1; i >= 0; i--) {
     if (predicate(arr[i], i, arr)) {
-      return arr[i];
+      return i;
     }
   }
-  return undefined;
+  return -1;
 };
 
-export default arrayFindLast;
+export default arrayFindLastIndex;

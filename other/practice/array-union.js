@@ -1,12 +1,9 @@
-/**
- * Creates an array of unique values, in order, from all given arrays.
- *
- * @param {...Array} arrays The arrays to inspect.
- * @returns {Array} Returns the new array of unique values.
- */
-function union(...arrays) {
-  const flattened = arrays.reduce((acc, curr) => acc.concat(curr), []);
-  return [...new Set(flattened)];
-}
+const arrayUnion = (...arrays) => {
+  if (arrays.some(arr => !Array.isArray(arr))) {
+    throw new TypeError('Expected all arguments to be arrays.');
+  }
+  const flatArray = arrays.flat();
+  return [...new Set(flatArray)];
+};
 
-export { union };
+export default arrayUnion;

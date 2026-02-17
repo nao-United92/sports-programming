@@ -1,31 +1,21 @@
-/**
- * Creates an array of elements split into two groups, one of which contains
- * elements `predicate` returns truthy for, and one of which contains elements
- * `predicate` returns falsey for. The predicate is invoked with three arguments:
- * (value, index, array).
- *
- * @param {Array} arr The array to inspect.
- * @param {Function} predicate The function invoked per iteration.
- * @returns {Array} Returns the new array of partitioned elements.
- */
-function partition(arr, predicate) {
-  if (!Array.isArray(arr) || typeof predicate !== 'function') {
-    return [[], []];
+const arrayPartition = (arr, predicate) => {
+  if (!Array.isArray(arr)) {
+    throw new TypeError('Expected an array for the first argument.');
+  }
+  if (typeof predicate !== 'function') {
+    throw new TypeError('Expected a function for the second argument.');
   }
 
   const truthy = [];
-  const falsey = [];
-
-  for (let i = 0; i < arr.length; i++) {
-    const item = arr[i];
-    if (predicate(item, i, arr)) {
+  const falsy = [];
+  for (const item of arr) {
+    if (predicate(item)) {
       truthy.push(item);
     } else {
-      falsey.push(item);
+      falsy.push(item);
     }
   }
+  return [truthy, falsy];
+};
 
-  return [truthy, falsey];
-}
-
-export { partition };
+export default arrayPartition;

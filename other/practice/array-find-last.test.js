@@ -1,40 +1,56 @@
-const { findLast } = require('./array-find-last');
+import arrayFindLast from './array-find-last';
 
-describe('findLast', () => {
-  test('should return the last even number', () => {
-    const arr = [1, 2, 3, 4, 5, 6];
-    expect(findLast(arr, (n) => n % 2 === 0)).toBe(6);
-  });
+describe('arrayFindLast', () => {
+  const users = [{
+    id: 1,
+    name: 'Alice',
+    active: false
+  }, {
+    id: 2,
+    name: 'Bob',
+    active: true
+  }, {
+    id: 3,
+    name: 'Charlie',
+    active: false
+  }, {
+    id: 4,
+    name: 'David',
+    active: true
+  }, ];
 
-  test('should return the last number greater than 5', () => {
-    const arr = [1, 8, 3, 5, 9];
-    expect(findLast(arr, (n) => n > 5)).toBe(9);
+  test('should return the last element that satisfies the predicate', () => {
+    const lastActiveUser = arrayFindLast(users, (user) => user.active);
+    expect(lastActiveUser).toEqual({
+      id: 4,
+      name: 'David',
+      active: true
+    });
   });
 
   test('should return undefined if no element satisfies the predicate', () => {
-    const arr = [1, 3, 5, 7];
-    expect(findLast(arr, (n) => n % 2 === 0)).toBeUndefined();
-  });
-
-  test('should work with an array of objects', () => {
-    const users = [
-      { name: 'Alice', age: 25 },
-      { name: 'Bob', age: 30 },
-      { name: 'Charlie', age: 25 },
-    ];
-    const charlie = { name: 'Charlie', age: 25 };
-    expect(findLast(users, (u) => u.age === 25)).toEqual(charlie);
+    const lastAdminUser = arrayFindLast(users, (user) => user.role === 'admin');
+    expect(lastAdminUser).toBeUndefined();
   });
 
   test('should return undefined for an empty array', () => {
-    expect(findLast([], (n) => n > 0)).toBeUndefined();
+    const emptyArr = [];
+    expect(arrayFindLast(emptyArr, (item) => item > 0)).toBeUndefined();
+  });
+
+  test('should work with primitive arrays', () => {
+    const numbers = [1, 2, 3, 4, 5, 6];
+    const lastEven = arrayFindLast(numbers, (num) => num % 2 === 0);
+    expect(lastEven).toBe(6);
   });
 
   test('should throw an error if the first argument is not an array', () => {
-    expect(() => findLast('not an array', () => true)).toThrow(TypeError);
+    expect(() => arrayFindLast(null, () => true)).toThrow('Expected an array for the first argument.');
+    expect(() => arrayFindLast(undefined, () => true)).toThrow('Expected an array for the first argument.');
   });
 
   test('should throw an error if the second argument is not a function', () => {
-    expect(() => findLast([1, 2, 3], 'not a function')).toThrow(TypeError);
+    expect(() => arrayFindLast([], null)).toThrow('Expected a function for the second argument.');
+    expect(() => arrayFindLast([], 'string')).toThrow('Expected a function for the second argument.');
   });
 });

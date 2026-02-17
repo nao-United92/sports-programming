@@ -1,26 +1,14 @@
-/**
- * Removes all given values from `array` using `SameValueZero` for equality comparisons.
- * Note: This function mutates `array`.
- *
- * @param {Array} arr The array to modify.
- * @param {...*} values The values to remove.
- * @returns {Array} Returns `array`.
- */
-function pull(arr, ...values) {
+const arrayPull = (arr, ...values) => {
   if (!Array.isArray(arr)) {
-    return arr;
+    throw new TypeError('Expected an array for the first argument.');
   }
-
-  const valuesToRemove = new Set(values);
-  let i = 0;
-  while (i < arr.length) {
-    if (valuesToRemove.has(arr[i])) {
+  let i = arr.length;
+  while (i--) {
+    if (values.includes(arr[i])) {
       arr.splice(i, 1);
-    } else {
-      i++;
     }
   }
   return arr;
-}
+};
 
-export { pull };
+export default arrayPull;

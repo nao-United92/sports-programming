@@ -1,63 +1,91 @@
-const { groupBy } = require('./array-group-by');
+import arrayGroupBy from './array-group-by';
 
-describe('groupBy', () => {
-  const users = [
-    { id: 1, name: 'Alice', age: 30, city: 'New York' },
-    { id: 2, name: 'Bob', age: 25, city: 'London' },
-    { id: 3, name: 'Charlie', age: 30, city: 'New York' },
-    { id: 4, name: 'David', age: 25, city: 'Paris' },
-  ];
-
-  test('should group by a string key', () => {
-    const result = groupBy(users, 'age');
-    expect(result).toEqual({
-      30: [
-        { id: 1, name: 'Alice', age: 30, city: 'New York' },
-        { id: 3, name: 'Charlie', age: 30, city: 'New York' },
-      ],
-      25: [
-        { id: 2, name: 'Bob', age: 25, city: 'London' },
-        { id: 4, name: 'David', age: 25, city: 'Paris' },
-      ],
+describe('arrayGroupBy', () => {
+  test('should group elements by a function', () => {
+    const arr = [{
+      id: 1,
+      name: 'apple'
+    }, {
+      id: 2,
+      name: 'banana'
+    }, {
+      id: 3,
+      name: 'apple'
+    }];
+    const groupByFn = (item) => item.name;
+    expect(arrayGroupBy(arr, groupByFn)).toEqual({
+      apple: [{
+        id: 1,
+        name: 'apple'
+      }, {
+        id: 3,
+        name: 'apple'
+      }],
+      banana: [{
+        id: 2,
+        name: 'banana'
+      }],
     });
   });
 
-  test('should group by a function', () => {
-    const result = groupBy(users, (user) => (user.age > 28 ? 'old' : 'young'));
-    expect(result).toEqual({
-      old: [
-        { id: 1, name: 'Alice', age: 30, city: 'New York' },
-        { id: 3, name: 'Charlie', age: 30, city: 'New York' },
-      ],
-      young: [
-        { id: 2, name: 'Bob', age: 25, city: 'London' },
-        { id: 4, name: 'David', age: 25, city: 'Paris' },
-      ],
+  test('should group elements by a property name', () => {
+    const arr = [{
+      id: 1,
+      name: 'apple'
+    }, {
+      id: 2,
+      name: 'banana'
+    }, {
+      id: 3,
+      name: 'apple'
+    }];
+    expect(arrayGroupBy(arr, 'name')).toEqual({
+      apple: [{
+        id: 1,
+        name: 'apple'
+      }, {
+        id: 3,
+        name: 'apple'
+      }],
+      banana: [{
+        id: 2,
+        name: 'banana'
+      }],
     });
   });
 
-  test('should group by a string key that does not exist (should group by undefined)', () => {
-    const result = groupBy(users, 'country');
-    expect(result).toEqual({
-      undefined: users,
+  test('should handle empty array', () => {
+    const arr = [];
+    const groupByFn = (item) => item.name;
+    expect(arrayGroupBy(arr, groupByFn)).toEqual({});
+  });
+
+  test('should handle elements with undefined group key', () => {
+    const arr = [{
+      id: 1,
+      name: 'apple'
+    }, {
+      id: 2
+    }];
+    const groupByFn = (item) => item.name;
+    expect(arrayGroupBy(arr, groupByFn)).toEqual({
+      apple: [{
+        id: 1,
+        name: 'apple'
+      }],
+      undefined: [{
+        id: 2
+      }],
     });
   });
 
-  test('should return an empty object for an empty array', () => {
-    expect(groupBy([], 'age')).toEqual({});
+  test('should throw an error if the first argument is not an array', () => {
+    expect(() => arrayGroupBy(null, 'name')).toThrow('Expected an array for the first argument.');
+    expect(() => arrayGroupBy(undefined, 'name')).toThrow('Expected an array for the first argument.');
   });
 
-  test('should throw TypeError if first argument is not an array', () => {
-    expect(() => groupBy('not an array', 'age')).toThrow(TypeError);
-    expect(() => groupBy(null, 'age')).toThrow(TypeError);
-    expect(() => groupBy(undefined, 'age')).toThrow(TypeError);
-    expect(() => groupBy({}, 'age')).toThrow(TypeError);
-  });
-
-  test('should throw TypeError if second argument is not a string or function', () => {
-    expect(() => groupBy(users, 123)).toThrow(TypeError);
-    expect(() => groupBy(users, null)).toThrow(TypeError);
-    expect(() => groupBy(users, undefined)).toThrow(TypeError);
-    expect(() => groupBy(users, true)).toThrow(TypeError);
+  test('should throw an error if the second argument is not a function or string', () => {
+    expect(() => arrayGroupBy([], null)).toThrow('Expected a function or a string for the second argument.');
+    expect(() => arrayGroupBy([], 123)).toThrow('Expected a function or a string for the second argument.');
   });
 });

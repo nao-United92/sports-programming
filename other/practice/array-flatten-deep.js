@@ -1,23 +1,8 @@
-/**
- * Recursively flattens an array.
- *
- * @param {Array} arr The array to flatten.
- * @returns {Array} The new flattened array.
- */
-function flattenDeep(arr) {
+const arrayFlattenDeep = (arr) => {
   if (!Array.isArray(arr)) {
-    return [arr];
+    throw new TypeError('Expected an array for the first argument.');
   }
+  return arr.flat(Infinity);
+};
 
-  let result = [];
-  for (let i = 0; i < arr.length; i++) {
-    if (Array.isArray(arr[i])) {
-      result = result.concat(flattenDeep(arr[i]));
-    } else {
-      result.push(arr[i]);
-    }
-  }
-  return result;
-}
-
-export { flattenDeep };
+export default arrayFlattenDeep;
