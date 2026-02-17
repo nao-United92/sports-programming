@@ -1,33 +1,33 @@
-import { flattenDeep } from './array-flatten-deep';
+import arrayFlattenDeep from './array-flatten-deep';
 
-describe('flattenDeep', () => {
-  test('should flatten a deeply nested array', () => {
-    const arr = [1, [2, [3, [4]], 5], 6];
-    expect(flattenDeep(arr)).toEqual([1, 2, 3, 4, 5, 6]);
+describe('arrayFlattenDeep', () => {
+  test('should deeply flatten a nested array', () => {
+    const arr = [1, [2, [3, [4, 5]]], 6];
+    expect(arrayFlattenDeep(arr)).toEqual([1, 2, 3, 4, 5, 6]);
   });
 
-  test('should return an empty array if given an empty array', () => {
-    const arr = [];
-    expect(flattenDeep(arr)).toEqual([]);
-  });
-
-  test('should return the same array if no nesting', () => {
+  test('should handle a flat array', () => {
     const arr = [1, 2, 3];
-    expect(flattenDeep(arr)).toEqual([1, 2, 3]);
+    expect(arrayFlattenDeep(arr)).toEqual([1, 2, 3]);
   });
 
-  test('should handle arrays with null or undefined values', () => {
-    const arr = [1, [null, [undefined]], 3];
-    expect(flattenDeep(arr)).toEqual([1, null, undefined, 3]);
+  test('should handle an empty array', () => {
+    const arr = [];
+    expect(arrayFlattenDeep(arr)).toEqual([]);
   });
 
-  test('should handle arrays with mixed types', () => {
-    const arr = [1, ['a', [true, { key: 'value' }]], 3];
-    expect(flattenDeep(arr)).toEqual([1, 'a', true, { key: 'value' }, 3]);
+  test('should handle an array with empty nested arrays', () => {
+    const arr = [1, [],
+      [2, []], 3
+    ];
+    expect(arrayFlattenDeep(arr)).toEqual([1, 2, 3]);
   });
 
-  test('should handle deeply nested empty arrays', () => {
-    const arr = [1, [], [2, [], [3, []]], 4];
-    expect(flattenDeep(arr)).toEqual([1, 2, 3, 4]);
+  test('should throw an error if the argument is not an array', () => {
+    expect(() => arrayFlattenDeep(null)).toThrow('Expected an array for the first argument.');
+    expect(() => arrayFlattenDeep(undefined)).toThrow('Expected an array for the first argument.');
+    expect(() => arrayFlattenDeep('string')).toThrow('Expected an array for the first argument.');
+    expect(() => arrayFlattenDeep(123)).toThrow('Expected an array for the first argument.');
+    expect(() => arrayFlattenDeep({})).toThrow('Expected an array for the first argument.');
   });
 });
