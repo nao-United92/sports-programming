@@ -1,16 +1,17 @@
-const findLast = (arr, predicate) => {
+const arrayFindLast = (arr, predicate) => {
   if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array');
+    throw new TypeError('Expected an array for the first argument.');
   }
   if (typeof predicate !== 'function') {
-    throw new TypeError('Predicate must be a function');
+    throw new TypeError('Expected a function for the second argument.');
   }
+
   for (let i = arr.length - 1; i >= 0; i--) {
-    if (predicate(arr[i])) {
+    if (predicate(arr[i], i, arr)) {
       return arr[i];
     }
   }
   return undefined;
 };
 
-module.exports = { findLast };
+export default arrayFindLast;
