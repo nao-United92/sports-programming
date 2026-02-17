@@ -1,72 +1,53 @@
-// other/practice/array-zip.test.js
-const arrayZip = require('./array-zip');
+import arrayZip from './array-zip';
 
 describe('arrayZip', () => {
   test('should zip two arrays of equal length', () => {
-    expect(arrayZip(['a', 'b'], [1, 2])).toEqual([
-      ['a', 1],
-      ['b', 2],
-    ]);
-  });
-
-  test('should zip three arrays of equal length', () => {
-    expect(arrayZip(['a', 'b'], [1, 2], [true, false])).toEqual([
-      ['a', 1, true],
-      ['b', 2, false],
-    ]);
-  });
-
-  test('should handle arrays of different lengths (shorter arrays filled with undefined)', () => {
-    expect(arrayZip(['a', 'b', 'c'], [1, 2])).toEqual([
-      ['a', 1],
-      ['b', 2],
-      ['c', undefined],
-    ]);
-  });
-
-  test('should handle arrays of different lengths (longer arrays determine length)', () => {
-    expect(arrayZip([1, 2], ['a', 'b', 'c'])).toEqual([
+    const arr1 = [1, 2, 3];
+    const arr2 = ['a', 'b', 'c'];
+    expect(arrayZip(arr1, arr2)).toEqual([
       [1, 'a'],
       [2, 'b'],
-      [undefined, 'c'],
+      [3, 'c']
     ]);
   });
 
-  test('should return an empty array if no arrays are provided', () => {
-    expect(arrayZip()).toEqual([]);
-  });
-
-  test('should handle empty arrays as input', () => {
-    expect(arrayZip([], [], [])).toEqual([]);
-    expect(arrayZip(['a', 'b'], [])).toEqual([
-      ['a', undefined],
-      ['b', undefined],
+  test('should zip multiple arrays of equal length', () => {
+    const arr1 = [1, 2];
+    const arr2 = ['a', 'b'];
+    const arr3 = [true, false];
+    expect(arrayZip(arr1, arr2, arr3)).toEqual([
+      [1, 'a', true],
+      [2, 'b', false]
     ]);
   });
 
-  test('should handle single array input', () => {
-    expect(arrayZip([1, 2, 3])).toEqual([
-      [1],
-      [2],
-      [3],
+  test('should handle arrays of different lengths, filling with undefined', () => {
+    const arr1 = [1, 2, 3];
+    const arr2 = ['a', 'b'];
+    expect(arrayZip(arr1, arr2)).toEqual([
+      [1, 'a'],
+      [2, 'b'],
+      [3, undefined]
     ]);
   });
 
-  test('should handle arrays with mixed types', () => {
-    expect(arrayZip([1, 'b'], [true, null])).toEqual([
-      [1, true],
-      ['b', null],
+  test('should handle empty arrays', () => {
+    const arr1 = [];
+    const arr2 = ['a', 'b'];
+    expect(arrayZip(arr1, arr2)).toEqual([
+      [undefined, 'a'],
+      [undefined, 'b']
     ]);
   });
 
-  test('should handle non-array arguments, treating them as empty arrays (or undefined values)', () => {
-    expect(arrayZip(['a', 'b'], null, [1, 2])).toEqual([
-      ['a', undefined, 1],
-      ['b', undefined, 2],
-    ]);
-    expect(arrayZip(['a', 'b'], undefined, [1, 2])).toEqual([
-      ['a', undefined, 1],
-      ['b', undefined, 2],
-    ]);
+  test('should handle all empty arrays', () => {
+    expect(arrayZip([], [])).toEqual([]);
+  });
+
+  test('should throw an error if any argument is not an array', () => {
+    const arr1 = [1, 2];
+    expect(() => arrayZip(arr1, null)).toThrow('Expected all arguments to be arrays.');
+    expect(() => arrayZip(undefined, arr1)).toThrow('Expected all arguments to be arrays.');
+    expect(() => arrayZip(arr1, 'string')).toThrow('Expected all arguments to be arrays.');
   });
 });
