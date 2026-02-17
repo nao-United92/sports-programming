@@ -1,8 +1,8 @@
-function unique(arr) {
+const arrayUnique = (arr) => {
   if (!Array.isArray(arr)) {
-    throw new Error('Argument must be an array.');
+    throw new TypeError('Expected an array for the first argument.');
   }
   return [...new Set(arr)];
-}
+};
 
-module.exports = unique;
+export default arrayUnique;
