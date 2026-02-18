@@ -1,14 +1,9 @@
-const arrayShuffle = (arr) => {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array for the first argument.');
+export const arrayShuffle = (arr) => {
+  const newArr = [...arr];
+  let m = newArr.length;
+  while (m) {
+    const i = Math.floor(Math.random() * m--);
+    [newArr[m], newArr[i]] = [newArr[i], newArr[m]];
   }
-
-  const shuffledArr = [...arr];
-  for (let i = shuffledArr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledArr[i], shuffledArr[j]] = [shuffledArr[j], shuffledArr[i]];
-  }
-  return shuffledArr;
+  return newArr;
 };
-
-export default arrayShuffle;
