@@ -1,7 +1,12 @@
-export const functionDebounceSimple = (fn, ms) => {
-  let timeoutId;
+
+const functionDebounceSimple = (func, wait) => {
+  let timeout;
   return function(...args) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn.apply(this, args), ms);
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(this, args);
+    }, wait);
   };
 };
+
+module.exports = functionDebounceSimple;
