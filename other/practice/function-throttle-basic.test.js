@@ -1,19 +1,21 @@
-import { functionThrottleBasic } from './function-throttle-basic';
 
-jest.useFakeTimers();
+const functionThrottleBasic = require('./function-throttle-basic');
 
-test('functionThrottleBasic throttles function calls', () => {
-  const func = jest.fn();
-  const throttledFunc = functionThrottleBasic(func, 1000);
+describe('functionThrottleBasic', () => {
+  jest.useFakeTimers();
 
-  throttledFunc();
-  throttledFunc();
-  throttledFunc();
-
-  expect(func).toHaveBeenCalledTimes(1);
-
-  jest.advanceTimersByTime(1000);
-  throttledFunc();
-
-  expect(func).toHaveBeenCalledTimes(2);
+  test('throttles function execution', () => {
+    const func = jest.fn();
+    const throttled = functionThrottleBasic(func, 100);
+    
+    throttled();
+    throttled();
+    throttled();
+    
+    expect(func).toHaveBeenCalledTimes(1);
+    
+    jest.advanceTimersByTime(100);
+    throttled();
+    expect(func).toHaveBeenCalledTimes(2);
+  });
 });

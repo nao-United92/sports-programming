@@ -1,12 +1,13 @@
-export const functionThrottleBasic = (fn, wait) => {
-  let isThrottled = false;
+
+const functionThrottleBasic = (func, limit) => {
+  let inThrottle;
   return function(...args) {
-    if (!isThrottled) {
-      fn.apply(this, args);
-      isThrottled = true;
-      setTimeout(() => {
-        isThrottled = false;
-      }, wait);
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
     }
   };
 };
+
+module.exports = functionThrottleBasic;
