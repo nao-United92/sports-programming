@@ -1,11 +1,13 @@
-const arrayZip = (...arrays) => {
-  if (arrays.some(arr => !Array.isArray(arr))) {
-    throw new TypeError('Expected all arguments to be arrays.');
-  }
+/**
+ * Creates an array of grouped elements, the first of which contains the first elements 
+ * of the given arrays, the second of which contains the second elements of the given arrays, and so on.
+ *
+ * @param {...Array} arrays - The arrays to process.
+ * @returns {Array} The new array of grouped elements.
+ */
+export const zip = (...arrays) => {
   const maxLength = Math.max(...arrays.map(arr => arr.length));
-  return Array.from({
-    length: maxLength
-  }, (_, i) => arrays.map(arr => arr[i]));
+  return Array.from({ length: maxLength }).map((_, i) => {
+    return arrays.map(arr => arr[i]);
+  });
 };
-
-export default arrayZip;

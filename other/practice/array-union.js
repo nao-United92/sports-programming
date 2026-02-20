@@ -1,9 +1,10 @@
-const arrayUnion = (...arrays) => {
-  if (arrays.some(arr => !Array.isArray(arr))) {
-    throw new TypeError('Expected all arguments to be arrays.');
-  }
-  const flatArray = arrays.flat();
-  return [...new Set(flatArray)];
+/**
+ * Returns an array of unique values, in order, from all given arrays.
+ *
+ * @param {Array} arr1 - The first array.
+ * @param {Array} arr2 - The second array.
+ * @returns {Array} The union of the two arrays.
+ */
+export const union = (arr1, arr2) => {
+  return [...new Set([...arr1, ...arr2])];
 };
-
-export default arrayUnion;

@@ -1,8 +1,9 @@
-const isEmptyObject = (obj) => {
-  if (typeof obj !== 'object' || obj === null) {
-    return false; // Not an object or is null
-  }
-  return Object.keys(obj).length === 0 && (obj.constructor === Object || Object.getPrototypeOf(obj) === null);
+/**
+ * Checks if an object is empty (has no own enumerable string-keyed properties).
+ *
+ * @param {Object} obj - The object to check.
+ * @returns {boolean} True if empty, false otherwise.
+ */
+export const isEmpty = (obj) => {
+  return Object.keys(obj).length === 0;
 };
-
-module.exports = { isEmptyObject };
