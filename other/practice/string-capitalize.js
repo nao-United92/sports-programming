@@ -1,11 +1,10 @@
-function capitalize(str) {
-  if (typeof str !== 'string') {
-    throw new Error('Argument must be a string.');
-  }
-  if (str.length === 0) {
-    return '';
-  }
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-module.exports = capitalize;
+/**
+ * Capitalizes the first letter of a string.
+ *
+ * @param {string} str - The string to capitalize.
+ * @returns {string} The capitalized string.
+ */
+export const capitalize = (str) => {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
