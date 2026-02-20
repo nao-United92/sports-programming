@@ -1,24 +1,17 @@
-import { merge } from './object-merge.js';
+import { merge } from './object-merge';
 
 describe('merge', () => {
-  it('should merge two objects', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { c: 3, d: 4 };
-    const expected = { a: 1, b: 2, c: 3, d: 4 };
-    expect(merge(obj1, obj2)).toEqual(expected);
+  test('merges two objects', () => {
+    expect(merge({ a: 1 }, { b: 2 })).toEqual({ a: 1, b: 2 });
   });
 
-  it('should overwrite properties from the first object with properties from the second', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { b: 3, c: 4 };
-    const expected = { a: 1, b: 3, c: 4 };
-    expect(merge(obj1, obj2)).toEqual(expected);
+  test('overwrites properties from the first object with the second', () => {
+    expect(merge({ a: 1, b: 2 }, { b: 3, c: 4 })).toEqual({ a: 1, b: 3, c: 4 });
   });
 
-  it('should handle merging with an empty object', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = {};
-    expect(merge(obj1, obj2)).toEqual(obj1);
-    expect(merge(obj2, obj1)).toEqual(obj1);
+  test('returns a new object', () => {
+    const obj1 = { a: 1 };
+    const result = merge(obj1, { b: 2 });
+    expect(result).not.toBe(obj1);
   });
 });
