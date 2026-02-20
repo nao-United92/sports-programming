@@ -1,7 +1,15 @@
-import { mathClamp } from './math-clamp';
+import { clamp } from './math-clamp';
 
-test('mathClamp restricts number to range', () => {
-  expect(mathClamp(5, 0, 10)).toBe(5);
-  expect(mathClamp(-5, 0, 10)).toBe(0);
-  expect(mathClamp(15, 0, 10)).toBe(10);
+describe('clamp', () => {
+  test('clamps a number to the lower bound', () => {
+    expect(clamp(-5, 0, 10)).toBe(0);
+  });
+
+  test('clamps a number to the upper bound', () => {
+    expect(clamp(15, 0, 10)).toBe(10);
+  });
+
+  test('returns the number if it is within bounds', () => {
+    expect(clamp(5, 0, 10)).toBe(5);
+  });
 });
