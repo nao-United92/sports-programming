@@ -1,9 +1,11 @@
+
 /**
- * Gets the first element of an array.
- *
- * @param {Array} arr - The array to query.
- * @returns {*} The first element of the array.
+ * Gets the first element of array.
+ * @param {Array} array The array to query.
+ * @returns {*} Returns the first element of array.
  */
-export const head = (arr) => {
-  return (arr && arr.length) ? arr[0] : undefined;
-};
+function head(array) {
+  return (array && array.length) ? array[0] : undefined;
+}
+
+module.exports = head;
