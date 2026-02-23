@@ -1,10 +1,5 @@
-/**
- * Shuffles an array in place using the Fisher-Yates algorithm.
- *
- * @param {Array} arr - The array to shuffle.
- * @returns {Array} The shuffled array.
- */
 export const shuffle = (arr) => {
+  if (!Array.isArray(arr)) return [];
   const result = [...arr];
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

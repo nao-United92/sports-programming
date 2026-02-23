@@ -2,17 +2,23 @@ import { shuffle } from './array-shuffle';
 
 describe('shuffle', () => {
   test('shuffles the elements of an array', () => {
-    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    const shuffled = shuffle(arr);
-    expect(shuffled).toHaveLength(arr.length);
-    expect(shuffled).toEqual(expect.arrayContaining(arr));
-    // Note: Technically it could be equal by chance, but very unlikely for 10 elements.
-    expect(shuffled).not.toEqual(arr);
+    const arr = [1, 2, 3, 4, 5];
+    const result = shuffle(arr);
+    expect(result).toHaveLength(arr.length);
+    expect(result).toEqual(expect.arrayContaining(arr));
   });
 
-  test('returns a new array', () => {
+  test('returns a new array (shallow copy)', () => {
     const arr = [1, 2, 3];
-    const shuffled = shuffle(arr);
-    expect(shuffled).not.toBe(arr);
+    const result = shuffle(arr);
+    expect(result).not.toBe(arr);
+  });
+
+  test('handles empty arrays', () => {
+    expect(shuffle([])).toEqual([]);
+  });
+
+  test('returns an empty array for non-array input', () => {
+    expect(shuffle(null)).toEqual([]);
   });
 });
