@@ -1,10 +1,5 @@
-/**
- * Converts a string to camelCase.
- *
- * @param {string} str - The string to convert.
- * @returns {string} The camelCased string.
- */
 export const camelCase = (str) => {
+  if (typeof str !== 'string') return '';
   return str
     .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
       return index === 0 ? word.toLowerCase() : word.toUpperCase();
