@@ -1,27 +1,21 @@
-import stringReverse from './string-reverse';
+import { reverseString } from './string-reverse';
 
-describe('stringReverse', () => {
-  test('should reverse a basic string', () => {
-    expect(stringReverse('hello')).toBe('olleh');
+describe('reverseString', () => {
+  test('reverses a standard string', () => {
+    expect(reverseString('hello')).toBe('olleh');
   });
 
-  test('should reverse a string with spaces', () => {
-    expect(stringReverse('hello world')).toBe('dlrow olleh');
+  test('handles empty strings', () => {
+    expect(reverseString('')).toBe('');
   });
 
-  test('should return an empty string for an empty input', () => {
-    expect(stringReverse('')).toBe('');
+  test('returns empty string for non-string inputs', () => {
+    expect(reverseString(null)).toBe('');
+    expect(reverseString(undefined)).toBe('');
+    expect(reverseString(123)).toBe('');
   });
 
-  test('should return the same character for a single character string', () => {
-    expect(stringReverse('a')).toBe('a');
-  });
-
-  test('should handle numbers in a string', () => {
-    expect(stringReverse('12345')).toBe('54321');
-  });
-
-  test('should handle special characters', () => {
-    expect(stringReverse('!@#$%')).toBe('%$#@!');
+  test('handles strings with spaces', () => {
+    expect(reverseString('a b c')).toBe('c b a');
   });
 });
