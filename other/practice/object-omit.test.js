@@ -1,19 +1,24 @@
 import { omit } from './object-omit';
 
 describe('omit', () => {
+  const obj = { a: 1, b: 2, c: 3 };
+
   test('omits specified keys from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
     expect(omit(obj, ['a', 'c'])).toEqual({ b: 2 });
   });
 
-  test('returns a new object', () => {
-    const obj = { a: 1 };
-    const result = omit(obj, ['a']);
-    expect(result).not.toBe(obj);
+  test('returns the same object if no keys match', () => {
+    expect(omit(obj, ['d', 'e'])).toEqual(obj);
   });
 
-  test('does nothing if keys do not exist', () => {
-    const obj = { a: 1 };
-    expect(omit(obj, ['b'])).toEqual({ a: 1 });
+  test('handles null or undefined objects', () => {
+    expect(omit(null, ['a'])).toEqual({});
+    expect(omit(undefined, ['a'])).toEqual({});
+  });
+
+  test('returns a new object (shallow copy)', () => {
+    const result = omit(obj, []);
+    expect(result).toEqual(obj);
+    expect(result).not.toBe(obj);
   });
 });

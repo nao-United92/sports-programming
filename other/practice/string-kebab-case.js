@@ -1,12 +1,7 @@
-const kebabCase = (str) => {
-  if (typeof str !== 'string') {
-    throw new TypeError('Expected a string');
-  }
+export const kebabCase = (str) => {
+  if (typeof str !== 'string') return '';
   return str
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2') // Convert camelCase to kebab-case
-    .replace(/[\s_]+/g, '-') // Replace spaces and underscores with hyphens
-    .toLowerCase() // Convert to lowercase
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+    .map(x => x.toLowerCase())
+    .join('-');
 };
-
-module.exports = { kebabCase };

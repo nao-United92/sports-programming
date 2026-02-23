@@ -1,18 +1,22 @@
 import { pick } from './object-pick';
 
 describe('pick', () => {
+  const obj = { a: 1, b: 2, c: 3 };
+
   test('picks specified keys from an object', () => {
-    const obj = { a: 1, b: 2, c: 3 };
     expect(pick(obj, ['a', 'c'])).toEqual({ a: 1, c: 3 });
   });
 
-  test('returns an empty object if no keys are found', () => {
-    const obj = { a: 1 };
-    expect(pick(obj, ['b'])).toEqual({});
+  test('returns an empty object if no keys match', () => {
+    expect(pick(obj, ['d', 'e'])).toEqual({});
   });
 
-  test('handles non-existent keys gracefully', () => {
-    const obj = { a: 1, b: 2 };
-    expect(pick(obj, ['a', 'c'])).toEqual({ a: 1 });
+  test('handles null or undefined objects', () => {
+    expect(pick(null, ['a'])).toEqual({});
+    expect(pick(undefined, ['a'])).toEqual({});
+  });
+
+  test('ignores keys that are not on the object', () => {
+    expect(pick(obj, ['a', 'd'])).toEqual({ a: 1 });
   });
 });

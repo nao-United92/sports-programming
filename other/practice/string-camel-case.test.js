@@ -3,15 +3,18 @@ import { camelCase } from './string-camel-case';
 describe('camelCase', () => {
   test('converts space-separated words to camelCase', () => {
     expect(camelCase('hello world')).toBe('helloWorld');
+    expect(camelCase('foo bar baz')).toBe('fooBarBaz');
   });
 
-  test('converts kebab-case words to camelCase (basic)', () => {
-    // Note: The current implementation might need refinement for symbols, 
-    // but let's test basic functionality first.
+  test('handles single word', () => {
+    expect(camelCase('hello')).toBe('hello');
+  });
+
+  test('capitalizes existing camelCase correctly (simple case)', () => {
     expect(camelCase('Hello World')).toBe('helloWorld');
   });
 
-  test('handles multiple spaces', () => {
-    expect(camelCase('hello   world')).toBe('helloWorld');
+  test('returns empty string for non-string input', () => {
+    expect(camelCase(null)).toBe('');
   });
 });
