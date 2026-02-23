@@ -1,14 +1,8 @@
-/**
- * Creates an object composed of the own and inherited enumerable property paths of object that are not omitted.
- *
- * @param {Object} obj - The source object.
- * @param {string[]} paths - The property paths to omit.
- * @returns {Object} The new object.
- */
-export const omit = (obj, paths) => {
+export const omit = (obj, keys) => {
+  if (!obj) return {};
   const result = { ...obj };
-  paths.forEach(path => {
-    delete result[path];
+  keys.forEach((key) => {
+    delete result[key];
   });
   return result;
 };
