@@ -1,8 +1,4 @@
-const tail = (arr) => {
-  if (!Array.isArray(arr) || arr.length <= 1) {
-    return [];
-  }
-  return arr.slice(1);
+export const arrayTail = (array) => {
+  const length = array == null ? 0 : array.length;
+  return length ? array.slice(1) : [];
 };
-
-export { tail };

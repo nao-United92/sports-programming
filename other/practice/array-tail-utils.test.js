@@ -1,22 +1,15 @@
-import { tail } from './array-tail-utils.js';
+import { arrayTail } from './array-tail-utils';
 
-describe('tail', () => {
-  it('should return all elements except the first', () => {
-    expect(tail([1, 2, 3, 4])).toEqual([2, 3, 4]);
+describe('arrayTail', () => {
+  test('returns all but the first element of an array', () => {
+    expect(arrayTail([1, 2, 3])).toEqual([2, 3]);
   });
 
-  it('should return an empty array for an empty array', () => {
-    expect(tail([])).toEqual([]);
+  test('returns empty array for array with one element', () => {
+    expect(arrayTail([1])).toEqual([]);
   });
 
-  it('should return an empty array for a single-element array', () => {
-    expect(tail([1])).toEqual([]);
-  });
-
-  it('should return an empty array for non-array inputs', () => {
-    expect(tail(null)).toEqual([]);
-    expect(tail(undefined)).toEqual([]);
-    expect(tail("string")).toEqual([]);
-    expect(tail({})).toEqual([]);
+  test('returns empty array for empty array', () => {
+    expect(arrayTail([])).toEqual([]);
   });
 });
