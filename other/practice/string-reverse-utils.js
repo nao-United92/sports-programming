@@ -1,6 +1,6 @@
-export const reverseString = (str) => {
+export const stringReverse = (str) => {
   if (typeof str !== 'string') {
-    return '';
+    throw new Error('Input must be a string');
   }
   return str.split('').reverse().join('');
 };
