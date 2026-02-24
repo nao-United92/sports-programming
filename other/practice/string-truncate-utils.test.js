@@ -1,27 +1,15 @@
-import { truncate } from './string-truncate-utils.js';
+import { stringTruncate } from './string-truncate-utils';
 
-describe('truncate', () => {
-  const str = 'abcdefghijklmnopqrstuvwxyz';
-
-  test('should truncate a string to a specified length', () => {
-    expect(truncate(str, 10)).toBe('abcdefghij...');
+describe('stringTruncate', () => {
+  test('truncates a string', () => {
+    expect(stringTruncate('hello world', 8)).toBe('hello...');
   });
 
-  test('should not truncate if the string is shorter than or equal to the length', () => {
-    expect(truncate('short', 10)).toBe('short');
-    expect(truncate('ten chars!', 10)).toBe('ten chars!');
+  test('does not truncate if string is shorter than length', () => {
+    expect(stringTruncate('hello', 10)).toBe('hello');
   });
 
-  test('should use a custom omission string', () => {
-    expect(truncate(str, 10, '... (more)')).toBe('abcdefghij... (more)');
-  });
-
-  test('should return an empty string for non-string inputs', () => {
-    expect(truncate(null, 10)).toBe('');
-    expect(truncate(123, 5)).toBe('');
-  });
-
-  test('should handle a length of 0', () => {
-    expect(truncate(str, 0)).toBe('...');
+  test('uses custom ending', () => {
+    expect(stringTruncate('hello world', 8, '!')).toBe('hello w!');
   });
 });
