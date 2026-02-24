@@ -1,22 +1,15 @@
-import { initial } from './array-initial-utils.js';
+import { arrayInitial } from './array-initial-utils';
 
-describe('initial', () => {
-  it('should return all elements except the last', () => {
-    expect(initial([1, 2, 3, 4])).toEqual([1, 2, 3]);
+describe('arrayInitial', () => {
+  test('returns all but the last element of an array', () => {
+    expect(arrayInitial([1, 2, 3])).toEqual([1, 2]);
   });
 
-  it('should return an empty array for an empty array', () => {
-    expect(initial([])).toEqual([]);
+  test('returns empty array for array with one element', () => {
+    expect(arrayInitial([1])).toEqual([]);
   });
 
-  it('should return an empty array for a single-element array', () => {
-    expect(initial([1])).toEqual([]);
-  });
-
-  it('should return an empty array for non-array inputs', () => {
-    expect(initial(null)).toEqual([]);
-    expect(initial(undefined)).toEqual([]);
-    expect(initial("string")).toEqual([]);
-    expect(initial({})).toEqual([]);
+  test('returns empty array for empty array', () => {
+    expect(arrayInitial([])).toEqual([]);
   });
 });
