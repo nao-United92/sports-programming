@@ -1,10 +1,8 @@
-export const times = (n, iteratee) => {
-  if (n < 0) {
-    return [];
-  }
-  const result = [];
+export const functionTimes = (n, iteratee) => {
+  if (n < 1) return [];
+  const results = [];
   for (let i = 0; i < n; i++) {
-    result.push(iteratee(i));
+    results.push(iteratee(i));
   }
-  return result;
+  return results;
 };
