@@ -1,12 +1,8 @@
-const omit = (obj, keysToOmit) => {
-  if (typeof obj !== 'object' || obj === null) {
-    return {};
-  }
+export const objectOmit = (obj, keys) => {
+  if (!obj || typeof obj !== 'object') return {};
   const result = { ...obj };
-  for (const key of keysToOmit) {
+  keys.forEach((key) => {
     delete result[key];
-  }
+  });
   return result;
 };
-
-export default omit;
