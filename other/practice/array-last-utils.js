@@ -1,8 +1,4 @@
-const last = (arr) => {
-  if (!Array.isArray(arr) || arr.length === 0) {
-    return undefined;
-  }
-  return arr[arr.length - 1];
+export const arrayLast = (array) => {
+  const length = array == null ? 0 : array.length;
+  return length ? array[length - 1] : undefined;
 };
-
-export { last };

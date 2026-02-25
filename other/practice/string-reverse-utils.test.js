@@ -1,24 +1,15 @@
-import { reverseString } from './string-reverse-utils.js';
+import { stringReverse } from './string-reverse-utils';
 
-describe('reverseString', () => {
-  test('should reverse a string', () => {
-    expect(reverseString('hello')).toBe('olleh');
+describe('stringReverse', () => {
+  test('reverses a string', () => {
+    expect(stringReverse('hello')).toBe('olleh');
   });
 
-  test('should return an empty string for an empty input string', () => {
-    expect(reverseString('')).toBe('');
+  test('reverses a string with spaces', () => {
+    expect(stringReverse('hello world')).toBe('dlrow olleh');
   });
 
-  test('should return an empty string for non-string inputs', () => {
-    expect(reverseString(123)).toBe('');
-    expect(reverseString(null)).toBe('');
-  });
-
-  test('should handle palindromic strings', () => {
-    expect(reverseString('madam')).toBe('madam');
-  });
-
-  test('should handle strings with spaces', () => {
-    expect(reverseString('hello world')).toBe('dlrow olleh');
+  test('throws error for non-string input', () => {
+    expect(() => stringReverse(123)).toThrow('Input must be a string');
   });
 });

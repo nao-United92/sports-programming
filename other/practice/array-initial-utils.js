@@ -1,8 +1,4 @@
-const initial = (arr) => {
-  if (!Array.isArray(arr) || arr.length === 0) {
-    return [];
-  }
-  return arr.slice(0, arr.length - 1);
+export const arrayInitial = (array) => {
+  const length = array == null ? 0 : array.length;
+  return length ? array.slice(0, -1) : [];
 };
-
-export { initial };
