@@ -1,16 +1,15 @@
-const arrayPullAll = (arr, valuesToRemove) => {
-  if (!Array.isArray(arr) || !Array.isArray(valuesToRemove)) {
-    throw new TypeError('Expected both arguments to be arrays.');
-  }
-
-  const valuesSet = new Set(valuesToRemove);
-  let i = arr.length;
-  while (i--) {
-    if (valuesSet.has(arr[i])) {
-      arr.splice(i, 1);
+const pullAll = (array, values) => {
+  if (!Array.isArray(array) || !Array.isArray(values)) return array;
+  const valuesSet = new Set(values);
+  let i = 0;
+  while (i < array.length) {
+    if (valuesSet.has(array[i])) {
+      array.splice(i, 1);
+    } else {
+      i++;
     }
   }
-  return arr;
+  return array;
 };
 
-export default arrayPullAll;
+module.exports = pullAll;
