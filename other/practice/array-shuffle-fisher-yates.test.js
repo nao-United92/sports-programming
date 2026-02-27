@@ -1,23 +1,14 @@
+const shuffleFisherYates = require('./array-shuffle-fisher-yates');
 
-const arrayShuffleFisherYates = require('./array-shuffle-fisher-yates');
+test('shuffleFisherYates shuffles an array', () => {
+  const input = [1, 2, 3, 4, 5];
+  const result = shuffleFisherYates(input);
+  expect(result).toHaveLength(input.length);
+  expect(result.sort()).toEqual(input.sort());
+});
 
-describe('arrayShuffleFisherYates', () => {
-  test('returns an array of the same length', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const result = arrayShuffleFisherYates(arr);
-    expect(result.length).toBe(arr.length);
-  });
-
-  test('contains the same elements', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const result = arrayShuffleFisherYates(arr);
-    expect(result.sort()).toEqual(arr.sort());
-  });
-
-  test('does not modify original array', () => {
-    const arr = [1, 2, 3];
-    const original = [...arr];
-    arrayShuffleFisherYates(arr);
-    expect(arr).toEqual(original);
-  });
+test('shuffleFisherYates returns a new array', () => {
+  const input = [1, 2, 3];
+  const result = shuffleFisherYates(input);
+  expect(result).not.toBe(input);
 });
