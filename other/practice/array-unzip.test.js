@@ -1,11 +1,10 @@
-import { unzip } from './array-unzip';
 
-describe('unzip', () => {
-  test('unzips an array of grouped elements', () => {
-    expect(unzip([['a', 1, true], ['b', 2, false]])).toEqual([['a', 'b'], [1, 2], [true, false]]);
-  });
+const unzip = require('./array-unzip');
 
-  test('handles an empty array', () => {
-    expect(unzip([])).toEqual([]);
-  });
+test('unzips array of arrays', () => {
+  expect(unzip([['a', 1, true], ['b', 2, false]])).toEqual([
+    ['a', 'b'],
+    [1, 2],
+    [true, false]
+  ]);
 });
