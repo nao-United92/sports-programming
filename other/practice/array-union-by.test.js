@@ -1,11 +1,9 @@
-const unionBy = require('./array-union-by');
+const arrayUnionBy = require('./array-union-by');
 
-test('unionBy calculates union with iteratee', () => {
-  const result = unionBy(Math.floor, [2.1], [1.2, 2.3]);
-  expect(result).toEqual([2.1, 1.2]);
+test('creates a union of two arrays based on a function', () => {
+  expect(arrayUnionBy([2.1], [1.2, 2.3], Math.floor)).toEqual([2.1, 1.2]);
 });
 
-test('unionBy handles property names', () => {
-  const result = unionBy(x => x.x, [{ x: 1 }], [{ x: 2 }, { x: 1 }]);
-  expect(result).toEqual([{ x: 1 }, { x: 2 }]);
+test('handles empty arrays', () => {
+  expect(arrayUnionBy([], [], x => x)).toEqual([]);
 });

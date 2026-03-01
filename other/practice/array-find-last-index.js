@@ -1,16 +1,8 @@
-/**
- * Returns the index of the last element in the array that satisfies the provided testing function.
- * If no elements satisfy the testing function, -1 is returned.
- *
- * @param {Array} arr - The array to search.
- * @param {Function} predicate - Function to execute on each value in the array.
- * @returns {number} The index of the last element that passes the test, or -1.
- */
-export const findLastIndex = (arr, predicate) => {
+const arrayFindLastIndex = (arr, fn) => {
   for (let i = arr.length - 1; i >= 0; i--) {
-    if (predicate(arr[i], i, arr)) {
-      return i;
-    }
+    if (fn(arr[i], i, arr)) return i;
   }
   return -1;
 };
+
+module.exports = arrayFindLastIndex;

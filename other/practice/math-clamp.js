@@ -1,3 +1,3 @@
-export const clamp = (num, min, max) => {
-  return Math.min(Math.max(num, min), max);
-};
+const mathClamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+module.exports = mathClamp;
