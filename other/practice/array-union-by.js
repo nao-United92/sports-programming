@@ -1,18 +1,6 @@
-const unionBy = (iteratee, ...arrays) => {
-  const seen = new Set();
-  const result = [];
-  
-  for (const array of arrays) {
-    for (const item of array) {
-      const val = iteratee(item);
-      if (!seen.has(val)) {
-        seen.add(val);
-        result.push(item);
-      }
-    }
-  }
-  
-  return result;
+const arrayUnionBy = (a, b, fn) => {
+  const s = new Set(a.map(fn));
+  return Array.from(new Set([...a, ...b.filter(x => !s.has(fn(x)))]));
 };
 
-module.exports = unionBy;
+module.exports = arrayUnionBy;
