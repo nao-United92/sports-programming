@@ -1,5 +1,4 @@
-export const slugify = (str) => {
-  if (typeof str !== 'string') return '';
+const stringSlugify = (str) => {
   return str
     .toLowerCase()
     .trim()
@@ -7,3 +6,5 @@ export const slugify = (str) => {
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '');
 };
+
+module.exports = stringSlugify;
