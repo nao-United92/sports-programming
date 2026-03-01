@@ -1,16 +1,7 @@
-const sortedIndex = (array, value) => {
-  let low = 0;
-  let high = array.length;
-
-  while (low < high) {
-    const mid = (low + high) >>> 1;
-    if (array[mid] < value) {
-      low = mid + 1;
-    } else {
-      high = mid;
-    }
-  }
-  return low;
+const arraySortedIndex = (arr, n) => {
+  const isDescending = arr[0] > arr[arr.length - 1];
+  const index = arr.findIndex(el => (isDescending ? n >= el : n <= el));
+  return index === -1 ? arr.length : index;
 };
 
-module.exports = sortedIndex;
+module.exports = arraySortedIndex;
