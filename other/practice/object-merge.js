@@ -1,10 +1,16 @@
 /**
- * Merges two objects. Properties from the second object overwrite those of the first.
- *
- * @param {Object} obj1 - The first object.
- * @param {Object} obj2 - The second object.
- * @returns {Object} The merged object.
+ * Merges two or more objects into a single object.
+ * @param {...object} objects
+ * @returns {object} The merged object.
  */
-export const merge = (obj1, obj2) => {
-  return { ...obj1, ...obj2 };
+const merge = (...objects) => {
+  return objects.reduce((acc, obj) => {
+    if (obj === null || typeof obj !== 'object') return acc;
+    return Object.keys(obj).reduce((innerAcc, key) => {
+      innerAcc[key] = obj[key];
+      return innerAcc;
+    }, acc);
+  }, {});
 };
+
+module.exports = merge;
