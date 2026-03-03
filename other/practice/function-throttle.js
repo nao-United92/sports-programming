@@ -1,17 +1,18 @@
 /**
- * Creates a throttled function that only invokes func at most once per every wait milliseconds.
- *
- * @param {Function} func - The function to throttle.
- * @param {number} wait - The number of milliseconds to throttle invocations to.
- * @returns {Function} The new throttled function.
+ * Creates a throttled version of a function.
+ * @param {Function} fn
+ * @param {number} ms
+ * @returns {Function} The throttled function.
  */
-export const throttle = (func, wait) => {
+const throttle = (fn, ms) => {
   let lastCall = 0;
-  return function(...args) {
+  return (...args) => {
     const now = Date.now();
-    if (now - lastCall >= wait) {
+    if (now - lastCall >= ms) {
       lastCall = now;
-      return func.apply(this, args);
+      fn(...args);
     }
   };
 };
+
+module.exports = throttle;

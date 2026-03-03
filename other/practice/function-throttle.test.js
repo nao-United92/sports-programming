@@ -1,23 +1,23 @@
-import { throttle } from './function-throttle';
+const throttle = require('./function-throttle');
 
-describe('throttle', () => {
-  test('throttles function execution', () => {
-    const func = jest.fn();
-    const throttledFunc = throttle(func, 100);
+describe('function-throttle', () => {
+  test('throttles a function', () => {
+    const fn = jest.fn();
+    const throttled = throttle(fn, 100);
 
     const now = Date.now();
     jest.spyOn(Date, 'now').mockReturnValue(now);
-
-    throttledFunc();
-    expect(func).toHaveBeenCalledTimes(1);
+    throttled();
+    throttled();
+    expect(fn).toHaveBeenCalledTimes(1);
 
     Date.now.mockReturnValue(now + 50);
-    throttledFunc();
-    expect(func).toHaveBeenCalledTimes(1);
+    throttled();
+    expect(fn).toHaveBeenCalledTimes(1);
 
     Date.now.mockReturnValue(now + 101);
-    throttledFunc();
-    expect(func).toHaveBeenCalledTimes(2);
+    throttled();
+    expect(fn).toHaveBeenCalledTimes(2);
 
     Date.now.mockRestore();
   });
