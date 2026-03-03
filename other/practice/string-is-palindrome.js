@@ -1,10 +1,14 @@
-const isPalindrome = (str) => {
-  if (typeof str !== 'string') {
-    throw new TypeError('Expected a string');
-  }
+const reverseString = require('./string-reverse');
 
-  const cleanedStr = str.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return cleanedStr === cleanedStr.split('').reverse().join('');
+/**
+ * Checks if a string is a palindrome.
+ * @param {string} str
+ * @returns {boolean} True if the string is a palindrome, false otherwise.
+ */
+const isPalindrome = (str) => {
+  if (typeof str !== 'string') return false;
+  const cleaned = str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  return cleaned === reverseString(cleaned);
 };
 
-module.exports = { isPalindrome };
+module.exports = isPalindrome;
