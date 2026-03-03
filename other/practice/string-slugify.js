@@ -1,4 +1,10 @@
-const stringSlugify = (str) => {
+/**
+ * Converts a string into a URL-friendly slug.
+ * @param {string} str
+ * @returns {string} The slugified string.
+ */
+const slugify = (str) => {
+  if (typeof str !== 'string') return str;
   return str
     .toLowerCase()
     .trim()
@@ -7,4 +13,4 @@ const stringSlugify = (str) => {
     .replace(/^-+|-+$/g, '');
 };
 
-module.exports = stringSlugify;
+module.exports = slugify;

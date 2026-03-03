@@ -1,10 +1,23 @@
-const stringSlugify = require('./string-slugify');
+const slugify = require('./string-slugify');
 
-test('slugifies a string', () => {
-  expect(stringSlugify('Hello World!')).toBe('hello-world');
-  expect(stringSlugify('  Multiple   Spaces  ')).toBe('multiple-spaces');
-});
+describe('string-slugify', () => {
+  test('converts a string to a slug', () => {
+    expect(slugify('Hello World')).toBe('hello-world');
+  });
 
-test('handles special characters', () => {
-  expect(stringSlugify('What about & symbols?')).toBe('what-about-symbols');
+  test('handles multiple spaces and underscores', () => {
+    expect(slugify('Hello   World__Test')).toBe('hello-world-test');
+  });
+
+  test('removes special characters', () => {
+    expect(slugify('Hello, World!')).toBe('hello-world');
+  });
+
+  test('trims leading and trailing hyphens', () => {
+    expect(slugify('  -Hello World-  ')).toBe('hello-world');
+  });
+
+  test('handles non-string inputs', () => {
+    expect(slugify(null)).toBe(null);
+  });
 });
