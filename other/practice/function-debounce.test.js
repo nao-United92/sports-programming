@@ -1,20 +1,32 @@
-import { debounce } from './function-debounce';
+const debounce = require('./function-debounce');
 
 jest.useFakeTimers();
 
-describe('debounce', () => {
-  test('delays function execution', () => {
-    const func = jest.fn();
-    const debouncedFunc = debounce(func, 100);
+describe('function-debounce', () => {
+  test('debounces a function', () => {
+    const fn = jest.fn();
+    const debounced = debounce(fn, 100);
 
-    debouncedFunc();
-    expect(func).not.toHaveBeenCalled();
+    debounced();
+    debounced();
+    debounced();
 
-    jest.advanceTimersByTime(50);
-    debouncedFunc();
-    expect(func).not.toHaveBeenCalled();
+    expect(fn).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(100);
-    expect(func).toHaveBeenCalledTimes(1);
+    jest.runAllTimers();
+
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  test('calls the function with the last arguments', () => {
+    const fn = jest.fn();
+    const debounced = debounce(fn, 100);
+
+    debounced('first');
+    debounced('last');
+
+    jest.runAllTimers();
+
+    expect(fn).toHaveBeenCalledWith('last');
   });
 });
