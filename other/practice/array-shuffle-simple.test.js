@@ -1,12 +1,22 @@
+import { shuffle } from './array-shuffle-simple';
 
-const shuffle = require('./array-shuffle-simple');
+describe('shuffle', () => {
+  test('should return an array of the same length', () => {
+    const input = [1, 2, 3, 4, 5];
+    const result = shuffle(input);
+    expect(result).toHaveLength(input.length);
+  });
 
-test('shuffle should return array of same length', () => {
-  const arr = [1, 2, 3, 4, 5];
-  expect(shuffle(arr)).toHaveLength(5);
-});
+  test('should contain all the original elements', () => {
+    const input = [1, 2, 3, 4, 5];
+    const result = shuffle(input);
+    expect(result.sort()).toEqual(input.sort());
+  });
 
-test('shuffle should contain same elements', () => {
-  const arr = [1, 2, 3];
-  expect(shuffle(arr).sort()).toEqual([1, 2, 3]);
+  test('should not modify the original array', () => {
+    const input = [1, 2, 3];
+    const inputCopy = [...input];
+    shuffle(input);
+    expect(input).toEqual(inputCopy);
+  });
 });

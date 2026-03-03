@@ -1,16 +1,14 @@
+import { partition } from './array-partition-simple';
 
-const partition = require('./array-partition-simple');
+describe('partition', () => {
+  test('should partition an array of numbers into even and odd', () => {
+    const isEven = (n) => n % 2 === 0;
+    const result = partition([1, 2, 3, 4, 5], isEven);
+    expect(result).toEqual([[2, 4], [1, 3, 5]]);
+  });
 
-test('partition should split array based on predicate', () => {
-  const users = [
-    { user: 'barney', age: 36, active: false },
-    { user: 'fred', age: 40, active: true },
-    { user: 'pebbles', age: 1, active: false }
-  ];
-  const result = partition(users, (o) => o.active);
-  expect(result[0]).toEqual([{ user: 'fred', age: 40, active: true }]);
-  expect(result[1]).toEqual([
-    { user: 'barney', age: 36, active: false },
-    { user: 'pebbles', age: 1, active: false }
-  ]);
+  test('should return two empty arrays for an empty input', () => {
+    const result = partition([], (x) => x > 0);
+    expect(result).toEqual([[], []]);
+  });
 });

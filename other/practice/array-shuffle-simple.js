@@ -1,11 +1,14 @@
-
-const shuffle = (array) => {
-  const newArray = [...array];
-  for (let i = newArray.length - 1; i > 0; i--) {
+/**
+ * Randomly shuffles an array using the Fisher-Yates algorithm.
+ * 
+ * @param {Array} arr - The array to shuffle.
+ * @returns {Array} A new shuffled array.
+ */
+export const shuffle = (arr) => {
+  const newArr = [...arr];
+  for (let i = newArr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
   }
-  return newArray;
+  return newArr;
 };
-
-module.exports = shuffle;

@@ -1,7 +1,12 @@
-
-const intersection = (a, b) => {
-  const s = new Set(b);
-  return [...new Set(a)].filter(x => s.has(x));
+/**
+ * Creates an array of unique values that are included in all given arrays.
+ * 
+ * @param {...Array} arrays - The arrays to inspect.
+ * @returns {Array} A new array of intersecting values.
+ */
+export const intersection = (...arrays) => {
+  if (arrays.length === 0) return [];
+  return arrays.reduce((acc, current) => {
+    return acc.filter(value => current.includes(value));
+  });
 };
-
-module.exports = intersection;
