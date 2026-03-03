@@ -1,8 +1,14 @@
-
-const unzip = (array) => {
+/**
+ * This method is like `zip` except that it accepts an array of grouped elements 
+ * and creates an array regrouping the elements to their pre-zip configuration.
+ * 
+ * @param {Array[]} array - The array of grouped elements to process.
+ * @returns {Array[]} A new array of regrouped elements.
+ */
+export const unzip = (array) => {
   if (!array || !array.length) return [];
-  const length = array[0].length;
-  return Array.from({ length }, (_, i) => array.map((row) => row[i]));
+  const maxLength = Math.max(...array.map(group => group.length));
+  return Array.from({ length: maxLength }).map((_, i) => {
+    return array.map(group => group[i]);
+  });
 };
-
-module.exports = unzip;
