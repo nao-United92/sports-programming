@@ -1,10 +1,14 @@
+import { reject } from './array-reject-simple';
 
-const reject = require('./array-reject-simple');
+describe('reject', () => {
+  test('should reject even numbers', () => {
+    const isEven = n => n % 2 === 0;
+    const result = reject([1, 2, 3, 4, 5], isEven);
+    expect(result).toEqual([1, 3, 5]);
+  });
 
-test('reject should filter out matching elements', () => {
-  const users = [
-    { user: 'barney', age: 36, active: false },
-    { user: 'fred', age: 40, active: true }
-  ];
-  expect(reject(users, (o) => !o.active)).toEqual([{ user: 'fred', age: 40, active: true }]);
+  test('should return the same array if nothing is rejected', () => {
+    const result = reject([1, 3, 5], n => n % 2 === 0);
+    expect(result).toEqual([1, 3, 5]);
+  });
 });
