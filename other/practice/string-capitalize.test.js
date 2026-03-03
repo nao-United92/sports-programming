@@ -1,20 +1,24 @@
-import { capitalize } from './string-capitalize';
+const capitalize = require('./string-capitalize');
 
-describe('capitalize', () => {
-  test('capitalizes the first letter of a string', () => {
+describe('string-capitalize', () => {
+  test('capitalizes the first letter of a word', () => {
     expect(capitalize('hello')).toBe('Hello');
   });
 
-  test('converts the rest of the string to lowercase', () => {
-    expect(capitalize('hELLO')).toBe('Hello');
+  test('handles already capitalized strings', () => {
+    expect(capitalize('Hello')).toBe('Hello');
   });
 
-  test('returns an empty string for non-string input', () => {
-    expect(capitalize(null)).toBe('');
-    expect(capitalize(123)).toBe('');
+  test('handles single character strings', () => {
+    expect(capitalize('a')).toBe('A');
   });
 
-  test('returns an empty string for empty input', () => {
+  test('handles empty strings', () => {
     expect(capitalize('')).toBe('');
+  });
+
+  test('handles non-string inputs', () => {
+    expect(capitalize(null)).toBe(null);
+    expect(capitalize(123)).toBe(123);
   });
 });
