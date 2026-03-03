@@ -1,6 +1,6 @@
-import { isEmpty } from './object-is-empty';
+const isEmpty = require('./object-is-empty');
 
-describe('isEmpty', () => {
+describe('object-is-empty', () => {
   test('returns true for an empty object', () => {
     expect(isEmpty({})).toBe(true);
   });
@@ -9,8 +9,17 @@ describe('isEmpty', () => {
     expect(isEmpty({ a: 1 })).toBe(false);
   });
 
-  test('returns true for an object with no own properties', () => {
-    const obj = Object.create({ a: 1 });
-    expect(isEmpty(obj)).toBe(true);
+  test('returns false for null', () => {
+    expect(isEmpty(null)).toBe(false);
+  });
+
+  test('returns false for arrays', () => {
+    expect(isEmpty([])).toBe(false);
+    expect(isEmpty([1])).toBe(false);
+  });
+
+  test('returns false for primitives', () => {
+    expect(isEmpty(123)).toBe(false);
+    expect(isEmpty('hello')).toBe(false);
   });
 });

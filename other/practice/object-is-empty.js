@@ -1,9 +1,11 @@
 /**
- * Checks if an object is empty (has no own enumerable string-keyed properties).
- *
- * @param {Object} obj - The object to check.
- * @returns {boolean} True if empty, false otherwise.
+ * Checks if an object is empty.
+ * @param {object} obj
+ * @returns {boolean} True if the object is empty, false otherwise.
  */
-export const isEmpty = (obj) => {
+const isEmpty = (obj) => {
+  if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) return false;
   return Object.keys(obj).length === 0;
 };
+
+module.exports = isEmpty;
