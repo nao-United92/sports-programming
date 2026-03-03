@@ -1,25 +1,31 @@
-import { deepClone } from './object-deep-clone';
+const deepClone = require('./object-deep-clone');
 
-describe('deepClone', () => {
-  test('clones primitive values', () => {
-    expect(deepClone(1)).toBe(1);
-    expect(deepClone('s')).toBe('s');
+describe('object-deep-clone', () => {
+  test('clones a simple object', () => {
+    const obj = { a: 1, b: 2 };
+    const clone = deepClone(obj);
+    expect(clone).toEqual(obj);
+    expect(clone).not.toBe(obj);
+  });
+
+  test('clones a nested object', () => {
+    const obj = { a: 1, b: { c: 3 } };
+    const clone = deepClone(obj);
+    expect(clone).toEqual(obj);
+    expect(clone.b).not.toBe(obj.b);
+  });
+
+  test('clones an array', () => {
+    const arr = [1, [2, 3], { a: 4 }];
+    const clone = deepClone(arr);
+    expect(clone).toEqual(arr);
+    expect(clone[1]).not.toBe(arr[1]);
+    expect(clone[2]).not.toBe(arr[2]);
+  });
+
+  test('handles null and primitives', () => {
     expect(deepClone(null)).toBe(null);
-  });
-
-  test('clones objects', () => {
-    const obj = { a: 1, b: { c: 2 } };
-    const cloned = deepClone(obj);
-    expect(cloned).toEqual(obj);
-    expect(cloned).not.toBe(obj);
-    expect(cloned.b).not.toBe(obj.b);
-  });
-
-  test('clones arrays', () => {
-    const arr = [1, [2, 3]];
-    const cloned = deepClone(arr);
-    expect(cloned).toEqual(arr);
-    expect(cloned).not.toBe(arr);
-    expect(cloned[1]).not.toBe(arr[1]);
+    expect(deepClone(123)).toBe(123);
+    expect(deepClone('hello')).toBe('hello');
   });
 });
