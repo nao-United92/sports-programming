@@ -1,21 +1,19 @@
-import { truncate } from './string-truncate';
+const truncate = require('./string-truncate');
 
 describe('truncate', () => {
-  test('truncates a string that exceeds the specified length', () => {
-    expect(truncate('Hello World', 8)).toBe('Hello...');
+  test('truncates a string to the specified length', () => {
+    expect(truncate('hello world', 8)).toBe('hello...');
   });
 
-  test('does not truncate a string that is shorter than the length', () => {
-    expect(truncate('Hello', 10)).toBe('Hello');
+  test('does not truncate if string is shorter than length', () => {
+    expect(truncate('hello', 10)).toBe('hello');
   });
 
-  test('uses a custom suffix', () => {
-    expect(truncate('Hello World', 8, '!')).toBe('Hello W!');
+  test('uses a custom omission string', () => {
+    expect(truncate('hello world', 8, '!')).toBe('hello w!');
   });
 
-  test('handles default length', () => {
-    const longStr = 'a'.repeat(50);
-    expect(truncate(longStr)).toHaveLength(30);
-    expect(truncate(longStr).endsWith('...')).toBe(true);
+  test('returns empty string for non-string input', () => {
+    expect(truncate(null, 5)).toBe('');
   });
 });

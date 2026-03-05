@@ -1,10 +1,10 @@
 /**
- * Computes the greatest common divisor (GCD) of two numbers using the Euclidean algorithm.
- * @param {number} a
- * @param {number} b
- * @returns {number} The GCD of a and b.
+ * Calculates the Greatest Common Divisor (GCD) of two numbers.
+ * @param {number} a - First number.
+ * @param {number} b - Second number.
+ * @returns {number} - The GCD.
  */
-const gcd = (a, b) => {
+function gcd(a, b) {
   a = Math.abs(a);
   b = Math.abs(b);
   while (b) {
@@ -12,6 +12,6 @@ const gcd = (a, b) => {
     [a, b] = [b, a];
   }
   return a;
-};
+}
 
 module.exports = gcd;

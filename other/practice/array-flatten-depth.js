@@ -1,24 +1,21 @@
 /**
  * Flattens an array up to the specified depth.
- *
- * @param {Array} arr The array to flatten.
- * @param {number} [depth=1] The maximum depth to flatten.
- * @returns {Array} The new flattened array.
+ * @param {Array} array - The array to flatten.
+ * @param {number} [depth=1] - The maximum recursion depth.
+ * @returns {Array} - The new flattened array.
  */
-const flattenDepth = (arr, depth = 1) => {
-  if (depth === 0) {
-    return arr;
-  }
+function flattenDepth(array, depth = 1) {
+  if (!Array.isArray(array)) return [];
+  if (depth < 1) return [...array];
 
-  let result = [];
-  for (let i = 0; i < arr.length; i++) {
-    if (Array.isArray(arr[i]) && depth > 0) {
-      result.push(...flattenDepth(arr[i], depth - 1));
+  return array.reduce((acc, val) => {
+    if (Array.isArray(val) && depth > 0) {
+      acc.push(...flattenDepth(val, depth - 1));
     } else {
-      result.push(arr[i]);
+      acc.push(val);
     }
-  }
-  return result;
-};
+    return acc;
+  }, []);
+}
 
-export default flattenDepth;
+module.exports = flattenDepth;
