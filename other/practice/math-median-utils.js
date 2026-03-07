@@ -1,14 +1,22 @@
-const median = (arr) => {
-  if (!Array.isArray(arr) || arr.length === 0) {
+/**
+ * Calculates the median of an array of numbers.
+ * 
+ * @param {Array<number>} numbers - The array of numbers to process.
+ * @returns {number} The median. Returns 0 if array is empty.
+ */
+function median(numbers) {
+  if (!Array.isArray(numbers) || numbers.length === 0) {
     return 0;
   }
 
-  const sortedArr = [...arr].sort((a, b) => a - b);
-  const mid = Math.floor(sortedArr.length / 2);
+  const sorted = [...numbers].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
 
-  return sortedArr.length % 2 !== 0
-    ? sortedArr[mid]
-    : (sortedArr[mid - 1] + sortedArr[mid]) / 2;
-};
+  if (sorted.length % 2 === 0) {
+    return (sorted[mid - 1] + sorted[mid]) / 2;
+  }
 
-export default median;
+  return sorted[mid];
+}
+
+module.exports = median;

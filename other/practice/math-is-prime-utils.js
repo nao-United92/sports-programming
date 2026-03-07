@@ -1,9 +1,18 @@
-export const mathIsPrime = (n) => {
-  if (n <= 1) return false;
-  if (n <= 3) return true;
-  if (n % 2 === 0 || n % 3 === 0) return false;
-  for (let i = 5; i * i <= n; i += 6) {
-    if (n % i === 0 || n % (i + 2) === 0) return false;
+/**
+ * Checks if a number is prime.
+ * 
+ * @param {number} num - The number to check.
+ * @returns {boolean} True if the number is prime, false otherwise.
+ */
+function isPrime(num) {
+  if (num <= 1) return false;
+  if (num <= 3) return true;
+  if (num % 2 === 0 || num % 3 === 0) return false;
+
+  for (let i = 5; i * i <= num; i += 6) {
+    if (num % i === 0 || num % (i + 2) === 0) return false;
   }
   return true;
-};
+}
+
+module.exports = isPrime;

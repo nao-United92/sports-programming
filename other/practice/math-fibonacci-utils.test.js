@@ -1,11 +1,19 @@
-import { mathFibonacci } from './math-fibonacci-utils';
+const fibonacci = require('./math-fibonacci-utils');
 
-describe('mathFibonacci', () => {
-  test('returns fibonacci sequence of length 5', () => {
-    expect(mathFibonacci(5)).toEqual([0, 1, 1, 2, 3]);
+describe('fibonacci', () => {
+  test('generates Fibonacci sequence of length 5', () => {
+    expect(fibonacci(5)).toEqual([0, 1, 1, 2, 3]);
   });
 
-  test('returns empty array for negative input', () => {
-    expect(mathFibonacci(-1)).toEqual([]);
+  test('generates Fibonacci sequence of length 1', () => {
+    expect(fibonacci(1)).toEqual([0]);
+  });
+
+  test('returns empty array for length 0', () => {
+    expect(fibonacci(0)).toEqual([]);
+  });
+
+  test('generates Fibonacci sequence of length 10', () => {
+    expect(fibonacci(10)).toEqual([0, 1, 1, 2, 3, 5, 8, 13, 21, 34]);
   });
 });
