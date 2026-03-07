@@ -1,15 +1,19 @@
-import { mathFactorial } from './math-factorial-utils';
+const factorial = require('./math-factorial-utils');
 
-describe('mathFactorial', () => {
-  test('calculates factorial of 0', () => {
-    expect(mathFactorial(0)).toBe(1);
-  });
-
+describe('factorial', () => {
   test('calculates factorial of 5', () => {
-    expect(mathFactorial(5)).toBe(120);
+    expect(factorial(5)).toBe(120);
   });
 
-  test('returns undefined for negative numbers', () => {
-    expect(mathFactorial(-1)).toBeUndefined();
+  test('calculates factorial of 0', () => {
+    expect(factorial(0)).toBe(1);
+  });
+
+  test('calculates factorial of 1', () => {
+    expect(factorial(1)).toBe(1);
+  });
+
+  test('returns 0 for negative numbers', () => {
+    expect(factorial(-1)).toBe(0);
   });
 });
