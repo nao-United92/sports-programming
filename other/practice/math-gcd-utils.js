@@ -1,6 +1,18 @@
-export const mathGCD = (a, b) => {
-  if (!b) {
-    return a;
+/**
+ * Calculates the Greatest Common Divisor (GCD) of two numbers.
+ * 
+ * @param {number} a - First number.
+ * @param {number} b - Second number.
+ * @returns {number} The GCD of a and b.
+ */
+function gcd(a, b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
+  while (b) {
+    a %= b;
+    [a, b] = [b, a];
   }
-  return mathGCD(b, a % b);
-};
+  return a;
+}
+
+module.exports = gcd;
