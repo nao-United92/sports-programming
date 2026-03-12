@@ -1,9 +1,9 @@
 const pick = (obj, keys) => {
-  return keys.reduce((newObj, key) => {
+  return keys.reduce((acc, key) => {
     if (key in obj) {
-      newObj[key] = obj[key];
+      acc[key] = obj[key];
     }
-    return newObj;
+    return acc;
   }, {});
 };
 

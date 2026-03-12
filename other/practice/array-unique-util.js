@@ -1,6 +1,5 @@
-export const unique = (arr) => {
-  if (!Array.isArray(arr)) {
-    return [];
-  }
+const unique = (arr) => {
   return [...new Set(arr)];
 };
+
+module.exports = unique;

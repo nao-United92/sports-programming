@@ -1,18 +1,9 @@
-const kebabCase = str => {
-  if (str == null) {
-    return '';
-  }
-  const result = String(str)
-    // Add space before uppercase letters, but not at the start of the string
-    .replace(/([A-Z])/g, ' $1')
-    // Replace spaces, hyphens, and underscores with a single hyphen
-    .replace(/[ _-]+/g, '-')
-    // Remove leading hyphen if it exists
-    .replace(/^-/, '')
-    // Convert to lower case
-    .toLowerCase();
-
-  return result;
+const toKebabCase = (str) => {
+  return str
+    .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2')
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/^-+|-+$/g, '');
 };
 
-module.exports = kebabCase;
+module.exports = toKebabCase;
