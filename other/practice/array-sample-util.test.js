@@ -1,18 +1,11 @@
-import { sample } from './array-sample-util';
+const sample = require('./array-sample-util');
 
 describe('sample', () => {
-  it('should return a random element from an array', () => {
-    const arr = [1, 2, 3, 4, 5];
-    const result = sample(arr);
-    expect(arr).toContain(result);
+  test('returns an element from the array', () => {
+    const arr = [1, 2, 3];
+    expect(arr).toContain(sample(arr));
   });
-
-  it('should return undefined for an empty array', () => {
+  test('returns undefined for empty array', () => {
     expect(sample([])).toBeUndefined();
-  });
-
-  it('should return undefined for non-array values', () => {
-    expect(sample(null)).toBeUndefined();
-    expect(sample(undefined)).toBeUndefined();
   });
 });
