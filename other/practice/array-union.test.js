@@ -1,9 +1,15 @@
-const arrayUnion = require('./array-union');
+import { union } from './array-union.js';
 
-test('returns the union of two arrays', () => {
-  expect(arrayUnion([1, 2, 3], [4, 3, 2])).toEqual([1, 2, 3, 4]);
-});
+describe('union', () => {
+  it('returns the union of two arrays', () => {
+    expect(union([1, 2, 3], [4, 3, 2])).toEqual([1, 2, 3, 4]);
+  });
 
-test('handles empty arrays', () => {
-  expect(arrayUnion([], [1, 2])).toEqual([1, 2]);
+  it('returns the union of multiple arrays', () => {
+    expect(union([1, 2], [2, 3], [3, 4])).toEqual([1, 2, 3, 4]);
+  });
+
+  it('handles empty arrays', () => {
+    expect(union([], [1, 2])).toEqual([1, 2]);
+  });
 });

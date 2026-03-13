@@ -1,14 +1,17 @@
+import { head } from './array-head.js';
 
-const head = require('./array-head');
+describe('head', () => {
+  it('returns the first element of an array', () => {
+    expect(head([1, 2, 3])).toBe(1);
+    expect(head(['a', 'b', 'c'])).toBe('a');
+  });
 
-test('should return the first element', () => {
-  expect(head([1, 2, 3])).toBe(1);
-});
+  it('returns undefined for an empty array', () => {
+    expect(head([])).toBeUndefined();
+  });
 
-test('should return undefined if empty', () => {
-  expect(head([])).toBeUndefined();
-});
-
-test('should return undefined if null', () => {
-  expect(head(null)).toBeUndefined();
+  it('returns undefined for null or undefined', () => {
+    expect(head(null)).toBeUndefined();
+    expect(head(undefined)).toBeUndefined();
+  });
 });

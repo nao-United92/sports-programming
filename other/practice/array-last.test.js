@@ -1,11 +1,17 @@
-import { last } from './array-last';
+import { last } from './array-last.js';
 
 describe('last', () => {
-  test('returns the last element of an array', () => {
+  it('returns the last element of an array', () => {
     expect(last([1, 2, 3])).toBe(3);
+    expect(last(['a', 'b', 'c'])).toBe('c');
   });
 
-  test('returns undefined for an empty array', () => {
+  it('returns undefined for an empty array', () => {
     expect(last([])).toBeUndefined();
+  });
+
+  it('returns undefined for null or undefined', () => {
+    expect(last(null)).toBeUndefined();
+    expect(last(undefined)).toBeUndefined();
   });
 });

@@ -1,21 +1,22 @@
-const zip = require('./array-zip');
+import { zip } from './array-zip.js';
 
 describe('zip', () => {
-  test('zips multiple arrays together', () => {
+  it('zips multiple arrays', () => {
     expect(zip(['a', 'b'], [1, 2], [true, false])).toEqual([
       ['a', 1, true],
       ['b', 2, false],
     ]);
   });
 
-  test('handles arrays of different lengths', () => {
-    expect(zip(['a', 'b'], [1])).toEqual([
-      ['a', 1],
-      ['b', undefined],
+  it('handles arrays of different lengths', () => {
+    expect(zip(['a'], [1, 2], [true, false, 'extra'])).toEqual([
+      ['a', 1, true],
+      [undefined, 2, false],
+      [undefined, undefined, 'extra'],
     ]);
   });
 
-  test('returns an empty array if no input', () => {
+  it('handles empty input', () => {
     expect(zip()).toEqual([]);
   });
 });

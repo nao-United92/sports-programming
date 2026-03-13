@@ -1,3 +1,1 @@
-
-const pluck = (arr, key) => arr.map(i => i[key]);
-module.exports = pluck;
+export const pluck = (arr, key) => arr.map((obj) => obj[key]);

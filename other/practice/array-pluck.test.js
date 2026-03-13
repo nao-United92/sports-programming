@@ -1,10 +1,17 @@
+import { pluck } from './array-pluck.js';
 
-const pluck = require('./array-pluck');
+describe('pluck', () => {
+  it('extracts a property from an array of objects', () => {
+    const arr = [{ name: 'Alice', age: 25 }, { name: 'Bob', age: 30 }];
+    expect(pluck(arr, 'name')).toEqual(['Alice', 'Bob']);
+  });
 
-test('pluck extracts property values from array of objects', () => {
-  const users = [
-    { user: 'barney', age: 36 },
-    { user: 'fred', age: 40 }
-  ];
-  expect(pluck(users, 'user')).toEqual(['barney', 'fred']);
+  it('handles missing properties as undefined', () => {
+    const arr = [{ name: 'Alice' }, { age: 30 }];
+    expect(pluck(arr, 'name')).toEqual(['Alice', undefined]);
+  });
+
+  it('returns empty array for empty input', () => {
+    expect(pluck([], 'a')).toEqual([]);
+  });
 });
