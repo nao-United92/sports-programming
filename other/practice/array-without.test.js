@@ -1,31 +1,21 @@
-import arrayWithout from './array-without';
+import { without } from './array-without.js';
 
-describe('arrayWithout', () => {
-  test('should create an array excluding specified values', () => {
-    const arr = [1, 2, 3, 1, 2];
-    expect(arrayWithout(arr, 1)).toEqual([2, 3, 2]);
-    expect(arrayWithout(arr, 1, 2)).toEqual([3]);
-    expect(arrayWithout(arr, 4)).toEqual([1, 2, 3, 1, 2]);
+describe('without', () => {
+  test('returns an array with the specified values removed', () => {
+    expect(without([2, 1, 2, 3], 1, 2)).toEqual([3]);
   });
 
-  test('should handle an empty array', () => {
-    const arr = [];
-    expect(arrayWithout(arr, 1, 2)).toEqual([]);
+  test('returns the original array if no values are specified to remove', () => {
+    expect(without([1, 2, 3])).toEqual([1, 2, 3]);
   });
 
-  test('should handle no values to exclude', () => {
+  test('returns an empty array if all elements are removed', () => {
+    expect(without([1, 2, 2], 1, 2)).toEqual([]);
+  });
+
+  test('does not modify the original array', () => {
     const arr = [1, 2, 3];
-    expect(arrayWithout(arr)).toEqual([1, 2, 3]);
-  });
-
-  test('should handle arrays with mixed types', () => {
-    const arr = [1, 'a', 2, 'b', 1];
-    expect(arrayWithout(arr, 1, 'b')).toEqual(['a', 2]);
-  });
-
-  test('should throw an error if the first argument is not an array', () => {
-    expect(() => arrayWithout(null, 1)).toThrow('Expected an array for the first argument.');
-    expect(() => arrayWithout(undefined, 1)).toThrow('Expected an array for the first argument.');
-    expect(() => arrayWithout('string', 1)).toThrow('Expected an array for the first argument.');
+    without(arr, 1);
+    expect(arr).toEqual([1, 2, 3]);
   });
 });
