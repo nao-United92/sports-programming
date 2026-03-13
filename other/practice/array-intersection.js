@@ -1,6 +1,2 @@
-const arrayIntersection = (a, b) => {
-  const s = new Set(b);
-  return a.filter(x => s.has(x));
-};
-
-module.exports = arrayIntersection;
+export const intersection = (arr, ...args) =>
+  arr.filter((val) => args.every((arg) => arg.includes(val)));
