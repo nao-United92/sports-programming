@@ -1,14 +1,4 @@
-/**
- * Creates an array of grouped elements, the first of which contains the first elements of the given arrays, the second of which contains the second elements of the given arrays, and so on.
- * @param {...Array} arrays - The arrays to process.
- * @returns {Array} - The new array of grouped elements.
- */
-function zip(...arrays) {
-  if (arrays.length === 0) return [];
-  const maxLength = Math.max(...arrays.map((arr) => (arr ? arr.length : 0)));
-  return Array.from({ length: maxLength }, (_, i) =>
-    arrays.map((arr) => (arr ? arr[i] : undefined))
-  );
-}
-
-module.exports = zip;
+export const zip = (...args) => {
+  const maxLength = Math.max(...args.map((arg) => arg.length));
+  return Array.from({ length: maxLength }).map((_, i) => args.map((arg) => arg[i]));
+};
