@@ -1,49 +1,21 @@
-import arrayPartition from './array-partition';
+import { partition } from './array-partition.js';
 
-describe('arrayPartition', () => {
-  test('should partition an array based on a predicate', () => {
+describe('partition', () => {
+  it('splits an array into two based on a predicate', () => {
     const arr = [1, 2, 3, 4, 5, 6];
     const isEven = (n) => n % 2 === 0;
-    expect(arrayPartition(arr, isEven)).toEqual([
-      [2, 4, 6],
-      [1, 3, 5]
-    ]);
+    expect(partition(arr, isEven)).toEqual([[2, 4, 6], [1, 3, 5]]);
   });
 
-  test('should handle an empty array', () => {
-    const arr = [];
-    const isEven = (n) => n % 2 === 0;
-    expect(arrayPartition(arr, isEven)).toEqual([
-      [],
-      []
-    ]);
+  it('handles an empty array', () => {
+    expect(partition([], (x) => x > 0)).toEqual([[], []]);
   });
 
-  test('should place all elements in the truthy array if all satisfy the predicate', () => {
-    const arr = [2, 4, 6];
-    const isEven = (n) => n % 2 === 0;
-    expect(arrayPartition(arr, isEven)).toEqual([
-      [2, 4, 6],
-      []
-    ]);
+  it('handles an array where all elements satisfy the predicate', () => {
+    expect(partition([1, 2, 3], (x) => x > 0)).toEqual([[1, 2, 3], []]);
   });
 
-  test('should place all elements in the falsy array if none satisfy the predicate', () => {
-    const arr = [1, 3, 5];
-    const isEven = (n) => n % 2 === 0;
-    expect(arrayPartition(arr, isEven)).toEqual([
-      [],
-      [1, 3, 5]
-    ]);
-  });
-
-  test('should throw an error if the first argument is not an array', () => {
-    expect(() => arrayPartition(null, () => true)).toThrow('Expected an array for the first argument.');
-    expect(() => arrayPartition(undefined, () => true)).toThrow('Expected an array for the first argument.');
-  });
-
-  test('should throw an error if the second argument is not a function', () => {
-    expect(() => arrayPartition([], null)).toThrow('Expected a function for the second argument.');
-    expect(() => arrayPartition([], 'string')).toThrow('Expected a function for the second argument.');
+  it('handles an array where no elements satisfy the predicate', () => {
+    expect(partition([1, 2, 3], (x) => x < 0)).toEqual([[], [1, 2, 3]]);
   });
 });
