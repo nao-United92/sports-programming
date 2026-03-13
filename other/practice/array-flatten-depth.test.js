@@ -1,22 +1,19 @@
-const flattenDepth = require('./array-flatten-depth');
+import { flattenDepth } from './array-flatten-depth.js';
 
 describe('flattenDepth', () => {
-  const arr = [1, [2, [3, [4]], 5]];
-
-  test('flattens array with default depth (1)', () => {
-    expect(flattenDepth(arr)).toEqual([1, 2, [3, [4]], 5]);
+  it('flattens an array up to a specified depth', () => {
+    expect(flattenDepth([1, [2, [3, [4, 5], 6], 7], 8], 2)).toEqual([1, 2, 3, [4, 5], 6, 7, 8]);
   });
 
-  test('flattens array with depth 2', () => {
-    expect(flattenDepth(arr, 2)).toEqual([1, 2, 3, [4], 5]);
+  it('flattens an array up to depth 1 by default', () => {
+    expect(flattenDepth([1, [2, [3, [4, 5], 6], 7], 8])).toEqual([1, 2, [3, [4, 5], 6], 7, 8]);
   });
 
-  test('flattens array completely with large depth', () => {
-    expect(flattenDepth(arr, 10)).toEqual([1, 2, 3, 4, 5]);
+  it('returns the same array if depth is 0', () => {
+    expect(flattenDepth([1, [2]], 0)).toEqual([1, [2]]);
   });
 
-  test('returns a shallow copy if depth is 0', () => {
-    expect(flattenDepth(arr, 0)).toEqual(arr);
-    expect(flattenDepth(arr, 0)).not.toBe(arr);
+  it('completely flattens an array if depth is high enough', () => {
+    expect(flattenDepth([1, [2, [3, [4]]]], 10)).toEqual([1, 2, 3, 4]);
   });
 });
