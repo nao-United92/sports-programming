@@ -1,3 +1,1 @@
-const arrayUnion = (a, b) => Array.from(new Set([...a, ...b]));
-
-module.exports = arrayUnion;
+export const union = (...args) => [...new Set(args.flat())];
