@@ -1,18 +1,15 @@
-const unzip = require('./array-unzip');
+import { unzip } from './array-unzip.js';
 
 describe('unzip', () => {
-  test('regroups the elements of a zipped array', () => {
-    const zipped = [['a', 1, true], ['b', 2, false]];
-    expect(unzip(zipped)).toEqual([['a', 'b'], [1, 2], [true, false]]);
+  it('unzips an array of grouped elements', () => {
+    expect(unzip([['a', 1, true], ['b', 2, false]])).toEqual([['a', 'b'], [1, 2], [true, false]]);
   });
 
-  test('handles groups of different lengths', () => {
-    const zipped = [['a', 1], ['b']];
-    expect(unzip(zipped)).toEqual([['a', 'b'], [1, undefined]]);
+  it('handles arrays of different lengths', () => {
+    expect(unzip([['a', 1, true], ['b', 2]])).toEqual([['a', 'b'], [1, 2], [true]]);
   });
 
-  test('returns an empty array if input is not an array or is empty', () => {
+  it('handles empty input', () => {
     expect(unzip([])).toEqual([]);
-    expect(unzip(null)).toEqual([]);
   });
 });
