@@ -1,0 +1,1 @@
+export const tap = (val, fn) => { fn(val); return val; };
