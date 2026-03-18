@@ -1,0 +1,1 @@
+export const toLower = (s) => s.toLowerCase();
