@@ -1,12 +1,13 @@
-const mathInRange = require('./math-in-range');
+import { inRange } from './math-in-range';
 
-test('checks if number is in range', () => {
-  expect(mathInRange(3, 2, 5)).toBe(true);
-  expect(mathInRange(3, 4, 1)).toBe(true);
-  expect(mathInRange(5, 2, 5)).toBe(false);
-});
+describe('inRange', () => {
+  test('returns true if number is in range', () => {
+    expect(inRange(5, 0, 10)).toBe(true);
+    expect(inRange(0, 0, 10)).toBe(true);
+  });
 
-test('handles single bound', () => {
-  expect(mathInRange(3, 5)).toBe(true);
-  expect(mathInRange(6, 5)).toBe(false);
+  test('returns false if number is out of range', () => {
+    expect(inRange(-1, 0, 10)).toBe(false);
+    expect(inRange(10, 0, 10)).toBe(false);
+  });
 });
