@@ -1,8 +1,4 @@
-const last = (arr) => {
-  if (!Array.isArray(arr)) {
-    throw new TypeError('Expected an array');
-  }
-  return arr.length > 0 ? arr[arr.length - 1] : undefined;
+export const lastElement = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) return undefined;
+  return arr[arr.length - 1];
 };
-
-module.exports = { last };
