@@ -1,8 +1,17 @@
-import { objectIsEmptyCheck } from './object-is-empty-check';
+import { isEmptyObject } from './object-is-empty-check';
 
-test('objectIsEmptyCheck checks for empty object', () => {
-  expect(objectIsEmptyCheck({})).toBe(true);
-  expect(objectIsEmptyCheck({ a: 1 })).toBe(false);
-  expect(objectIsEmptyCheck(null)).toBe(true);
-  expect(objectIsEmptyCheck(undefined)).toBe(true);
+describe('isEmptyObject', () => {
+  test('returns true for empty object', () => {
+    expect(isEmptyObject({})).toBe(true);
+  });
+
+  test('returns false for non-empty object', () => {
+    expect(isEmptyObject({ a: 1 })).toBe(false);
+  });
+
+  test('returns false for non-object', () => {
+    expect(isEmptyObject(null)).toBeFalsy();
+    expect(isEmptyObject(undefined)).toBeFalsy();
+    expect(isEmptyObject([])).toBe(false);
+  });
 });

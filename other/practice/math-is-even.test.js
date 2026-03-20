@@ -8,7 +8,7 @@ describe('isEven', () => {
   });
 
   test('returns false for odd numbers', () => {
-    expect(isEven(3)).toBe(false);
-    expect(isEven(-1)).toBe(false);
+    expect(isEven(1)).toBe(false);
+    expect(isEven(-3)).toBe(false);
   });
 });
