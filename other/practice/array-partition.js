@@ -1,8 +1,10 @@
-export const partition = (arr, predicate) =>
-  arr.reduce(
-    (acc, val) => {
-      acc[predicate(val) ? 0 : 1].push(val);
+const partition = (arr, fn) => {
+  return arr.reduce(
+    (acc, item) => {
+      acc[fn(item) ? 0 : 1].push(item);
       return acc;
     },
     [[], []]
   );
+};
+module.exports = partition;
