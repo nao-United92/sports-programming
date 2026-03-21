@@ -1,4 +1,4 @@
-export const reverseString = (str) => {
-  if (typeof str !== 'string') return '';
-  return str.split('').reverse().join('');
+const reverse = (str) => {
+  return str.split("").reverse().join("");
 };
+module.exports = reverse;
