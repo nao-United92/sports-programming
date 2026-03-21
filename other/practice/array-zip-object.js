@@ -1,8 +1,7 @@
-const arrayZipObject = (props, values) => {
+const zipObject = (props, values) => {
   return props.reduce((obj, prop, index) => {
     obj[prop] = values[index];
     return obj;
   }, {});
 };
-
-module.exports = arrayZipObject;
+module.exports = zipObject;

@@ -1,8 +1,10 @@
-export const shuffle = ([...arr]) => {
-  let m = arr.length;
+const shuffle = (arr) => {
+  const newArr = [...arr];
+  let m = newArr.length;
   while (m) {
     const i = Math.floor(Math.random() * m--);
-    [arr[m], arr[i]] = [arr[i], arr[m]];
+    [newArr[m], newArr[i]] = [newArr[i], newArr[m]];
   }
-  return arr;
+  return newArr;
 };
+module.exports = shuffle;

@@ -1,6 +1,8 @@
-export const groupBy = (arr, fn) =>
-  arr.reduce((acc, val) => {
-    const key = typeof fn === 'function' ? fn(val) : val[fn];
-    (acc[key] || (acc[key] = [])).push(val);
+const groupBy = (arr, fn) => {
+  return arr.reduce((acc, item) => {
+    const key = typeof fn === "function" ? fn(item) : item[fn];
+    (acc[key] = acc[key] || []).push(item);
     return acc;
   }, {});
+};
+module.exports = groupBy;

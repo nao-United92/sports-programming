@@ -1,8 +1,18 @@
-export const camelCase = (str) => {
-  if (typeof str !== 'string') return '';
-  return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
-      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+const camelCase = (str) => {
+  const words = str
+    .replace(/[^a-zA-Z0-9]/g, ' ')
+    .split(' ')
+    .filter(Boolean);
+    
+  if (words.length === 0) return '';
+  
+  return words
+    .map((word, index) => {
+      const lower = word.toLowerCase();
+      if (index === 0) return lower;
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
     })
-    .replace(/\s+/g, '');
+    .join('');
 };
+
+module.exports = camelCase;
