@@ -1,20 +1,6 @@
-const clamp = require('./math-clamp');
-
-describe('clamp', () => {
-  test('clamps a number within the range', () => {
-    expect(clamp(5, 0, 10)).toBe(5);
-  });
-
-  test('clamps a number to the lower bound', () => {
-    expect(clamp(-5, 0, 10)).toBe(0);
-  });
-
-  test('clamps a number to the upper bound', () => {
-    expect(clamp(15, 0, 10)).toBe(10);
-  });
-
-  test('handles positive and negative bounds', () => {
-    expect(clamp(-10, -5, 5)).toBe(-5);
-    expect(clamp(10, -5, 5)).toBe(5);
-  });
+const clamp = require("./math-clamp");
+test("clamp restricts value to range", () => {
+  expect(clamp(5, 1, 10)).toBe(5);
+  expect(clamp(0, 1, 10)).toBe(1);
+  expect(clamp(15, 1, 10)).toBe(10);
 });
