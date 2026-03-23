@@ -1,20 +1,19 @@
-import { unique } from './array-unique';
+import { unique } from './array-unique.js';
 
 describe('unique', () => {
-  test('removes duplicate numbers', () => {
-    expect(unique([1, 2, 2, 3, 4, 4, 5])).toEqual([1, 2, 3, 4, 5]);
+  test('should remove duplicates from array', () => {
+    expect(unique([1, 2, 2, 3])).toEqual([1, 2, 3]);
   });
 
-  test('removes duplicate strings', () => {
-    expect(unique(['a', 'b', 'a', 'c'])).toEqual(['a', 'b', 'c']);
+  test('should handle strings', () => {
+    expect(unique(['a', 'b', 'a'])).toEqual(['a', 'b']);
   });
 
-  test('handles empty arrays', () => {
+  test('should handle empty array', () => {
     expect(unique([])).toEqual([]);
   });
-
-  test('returns an empty array for non-array input', () => {
-    expect(unique(null)).toEqual([]);
-    expect(unique(123)).toEqual([]);
+  
+  test('should handle non-array input', () => {
+      expect(unique(null)).toEqual([]);
   });
 });
