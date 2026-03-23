@@ -1,17 +1,20 @@
-const lcm = require('./math-lcm');
+import { lcm } from './math-lcm.js';
 
 describe('lcm', () => {
-  test('calculates the LCM of two positive numbers', () => {
-    expect(lcm(12, 18)).toBe(36);
-    expect(lcm(5, 7)).toBe(35);
+  test('should find LCM of two positive integers', () => {
+    expect(lcm(12, 15)).toBe(60);
   });
 
-  test('returns 0 if either number is zero', () => {
-    expect(lcm(12, 0)).toBe(0);
-    expect(lcm(0, 0)).toBe(0);
+  test('should find LCM when one number is 0', () => {
+    expect(lcm(10, 0)).toBe(0);
+    expect(lcm(0, 5)).toBe(0);
   });
 
-  test('handles negative numbers', () => {
-    expect(lcm(-12, 18)).toBe(36);
+  test('should handle negative numbers', () => {
+    expect(lcm(-12, 15)).toBe(60);
+  });
+
+  test('should return NaN for non-integers', () => {
+    expect(lcm(12.5, 15)).toBe(NaN);
   });
 });
