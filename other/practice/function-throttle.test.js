@@ -1,11 +1,29 @@
-const throttle = require("./function-throttle");
+import { throttle } from './function-throttle.js';
+
 jest.useFakeTimers();
-test("throttle limits execution", () => {
-  const fn = jest.fn();
-  const throttled = throttle(fn, 100);
-  throttled();
-  throttled();
-  expect(fn).toHaveBeenCalledTimes(1);
-  jest.advanceTimersByTime(100);
-  expect(fn).toHaveBeenCalledTimes(2); // Depending on implementation detail, might be called again
+
+describe('throttle', () => {
+  test('should throttle a function', () => {
+    const func = jest.fn();
+    const throttledFunc = throttle(func, 100);
+
+    throttledFunc();
+    throttledFunc();
+    throttledFunc();
+
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(100);
+    throttledFunc();
+
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+  
+  test('should pass arguments', () => {
+      const func = jest.fn();
+      const throttledFunc = throttle(func, 100);
+      
+      throttledFunc('hello');
+      expect(func).toHaveBeenCalledWith('hello');
+  });
 });
