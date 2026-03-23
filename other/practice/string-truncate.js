@@ -1,5 +1,6 @@
-const truncate = (str, length, ending = "...") => {
-  if (str.length <= length) return str;
-  return str.substring(0, length - ending.length) + ending;
+// Truncate string to a specific length
+export const truncate = (string, length, omission = '...') => {
+  if (typeof string !== 'string') return '';
+  if (string.length <= length) return string;
+  return string.slice(0, length) + omission;
 };
-module.exports = truncate;

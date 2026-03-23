@@ -1,6 +1,11 @@
-const omit = (obj, keys) => {
-  const result = { ...obj };
-  keys.forEach(key => delete result[key]);
+// Omit specific keys from an object
+export const omit = (object, keys) => {
+  if (!object || typeof object !== 'object') return {};
+  if (!Array.isArray(keys)) return { ...object };
+
+  const result = { ...object };
+  keys.forEach((key) => {
+    delete result[key];
+  });
   return result;
 };
-module.exports = omit;

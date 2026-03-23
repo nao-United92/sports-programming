@@ -1,14 +1,8 @@
-const gcd = require('./math-gcd');
+import { gcd } from './math-gcd.js';
 
-/**
- * Calculates the Least Common Multiple (LCM) of two numbers.
- * @param {number} a - First number.
- * @param {number} b - Second number.
- * @returns {number} - The LCM.
- */
-function lcm(a, b) {
+// Calculates the least common multiple of two numbers
+export const lcm = (a, b) => {
+  if (!Number.isInteger(a) || !Number.isInteger(b)) return NaN;
   if (a === 0 || b === 0) return 0;
-  return Math.abs(a * b) / gcd(a, b);
-}
-
-module.exports = lcm;
+  return Math.abs((a * b) / gcd(a, b));
+};

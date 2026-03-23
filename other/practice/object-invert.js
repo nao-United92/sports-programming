@@ -1,8 +1,9 @@
-const objectInvert = (obj) => {
-  return Object.keys(obj).reduce((acc, key) => {
-    acc[obj[key]] = key;
+// Invert keys and values of an object
+export const invert = (object) => {
+  if (!object || typeof object !== 'object') return {};
+  
+  return Object.keys(object).reduce((acc, key) => {
+    acc[object[key]] = key;
     return acc;
   }, {});
 };
-
-module.exports = objectInvert;
