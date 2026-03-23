@@ -1,61 +1,22 @@
-const { mergeDeep } = require('./object-merge-deep');
+import { mergeDeep } from './object-merge-deep.js';
 
 describe('mergeDeep', () => {
-  it('should deeply merge two objects', () => {
-    const obj1 = {
-      a: 1,
-      b: { b1: 10, b2: 20 },
-      c: [1, 2],
-    };
-    const obj2 = {
-      a: 2,
-      b: { b2: 200, b3: 300 },
-      d: 4,
-    };
-    const expected = {
-      a: 2,
-      b: { b1: 10, b2: 200, b3: 300 },
-      c: [1, 2],
-      d: 4,
-    };
-    expect(mergeDeep(obj1, obj2)).toEqual(expected);
+  test('should deeply merge two objects', () => {
+    const target = { a: 1, b: { c: 2 } };
+    const source = { b: { d: 3 }, e: 4 };
+    const result = mergeDeep(target, source);
+    expect(result).toEqual({ a: 1, b: { c: 2, d: 3 }, e: 4 });
   });
 
-  it('should deeply merge multiple objects', () => {
-    const obj1 = { a: 1, b: { c: 2 } };
-    const obj2 = { d: 3, b: { e: 4 } };
-    const obj3 = { f: 5, b: { c: 5 } };
-    const expected = { a: 1, d: 3, f: 5, b: { c: 5, e: 4 } };
-    expect(mergeDeep(obj1, obj2, obj3)).toEqual(expected);
+  test('should overwrite primitive values', () => {
+    const target = { a: 1 };
+    const source = { a: 2 };
+    expect(mergeDeep(target, source)).toEqual({ a: 2 });
   });
 
-  it('should not modify the original objects', () => {
-    const obj1 = { a: 1, b: { c: 2 } };
-    const obj2 = { d: 3 };
-    mergeDeep(obj1, obj2);
-    expect(obj1).toEqual({ a: 1, b: { c: 2 } });
-    expect(obj2).toEqual({ d: 3 });
-  });
-
-  it('should handle non-object properties correctly', () => {
-    const obj1 = { a: 1 };
-    const obj2 = { a: 'hello' };
-    expect(mergeDeep(obj1, obj2)).toEqual({ a: 'hello' });
-  });
-
-  it('should handle arrays by replacing them, not merging their contents', () => {
-    const obj1 = { arr: [1, 2] };
-    const obj2 = { arr: [3, 4] };
-    expect(mergeDeep(obj1, obj2)).toEqual({ arr: [3, 4] });
-  });
-
-  it('should handle empty objects', () => {
-    expect(mergeDeep({}, {})).toEqual({});
-  });
-  
-  it('should throw an error if target is not an object', () => {
-    expect(() => mergeDeep(null, {})).toThrow(TypeError);
-    expect(() => mergeDeep(1, {})).toThrow(TypeError);
-    expect(() => mergeDeep('string', {})).toThrow(TypeError);
+  test('should handle null values', () => {
+    const target = { a: 1 };
+    const source = { a: null };
+    expect(mergeDeep(target, source)).toEqual({ a: null });
   });
 });

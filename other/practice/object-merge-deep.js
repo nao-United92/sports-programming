@@ -1,31 +1,14 @@
-const isObject = (item) => {
-  return (item && typeof item === 'object' && !Array.isArray(item));
-};
+// Deeply merges two objects
+export const mergeDeep = (target, source) => {
+  if (typeof target !== 'object' || target === null) return target;
+  if (typeof source !== 'object' || source === null) return target;
 
-const mergeDeep = (target, ...sources) => {
-  if (!isObject(target)) {
-    throw new TypeError('Target must be an object');
-  }
-
-  const output = { ...target };
-
-  sources.forEach(source => {
-    if (isObject(source)) {
-      for (const key in source) {
-        if (isObject(source[key])) {
-          if (!(key in output)) {
-            Object.assign(output, { [key]: source[key] });
-          } else {
-            output[key] = mergeDeep(output[key], source[key]);
-          }
-        } else {
-          Object.assign(output, { [key]: source[key] });
-        }
-      }
+  for (const key in source) {
+    if (source[key] instanceof Object && key in target && target[key] instanceof Object) {
+      mergeDeep(target[key], source[key]);
+    } else {
+      target[key] = source[key];
     }
-  });
-
-  return output;
+  }
+  return target;
 };
-
-module.exports = { mergeDeep };
