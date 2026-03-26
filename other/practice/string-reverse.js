@@ -1,5 +1,11 @@
-// Reverses a string
-export const reverse = (string) => {
-  if (typeof string !== 'string') return '';
-  return string.split('').reverse().join('');
+/**
+ * Reverses a string
+ * @param {string} str - The string to reverse
+ * @returns {string} The reversed string
+ */
+export const reverse = (str) => {
+  if (typeof str !== 'string') return '';
+  return str.split('').reverse().join('');
 };
+
+// Practice implementation
