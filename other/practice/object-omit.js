@@ -1,11 +1,3 @@
-// Omit specific keys from an object
-export const omit = (object, keys) => {
-  if (!object || typeof object !== 'object') return {};
-  if (!Array.isArray(keys)) return { ...object };
+const omit = (obj, keys) => Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key)));
 
-  const result = { ...object };
-  keys.forEach((key) => {
-    delete result[key];
-  });
-  return result;
-};
+export { omit };
