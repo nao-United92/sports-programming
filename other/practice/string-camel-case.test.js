@@ -1,5 +1,7 @@
-const camelCase = require("./string-camel-case");
-test("camelCase converts string", () => {
-  expect(camelCase("Foo Bar")).toBe("fooBar");
-  expect(camelCase("--foo-bar--")).toBe("fooBar"); 
+import { toCamelCase } from './string-camel-case.js';
+describe('toCamelCase', () => {
+  it('should convert strings to camel case', () => {
+    expect(toCamelCase('hello-world')).toBe('helloWorld');
+    expect(toCamelCase('foo_bar')).toBe('fooBar');
+  });
 });

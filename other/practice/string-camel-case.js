@@ -1,18 +1,3 @@
-const camelCase = (str) => {
-  const words = str
-    .replace(/[^a-zA-Z0-9]/g, ' ')
-    .split(' ')
-    .filter(Boolean);
-    
-  if (words.length === 0) return '';
-  
-  return words
-    .map((word, index) => {
-      const lower = word.toLowerCase();
-      if (index === 0) return lower;
-      return lower.charAt(0).toUpperCase() + lower.slice(1);
-    })
-    .join('');
-};
+const toCamelCase = (str) => str.replace(/[-_ ]+(.)/g, (_, c) => c.toUpperCase()).replace(/^(.)/, (c) => c.toLowerCase());
 
-module.exports = camelCase;
+export { toCamelCase };
