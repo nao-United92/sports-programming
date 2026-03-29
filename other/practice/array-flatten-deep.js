@@ -1,6 +1,3 @@
-const flattenDeep = (arr) => {
-  return arr.reduce((acc, val) => 
-    Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), 
-  []);
-};
-module.exports = flattenDeep;
+const flattenDeep = (arr) => arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? flattenDeep(val) : val), []);
+
+export { flattenDeep };

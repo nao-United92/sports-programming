@@ -1,10 +1,10 @@
 const shuffle = (arr) => {
-  const newArr = [...arr];
-  let m = newArr.length;
-  while (m) {
-    const i = Math.floor(Math.random() * m--);
-    [newArr[m], newArr[i]] = [newArr[i], newArr[m]];
+  const res = [...arr];
+  for (let i = res.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [res[i], res[j]] = [res[j], res[i]];
   }
-  return newArr;
+  return res;
 };
-module.exports = shuffle;
+
+export { shuffle };

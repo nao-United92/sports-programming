@@ -1,5 +1,7 @@
-const kebabCase = require("./string-kebab-case");
-test("kebabCase converts string", () => {
-  expect(kebabCase("fooBar")).toBe("foo-bar");
-  expect(kebabCase("Foo Bar")).toBe("foo-bar");
+import { toKebabCase } from './string-kebab-case.js';
+describe('toKebabCase', () => {
+  it('should convert strings to kebab case', () => {
+    expect(toKebabCase('helloWorld')).toBe('hello-world');
+    expect(toKebabCase('Foo Bar')).toBe('foo-bar');
+  });
 });

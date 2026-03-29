@@ -1,12 +1,3 @@
-// Pick specific keys from an object
-export const pick = (object, keys) => {
-  if (!object || typeof object !== 'object') return {};
-  if (!Array.isArray(keys)) return {};
-  
-  return keys.reduce((acc, key) => {
-    if (key in object) {
-      acc[key] = object[key];
-    }
-    return acc;
-  }, {});
-};
+const pick = (obj, keys) => keys.reduce((acc, key) => (key in obj && (acc[key] = obj[key]), acc), {});
+
+export { pick };

@@ -1,4 +1,3 @@
-export const zip = (...args) => {
-  const maxLength = Math.max(...args.map((arg) => arg.length));
-  return Array.from({ length: maxLength }).map((_, i) => args.map((arg) => arg[i]));
-};
+const zip = (arr1, arr2) => arr1.map((k, i) => [k, arr2[i]]);
+
+export { zip };
