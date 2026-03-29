@@ -1,5 +1,9 @@
-// Remove duplicate values from an array
-export const unique = (array) => {
-  if (!Array.isArray(array)) return [];
-  return [...new Set(array)];
+/**
+ * Returns an array with only unique elements.
+ * @param {Array} arr
+ * @returns {Array}
+ */
+export const unique = (arr) => {
+  if (!Array.isArray(arr)) return [];
+  return [...new Set(arr)];
 };
