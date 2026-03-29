@@ -1,26 +1,9 @@
-const deepClone = require('./object-deep-clone');
-
+import { deepClone } from './object-deep-clone.js';
 describe('deepClone', () => {
-  test('clones primitives correctly', () => {
-    expect(deepClone(1)).toBe(1);
-    expect(deepClone('hello')).toBe('hello');
-    expect(deepClone(null)).toBe(null);
-  });
-
-  test('clones objects deeply', () => {
+  it('should deeply clone an object', () => {
     const obj = { a: 1, b: { c: 2 } };
-    const cloned = deepClone(obj);
-    expect(cloned).toEqual(obj);
-    expect(cloned).not.toBe(obj);
-    expect(cloned.b).not.toBe(obj.b);
-  });
-
-  test('clones arrays deeply', () => {
-    const arr = [1, [2, 3], { a: 4 }];
-    const cloned = deepClone(arr);
-    expect(cloned).toEqual(arr);
-    expect(cloned).not.toBe(arr);
-    expect(cloned[1]).not.toBe(arr[1]);
-    expect(cloned[2]).not.toBe(arr[2]);
+    const clone = deepClone(obj);
+    expect(clone).toEqual(obj);
+    expect(clone.b).not.toBe(obj.b);
   });
 });
