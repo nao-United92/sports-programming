@@ -1,7 +1,23 @@
-import { toSnakeCase } from './string-snake-case.js';
+const toSnakeCase = require('./string-snake-case');
+
 describe('toSnakeCase', () => {
-  it('should convert strings to snake case', () => {
+  test('should convert camelCase to snake_case', () => {
     expect(toSnakeCase('helloWorld')).toBe('hello_world');
-    expect(toSnakeCase('foo-bar')).toBe('foo_bar');
+  });
+
+  test('should convert PascalCase to snake_case', () => {
+    expect(toSnakeCase('HelloWorld')).toBe('hello_world');
+  });
+
+  test('should convert kebab-case to snake_case', () => {
+    expect(toSnakeCase('hello-world')).toBe('hello_world');
+  });
+
+  test('should convert spaces to underscores', () => {
+    expect(toSnakeCase('hello world')).toBe('hello_world');
+  });
+
+  test('should handle alphanumeric strings', () => {
+    expect(toSnakeCase('v1BetaVersion')).toBe('v1_beta_version');
   });
 });

@@ -1,3 +1,13 @@
-const toCamelCase = (str) => str.replace(/[-_ ]+(.)/g, (_, c) => c.toUpperCase()).replace(/^(.)/, (c) => c.toLowerCase());
+/**
+ * Converts a string to camelCase.
+ * 
+ * @param {string} str - The string to convert.
+ * @returns {string} The camelCased string.
+ */
+function toCamelCase(str) {
+  return str
+    .replace(/[_-]+(.)?/g, (_, c) => c ? c.toUpperCase() : '')
+    .replace(/^\w/, c => c.toLowerCase());
+}
 
-export { toCamelCase };
+module.exports = toCamelCase;
