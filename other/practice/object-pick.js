@@ -1,14 +1,16 @@
 /**
- * Picks specified keys from an object.
- * 
- * @param {Object} obj - The source object.
- * @param {string[]} keys - The keys to pick.
- * @returns {Object} A new object with the picked keys.
+ * Creates an object composed of the picked object properties.
+ * @param {Object} object - The source object.
+ * @param {string[]} paths - The property paths to pick.
+ * @returns {Object} - The new object.
  */
-function pick(obj, keys) {
-  return keys.reduce((acc, key) => {
-    if (obj && Object.prototype.hasOwnProperty.call(obj, key)) {
-      acc[key] = obj[key];
+function pick(object, paths) {
+  if (object == null) {
+    return {};
+  }
+  return paths.reduce((acc, key) => {
+    if (key in object) {
+      acc[key] = object[key];
     }
     return acc;
   }, {});
