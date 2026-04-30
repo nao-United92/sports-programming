@@ -1,0 +1,17 @@
+/**
+ * Creates an object with the same keys as object and values generated
+ * by running each own enumerable string keyed property of object through fn.
+ *
+ * @param {Object} obj The object to iterate over.
+ * @param {Function} fn The function invoked per iteration.
+ * @returns {Object} Returns the new mapped object.
+ */
+function mapValues(obj, fn) {
+  const result = {};
+  Object.keys(obj).forEach((key) => {
+    result[key] = fn(obj[key], key, obj);
+  });
+  return result;
+}
+
+module.exports = mapValues;
