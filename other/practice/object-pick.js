@@ -1,9 +1,9 @@
 /**
- * Picks specified keys from an object.
+ * Creates an object composed of the picked object properties.
  * 
  * @param {Object} obj - The source object.
- * @param {string[]} keys - The keys to pick.
- * @returns {Object} A new object with the picked keys.
+ * @param {string[]} keys - The property keys to pick.
+ * @returns {Object} The new object.
  */
 function pick(obj, keys) {
   return keys.reduce((acc, key) => {
